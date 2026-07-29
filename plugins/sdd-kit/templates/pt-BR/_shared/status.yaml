@@ -1,0 +1,47 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "{{CHANGE_ID}}"
+# feature | bug | refactor | change
+type: "{{CHANGE_TYPE}}"
+title: "{{CHANGE_TITLE}}"
+
+# Toda mudança nasce em DRAFT.
+status: DRAFT
+
+created: "{{DATE}}"
+updated: "{{DATE}}"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "{{DATE}}"
+    reason: >-
+      {{CREATION_REASON}}
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# {{guia: cada item tem question, description, severity
+#   (critical|high|medium|low) e, opcionalmente, resolves_with }}
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+# {{guia: cada item tem question, date, resolved_by, summary e,
+#   opcionalmente, adr }}
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 0
+  pending: 0
+  in_progress: 0
+  done: 0

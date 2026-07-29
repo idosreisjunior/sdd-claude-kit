@@ -1,0 +1,299 @@
+# Matriz de rastreabilidade — 0001-plugin-foundation
+#
+# Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` lista os arquivos já entregues. Requisitos com a lista vazia
+# ainda não têm implementação — ver o status das tarefas em tasks.md.
+#
+# TASK-PF-012 implementou a suíte: 127 testes em tests/. TEST-PF-019 (comandos),
+# TEST-PF-020 (matriz de plataformas) e TEST-PF-021 (exemplo) ainda não — ver
+# a seção `gaps` no fim deste arquivo.
+version: 1
+
+feature: 0001-plugin-foundation
+
+requirements:
+
+  REQ-PF-001:
+    title: Plugin instalável a partir do repositório
+    scenarios:
+      - SCN-PF-001
+    tasks:
+      - TASK-PF-001
+      - TASK-PF-002
+      - TASK-PF-003
+      - TASK-PF-015
+    implementation:
+      - plugins/sdd-kit/.claude-plugin/plugin.json
+      - .claude-plugin/marketplace.json
+      - README.md
+      - docs/pt-BR/instalacao.md
+      - docs/pt-BR/primeira-feature.md
+      - tests/docs.test.ts
+    tests:
+      - TEST-PF-001
+      - TEST-PF-002
+    note: >-
+      Únicos testes desta feature executados com a ferramenta real, não com
+      harness: claude plugin validate --strict passou em ambos os manifestos
+      (exit 0). SCN-PF-001 foi exercitado de ponta a ponta — marketplace add,
+      install, e claude plugin details reportando as 4 skills sob
+      sdd-kit@sdd-claude-kit. Estado da máquina revertido após o teste.
+
+  REQ-PF-002:
+    title: Inicializar o framework em um projeto
+    scenarios:
+      - SCN-PF-002
+      - SCN-PF-003
+      - SCN-PF-004
+      - SCN-PF-005
+      - SCN-PF-021
+    tasks:
+      - TASK-PF-007
+      - TASK-PF-014
+    implementation:
+      - plugins/sdd-kit/skills/init/SKILL.md
+    tests:
+      - TEST-PF-009
+      - TEST-PF-010
+      - TEST-PF-023
+
+  REQ-PF-003:
+    title: Criar uma mudança a partir de linguagem natural
+    scenarios:
+      - SCN-PF-006
+      - SCN-PF-007
+      - SCN-PF-008
+    tasks:
+      - TASK-PF-008
+      - TASK-PF-014
+    implementation:
+      - plugins/sdd-kit/skills/new/SKILL.md
+      - plugins/sdd-kit/templates/pt-BR/change/spec.md
+    tests:
+      - TEST-PF-011
+      - TEST-PF-012
+
+  REQ-PF-004:
+    title: Elaborar e refinar requisitos
+    scenarios:
+      - SCN-PF-009
+      - SCN-PF-010
+      - SCN-PF-011
+    tasks:
+      - TASK-PF-009
+      - TASK-PF-014
+    implementation:
+      - plugins/sdd-kit/skills/spec/SKILL.md
+    tests:
+      - TEST-PF-014
+      - TEST-PF-015
+
+  REQ-PF-005:
+    title: Gerar plano de tarefas
+    scenarios:
+      - SCN-PF-012
+      - SCN-PF-013
+      - SCN-PF-014
+    tasks:
+      - TASK-PF-010
+      - TASK-PF-014
+    implementation:
+      - plugins/sdd-kit/skills/tasks/SKILL.md
+    tests:
+      - TEST-PF-016
+      - TEST-PF-017
+
+  REQ-PF-006:
+    title: Registrar e transicionar estado
+    scenarios:
+      - SCN-PF-015
+      - SCN-PF-016
+    tasks:
+      - TASK-PF-004
+      - TASK-PF-006
+      - TASK-PF-008
+      - TASK-PF-010
+      - TASK-PF-012
+    implementation:
+      - plugins/sdd-kit/schemas/status.schema.json
+      - plugins/sdd-kit/templates/pt-BR/_shared/status.yaml
+      - plugins/sdd-kit/skills/tasks/SKILL.md
+    tests:
+      - TEST-PF-004
+      - TEST-PF-005
+      - TEST-PF-007
+      - TEST-PF-018
+
+  REQ-PF-007:
+    title: Manter o índice de mudanças
+    scenarios:
+      - SCN-PF-017
+    tasks:
+      - TASK-PF-007
+      - TASK-PF-008
+    implementation:
+      - plugins/sdd-kit/templates/pt-BR/index.yaml
+      - plugins/sdd-kit/skills/init/SKILL.md
+      - plugins/sdd-kit/skills/new/SKILL.md
+    tests:
+      - TEST-PF-013
+
+  REQ-PF-008:
+    title: Templates padronizados
+    scenarios:
+      - SCN-PF-018
+    tasks:
+      - TASK-PF-005
+      - TASK-PF-006
+      - TASK-PF-012
+    implementation:
+      - plugins/sdd-kit/templates/README.md
+      - plugins/sdd-kit/templates/pt-BR/config.yaml
+      - plugins/sdd-kit/templates/pt-BR/project/vision.md
+      - plugins/sdd-kit/templates/pt-BR/project/constitution.md
+      - plugins/sdd-kit/templates/pt-BR/project/context.md
+      - plugins/sdd-kit/templates/pt-BR/project/architecture.md
+      - plugins/sdd-kit/templates/pt-BR/project/glossary.md
+      - plugins/sdd-kit/templates/pt-BR/project/standards.md
+      - plugins/sdd-kit/templates/pt-BR/_shared/request.md
+      - plugins/sdd-kit/templates/pt-BR/_shared/tasks.md
+      - plugins/sdd-kit/templates/pt-BR/_shared/status.yaml
+      - plugins/sdd-kit/templates/pt-BR/_shared/traceability.yaml
+      - plugins/sdd-kit/templates/pt-BR/index.yaml
+      - plugins/sdd-kit/templates/pt-BR/feature/spec.md
+      - plugins/sdd-kit/templates/pt-BR/bug/spec.md
+      - plugins/sdd-kit/templates/pt-BR/refactor/spec.md
+      - plugins/sdd-kit/templates/pt-BR/change/spec.md
+      - plugins/sdd-kit/templates/pt-BR/adr/ADR-template.md
+    tests:
+      - TEST-PF-006
+      - TEST-PF-007
+      - TEST-PF-008
+
+  REQ-PF-009:
+    title: Respeitar o modo de governança
+    scenarios:
+      - SCN-PF-019
+      - SCN-PF-020
+    tasks:
+      - TASK-PF-004
+      - TASK-PF-007
+      - TASK-PF-008
+      - TASK-PF-009
+      - TASK-PF-010
+      - TASK-PF-017
+    implementation:
+      - plugins/sdd-kit/schemas/config.schema.json
+      - .specs/project/decisions/ADR-008-autoinvocacao-de-skills.md
+      - plugins/sdd-kit/skills/init/SKILL.md
+      - plugins/sdd-kit/skills/new/SKILL.md
+      - plugins/sdd-kit/skills/spec/SKILL.md
+      - plugins/sdd-kit/skills/tasks/SKILL.md
+    tests:
+      - TEST-PF-003
+      - TEST-PF-010
+      - TEST-PF-024
+
+  NFR-PF-001:
+    title: Compatibilidade multiplataforma
+    scenarios: []
+    tasks:
+      - TASK-PF-011
+      - TASK-PF-013
+    implementation:
+      - package.json
+      - tsconfig.json
+      - eslint.config.js
+      - vitest.config.ts
+      - .specs/project/decisions/ADR-007-scripts-do-plugin-em-javascript.md
+    tests:
+      - TEST-PF-012
+      - TEST-PF-019
+      - TEST-PF-020
+    note: >-
+      TEST-PF-019 executado e aprovado apenas em LINUX (Node v20.20.2).
+      NFR-PF-001 exige Windows, Linux e macOS: só estará cumprido quando a
+      matriz de CI de TASK-PF-013 rodar nos três.
+
+  NFR-PF-002:
+    title: Isolamento e segurança
+    scenarios: []
+    tasks:
+      - TASK-PF-007
+      - TASK-PF-012
+    implementation:
+      - plugins/sdd-kit/skills/init/SKILL.md
+      - plugins/sdd-kit/skills/new/SKILL.md
+    tests:
+      - TEST-PF-022
+    implementation_tests:
+      - tests/no-network.test.ts
+    note: >-
+      TEST-PF-022 verificado por mutação: um script com fetch() em
+      plugins/sdd-kit/scripts/ faz o teste falhar. O teste também valida o
+      próprio detector e registra que hoje há zero arquivos executáveis, para
+      a aprovação por ausência não parecer cobertura. Em init, "não alterar código" deixou de ser só instrução: Edit e
+      NotebookEdit são removidos via disallowed-tools enquanto a skill está
+      ativa, tornando SCN-PF-003 uma garantia mecânica.
+
+  NFR-PF-003:
+    title: Contexto sob demanda
+    scenarios: []
+    tasks:
+      - TASK-PF-007
+      - TASK-PF-009
+      - TASK-PF-010
+    implementation:
+      - plugins/sdd-kit/skills/init/SKILL.md
+      - plugins/sdd-kit/skills/new/SKILL.md
+      - plugins/sdd-kit/skills/spec/SKILL.md
+      - plugins/sdd-kit/skills/tasks/SKILL.md
+    tests: []
+    note: >-
+      Verificado por revisão dos SKILL.md, não por teste automatizado. Cada
+      skill precisa declarar explicitamente os arquivos que lê.
+
+  NFR-PF-004:
+    title: Preparação para internacionalização
+    scenarios: []
+    tasks:
+      - TASK-PF-005
+      - TASK-PF-006
+    implementation:
+      - plugins/sdd-kit/templates/README.md
+      - .specs/project/decisions/ADR-009-templates-por-idioma.md
+    tests: []
+    note: >-
+      Atingido por escopo de idioma no caminho (ADR-009), não por catálogo de
+      strings: documentos são prosa inteira. Traduzir é copiar templates/pt-BR/
+      para templates/<idioma>/ e traduzir Markdown. Verificado por revisão.
+
+  NFR-PF-005:
+    title: Specs legíveis sem o plugin
+    scenarios: []
+    tasks:
+      - TASK-PF-012
+      - TASK-PF-014
+    implementation:
+      - tests/specs-invariants.test.ts
+      - examples/node-api/.specs/config.yaml
+      - examples/node-api/README.md
+    tests:
+      - TEST-PF-021
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Devem ser reavaliados quando o validador da Fase 4 existir.
+gaps:
+  - id: NFR-PF-003
+    reason: >-
+      O comportamento de uma skill é instrução em linguagem natural e não é
+      testável deterministicamente. O CUSTO DE CONTEXTO, porém, é medível:
+      TASK-PF-002 apurou ~971 tokens sempre ativos e ~4k por invocação, via
+      claude plugin details. A lacuna restante é o comportamento, não o custo.
+    mitigation: >-
+      Revisão humana no critério de conclusão de TASK-PF-007, 009 e 010, mais
+      acompanhamento do custo sempre-ativo a cada skill nova.
+  - id: NFR-PF-004
+    reason: Preparação para i18n é uma propriedade estrutural dos templates.
+    mitigation: Revisão humana no critério de conclusão de TASK-PF-005 e 006.

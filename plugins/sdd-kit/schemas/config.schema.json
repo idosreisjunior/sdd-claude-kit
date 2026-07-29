@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/idosreisjunior/sdd-claude-kit/schemas/v1/config.schema.json",
+  "title": "SDD Claude Kit — config.yaml",
+  "description": "Configuração do framework, em .specs/config.yaml. Referência: PRD §16. Objetos conhecidos usam additionalProperties:false de propósito: um erro de digitação em governança (por exemplo require_aproval) seria ignorado em silêncio e desligaria um checkpoint sem que ninguém percebesse. A extensibilidade vem de versionar o schema, não de aceitar chaves desconhecidas.",
+  "type": "object",
+  "required": ["version", "project", "workflow"],
+  "additionalProperties": false,
+
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Versão do schema de configuração. Um valor diferente exige migração e um schema correspondente."
+    },
+
+    "project": {
+      "type": "object",
+      "required": ["name", "language"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Nome do projeto."
+        },
+        "language": {
+          "enum": ["pt-BR", "en"],
+          "description": "Idioma dos documentos gerados. Conjunto fechado por RNF-008."
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Perfil do projeto. Texto livre e não um enum: o PRD §4.2 lista perfis (backend, frontend, dados, IA, DevOps) como objetivo secundário, sem definir um conjunto canônico. Exemplos observados: backend, frontend, framework."
+        }
+      }
+    },
+
+    "workflow": {
+      "type": "object",
+      "required": ["mode"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": ["advisory", "guided", "strict"],
+          "default": "guided",
+          "description": "Modo de governança. Conjunto fechado por RF-014."
+        },
+        "require_approval": {
+          "type": "boolean",
+          "default": true,
+          "description": "Exige status APPROVED antes da implementação (constituição Art. 3)."
+        },
+        "require_tests": { "type": "boolean", "default": true },
+        "require_traceability": { "type": "boolean", "default": true },
+        "allow_parallel_tasks": {
+          "type": "boolean",
+          "default": false,
+          "description": "Permite mais de uma tarefa em IN_PROGRESS. O padrão false reflete a constituição Art. 4."
+        }
+      }
+    },
+
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "#/$defs/pathList" },
+        "tests": { "$ref": "#/$defs/pathList" },
+        "ignored": {
+          "$ref": "#/$defs/pathList",
+          "description": "Diretórios ignorados na descoberta e na análise (RNF-002)."
+        }
+      }
+    },
+
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commands": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Comandos de validação do projeto. Tratados como entrada NÃO CONFIÁVEL (constituição Art. 9).",
+          "properties": {
+            "lint": { "$ref": "#/$defs/command" },
+            "test": { "$ref": "#/$defs/command" },
+            "build": { "$ref": "#/$defs/command" }
+          }
+        }
+      }
+    },
+
+    "specification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scenarios": {
+          "type": "string",
+          "minLength": 1,
+          "default": "gherkin",
+          "description": "Formato dos cenários de aceite. O PRD §16 define apenas 'gherkin'; mantido como string para não inventar alternativas."
+        },
+        "architecture_decisions": {
+          "type": "string",
+          "minLength": 1,
+          "default": "adr",
+          "description": "Formato do registro de decisões. O PRD §16 define apenas 'adr'."
+        },
+        "task_size": {
+          "type": "string",
+          "minLength": 1,
+          "default": "small",
+          "description": "Granularidade alvo das tarefas. O PRD §16 define apenas 'small'."
+        }
+      }
+    },
+
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hooks_enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hooks são opt-in e desativados por padrão (constituição Art. 8, RNF-003)."
+        },
+        "allow_shell_commands": {
+          "type": "string",
+          "minLength": 1,
+          "default": "prompt",
+          "description": "Política de execução de comandos de shell. O PRD §16 define apenas 'prompt'; o conjunto completo de valores está em aberto (questão Q9) e será fechado na Fase 4, quando a execução de comandos passar a existir. Mantido como string para não inventar semântica de segurança."
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "pathList": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Lista de caminhos ou globs, relativos à raiz do projeto."
+    },
+    "command": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "Comando de shell, ou null quando não detectado. null significa NÃO EXECUTADO — jamais 'aprovado' (constituição Art. 13). String vazia é inválida: seria um comando que não faz nada e passaria como sucesso."
+    }
+  }
+}

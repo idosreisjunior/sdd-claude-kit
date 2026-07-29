@@ -1,0 +1,42 @@
+# Matriz de rastreabilidade — 0001-customer-registration
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` está vazio porque nada foi implementado: as duas primeiras
+# tarefas são decisões arquiteturais. Preenchê-lo agora afirmaria que arquivos
+# foram tocados.
+version: 1
+
+feature: 0001-customer-registration
+
+requirements:
+
+  REQ-CUST-001:
+    title: Registrar um cliente
+    scenarios:
+      - SCN-CUST-001
+      - SCN-CUST-002
+    tasks:
+      - TASK-CUST-001
+      - TASK-CUST-002
+      - TASK-CUST-003
+      - TASK-CUST-004
+      - TASK-CUST-005
+    implementation: []
+    tests:
+      - TEST-CUST-001
+      - TEST-CUST-002
+      - TEST-CUST-003
+      - TEST-CUST-004
+
+# Nenhum requisito não funcional foi registrado: a solicitação não trouxe
+# exigência dessa natureza e o projeto não tem padrão que imponha alguma.
+gaps:
+  - id: REQ-CUST-001
+    reason: >-
+      Três questões críticas em aberto (Q1 persistência, Q2 autorização,
+      Q3 campos). Os cenários existem, mas os critérios de aceite não podem
+      ser completados antes das respostas.
+    mitigation: >-
+      TASK-CUST-001 e TASK-CUST-002 são tarefas de decisão e bloqueiam o
+      restante do plano.

@@ -1,0 +1,45 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0005-dod-insatisfazivel-sem-linter"
+# feature | bug | refactor | change
+type: "bug"
+title: "Artigo 10 da constituição gerada é insatisfazível em projeto sem linter"
+
+# Toda mudança nasce em DRAFT.
+status: DRAFT
+
+created: "2026-07-29"
+updated: "2026-07-29"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-07-29"
+    reason: >-
+      Dogfooding de TASK-PF-016: a Definition of Done exige "lint aprovado" 
+      sem ressalva. Projeto sem linter tem lint: null e nenhuma tarefa 
+      consegue satisfazer o artigo.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 0
+  pending: 0
+  in_progress: 0
+  done: 0

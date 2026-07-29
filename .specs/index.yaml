@@ -1,0 +1,78 @@
+# Índice de todas as mudanças especificadas neste repositório.
+# Atualizado manualmente até TASK-PF-013 (script update-index).
+version: 1
+
+next_id: 7
+
+changes:
+  - id: 0001-plugin-foundation
+    type: feature
+    title: Fundação do plugin SDD Claude Kit
+    status: DESIGNED
+    path: features/0001-plugin-foundation
+    created: "2026-07-29"
+    updated: "2026-07-29"
+    covers:
+      - RF-001
+      - RF-003
+      - RF-004
+      - RF-007
+      - RF-014
+    phase: 1
+
+  - id: 0002-dangling-constitution-reference
+    type: bug
+    title: Referência a artigo inexistente da constituição no template de config
+    status: DRAFT
+    path: bugs/0002-dangling-constitution-reference
+    created: "2026-07-29"
+    updated: "2026-07-29"
+    covers:
+      - RF-001
+    phase: 1
+
+  - id: 0003-spec-expande-escopo
+    type: bug
+    title: A skill spec expande o escopo do pedido em requisitos não solicitados
+    status: DRAFT
+    path: bugs/0003-spec-expande-escopo
+    created: "2026-07-29"
+    updated: "2026-07-29"
+    covers:
+      - RF-005
+    phase: 1
+
+  - id: 0004-blocked-by-invalido
+    type: bug
+    title: status.yaml gerado viola o schema no campo blocked_by
+    status: DRAFT
+    path: bugs/0004-blocked-by-invalido
+    created: "2026-07-29"
+    updated: "2026-07-29"
+    covers:
+      - RF-005
+    phase: 1
+
+  - id: 0005-dod-insatisfazivel-sem-linter
+    type: bug
+    title: Artigo 10 da constituição gerada é insatisfazível em projeto sem linter
+    status: DRAFT
+    path: bugs/0005-dod-insatisfazivel-sem-linter
+    created: "2026-07-29"
+    updated: "2026-07-29"
+    covers:
+      - RF-005
+    phase: 1
+
+  - id: 0006-reason-quebra-com-aspas
+    type: bug
+    title: reason entre aspas quebra o YAML quando o texto contém aspas
+    status: DRAFT
+    path: bugs/0006-reason-quebra-com-aspas
+    created: "2026-07-29"
+    updated: "2026-07-29"
+    covers:
+      - RF-004
+    phase: 1
+
+archive: []

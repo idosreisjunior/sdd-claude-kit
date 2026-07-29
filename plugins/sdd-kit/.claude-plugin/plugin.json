@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "sdd-kit",
+  "displayName": "SDD Claude Kit",
+  "version": "0.1.0",
+  "description": "Spec-Driven Development para Claude Code: transforma solicitações em linguagem natural em especificações, tarefas e rastreabilidade versionadas em .specs, ao lado do código.",
+  "author": {
+    "name": "SDD Claude Kit contributors",
+    "url": "https://github.com/idosreisjunior/sdd-claude-kit"
+  },
+  "homepage": "https://github.com/idosreisjunior/sdd-claude-kit",
+  "repository": "https://github.com/idosreisjunior/sdd-claude-kit",
+  "license": "Apache-2.0",
+  "keywords": [
+    "spec-driven-development",
+    "sdd",
+    "specification",
+    "requirements",
+    "traceability",
+    "governance"
+  ]
+}

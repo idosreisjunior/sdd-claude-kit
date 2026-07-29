@@ -1,0 +1,14 @@
+{
+  "name": "customer-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API de exemplo usada para demonstrar o SDD Claude Kit",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  }
+}

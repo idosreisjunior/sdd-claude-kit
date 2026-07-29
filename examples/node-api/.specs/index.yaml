@@ -1,0 +1,20 @@
+# Índice de todas as mudanças especificadas neste projeto.
+#
+# Responde "o que existe aqui" sem abrir nenhuma spec — é o que evita carregar
+# a árvore inteira de .specs para se orientar. Ver constitution.md, Art. 7.
+version: 1
+
+# Próximo identificador a ser alocado. Incrementado a cada mudança criada.
+# Identificadores nunca são reutilizados nem renumerados.
+next_id: 2
+
+changes:
+  - id: 0001-customer-registration
+    type: feature
+    title: Cadastro de clientes
+    status: DRAFT
+    path: features/0001-customer-registration
+    created: "2026-07-29"
+    updated: "2026-07-29"
+
+archive: []

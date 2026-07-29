@@ -1,0 +1,54 @@
+# Configuração do SDD Claude Kit aplicada ao próprio repositório.
+# Referência: PRD.md §16.
+version: 1
+
+project:
+  name: sdd-claude-kit
+  language: pt-BR
+  type: framework
+
+workflow:
+  mode: guided
+  require_approval: true
+  require_tests: true
+  require_traceability: true
+  allow_parallel_tasks: false
+
+paths:
+  source:
+    - plugins
+    - packages
+    - scripts
+  tests:
+    - tests
+    - packages/**/*.test.ts
+    - packages/**/*.spec.ts
+  ignored:
+    - node_modules
+    - dist
+    - build
+    - coverage
+    - .git
+    - examples
+
+validation:
+  commands:
+    # Configurados em TASK-PF-011. Verificados nesta máquina (Linux, Node
+    # v20.20.2): os três saem com exit 0.
+    lint: npm run lint
+    # ATENÇÃO: `--passWithNoTests` significa que ainda NÃO EXISTE nenhum teste.
+    # O exit 0 é "nada a executar", não "tudo passou" — ver constitution.md,
+    # Art. 13. TASK-PF-012 remove a flag ao escrever os primeiros testes.
+    test: npm test
+    # `build` é type-check: por ADR-007 os scripts do plugin são JS com JSDoc
+    # e não têm etapa de compilação. `tsc --noEmit` valida os tipos.
+    build: npm run build
+
+specification:
+  scenarios: gherkin
+  architecture_decisions: adr
+  task_size: small
+
+security:
+  hooks_enabled: false
+  allow_shell_commands: prompt

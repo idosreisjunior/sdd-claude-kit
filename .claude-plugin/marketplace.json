@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sdd-claude-kit",
+  "description": "Framework open source de Spec-Driven Development para Claude Code",
+  "owner": {
+    "name": "SDD Claude Kit contributors",
+    "url": "https://github.com/idosreisjunior/sdd-claude-kit"
+  },
+  "plugins": [
+    {
+      "name": "sdd-kit",
+      "source": "./plugins/sdd-kit",
+      "description": "Transforma solicitações em linguagem natural em especificações, tarefas e rastreabilidade versionadas em .specs, ao lado do código.",
+      "category": "development",
+      "tags": [
+        "spec-driven-development",
+        "requirements",
+        "traceability",
+        "governance"
+      ]
+    }
+  ]
+}

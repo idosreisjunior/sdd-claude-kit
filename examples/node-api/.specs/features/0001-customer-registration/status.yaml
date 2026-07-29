@@ -1,0 +1,48 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+version: 1
+
+id: 0001-customer-registration
+type: feature
+title: Cadastro de clientes
+
+status: DRAFT
+
+created: "2026-07-29"
+updated: "2026-07-29"
+
+history:
+  - status: DRAFT
+    date: "2026-07-29"
+    reason: >-
+      Mudança criada por /sdd-kit:new a partir da solicitação "criar cadastro
+      de clientes". Requisitos elaborados por /sdd-kit:spec e plano gerado por
+      /sdd-kit:tasks. Permanece em DRAFT: três questões críticas seguem em
+      aberto e a transição DRAFT → PLANNED é inválida na máquina de estados.
+
+approval: null
+
+blocked_by:
+  - question: Q1
+    description: >-
+      Onde os clientes são armazenados? O projeto não tem persistência —
+      decisão arquitetural que exige ADR.
+    severity: critical
+    resolves_with: TASK-CUST-001
+  - question: Q2
+    description: >-
+      Quem pode cadastrar? Não há autenticação; um endpoint público de
+      cadastro é decisão, não padrão.
+    severity: critical
+    resolves_with: TASK-CUST-002
+  - question: Q3
+    description: Quais campos compõem um cliente, e quais são obrigatórios?
+    severity: critical
+    resolves_with: TASK-CUST-003
+
+resolved_questions: []
+
+tasks:
+  total: 5
+  pending: 5
+  in_progress: 0
+  done: 0

@@ -1,0 +1,121 @@
+version: 1
+
+id: 0001-plugin-foundation
+type: feature
+title: Fundação do plugin SDD Claude Kit
+status: DESIGNED
+
+created: "2026-07-29"
+updated: "2026-07-29"
+
+history:
+  - status: DRAFT
+    date: "2026-07-29"
+    reason: >-
+      Mudança criada a partir do PRD 1.0, §25 (Fase 1) e §33 (instrução inicial).
+      Especificação, design provisório e plano de tarefas escritos manualmente,
+      já que o framework ainda não existe.
+
+  - status: CLARIFIED
+    date: "2026-07-29"
+    reason: >-
+      TASK-PF-001 concluída. As três ambiguidades críticas (Q1, Q2, Q3) foram
+      resolvidas contra a documentação oficial do Claude Code e a inspeção do
+      marketplace oficial em cache. Contratos da plataforma registrados em
+      design.md §14. O namespace /sdd-kit:<skill> do PRD §11 foi confirmado.
+      Duas questões novas foram abertas (Q7, Q8); Q7 é arquitetural e exige
+      ADR, mas não é ambiguidade de requisito — por isso a transição para
+      CLARIFIED procede e a de DESIGNED não.
+
+  - status: DESIGNED
+    date: "2026-07-29"
+    reason: >-
+      TASK-PF-017 concluída. Q7 resolvida por ADR-008: disable-model-invocation
+      apenas em approve, implement e archive, as três skills que consomem ou
+      executam uma decisão humana. Nenhuma skill desta feature é bloqueada.
+      Design técnico fechado — resta apenas Q6, que não toca esta feature
+      porque a Fase 1 não entrega scripts executáveis.
+
+# Preenchido por /sdd-kit:approve (Fase 2). Nulo significa não aprovado.
+approval: null
+
+# TASK-PF-013 entregou o pipeline, mas ele nunca executou: o repositório não
+# tem commits nem remote. NFR-PF-001 (Windows, Linux, macOS) segue sem
+# verificação real — nada no ambiente de desenvolvimento comprova
+# compatibilidade multiplataforma.
+blocked_by:
+  - question: Q10
+    description: >-
+      A matriz de CI passa em Windows, Linux e macOS? Declarada em
+      TASK-PF-013 mas nunca executada — o repositório não tem commits nem
+      remote. NFR-PF-001 e TEST-PF-020 só podem ser verificados depois da
+      publicação no GitHub. A feature não chega a VERIFIED antes disso.
+    severity: high
+    resolves_with: TASK-PF-013
+  - question: Q11
+    description: >-
+      RESPONDIDA em 2026-07-29 e reaberta com escopo novo. As skills foram
+      invocadas de verdade via claude -p, numa sessão nova. Elas funcionam,
+      mas a skill spec expandiu "criar cadastro de clientes" em cinco
+      requisitos CRUD — quatro não pedidos e não marcados como hipótese, o que
+      viola o Artigo 2. Cinco bugs registrados (0002 a 0006). Enquanto 0003
+      não for corrigido e reverificado, os critérios de aceite 5 e 6 estão
+      REPROVADOS, não apenas com ressalva.
+    severity: critical
+    resolves_with: TASK-PF-016
+
+resolved_questions:
+  - question: Q1
+    date: "2026-07-29"
+    resolved_by: TASK-PF-001
+    summary: >-
+      plugin.json é opcional, só `name` é obrigatório. marketplace.json exige
+      name, owner e plugins[]. Skills em skills/<nome>/SKILL.md, namespace
+      /sdd-kit:<nome> confirmado.
+  - question: Q2
+    date: "2026-07-29"
+    resolved_by: TASK-PF-001
+    summary: >-
+      Não há parsing nativo de flags. Argumentos chegam como texto via
+      $ARGUMENTS, $N (base 0) ou nomes declarados em `arguments`. A skill init
+      precisa interpretar --mode e --language por conta própria.
+  - question: Q3
+    date: "2026-07-29"
+    resolved_by: TASK-PF-001
+    summary: >-
+      ${CLAUDE_PLUGIN_ROOT} substitui no conteúdo da skill e é o caminho para
+      templates e schemas compartilhados. Travessia para fora do diretório do
+      plugin é bloqueada; o diretório é efêmero entre atualizações.
+  - question: Q4
+    date: "2026-07-29"
+    resolved_by: TASK-PF-008
+    summary: >-
+      Slug em inglês, confirmando standards.md §3. O risco não é o idioma e sim
+      a tradução imprecisa virar permanente, já que do slug deriva o escopo dos
+      identificadores. A skill new apresenta slug, tradução e escopo antes de
+      criar o diretório.
+  - question: Q6
+    date: "2026-07-29"
+    resolved_by: TASK-PF-011
+    adr: ADR-007
+    summary: >-
+      Scripts do plugin em JavaScript com JSDoc; CLI em TypeScript compilado.
+      A razão é restrição de plataforma: plugins de marketplace são copiados
+      como estão, sem npm install e sem build, e o padrão documentado para
+      instalar dependências é um hook SessionStart — que é opt-in pelo Art. 9.
+      Scripts do plugin também não podem ter dependências de runtime.
+  - question: Q7
+    date: "2026-07-29"
+    resolved_by: TASK-PF-017
+    adr: ADR-008
+    summary: >-
+      disable-model-invocation: true apenas em approve, implement e archive.
+      As outras dez skills permanecem no padrão, preservando o modo advisory.
+      O campo não é fronteira de segurança: o Artigo 3 só é aplicado de fato
+      pelo hook PreToolUse do modo strict, na Fase 4.
+
+tasks:
+  total: 17
+  pending: 2
+  in_progress: 0
+  done: 15

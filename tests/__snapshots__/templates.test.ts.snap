@@ -1,0 +1,146 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções de cada spec.md são estáveis 1`] = `
+[
+  "Objetivo",
+  "Contexto",
+  "Escopo",
+  "Requisitos funcionais",
+  "Requisitos não funcionais",
+  "Critérios de aceite",
+  "Questões pendentes",
+  "Hipóteses assumidas",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções de cada spec.md são estáveis 2`] = `
+[
+  "Comportamento observado",
+  "Comportamento esperado",
+  "Regra violada",
+  "Reprodução",
+  "Impacto",
+  "Causa raiz",
+  "Escopo da correção",
+  "Cenários de regressão",
+  "Critérios de aceite",
+  "Questões pendentes",
+  "Hipóteses assumidas",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções de cada spec.md são estáveis 3`] = `
+[
+  "Motivação",
+  "Estado atual",
+  "Estado alvo",
+  "Escopo",
+  "Garantia de preservação de comportamento",
+  "Interfaces afetadas",
+  "Cenários de preservação",
+  "Riscos",
+  "Critérios de aceite",
+  "Questões pendentes",
+  "Hipóteses assumidas",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções de cada spec.md são estáveis 4`] = `
+[
+  "Motivação",
+  "Arquitetura atual",
+  "Arquitetura alvo",
+  "Decisão registrada",
+  "Raio de impacto",
+  "Contratos que mudam",
+  "Migração",
+  "Rollback",
+  "Cenários",
+  "Riscos",
+  "Critérios de aceite",
+  "Questões pendentes",
+  "Hipóteses assumidas",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções dos documentos de projeto são estáveis 1`] = `
+[
+  "Por que este projeto existe",
+  "O que queremos",
+  "Para quem",
+  "Como",
+  "Como saberemos que funcionou",
+  "O que este projeto não é",
+  "Tensão central a administrar",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções dos documentos de projeto são estáveis 2`] = `
+[
+  "Artigo 1 — A especificação vem antes do código",
+  "Artigo 2 — Não inventar requisitos",
+  "Artigo 3 — Aprovação humana antes da implementação",
+  "Artigo 4 — Uma tarefa por vez",
+  "Artigo 5 — Specs são a fonte da verdade",
+  "Artigo 6 — Rastreabilidade obrigatória",
+  "Artigo 7 — Contexto sob demanda",
+  "Artigo 8 — Interromper diante de decisão arquitetural não prevista",
+  "Artigo 9 — Segurança por padrão",
+  "Artigo 10 — Definition of Done",
+  "Artigo 11 — {{PROJECT_RULE_TITLE}}",
+  "Emendas",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções dos documentos de projeto são estáveis 3`] = `
+[
+  "Estado atual",
+  "Tipo de projeto",
+  "Linguagens e tecnologias",
+  "Estrutura de diretórios",
+  "Comandos",
+  "Persistência e infraestrutura",
+  "Padrões de arquitetura observados",
+  "Documentação existente",
+  "Riscos iniciais identificados",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções dos documentos de projeto são estáveis 4`] = `
+[
+  "1. Visão geral",
+  "2. Componentes e responsabilidades",
+  "3. Fluxos principais",
+  "4. Contratos",
+  "5. Persistência",
+  "6. Segurança",
+  "7. Observabilidade",
+  "8. Limites explícitos",
+  "9. Decisões arquiteturais",
+  "10. Questões arquiteturais em aberto",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções dos documentos de projeto são estáveis 5`] = `
+[
+  "Termos do domínio",
+  "Termos evitados",
+  "Termos do método",
+  "Estados",
+]
+`;
+
+exports[`TEST-PF-008 — estrutura dos templates é estável (SCN-PF-018) > as seções dos documentos de projeto são estáveis 6`] = `
+[
+  "1. Identificadores",
+  "2. Diretórios de mudança",
+  "3. Cenários",
+  "4. Marcação de incerteza",
+  "5. Idioma",
+  "6. Código",
+  "7. Testes",
+  "8. Commits",
+  "9. YAML",
+  "10. Markdown",
+]
+`;

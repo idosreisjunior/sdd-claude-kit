@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Menor privilégio: o pipeline só lê o repositório.
+permissions:
+  contents: read
+
+# Uma execução por ref. Push novo cancela a anterior, exceto em main.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  # RNF-001 — o framework precisa funcionar em Windows, Linux e macOS.
+  # Esta matriz é a única verificação real dessa exigência: nada no ambiente
+  # de desenvolvimento comprova compatibilidade multiplataforma.
+  verify:
+    name: ${{ matrix.os }} · Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+
+    strategy:
+      # Sem fail-fast: interessa saber QUAIS plataformas falham, não só que
+      # alguma falhou. Um erro só de Windows some se o job de Ubuntu aborta
+      # a matriz primeiro.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: ['20']
+        include:
+          # Node 22 apenas em Ubuntu: cobre compatibilidade com a versão
+          # seguinte sem triplicar o custo da matriz.
+          - os: ubuntu-latest
+            node: '22'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # `npm ci` instala exatamente o package-lock.json e falha se ele
+      # divergir do package.json — diferente de `npm install`, que o corrigiria
+      # em silêncio.
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verificação de tipos
+        run: npm run build
+
+      - name: Testes
+        run: npm test
+
+  # Os manifestos são validados estruturalmente pela suíte (TEST-PF-001 e
+  # TEST-PF-002), que não depende do CLI do Claude Code — os runners não o
+  # têm instalado. `npm run validate-plugin` roda o validador oficial e
+  # continua sendo a verificação definitiva, feita localmente antes de release.
+  specs:
+    name: Consistência das specs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      # Invariantes de .specs: identificadores únicos, índice refletindo o
+      # disco, rastreabilidade sem órfãos, transições válidas na máquina de
+      # estados. Roda separado para que uma quebra de spec seja distinguível
+      # de uma quebra de código na lista de checks do PR.
+      - name: Invariantes das especificações
+        run: npx vitest run tests/specs-invariants.test.ts

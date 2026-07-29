@@ -1,0 +1,35 @@
+# Matriz de rastreabilidade — {{CHANGE_ID}}
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "{{CHANGE_ID}}"
+
+requirements:
+
+  "{{REQUIREMENT_ID}}":
+    title: "{{REQUIREMENT_TITLE}}"
+    scenarios:
+      - "{{SCENARIO_ID}}"
+    tasks:
+      - "{{TASK_ID}}"
+    implementation: []
+    tests:
+      - "{{TEST_ID}}"
+
+  # {{repetir: um bloco por requisito, incluindo os NFR-* }}
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "{{UNCOVERED_ID}}"
+    reason: "{{GAP_REASON}}"
+    mitigation: "{{GAP_MITIGATION}}"
+
+  # {{opcional: remover a chave `gaps` inteira se toda a cobertura for
+  #   automatizada }}

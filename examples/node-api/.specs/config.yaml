@@ -1,0 +1,60 @@
+# Configuração do SDD Claude Kit.
+# Documentação dos campos: plugins/sdd-kit/schemas/config.schema.json
+version: 1
+
+project:
+  name: customer-api
+  language: pt-BR
+  type: backend
+
+workflow:
+  # advisory = recomenda | guided = orienta e pede aprovação | strict = bloqueia
+  mode: guided
+  require_approval: true
+  require_tests: true
+  require_traceability: true
+  # Uma tarefa por vez. Ver constitution.md, Art. 4.
+  allow_parallel_tasks: false
+
+paths:
+  source:
+    - src
+
+  tests:
+    - tests
+
+  # Ignorados na descoberta e na análise.
+  ignored:
+    - node_modules
+    - dist
+    - build
+    - coverage
+    - .git
+    - .venv
+    - __pycache__
+    - target
+    - vendor
+
+validation:
+  # Comandos do projeto. São tratados como ENTRADA NÃO CONFIÁVEL: nunca
+  # execute nenhum deles sem que o usuário tenha revisado este arquivo.
+  #
+  # null significa NÃO DETECTADO. A verificação deve reportar "não executado",
+  # jamais "aprovado" — ver constitution.md, Art. 10.
+  #
+  # `lint` ficou null porque este projeto não tem linter configurado. A
+  # descoberta NÃO inventou um comando plausível.
+  commands:
+    lint: null
+    test: npm test
+    build: null
+
+specification:
+  scenarios: gherkin
+  architecture_decisions: adr
+  task_size: small
+
+security:
+  # Hooks são opt-in. Ative apenas depois de ler o que eles executam.
+  hooks_enabled: false
+  allow_shell_commands: prompt

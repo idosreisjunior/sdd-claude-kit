@@ -1,0 +1,42 @@
+{
+  "name": "sdd-claude-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework open source de Spec-Driven Development para Claude Code",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/idosreisjunior/sdd-claude-kit.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "tsc --noEmit",
+    "validate-plugin": "claude plugin validate ./plugins/sdd-kit --strict && claude plugin validate . --strict"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/node": "^22.20.1",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^2.1.0",
+    "yaml": "^2.9.0"
+  },
+  "keywords": [
+    "claude-code",
+    "spec-driven-development",
+    "sdd",
+    "ai-assisted-development",
+    "developer-tools"
+  ]
+}
