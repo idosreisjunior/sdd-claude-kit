@@ -2,7 +2,7 @@
 
 - **ID:** 0001-plugin-foundation
 - **Escopo dos identificadores:** `PF`
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Cobre do PRD:** RF-001, RF-003, RF-004, RF-007, RF-014 (parcial)
 
 ---

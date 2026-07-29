@@ -2,7 +2,7 @@
 
 - **ID:** 0003-spec-expande-escopo
 - **Escopo dos identificadores:** SEE
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Severidade:** **alta**
 - **Correção:** aplicada e reverificada em 2026-07-29
 

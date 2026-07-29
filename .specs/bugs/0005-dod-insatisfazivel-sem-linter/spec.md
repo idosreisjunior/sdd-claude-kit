@@ -2,7 +2,7 @@
 
 - **ID:** 0005-dod-insatisfazivel-sem-linter
 - **Escopo dos identificadores:** DIL
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Severidade:** média
 - **Correção:** aplicada e verificada em 2026-07-29
 

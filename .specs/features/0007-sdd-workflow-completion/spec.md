@@ -2,7 +2,7 @@
 
 - **ID:** 0007-sdd-workflow-completion
 - **Escopo dos identificadores:** SWC
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 
 > Cada requisito abaixo traz a linha **Origem**, apontando o trecho da
 > solicitação de onde veio. Requisito sem trecho de origem é inferência, e nesta

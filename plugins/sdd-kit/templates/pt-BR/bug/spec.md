@@ -2,7 +2,7 @@
 
 - **ID:** {{CHANGE_ID}}
 - **Escopo dos identificadores:** {{ID_SCOPE}}
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Severidade:** {{SEVERITY}}
 
 {{guia: uma spec de bug não descreve funcionalidade nova — descreve uma

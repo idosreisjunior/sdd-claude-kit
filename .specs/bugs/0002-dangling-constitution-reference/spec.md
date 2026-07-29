@@ -2,7 +2,7 @@
 
 - **ID:** 0002-dangling-constitution-reference
 - **Escopo dos identificadores:** DCR
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Severidade:** baixa
 
 ---

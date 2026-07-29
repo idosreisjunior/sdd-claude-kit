@@ -9,7 +9,7 @@ id: "0007-sdd-workflow-completion"
 type: "feature"
 title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
 
-status: DESIGNED
+status: PLANNED
 
 created: "2026-07-29"
 updated: "2026-07-29"
@@ -48,6 +48,24 @@ history:
       architecture.md §3 em vez de sincronizá-la). Define workflow.json,
       o contrato das seis skills e a ordem de escrita. Resta Q10, que é
       trabalho de spec, não de design.
+
+  - status: PLANNED
+    date: "2026-07-29"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir de spec.md e design.md: 17
+      tarefas (8 P, 9 M, nenhuma G), ordenadas por dependência, com
+      traceability.yaml cobrindo os onze requisitos. Transição DESIGNED →
+      PLANNED válida pelo grafo de architecture.md §3 — nenhum estado pulado.
+      As duas condições que bloqueiam a promoção não se aplicam: todo
+      requisito tem ao menos uma tarefa e toda dependência aponta para tarefa
+      existente, sem ciclos. Duas tarefas candidatas a G foram divididas antes
+      de entrar no plano — implement em TASK-SWC-010 e TASK-SWC-011, verify em
+      TASK-SWC-012 e TASK-SWC-013.
+
+      A execução anterior desta skill escreveu tasks.md e traceability.yaml e
+      caiu por erro de servidor antes de atualizar status.yaml e index.yaml.
+      Esta entrada completa a operação; os identificadores TASK-SWC-* e
+      TEST-SWC-* daquela execução foram preservados, nenhum renumerado.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -170,7 +188,7 @@ resolved_questions:
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
-  total: 0
-  pending: 0
+  total: 17
+  pending: 17
   in_progress: 0
   done: 0

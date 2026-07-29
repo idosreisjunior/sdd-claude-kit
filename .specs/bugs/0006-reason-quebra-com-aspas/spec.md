@@ -2,7 +2,7 @@
 
 - **ID:** 0006-reason-quebra-com-aspas
 - **Escopo dos identificadores:** RQA
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Severidade:** **alta**
 
 ---

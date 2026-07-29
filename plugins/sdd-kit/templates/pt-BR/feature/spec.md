@@ -2,7 +2,7 @@
 
 - **ID:** {{CHANGE_ID}}
 - **Escopo dos identificadores:** {{ID_SCOPE}}
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 
 {{guia: esta spec descreve **o quê** e **por quê**. O **como** vai em
 design.md. Se você estiver escrevendo nomes de classe ou de tabela aqui,

@@ -2,7 +2,7 @@
 
 - **ID:** 0004-blocked-by-invalido
 - **Escopo dos identificadores:** BBI
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **Severidade:** média
 - **Correção:** aplicada e verificada em 2026-07-29
 

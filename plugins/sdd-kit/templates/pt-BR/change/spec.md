@@ -2,7 +2,7 @@
 
 - **ID:** {{CHANGE_ID}}
 - **Escopo dos identificadores:** {{ID_SCOPE}}
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 - **ADR:** {{ADR_REFERENCE}}
 
 {{guia: uma mudança arquitetural altera **estrutura ou contratos**, não apenas

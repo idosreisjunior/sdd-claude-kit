@@ -1,0 +1,279 @@
+# Matriz de rastreabilidade — 0007-sdd-workflow-completion
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` está vazio em TODOS os requisitos, e isso é o estado
+# correto: nada foi implementado ainda. O preenchimento acontece em
+# /sdd-kit:implement, tarefa por tarefa — que é justamente uma das entregas
+# desta mudança (TASK-SWC-011).
+#
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0007-sdd-workflow-completion"
+
+requirements:
+
+  "REQ-SWC-001":
+    title: "Skill clarify"
+    scenarios:
+      - "SCN-SWC-001"
+      - "SCN-SWC-009"
+    tasks:
+      - "TASK-SWC-007"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-009"
+      - "TEST-SWC-010"
+      - "TEST-SWC-011"
+      - "TEST-SWC-035"
+
+  "REQ-SWC-002":
+    title: "Skill design"
+    scenarios:
+      - "SCN-SWC-002"
+      - "SCN-SWC-010"
+    tasks:
+      - "TASK-SWC-005"
+      - "TASK-SWC-008"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-007"
+      - "TEST-SWC-013"
+      - "TEST-SWC-014"
+      - "TEST-SWC-015"
+      - "TEST-SWC-035"
+
+  "REQ-SWC-003":
+    title: "Skill approve"
+    scenarios:
+      - "SCN-SWC-003"
+      - "SCN-SWC-011"
+      - "SCN-SWC-020"
+    tasks:
+      - "TASK-SWC-009"
+      - "TASK-SWC-010"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-016"
+      - "TEST-SWC-017"
+      - "TEST-SWC-018"
+      - "TEST-SWC-021"
+      - "TEST-SWC-035"
+    note: >-
+      SCN-SWC-020 (aprovação vencida por alteração da spec) é declarado sob
+      REQ-SWC-003 na spec, mas quem o detecta é implement, em TASK-SWC-010.
+      Por isso a tarefa aparece aqui: o hash é gravado por approve e
+      conferido por implement, e testar só um dos lados não fecha o cenário.
+
+  "REQ-SWC-004":
+    title: "Skill implement"
+    scenarios:
+      - "SCN-SWC-004"
+      - "SCN-SWC-012"
+      - "SCN-SWC-013"
+      - "SCN-SWC-019"
+      - "SCN-SWC-022"
+    tasks:
+      - "TASK-SWC-010"
+      - "TASK-SWC-011"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-020"
+      - "TEST-SWC-022"
+      - "TEST-SWC-023"
+      - "TEST-SWC-024"
+      - "TEST-SWC-025"
+      - "TEST-SWC-026"
+      - "TEST-SWC-035"
+
+  "REQ-SWC-005":
+    title: "Skill verify"
+    scenarios:
+      - "SCN-SWC-005"
+      - "SCN-SWC-014"
+    tasks:
+      - "TASK-SWC-006"
+      - "TASK-SWC-012"
+      - "TASK-SWC-013"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-008"
+      - "TEST-SWC-027"
+      - "TEST-SWC-028"
+      - "TEST-SWC-029"
+      - "TEST-SWC-035"
+
+  "REQ-SWC-006":
+    title: "Skill archive"
+    scenarios:
+      - "SCN-SWC-006"
+      - "SCN-SWC-015"
+    tasks:
+      - "TASK-SWC-014"
+      - "TASK-SWC-015"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-031"
+      - "TEST-SWC-032"
+      - "TEST-SWC-033"
+      - "TEST-SWC-035"
+
+  "REQ-SWC-007":
+    title: "Máquina de estados"
+    scenarios:
+      - "SCN-SWC-007"
+      - "SCN-SWC-016"
+      - "SCN-SWC-018"
+      - "SCN-SWC-021"
+    tasks:
+      - "TASK-SWC-001"
+      - "TASK-SWC-002"
+      - "TASK-SWC-003"
+      - "TASK-SWC-007"
+      - "TASK-SWC-008"
+      - "TASK-SWC-009"
+      - "TASK-SWC-014"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-001"
+      - "TEST-SWC-002"
+      - "TEST-SWC-003"
+      - "TEST-SWC-004"
+      - "TEST-SWC-012"
+      - "TEST-SWC-019"
+      - "TEST-SWC-035"
+    note: >-
+      Este é o requisito mais distribuído do plano: oito tarefas o tocam,
+      porque cada skill que promove estado precisa verificar o grafo antes de
+      escrever. A fonte única é workflow.json (TASK-SWC-001) — ADR-010. O
+      limite registrado pelo ADR continua valendo: um arquivo de dados não faz
+      uma skill obedecer, torna a desobediência detectável. Aplicação mecânica
+      chega com os hooks da Fase 4.
+
+  "REQ-SWC-008":
+    title: "Rastreabilidade mantida ao longo do fluxo"
+    scenarios:
+      - "SCN-SWC-008"
+      - "SCN-SWC-017"
+    tasks:
+      - "TASK-SWC-004"
+      - "TASK-SWC-011"
+      - "TASK-SWC-013"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-005"
+      - "TEST-SWC-006"
+      - "TEST-SWC-025"
+      - "TEST-SWC-030"
+      - "TEST-SWC-035"
+
+  "NFR-SWC-001":
+    title: "Idioma e i18n"
+    scenarios: []
+    tasks:
+      - "TASK-SWC-016"
+    implementation: []
+    tests:
+      - "TEST-SWC-034"
+
+  "NFR-SWC-002":
+    title: "Contexto mínimo carregado"
+    scenarios: []
+    tasks:
+      - "TASK-SWC-016"
+    implementation: []
+    tests:
+      - "TEST-SWC-034"
+
+  "NFR-SWC-003":
+    title: "Código determinístico verificável"
+    scenarios: []
+    tasks:
+      - "TASK-SWC-001"
+      - "TASK-SWC-002"
+      - "TASK-SWC-004"
+      - "TASK-SWC-017"
+    implementation: []
+    tests:
+      - "TEST-SWC-001"
+      - "TEST-SWC-002"
+      - "TEST-SWC-005"
+      - "TEST-SWC-035"
+    note: >-
+      Esta mudança não introduz nenhum script executável — ADR-007 os coloca
+      na Fase 4 e o design §2 confirma. O NFR incide, portanto, sobre os dois
+      artefatos de dados novos e sobre as alterações em tests/, que passam por
+      tsc --noEmit.
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "SCN-SWC-021"
+    reason: >-
+      O cenário exige que uma mudança em qualquer estado não terminal possa
+      passar a CANCELLED com o motivo registrado no histórico. Nenhuma das
+      seis skills desta entrega executa cancelamento: a solicitação nomeou
+      seis skills e cancel não está entre elas, e o escopo da spec proíbe
+      inventar skill não pedida. A cobertura é estrutural — TEST-SWC-001
+      verifica que CANCELLED é alcançável de todo estado não terminal no
+      grafo — mas nenhum caminho executável produz a transição.
+    mitigation: >-
+      Até existir uma skill cancel, o cancelamento é edição manual de
+      status.yaml, e TEST-SWC-003 verifica que a sequência resultante
+      satisfaz o grafo. Abrir uma mudança própria para a skill cancel é o
+      encaminhamento; registrá-la aqui evita que a lacuna passe por
+      cobertura.
+
+  - id: "TEST-SWC-010"
+    reason: >-
+      Os testes comportamentais — TEST-SWC-010, 011, 014, 015, 017, 018, 024,
+      026, 027, 029, 031, 032 e 035 — dependem de execução real via
+      `claude -p` e do CLI claude disponível na máquina. Não são testes de
+      unidade e não rodam sem o binário. O design §10 os torna obrigatórios
+      justamente porque teste estrutural sobre SKILL.md não pega defeito de
+      comportamento: o bug 0003 passou por 201 testes verdes e só apareceu
+      na execução real.
+    mitigation: >-
+      Cada tarefa de skill exige a execução real como critério de conclusão,
+      com a saída registrada na própria seção "Resultado", como TASK-PF-002
+      fez com `claude plugin validate`. É a mesma prática da Fase 1: quando o
+      teste roda com a ferramenta real, isso fica escrito; quando roda com
+      harness, isso também fica escrito.
+
+  - id: "NFR-SWC-001"
+    reason: >-
+      "Nenhuma string voltada ao usuário escrita direto no código" é
+      parcialmente automatizável. TEST-SWC-034 verifica a presença da seção
+      de arquivos lidos e a ausência de glob que alcance outra mudança; não
+      verifica que todo texto de usuário está em pt-BR idiomático nem que a
+      camada de i18n foi usada, porque esta mudança não introduz código onde
+      a camada existiria.
+    mitigation: >-
+      Revisão humana dos seis SKILL.md em TASK-SWC-016, com o resultado
+      registrado. A verificação mecânica completa chega quando a Fase 4
+      introduzir os scripts, que são onde o risco de string embutida
+      realmente mora.
+
+  - id: "Q10"
+    reason: >-
+      A spec deixou Q10 aberta com prioridade média: se existem NFRs
+      específicos desta mudança além dos três herdados dos padrões do projeto.
+      O design §15 registra que acrescentar requisito é trabalho de spec, não
+      de design, e sugere um candidato — teto de custo de contexto por skill,
+      risco 3. Um requisito não escrito não tem cobertura por definição.
+    mitigation: >-
+      TASK-SWC-016 mede o custo de contexto real das dez skills e produz o
+      dado que a decisão precisa. Se virar requisito, entra por uma nova
+      passagem de /sdd-kit:spec, com identificador novo — NFR-SWC-004 — e
+      tarefa própria, sem renumerar nada.

@@ -116,6 +116,25 @@ describe('TEST-PF-018 — estado e histórico são consistentes', () => {
         if (!t) return
         expect(t['total']).toBe((t['pending'] ?? 0) + (t['in_progress'] ?? 0) + (t['done'] ?? 0))
       })
+
+      // Acrescentado depois de uma falha parcial real: a skill tasks escreveu
+      // tasks.md e o processo caiu antes de atualizar status.yaml. Os 76
+      // invariantes existentes passaram — nenhum comparava o plano com os
+      // contadores. O design afirmava que a falha seria detectável; não era.
+      it('os contadores refletem o tasks.md', () => {
+        if (!exists(`.specs/${d}/tasks.md`)) return
+        const t = st['tasks'] as Record<string, number> | undefined
+        if (!t) return
+        const noPlano = [...read(`.specs/${d}/tasks.md`)
+          .matchAll(/^##\s+TASK-[A-Z0-9]+-\d{3}/gm)].length
+        expect(t['total'], 'total declarado vs tarefas no plano').toBe(noPlano)
+      })
+
+      // Uma asserção "mudança com plano não fica atrás de PLANNED" foi tentada
+      // aqui e removida: acusava 0001-plugin-foundation, que tem 17 tarefas
+      // concluídas ainda em DESIGNED. Aquele estado é legítimo — a feature foi
+      // construída antes de existirem as skills approve e verify que a
+      // promoveriam. A asserção de contadores acima já pega a falha real.
     })
   }
 })
@@ -264,6 +283,21 @@ describe('TEST-PF-021 — os artefatos .specs do exemplo validam', () => {
     expect(cfg['validation'].commands.lint, 'sem linter no projeto').toBeNull()
     expect(cfg['validation'].commands.test, 'detectado em package.json').toBe('npm test')
   })
+})
+
+describe('spec.md não duplica o estado', () => {
+  // Encontrado pela própria skill tasks: dois spec.md declaravam
+  // "Status: DRAFT" três transições depois, e 214 testes passavam. Mesma
+  // classe do grafo triplicado — o mesmo fato em dois lugares diverge.
+  // A correção é apagar a cópia, não testar que as duas concordam.
+  for (const d of [...dirs, ...['feature', 'bug', 'refactor', 'change']
+    .map((t) => `plugins/sdd-kit/templates/pt-BR/${t}`)]) {
+    const p = d.startsWith('plugins/') ? `${d}/spec.md` : `.specs/${d}/spec.md`
+    if (!exists(p)) continue
+    it(`${d}: não declara Status no cabeçalho`, () => {
+      expect(read(p)).not.toMatch(/^- \*\*Status:\*\*/m)
+    })
+  }
 })
 
 describe('NFR-PF-005 — specs são legíveis sem o plugin', () => {

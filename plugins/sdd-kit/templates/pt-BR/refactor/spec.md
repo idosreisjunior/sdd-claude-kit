@@ -2,7 +2,7 @@
 
 - **ID:** {{CHANGE_ID}}
 - **Escopo dos identificadores:** {{ID_SCOPE}}
-- **Status:** DRAFT
+- **Estado:** ver `status.yaml` — a autoridade é ele
 
 {{guia: refatoração **não muda comportamento observável**. Essa é a definição,
 e é o que torna este documento diferente dos outros: o critério de aceite
