@@ -252,6 +252,47 @@ QUANDO a tarefa é concluída
 ENTÃO a linha correspondente em `traceability.yaml` passa a apontar os arquivos e os testes produzidos
 E a cadeia requisito → cenário → tarefa → arquivo → teste fica completa para essa tarefa
 
+### Cenários da máquina de estados
+
+Estes cinco atravessam mais de um requisito e por isso ficam agrupados. Cada um indica o requisito a que responde.
+
+#### SCN-SWC-018 — Bloqueio registrado não muda o estado *(REQ-SWC-007)*
+
+DADO uma mudança em `DRAFT` com três questões críticas em `blocked_by`
+QUANDO qualquer skill for executada sobre ela
+ENTÃO o estado deve permanecer `DRAFT`
+E não deve haver transição para `BLOCKED`.
+
+#### SCN-SWC-019 — Interrupção durante a implementação *(REQ-SWC-004)*
+
+DADO uma mudança em `IN_PROGRESS`
+QUANDO `implement` encontrar uma decisão arquitetural não prevista
+ENTÃO o estado deve passar para `BLOCKED`
+E o motivo deve nomear a decisão pendente.
+
+#### SCN-SWC-020 — Aprovação vencida por alteração da spec *(REQ-SWC-003)*
+
+DADO uma mudança em `APPROVED` cuja `spec.md` foi editada depois da aprovação
+QUANDO `implement` for executada
+ENTÃO o hash recalculado deve divergir de `approval.revision`
+E a skill deve recusar avançar, reportando a aprovação como vencida
+E **não** deve alterar o estado por conta própria.
+
+#### SCN-SWC-021 — Cancelamento a partir de qualquer estado *(REQ-SWC-007)*
+
+DADO uma mudança em qualquer estado exceto `ARCHIVED` ou `CANCELLED`
+QUANDO for cancelada
+ENTÃO o estado deve passar para `CANCELLED`
+E o motivo deve ser registrado no histórico.
+
+#### SCN-SWC-022 — `require_approval: false` dispensa a aprovação *(REQ-SWC-004)*
+
+DADO um projeto com `workflow.require_approval: false`
+E uma mudança em `PLANNED`
+QUANDO `implement` for executada
+ENTÃO ela deve prosseguir sem exigir o estado `APPROVED`
+E a transição `PLANNED → IN_PROGRESS` deve permanecer válida no grafo, independentemente da configuração.
+
 ---
 
 ## Requisitos não funcionais
@@ -338,23 +379,72 @@ Este projeto caiu nesse buraco: `vitest run --passWithNoTests` sai com exit 0 se
 
 > **Limite:** contar testes executados não diz que eles verificam algo. Fecha "nada executou" disfarçado de aprovação; não fecha "executou e não testou".
 
+
+### Q3, Q4 e Q11 — semântica do grafo ✅
+
+[`ADR-013`](../../project/decisions/ADR-013-semantica-da-maquina-de-estados.md). As três eram a mesma decisão vista de ângulos diferentes.
+
+**O campo `blocked_by` e o estado `BLOCKED` são coisas diferentes.** O campo registra questões que impedem avançar, em qualquer estado — é o normal em `DRAFT`. O estado significa que o trabalho **parou**, e só faz sentido durante a implementação.
+
+O que revelou isso foram os artefatos deste repositório: `0001` passou por `DESIGNED` com bloqueios registrados, `0003` está em `DRAFT` bloqueado agora, e nenhuma transicionou para `BLOCKED`. Nenhuma estava errada — o grafo estava certo e faltava a distinção documentada.
+
+**Regresso detecta, não muta.** Spec alterada depois de `APPROVED` tem hash divergente, a aprovação fica vencida, e `implement` recusa avançar. O framework **não** regride o estado sozinho: fazer isso seria reescrever o histórico da mudança sem que ninguém decidisse.
+
+**Estrutura e política são separadas.** `PLANNED → IN_PROGRESS` existe sempre no grafo; `require_approval` decide se `implement` aceita. Um grafo que se reescreve conforme a configuração deixa de ser verificável — e verificar é a razão de ele existir.
+
+### Q6 — `implement` aceita o identificador, propõe quando ausente ✅
+
+Ambos, e o PRD já previa os dois: §9.7 diz "selecionar a próxima tarefa pendente", §11 mostra `/sdd-kit:implement 0001-user-authentication TASK-AUTH-002`.
+
+Com identificador, é aquela tarefa. Sem identificador, `implement` propõe **a próxima tarefa pendente cujas dependências estejam todas concluídas** — e pede confirmação no modo `guided`.
+
+A qualificação importa: "próxima pendente" sem checar dependências escolheria uma tarefa que não pode começar. Havendo mais de uma elegível, a skill lista e pergunta em vez de escolher por ordem de identificador, que não significa prioridade.
+
+### Q7 — as skills escrevem; o schema garante a forma ✅
+
+Na Fase 2 as skills escrevem `traceability.yaml` diretamente. Não existe script para chamar: o [`ADR-007`](../../project/decisions/ADR-007-scripts-do-plugin-em-javascript.md) os coloca na Fase 4.
+
+O risco de cada skill escrever à sua maneira é real — é o mesmo do grafo triplicado que motivou o `ADR-010`. A contenção é `traceability.schema.json`, que o PRD §14 lista e que **ainda não existe**: `TASK-PF-004` entregou apenas `config` e `status`. Criá-lo é tarefa desta mudança.
+
+Na Fase 4 o script assume a escrita e as skills passam a chamá-lo.
+
+### Q12 — ordem de escrita que torna a falha detectável ✅
+
+Não há atomicidade real sem transação, e o framework escreve em arquivos soltos. A decisão é **escolher a ordem em que uma falha parcial é detectável e reparável**:
+
+```
+1. artefatos da mudança   (spec.md, tasks.md, traceability.yaml)
+2. status.yaml            (estado e histórico)
+3. index.yaml             (por último, sempre)
+```
+
+Falhando no meio, `index.yaml` fica **atrasado** em relação ao disco — nunca apontando para algo que não existe. É a direção segura: uma mudança invisível no índice é recuperável; uma entrada no índice apontando para diretório inexistente quebra toda skill que o percorra.
+
+E a divergência é **detectável hoje**: `TEST-PF-013` compara o índice com o disco e falha quando divergem. A reconciliação automática é o `sdd doctor` previsto no PRD §22.
+
+### Q13 — relatório legível por máquina, e "não confirmado" bloqueia ✅
+
+Extensão do [`ADR-012`](../../project/decisions/ADR-012-execucao-vazia-nao-e-aprovacao.md).
+
+`verify` pede ao runner um relatório estruturado quando ele suporta — `vitest --reporter=json`, `jest --json`, `pytest --json-report`, `go test -json` — e conta os testes executados a partir dele.
+
+Quando não consegue determinar a contagem, **não presume**. Reporta "não foi possível confirmar execução", que sob `require_tests: true` **bloqueia**, exatamente como zero testes.
+
+É a mesma regra do `ADR-012` aplicada à incerteza: não confirmado não é aprovado.
+
+### Q9 — cenários destravados ✅
+
+Dependiam de Q2, Q3 e Q4, agora decididas. Os cenários correspondentes foram escritos em “Cenários da máquina de estados”, `SCN-SWC-018` a `SCN-SWC-022`.
+
 ---
 
 ## Questões pendentes
 
 | # | Questão | Bloqueia | Prioridade |
 | --- | --- | --- | --- |
-| Q3 | Como `BLOCKED` e `CANCELLED` entram e saem do grafo? Nenhum dos dois foi citado na solicitação, mas ambos existem no schema e uma máquina de estados que os ignore fica incompleta. | REQ-SWC-007 | alta |
-| Q4 | Quais transições de regresso são válidas? Por exemplo, uma spec alterada depois de `APPROVED` deveria invalidar a aprovação e voltar a mudança para um estado anterior? | REQ-SWC-007 | alta |
-| Q6 | `implement` recebe o identificador de uma tarefa, ou escolhe sozinha a próxima pendente? `CLAUDE.md` fixa "uma tarefa por vez", mas não diz quem escolhe. | REQ-SWC-004 | alta |
-| Q7 | Quem escreve `traceability.yaml` durante a implementação — cada skill diretamente, ou um script compartilhado que elas chamam? | REQ-SWC-008 | alta |
 | Q8 | `archive` move o diretório fisicamente para `.specs/archive/`, o que quebra qualquer caminho relativo que aponte para ele. Links de entrada e saída são reescritos, ou aceita-se a quebra? | REQ-SWC-006 | média |
-| Q9 | Os cenários de caminho de falha foram escritos nesta passagem (SCN-SWC-009 a SCN-SWC-017). Continuam **não escritos** os cenários que dependem de Q2, Q3 e Q4 — regresso de estado, `BLOCKED` e `CANCELLED` — porque exigem decidir o comportamento antes de descrevê-lo. | REQ-SWC-007 | alta |
 | Q10 | Existem NFRs **específicos** desta mudança, além dos três herdados dos padrões do projeto? Por exemplo, limite de contexto carregado por skill ou comportamento em projeto sem git. A solicitação não declarou nenhum. | — | média |
-| Q11 | Quando `require_approval` é `false`, `approve` vira opcional e `implement` pode partir direto de `PLANNED`, ou o estado `APPROVED` continua obrigatório no grafo? | REQ-SWC-003, REQ-SWC-004 | alta |
-| Q13 | **Nova, de `ADR-012`.** Como `verify` conta testes executados? Vitest, Jest, pytest e `go test` reportam de formas diferentes. A decisão de *o quê* está tomada; o *como* exige investigação. | REQ-SWC-005 | alta |
 | Q14 | **Nova, de `ADR-010`.** Como manter `architecture.md` §3 em sincronia com `workflow.json` sem duplicar a manutenção? Um teste comparando os dois resolve, mas parsear tabela Markdown é frágil. | REQ-SWC-007 | média |
-| Q12 | Qual é a garantia de atomicidade? SCN-SWC-007 e SCN-SWC-015 exigem que nada seja alterado quando a operação é recusada, mas uma skill que falha no meio da escrita pode deixar `status.yaml` e `index.yaml` divergentes. | REQ-SWC-007 | alta |
 
 ## Hipóteses assumidas
 

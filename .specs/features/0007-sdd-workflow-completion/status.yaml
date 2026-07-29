@@ -30,8 +30,14 @@ history:
       estados como dado único), ADR-011 (identidade e invalidação da
       aprovação) e ADR-012 (execução vazia não é aprovação). Refinamento
       feito à mão: a skill clarify, que faria este trabalho, é justamente
-      uma das entregas desta mudança. Restam questões de prioridade alta e
-      média, nenhuma crítica.
+      uma das entregas desta mudança.
+
+      Numa segunda passagem, ainda em CLARIFIED, as oito questões de
+      prioridade alta foram respondidas: Q3, Q4 e Q11 eram a mesma decisão
+      vista de ângulos diferentes e viraram ADR-013, e Q9 destravou cinco
+      cenários. Restam três questões de prioridade média. Refinar não é
+      transicionar — por isso a segunda passagem não gerou entrada própria
+      no histórico.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -62,6 +68,72 @@ resolved_questions:
       approval.revision é o SHA-256 de spec.md truncado em 12 caracteres,
       tornando a invalidação exigida pelo RF-008 mecânica em vez de
       julgamento sobre o que é "alteração importante".
+  - question: Q3
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-013
+    summary: >-
+      blocked_by e BLOCKED são conceitos distintos. O campo registra questões
+      abertas em qualquer estado; o estado significa que o trabalho parou, e
+      só é alcançável de IN_PROGRESS. Os artefatos deste repositório
+      revelaram a distinção: 0001 passou por DESIGNED com bloqueios e nunca
+      transicionou para BLOCKED, corretamente.
+  - question: Q4
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-013
+    summary: >-
+      Regresso detecta, não muta. Spec alterada após APPROVED tem hash
+      divergente e a aprovação fica vencida; implement recusa avançar mas não
+      regride o estado sozinho, o que seria reescrever histórico sem decisão
+      humana.
+  - question: Q6
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      implement aceita o identificador da tarefa; sem ele, propõe a próxima
+      pendente cujas dependências estejam todas concluídas e pede confirmação
+      no modo guided. Havendo mais de uma elegível, lista em vez de escolher
+      por ordem de identificador.
+  - question: Q7
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      Na Fase 2 as skills escrevem traceability.yaml diretamente, porque os
+      scripts só chegam na Fase 4 por ADR-007. A contenção contra divergência
+      é traceability.schema.json, que o PRD §14 lista e ainda não existe —
+      criá-lo é tarefa desta mudança.
+  - question: Q9
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      Destravada por Q2, Q3 e Q4. Os cinco cenários dependentes foram escritos
+      como SCN-SWC-018 a SCN-SWC-022.
+  - question: Q11
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-013
+    summary: >-
+      Estrutura e política são separadas. PLANNED para IN_PROGRESS existe
+      sempre no grafo; require_approval decide se implement aceita. Um grafo
+      que se reescreve conforme a configuração deixa de ser verificável.
+  - question: Q12
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      Sem atomicidade real, escolhe-se a ordem em que a falha é detectável:
+      artefatos, depois status.yaml, index.yaml por último. Falha parcial
+      deixa o índice atrasado, nunca apontando para o que não existe.
+      TEST-PF-013 já detecta a divergência.
+  - question: Q13
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-012
+    summary: >-
+      verify pede relatório estruturado ao runner e conta os testes
+      executados. Não conseguindo determinar, reporta "não foi possível
+      confirmar execução", que sob require_tests true bloqueia — não
+      confirmado não é aprovado.
   - question: Q5
     date: "2026-07-29"
     resolved_by: TASK-PF-016
