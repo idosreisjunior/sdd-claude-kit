@@ -9,8 +9,7 @@ id: "0007-sdd-workflow-completion"
 type: "feature"
 title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
 
-# Toda mudança nasce em DRAFT.
-status: DRAFT
+status: CLARIFIED
 
 created: "2026-07-29"
 updated: "2026-07-29"
@@ -24,31 +23,53 @@ history:
       fluxo SDD com as seis skills restantes, a máquina de estados e a
       rastreabilidade. Rascunho inicial com 10 questões pendentes.
 
+  - status: CLARIFIED
+    date: "2026-07-29"
+    reason: >-
+      As três questões críticas foram resolvidas por ADR-010 (máquina de
+      estados como dado único), ADR-011 (identidade e invalidação da
+      aprovação) e ADR-012 (execução vazia não é aprovação). Refinamento
+      feito à mão: a skill clarify, que faria este trabalho, é justamente
+      uma das entregas desta mudança. Restam questões de prioridade alta e
+      média, nenhuma crítica.
+
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
 approval: null
 
-# Bloqueios ativos: as questões de severidade crítica registradas em spec.md.
-blocked_by:
-  - question: Q1
-    description: >-
-      O grafo de transições válidas vive em código determinístico ou apenas
-      como instrução em prosa dentro de cada skill?
-    severity: critical
-  - question: Q2
-    description: >-
-      Em approve, o que preenche os campos by e revision, que o schema exige
-      não vazios?
-    severity: critical
-  - question: Q5
-    description: >-
-      Verify deve tratar a ausência de testes como falha, dado que
-      require_tests é true e npm test usa --passWithNoTests?
-    severity: critical
+# Sem bloqueios: nenhuma questão crítica em aberto.
+blocked_by: []
 
 # Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
 # rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
-resolved_questions: []
+resolved_questions:
+  - question: Q1
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-010
+    summary: >-
+      A máquina de estados vira dado com fonte única em schemas/workflow.json.
+      O grafo já existia em três cópias manuais — architecture.md,
+      tasks/SKILL.md e a constante TRANSICOES nos testes, nenhuma derivando
+      das outras. REQ-SWC-007 passa a ser testável.
+  - question: Q2
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-011
+    summary: >-
+      approval.by vem de git config, mas só é gravado após ato humano
+      explícito na conversa; o git dá o rótulo, a pessoa dá o ato.
+      approval.revision é o SHA-256 de spec.md truncado em 12 caracteres,
+      tornando a invalidação exigida pelo RF-008 mecânica em vez de
+      julgamento sobre o que é "alteração importante".
+  - question: Q5
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    adr: ADR-012
+    summary: >-
+      verify exige evidência de execução, não código de saída. Executada sem
+      efeito bloqueia quando require_tests é true. Este projeto caiu nesse
+      buraco com vitest --passWithNoTests saindo 0 sem executar nada.
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:

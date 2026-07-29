@@ -304,21 +304,56 @@ JSDoc, sem etapa de compilação, e passa em `npm run build` (`tsc --noEmit`).
 
 ---
 
+## Questões resolvidas
+
+Resolvidas no refinamento de 2026-07-29. As três eram **críticas** e travavam a saída de `DRAFT`.
+
+### Q1 — A máquina de estados é dado, não prosa ✅
+
+[`ADR-010`](../../project/decisions/ADR-010-maquina-de-estados-como-dado.md). Fonte única em `plugins/sdd-kit/schemas/workflow.json`; skills, testes e o validador da Fase 4 derivam dela.
+
+O que forçou a decisão: o grafo **já existe em três lugares** — `architecture.md` §3, `tasks/SKILL.md` e a constante `TRANSICOES` em `tests/specs-invariants.test.ts` — escritos à mão, sem nenhum derivar dos outros. O teste que deveria ser a rede de proteção valida contra a própria cópia.
+
+`REQ-SWC-007` passa a ser testável.
+
+> **Limite:** um arquivo de dados não faz uma skill obedecer. Torna a desobediência **detectável** — um `status.yaml` fora do grafo falha na validação. Aplicação mecânica chega com os hooks da Fase 4.
+
+### Q2 — `by` é identidade humana; `revision` é hash do conteúdo ✅
+
+[`ADR-011`](../../project/decisions/ADR-011-identidade-e-invalidacao-da-aprovacao.md).
+
+`by` vem de `git config user.name <email>`, **mas só é gravado depois de um ato humano explícito na conversa**. A origem do valor não é a origem da aprovação: o git fornece o rótulo, a pessoa fornece o ato. Se o agente pudesse preencher esse campo sozinho, o Artigo 3 viraria encenação com rastro documental.
+
+`revision` é o SHA-256 de `spec.md`, truncado em 12 caracteres. Qualquer edição posterior muda o hash, e a aprovação fica **vencida** — o RF-008 deixa de depender de alguém julgar se a alteração foi "importante".
+
+> **Limite:** `git config` é autodeclarado, não autenticado. É trilha de auditoria, não prova de identidade. Suficiente para o que o Artigo 3 protege; insuficiente para não repúdio.
+
+### Q5 — Execução vazia não é aprovação ✅
+
+[`ADR-012`](../../project/decisions/ADR-012-execucao-vazia-nao-e-aprovacao.md). `verify` exige **evidência de execução**, não código de saída.
+
+Três estados distintos no relatório: *não configurada* (não bloqueia, por Art. 10), *executada sem efeito* (**bloqueia quando `require_tests: true`**) e *aprovada*.
+
+Este projeto caiu nesse buraco: `vitest run --passWithNoTests` sai com exit 0 sem executar nada, e foi preciso comentário em `config.yaml`, nota no `CONTRIBUTING.md` e critério em `TASK-PF-012` para impedir que aquele zero fosse lido como aprovação.
+
+> **Limite:** contar testes executados não diz que eles verificam algo. Fecha "nada executou" disfarçado de aprovação; não fecha "executou e não testou".
+
+---
+
 ## Questões pendentes
 
 | # | Questão | Bloqueia | Prioridade |
 | --- | --- | --- | --- |
-| Q1 | O grafo de transições válidas vive em código (script determinístico verificável) ou apenas como instrução em prosa dentro de cada skill? A escolha define se REQ-SWC-007 é testável. | REQ-SWC-007 | crítica |
-| Q2 | Em `approve`, o que preenche `by` e `revision`? O schema exige ambos não vazios, mas uma sessão do Claude Code não tem identidade humana confiável, e o PRD não define se `revision` é SHA, tag ou número. | REQ-SWC-003 | crítica |
 | Q3 | Como `BLOCKED` e `CANCELLED` entram e saem do grafo? Nenhum dos dois foi citado na solicitação, mas ambos existem no schema e uma máquina de estados que os ignore fica incompleta. | REQ-SWC-007 | alta |
 | Q4 | Quais transições de regresso são válidas? Por exemplo, uma spec alterada depois de `APPROVED` deveria invalidar a aprovação e voltar a mudança para um estado anterior? | REQ-SWC-007 | alta |
-| Q5 | `verify` roda com `npm test --passWithNoTests`, que sai com exit 0 sem executar teste nenhum. Verify deve tratar "nenhum teste" como falha, dado `require_tests: true`? | REQ-SWC-005 | crítica |
 | Q6 | `implement` recebe o identificador de uma tarefa, ou escolhe sozinha a próxima pendente? `CLAUDE.md` fixa "uma tarefa por vez", mas não diz quem escolhe. | REQ-SWC-004 | alta |
 | Q7 | Quem escreve `traceability.yaml` durante a implementação — cada skill diretamente, ou um script compartilhado que elas chamam? | REQ-SWC-008 | alta |
 | Q8 | `archive` move o diretório fisicamente para `.specs/archive/`, o que quebra qualquer caminho relativo que aponte para ele. Links de entrada e saída são reescritos, ou aceita-se a quebra? | REQ-SWC-006 | média |
 | Q9 | Os cenários de caminho de falha foram escritos nesta passagem (SCN-SWC-009 a SCN-SWC-017). Continuam **não escritos** os cenários que dependem de Q2, Q3 e Q4 — regresso de estado, `BLOCKED` e `CANCELLED` — porque exigem decidir o comportamento antes de descrevê-lo. | REQ-SWC-007 | alta |
 | Q10 | Existem NFRs **específicos** desta mudança, além dos três herdados dos padrões do projeto? Por exemplo, limite de contexto carregado por skill ou comportamento em projeto sem git. A solicitação não declarou nenhum. | — | média |
 | Q11 | Quando `require_approval` é `false`, `approve` vira opcional e `implement` pode partir direto de `PLANNED`, ou o estado `APPROVED` continua obrigatório no grafo? | REQ-SWC-003, REQ-SWC-004 | alta |
+| Q13 | **Nova, de `ADR-012`.** Como `verify` conta testes executados? Vitest, Jest, pytest e `go test` reportam de formas diferentes. A decisão de *o quê* está tomada; o *como* exige investigação. | REQ-SWC-005 | alta |
+| Q14 | **Nova, de `ADR-010`.** Como manter `architecture.md` §3 em sincronia com `workflow.json` sem duplicar a manutenção? Um teste comparando os dois resolve, mas parsear tabela Markdown é frágil. | REQ-SWC-007 | média |
 | Q12 | Qual é a garantia de atomicidade? SCN-SWC-007 e SCN-SWC-015 exigem que nada seja alterado quando a operação é recusada, mas uma skill que falha no meio da escrita pode deixar `status.yaml` e `index.yaml` divergentes. | REQ-SWC-007 | alta |
 
 ## Hipóteses assumidas
