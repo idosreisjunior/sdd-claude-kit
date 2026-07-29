@@ -2,7 +2,7 @@
 # Atualizado manualmente até TASK-PF-013 (script update-index).
 version: 1
 
-next_id: 7
+next_id: 8
 
 changes:
   - id: 0001-plugin-foundation
@@ -74,5 +74,13 @@ changes:
     covers:
       - RF-004
     phase: 1
+
+  - id: 0007-sdd-workflow-completion
+    type: feature
+    title: Completar o fluxo SDD — clarify, design, approve, implement, verify e archive
+    status: DRAFT
+    path: features/0007-sdd-workflow-completion
+    created: "2026-07-29"
+    updated: "2026-07-29"
 
 archive: []

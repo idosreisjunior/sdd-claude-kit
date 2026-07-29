@@ -21,12 +21,12 @@ Legenda: ✅ aprovado · ⚠️ aprovado com ressalva · ❌ reprovado
 | 6 | `/sdd-kit:tasks` gera tarefas pequenas com dependências e cobertura | ✅ | Executada: 8 tarefas, nenhuma `G`, todo requisito coberto, nenhuma dependência pendente, sem ciclos |
 | 7 | Transições de estado registradas com data e motivo | ✅ | `TEST-PF-018` valida em artefatos reais; na execução, o salto `DRAFT → PLANNED` foi registrado no motivo, nomeando os estados pulados |
 | 8 | Modo `advisory` não bloqueia; `strict` informa que não está implementado | ✅ | `TEST-PF-024` nas quatro skills |
-| 9 | `config.yaml` e `status.yaml` validam contra os schemas | ⚠️ | 17 testes cobrem. O `status.yaml` **gerado** violou o schema em `blocked_by` (bug `0004`) — corrigido, mas a correção é do guia do template e não foi reverificada por execução |
+| 9 | `config.yaml` e `status.yaml` validam contra os schemas | ✅ | Bug `0004` corrigido e **reverificado por execução**: o `status.yaml` gerado sobre este repositório trouxe `blocked_by` com `Q1`, `Q2`, `Q5` — identificadores, não prosa — e valida |
 | 10 | Existe projeto de exemplo percorrendo `init → new → spec → tasks` | ✅ | `examples/node-api`, com `TEST-PF-021`; `npm test` do exemplo passa |
 | 11 | Lint, testes e build passam em Ubuntu, Windows e macOS no CI | ❌ | **Verificado apenas em Linux.** A matriz nunca executou — sem commits nem remote quando foi declarada (Q10) |
-| 12 | O plugin opera sobre as specs deste próprio repositório | ⚠️ | As skills foram executadas de verdade, mas num projeto de teste limpo, não sobre `.specs/` deste repositório |
+| 12 | O plugin opera sobre as specs deste próprio repositório | ✅ | `new` e `spec` executadas sobre `.specs/` deste repositório, gerando a feature `0007`. Os 70 invariantes passam sobre o artefato gerado pela skill |
 
-**8 aprovados · 3 com ressalva · 1 reprovado**
+**10 aprovados · 1 com ressalva · 1 reprovado**
 
 ---
 
@@ -48,13 +48,25 @@ O mesmo dogfooding encontrou cinco defeitos, todos registrados em `.specs/bugs/`
 
 O `0003` era o mais grave: violava o Artigo 2, que é a regra central do framework. Sem executar as skills, ele não teria sido encontrado — nenhum teste estrutural pega expansão de escopo.
 
-## As três ressalvas restantes
+## O dogfooding literal
+
+As skills foram executadas sobre `.specs/` **deste repositório**, criando a feature `0007-sdd-workflow-completion` para a Fase 2. Resultado:
+
+| | |
+| --- | --- |
+| Requisitos | 8 funcionais, para as 8 coisas do pedido — **mapeamento 1:1** |
+| Origem declarada | 11 de 11 requisitos |
+| Cenários | 17 · Questões: 12 · Hipóteses marcadas: 5 |
+| `status.yaml` | Valida; `blocked_by` com identificadores |
+| Invariantes | Os 70 passam sobre o artefato gerado |
+
+A correção do `0003` se sustentou numa solicitação diferente e mais longa: nenhuma operação foi acrescentada por completude, e os 3 NFRs vieram de `standards.md`, do Artigo 7 e do `ADR-007` — não da solicitação, que não declarava nenhum.
+
+**A feature saiu como `0007`, não `0002`.** Identificadores são globais e sequenciais, e `0002`–`0006` foram consumidos pelos bugs do dogfooding anterior. A skill alocou o próximo livre e não reutilizou nenhum, que é o comportamento correto — a expectativa de "0002" vinha da descrição de `TASK-PF-016`, escrita quando só existia `0001`.
+
+## A ressalva restante
 
 **Critério 1** — a instalação foi exercitada por caminho local. O caminho `marketplace add idosreisjunior/sdd-claude-kit` só funciona depois da publicação.
-
-**Critério 9** — a correção do `0004` está no guia do template. Os testes provam que um `blocked_by` bem formado valida e que o guia agora declara o formato; não provam que a skill passará a preencher certo. Fecha com uma reexecução.
-
-**Critério 12** — as skills rodaram sobre um projeto de teste, não sobre `.specs/` deste repositório. É o dogfooding literal que `TASK-PF-016` descreve e que ainda não foi feito.
 
 ---
 
@@ -63,7 +75,7 @@ O `0003` era o mais grave: violava o Artigo 2, que é a regra central do framewo
 | Item | Estado |
 | --- | --- |
 | Código implementado | ✅ 4 skills, 2 schemas, 19 templates, 2 manifestos |
-| Testes relacionados aprovados | ✅ 194 testes |
+| Testes relacionados aprovados | ✅ 201 testes |
 | Lint aprovado | ✅ exit 0 |
 | Build aprovado | ✅ `tsc --noEmit`, exit 0 |
 | Documentação atualizada | ✅ 2 guias, exemplo, README, CONTRIBUTING |
@@ -79,7 +91,7 @@ A Definition of Done está cumprida; os critérios de aceite, não. A DoD mede s
 
 ## O que falta para `VERIFIED`
 
-1. **Publicar o repositório** e confirmar a matriz de CI verde nos três sistemas. Fecha o critério 11 e a questão Q10 — é o único item **reprovado**.
-2. **Executar as skills sobre `.specs/` deste repositório**, criando a feature `0002` da Fase 2. Fecha o critério 12.
-3. **Reexecutar o fluxo** depois da correção do `0004`, confirmando que o `blocked_by` gerado valida. Fecha o critério 9.
-4. Reavaliar este documento.
+1. **Publicar o repositório** e confirmar a matriz de CI verde nos três sistemas. Fecha o critério 11 e a questão Q10.
+2. Reavaliar este documento.
+
+É o único item pendente. Todo o resto foi verificado por execução.

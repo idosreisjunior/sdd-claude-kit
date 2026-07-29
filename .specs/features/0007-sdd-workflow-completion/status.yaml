@@ -1,0 +1,58 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0007-sdd-workflow-completion"
+# feature | bug | refactor | change
+type: "feature"
+title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
+
+# Toda mudança nasce em DRAFT.
+status: DRAFT
+
+created: "2026-07-29"
+updated: "2026-07-29"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-07-29"
+    reason: >-
+      Mudança criada por /sdd-kit:new a partir da solicitação de completar o
+      fluxo SDD com as seis skills restantes, a máquina de estados e a
+      rastreabilidade. Rascunho inicial com 10 questões pendentes.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos: as questões de severidade crítica registradas em spec.md.
+blocked_by:
+  - question: Q1
+    description: >-
+      O grafo de transições válidas vive em código determinístico ou apenas
+      como instrução em prosa dentro de cada skill?
+    severity: critical
+  - question: Q2
+    description: >-
+      Em approve, o que preenche os campos by e revision, que o schema exige
+      não vazios?
+    severity: critical
+  - question: Q5
+    description: >-
+      Verify deve tratar a ausência de testes como falha, dado que
+      require_tests é true e npm test usa --passWithNoTests?
+    severity: critical
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 0
+  pending: 0
+  in_progress: 0
+  done: 0

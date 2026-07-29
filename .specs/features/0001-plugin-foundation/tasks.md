@@ -26,7 +26,7 @@ TASK-PF-011 ✅ ──▶ TASK-PF-012 ✅ ◀───────────�
      │               │                                                           │
      └──▶ TASK-PF-013 ⛔ ◀──┘                                                       │
                                                                                  ▼
-                                            TASK-PF-014 ✅ ──▶ TASK-PF-015 ✅ ──▶ TASK-PF-016 ⛔
+                                            TASK-PF-014 ✅ ──▶ TASK-PF-015 ✅ ──▶ TASK-PF-016 ✅
 ```
 
 `TASK-PF-011` (toolchain) nunca dependeu de `TASK-PF-001` e pode ser executada em paralelo desde já.
@@ -885,7 +885,7 @@ O tutorial declara isso num aviso inicial em vez de deixar o leitor supor que tu
 **Requisitos:** todos os desta feature
 **Dependências:** TASK-PF-012, TASK-PF-014, TASK-PF-015
 **Complexidade:** P
-**Status:** **blocked** — dogfooding executado; resta rodar as skills sobre `.specs/` deste repositório
+**Status:** **done** — 2026-07-29
 
 ### Descrição
 
@@ -906,7 +906,7 @@ Nenhum automatizado — exercício de validação (constituição Art. 14).
 
 - [x] Divergências registradas — bug `0002-dangling-constitution-reference`.
 - [x] Critérios de aceite avaliados um a um em `acceptance.md`.
-- [~] O plugin opera sobre este repositório: as skills foram executadas de verdade, mas num projeto de teste limpo, não sobre `.specs/` deste repositório.
+- [x] O plugin opera sobre este repositório: `new` e `spec` executadas sobre `.specs/`, gerando a feature `0007-sdd-workflow-completion`.
 
 ### Resultado
 
@@ -955,11 +955,22 @@ O teste cobre mais que o defeito pontual: percorre todo arquivo distribuído —
 
 **A feature não pode ser promovida a `VERIFIED`.**
 
-### Para desbloquear
+### Dogfooding literal
 
-1. Numa **sessão nova** do Claude Code, com o plugin instalado, executar `/sdd-kit:new`, `/sdd-kit:spec` e `/sdd-kit:tasks` sobre este repositório.
-2. Comparar o gerado com `examples/node-api`. Divergências viram bugs.
-3. Converter as seis ressalvas de `acceptance.md` em aprovação ou defeito.
+Executado sobre `.specs/` deste repositório, criando `0007-sdd-workflow-completion` para a Fase 2.
+
+| | |
+| --- | --- |
+| Requisitos | 8, para as 8 coisas do pedido — mapeamento 1:1 |
+| Origem declarada | 11 de 11 |
+| `status.yaml` | Valida; `blocked_by` com `Q1`, `Q2`, `Q5` |
+| Invariantes | Os 70 passam sobre o artefato gerado pela skill |
+
+Isso fechou dois critérios de aceite: o **12** (o plugin opera sobre as specs deste repositório) e o **9** — a correção do `0004` foi reverificada por execução, com `blocked_by` recebendo identificadores em vez de prosa.
+
+A correção do `0003` também se sustentou numa solicitação diferente e mais longa: nenhuma expansão por completude.
+
+**A feature saiu como `0007`, não `0002`.** Identificadores são globais; `0002`–`0006` foram consumidos pelos bugs. A skill alocou o próximo livre — comportamento correto. A expectativa de "0002" nesta tarefa era anterior aos bugs existirem.
 
 ---
 
@@ -971,7 +982,7 @@ O teste cobre mais que o defeito pontual: percorre todo arquivo distribuído —
 | M | 10 |
 | G | 0 |
 
-Total: 17 tarefas · 15 concluídas · 2 bloqueadas (`013` CI, `016` invocação viva) · 0 pendentes.
+Total: 17 tarefas · **16 concluídas** · 1 bloqueada (`013` — CI nunca executou) · 0 pendentes.
 
 Nenhuma tarefa grande — nenhuma precisa ser dividida antes de começar (constituição Art. 4).
 
@@ -983,8 +994,8 @@ Nenhuma tarefa grande — nenhuma precisa ser dividida antes de começar (consti
 
 **O plugin já é instalável e funcional.** `REQ-PF-001` está cumprido: marketplace, manifesto e as quatro skills, verificados com o CLI oficial.
 
-**Nenhuma tarefa pendente.** As duas bloqueadas dependem do mesmo tipo de evento externo: publicar o repositório (`013`) e abrir uma sessão nova (`016`).
+**Nenhuma tarefa pendente.** A única bloqueada, `TASK-PF-013`, depende de publicar o repositório — a matriz de CI nunca executou.
 
-A suíte tem 159 testes passando. `NFR-PF-001` só fecha quando a matriz de CI rodar nos três sistemas operacionais (Q10).
+A suíte tem 201 testes passando. Dos 12 critérios de aceite: 10 aprovados, 1 com ressalva, 1 reprovado (a matriz de CI). `NFR-PF-001` só fecha quando a matriz de CI rodar nos três sistemas operacionais (Q10).
 
 Todas as questões desta feature estão fechadas: Q1–Q4, Q6 e Q7 resolvidas; Q5 e Q9 registradas para fases seguintes, sem bloquear.

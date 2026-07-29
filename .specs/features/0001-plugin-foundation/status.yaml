@@ -52,15 +52,6 @@ blocked_by:
       publicação no GitHub. A feature não chega a VERIFIED antes disso.
     severity: high
     resolves_with: TASK-PF-013
-  - question: Q11
-    description: >-
-      As skills foram invocadas de verdade via claude -p e funcionam; cinco
-      defeitos foram encontrados e todos corrigidos, o 0003 reverificado por
-      reexecução. Resta o dogfooding literal: rodar as skills sobre .specs/
-      deste repositório, criando a feature 0002 da Fase 2. Fecha o critério
-      de aceite 12.
-    severity: medium
-    resolves_with: TASK-PF-016
 
 resolved_questions:
   - question: Q1
@@ -102,6 +93,14 @@ resolved_questions:
       como estão, sem npm install e sem build, e o padrão documentado para
       instalar dependências é um hook SessionStart — que é opt-in pelo Art. 9.
       Scripts do plugin também não podem ter dependências de runtime.
+  - question: Q11
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      As skills foram executadas de verdade, primeiro em projeto de teste e
+      depois sobre .specs deste repositório, gerando a feature 0007. Cinco
+      defeitos encontrados e todos corrigidos; 0003 e 0004 reverificados por
+      reexecução. Fechou os critérios de aceite 9 e 12.
   - question: Q7
     date: "2026-07-29"
     resolved_by: TASK-PF-017
@@ -114,6 +113,6 @@ resolved_questions:
 
 tasks:
   total: 17
-  pending: 2
+  pending: 1
   in_progress: 0
-  done: 15
+  done: 16
