@@ -71,7 +71,7 @@ export function validate(v: ValidateFunction, doc: unknown): Failure[] {
  * `{{guia: …}}` some; `{{NOME}}` vira o valor informado.
  */
 export function fillTemplate(body: string, values: Record<string, string>): string {
-  let out = body.replace(/[ \t]*#?[ \t]*\{\{(?:guia|opcional|repetir):[\s\S]*?\}\}\n?/g, '')
+  let out = body.replace(/[ \t]*#?[ \t]*\{\{(?:guia|opcional|repetir):[\s\S]*?\}\}\r?\n?/g, '')
   for (const [key, value] of Object.entries(values)) {
     out = out.replaceAll(`{{${key}}}`, value)
   }
@@ -100,7 +100,7 @@ export function unfilledMarkers(markdown: string): string[] {
 /** Front matter + corpo de um SKILL.md. */
 export function parseSkill(path: string): { frontmatter: Record<string, unknown>; body: string } {
   const raw = read(path)
-  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raw)
+  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/.exec(raw)
   if (!match) throw new Error(`${path}: front matter ausente ou malformado`)
   return {
     frontmatter: parseYaml(match[1] as string) as Record<string, unknown>,

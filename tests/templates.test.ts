@@ -85,7 +85,7 @@ describe('TEST-PF-014 — spec.md gerado tem requisito, cenário e critérios', 
       expect(body, 'critérios de aceite').toMatch(/## Critérios de aceite/)
       expect(body, 'questões pendentes').toMatch(/## Questões pendentes/)
       expect(body, 'hipóteses — constituição Art. 2').toContain('> HIPÓTESE:')
-      expect(body, 'cenário em Gherkin').toMatch(/DADO .*\nQUANDO .*\nENTÃO /)
+      expect(body, 'cenário em Gherkin').toMatch(/DADO .*\r?\nQUANDO .*\r?\nENTÃO /)
     })
   }
 
@@ -166,7 +166,7 @@ describe('convenções dos templates', () => {
 
   it('0005 — a Definition of Done é satisfazível sem linter configurado', () => {
     const art = read(`${TPL}/pt-BR/project/constitution.md`)
-    const dod = /## Artigo 10 — Definition of Done([\s\S]*?)(?=\n## )/.exec(art)?.[1] ?? ''
+    const dod = /## Artigo 10 — Definition of Done([\s\S]*?)(?=\r?\n## )/.exec(art)?.[1] ?? ''
     expect(dod, 'artigo encontrado').not.toBe('')
     // Não pode exigir lint incondicionalmente.
     expect(dod, 'lint incondicional').not.toMatch(/;\s*lint aprovado;/)

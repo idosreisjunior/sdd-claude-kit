@@ -1,0 +1,13 @@
+# Normaliza quebras de linha no checkout de toda plataforma.
+#
+# Sem isto, o git converte LF em CRLF no Windows e qualquer parsing que
+# assuma \n quebra — foi como a matriz de CI pegou a falha na primeira
+# execução. Vale mais para os artefatos do framework: .specs é YAML e
+# Markdown lido por scripts, e uma quebra de linha diferente por plataforma
+# produziria comportamento diferente por plataforma.
+* text=auto eol=lf
+
+# Binários, quando existirem, ficam de fora da normalização.
+*.png binary
+*.jpg binary
+*.ico binary
