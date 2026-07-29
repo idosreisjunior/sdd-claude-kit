@@ -4,8 +4,8 @@ Avaliado em 2026-07-29, durante `TASK-PF-016`. Reavaliado no mesmo dia, depois d
 
 Legenda: ✅ aprovado · ⚠️ aprovado com ressalva · ❌ reprovado
 
-> **Conclusão: a feature pode ser promovida a `VERIFIED`.** Nenhum critério
-> reprovado. A única ressalva não impede o funcionamento.
+> **Conclusão: a feature pode ser promovida a `VERIFIED`.** Os doze critérios
+> foram aprovados, todos por execução.
 
 ---
 
@@ -13,7 +13,7 @@ Legenda: ✅ aprovado · ⚠️ aprovado com ressalva · ❌ reprovado
 
 | # | Critério | Resultado | Evidência |
 | --- | --- | --- | --- |
-| 1 | O plugin pode ser instalado a partir deste repositório | ⚠️ | `marketplace add ./` + `install` + `details` executados; 4 skills descobertas. **O caminho GitHub não foi testado** — o repositório não está publicado |
+| 1 | O plugin pode ser instalado a partir deste repositório | ✅ | `marketplace add idosreisjunior/sdd-claude-kit` + `install` executados **a partir do GitHub**; 4 skills descobertas. O pacote em cache é idêntico ao repositório — `diff -rq` sem divergência |
 | 2 | `/sdd-kit:init` cria `.specs` válida em projeto vazio e existente | ✅ | **Executada de verdade** em projeto Node limpo: criou 8 arquivos, `config.yaml` valida contra o schema |
 | 3 | `/sdd-kit:init` não sobrescreve arquivos sem confirmação | ✅ | Na primeira execução headless, apresentou o diagnóstico e **parou sem criar nada**, aguardando confirmação |
 | 4 | `/sdd-kit:new` cria mudança com id único, `request.md`, `spec.md`, `status.yaml` em `DRAFT` e entrada no índice | ✅ | Executada: alocou `0001`, criou os três arquivos, atualizou o índice e incrementou `next_id` |
@@ -26,7 +26,7 @@ Legenda: ✅ aprovado · ⚠️ aprovado com ressalva · ❌ reprovado
 | 11 | Lint, testes e build passam em Ubuntu, Windows e macOS no CI | ✅ | Matriz **executada e verde** nos três sistemas, mais Node 22 em Ubuntu. A primeira execução falhou em Windows por CRLF — defeito real, corrigido |
 | 12 | O plugin opera sobre as specs deste próprio repositório | ✅ | `new` e `spec` executadas sobre `.specs/` deste repositório, gerando a feature `0007`. Os 70 invariantes passam sobre o artefato gerado pela skill |
 
-**11 aprovados · 1 com ressalva · 0 reprovados**
+**12 aprovados · 0 com ressalva · 0 reprovados**
 
 ---
 
@@ -95,6 +95,20 @@ Publicada e executada. **A primeira execução falhou em Windows** enquanto Ubun
 
 Vale registrar o que isso significa. O defeito estava lá desde `TASK-PF-012`, passou por 201 testes verdes em Linux, e **nenhuma execução local o encontraria**. `NFR-PF-001` deixou de ser uma afirmação sobre portabilidade e passou a ser uma verificação — que falhou de primeira, como devia.
 
-## A ressalva restante
+## A instalação a partir do GitHub
 
-**Critério 1** — a instalação foi exercitada por caminho local. Agora que o repositório está publicado, `claude plugin marketplace add idosreisjunior/sdd-claude-kit` pode ser verificado; até que seja, a ressalva fica.
+Exercitada depois da publicação:
+
+```
+$ claude plugin marketplace add idosreisjunior/sdd-claude-kit
+✔ Successfully added marketplace: sdd-claude-kit
+$ claude plugin install sdd-kit@sdd-claude-kit
+✔ Successfully installed plugin (scope: user)
+$ claude plugin details sdd-kit
+    Source: sdd-kit@sdd-claude-kit
+    Skills (4)  init, new, spec, tasks
+```
+
+O pacote copiado para o cache foi comparado com `plugins/sdd-kit` deste repositório: **`diff -rq` sem divergência**. As correções dos bugs `0003` e `0005` estão no pacote publicado, e nada que não deve ser distribuído — `tests/`, `node_modules/`, `.specs/`, `examples/`, `docs/` — foi junto.
+
+Estado da máquina revertido depois do teste.
