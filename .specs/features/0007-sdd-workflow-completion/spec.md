@@ -436,15 +436,21 @@ Quando não consegue determinar a contagem, **não presume**. Reporta "não foi 
 
 Dependiam de Q2, Q3 e Q4, agora decididas. Os cenários correspondentes foram escritos em “Cenários da máquina de estados”, `SCN-SWC-018` a `SCN-SWC-022`.
 
+### Q8 e Q14 — fechadas pelo design ✅
+
+Ver [`design.md`](./design.md) §14.
+
+**Q8** — `archive` move o diretório e links relativos quebram. As opções eram reescrever ou aceitar. **Nenhuma das duas:** a causa é referenciar mudança por caminho. Convenção passa a ser **referência por identificador**, que resolve pelo índice — e o índice `archive` atualiza. Varrer o repositório reescrevendo Markdown é invasivo e erra em bloco de código.
+
+**Q14** — como sincronizar `architecture.md` §3 com `workflow.json`. **Não sincronizar:** §3 deixa de conter a tabela e passa a apontar para o arquivo. Duplicação se resolve apagando uma cópia, não testando as duas.
+
 ---
 
 ## Questões pendentes
 
 | # | Questão | Bloqueia | Prioridade |
 | --- | --- | --- | --- |
-| Q8 | `archive` move o diretório fisicamente para `.specs/archive/`, o que quebra qualquer caminho relativo que aponte para ele. Links de entrada e saída são reescritos, ou aceita-se a quebra? | REQ-SWC-006 | média |
 | Q10 | Existem NFRs **específicos** desta mudança, além dos três herdados dos padrões do projeto? Por exemplo, limite de contexto carregado por skill ou comportamento em projeto sem git. A solicitação não declarou nenhum. | — | média |
-| Q14 | **Nova, de `ADR-010`.** Como manter `architecture.md` §3 em sincronia com `workflow.json` sem duplicar a manutenção? Um teste comparando os dois resolve, mas parsear tabela Markdown é frágil. | REQ-SWC-007 | média |
 
 ## Hipóteses assumidas
 

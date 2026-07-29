@@ -9,7 +9,7 @@ id: "0007-sdd-workflow-completion"
 type: "feature"
 title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
 
-status: CLARIFIED
+status: DESIGNED
 
 created: "2026-07-29"
 updated: "2026-07-29"
@@ -38,6 +38,16 @@ history:
       cenários. Restam três questões de prioridade média. Refinar não é
       transicionar — por isso a segunda passagem não gerou entrada própria
       no histórico.
+
+  - status: DESIGNED
+    date: "2026-07-29"
+    reason: >-
+      Design técnico escrito à mão — a skill design, que faria este trabalho,
+      é uma das entregas desta mudança. Fecha Q8 (referência por identificador
+      em vez de reescrita de links) e Q14 (remover a duplicação de
+      architecture.md §3 em vez de sincronizá-la). Define workflow.json,
+      o contrato das seis skills e a ordem de escrita. Resta Q10, que é
+      trabalho de spec, não de design.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -134,6 +144,21 @@ resolved_questions:
       executados. Não conseguindo determinar, reporta "não foi possível
       confirmar execução", que sob require_tests true bloqueia — não
       confirmado não é aprovado.
+  - question: Q8
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      Mudanças passam a ser referenciadas por identificador, não por caminho.
+      archive move o diretório e atualiza o índice; não reescreve Markdown,
+      porque varrer o repositório reescrevendo links erra em bloco de código
+      e em citação.
+  - question: Q14
+    date: "2026-07-29"
+    resolved_by: TASK-PF-016
+    summary: >-
+      architecture.md §3 deixa de conter a tabela e passa a apontar para
+      workflow.json. Duplicação se resolve apagando uma cópia, não testando
+      a sincronia entre as duas.
   - question: Q5
     date: "2026-07-29"
     resolved_by: TASK-PF-016
