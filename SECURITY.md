@@ -12,7 +12,7 @@ O projeto está em Fase 0 (fundação). Ainda não há releases. Quando houver, 
 
 **Não abra uma issue pública para vulnerabilidades.**
 
-Use o [GitHub Security Advisories](https://docs.github.com/pt/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) do repositório (aba *Security* → *Report a vulnerability*), ou envie um e-mail para **[INSERIR E-MAIL DE CONTATO]**.
+Use o [GitHub Security Advisories](https://docs.github.com/pt/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) do repositório (aba *Security* → *Report a vulnerability*), ou envie um e-mail para **idosreisjunior@gmail.com**.
 
 Inclua: descrição da vulnerabilidade, passos de reprodução, impacto estimado, versão afetada e sistema operacional.
 

@@ -36,7 +36,7 @@ Este Código de Conduta se aplica a todos os espaços da comunidade e também qu
 
 ## Aplicação
 
-Casos de comportamento abusivo, de assédio ou de outra forma inaceitável podem ser reportados aos mantenedores em **[INSERIR E-MAIL DE CONTATO]**.
+Casos de comportamento abusivo, de assédio ou de outra forma inaceitável podem ser reportados aos mantenedores em **idosreisjunior@gmail.com**.
 
 Todas as reclamações serão analisadas e investigadas de forma rápida e justa. Todos os mantenedores são obrigados a respeitar a privacidade e a segurança de quem reportar qualquer incidente.
 
