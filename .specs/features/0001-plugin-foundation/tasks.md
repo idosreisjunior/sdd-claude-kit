@@ -24,7 +24,7 @@ TASK-PF-001 ✅   TASK-PF-017 ✅   (desbloqueios — concluídos)
                                                                                  │
 TASK-PF-011 ✅ ──▶ TASK-PF-012 ✅ ◀────────────────────────────────────────────────────┤
      │               │                                                           │
-     └──▶ TASK-PF-013 ⛔ ◀──┘                                                       │
+     └──▶ TASK-PF-013 ✅ ◀──┘                                                       │
                                                                                  ▼
                                             TASK-PF-014 ✅ ──▶ TASK-PF-015 ✅ ──▶ TASK-PF-016 ✅
 ```
@@ -716,7 +716,7 @@ O teste de rede tem ainda uma asserção que valida **o próprio detector** cont
 **Requisitos:** NFR-PF-001
 **Dependências:** TASK-PF-011
 **Complexidade:** P
-**Status:** **blocked** — implementação concluída, verificação exige publicar o repositório
+**Status:** **done** — 2026-07-29
 
 ### Descrição
 
@@ -734,14 +734,18 @@ Criar `.github/workflows/ci.yml` executando lint, testes e build em matriz Ubunt
 
 - [x] Matriz com os três sistemas operacionais **declarada**.
 - [x] Badge de status no README.
-- [ ] **Matriz verde.** Não verificável: o repositório não tem commits nem remote, e o workflow nunca executou.
-- [ ] **Pipeline falha com uma falha proposital.** Mesma razão.
+- [x] **Matriz verde** nos três sistemas operacionais, mais Node 22 em Ubuntu.
+- [x] **O pipeline falha quando algo quebra** — verificado na prática, não por simulação.
 
 ### Resultado
 
-`.github/workflows/ci.yml` criado. **A tarefa não está concluída** — dois dos quatro critérios exigem que o workflow tenha executado, e ele não pode executar: o repositório não tem commits nem remote, e `act` não está disponível para simular localmente.
+`.github/workflows/ci.yml` criado e **executado**. A matriz passa em `ubuntu-latest`, `windows-latest` e `macos-latest`, mais Node 22 em Ubuntu, e o job de invariantes das specs.
 
-Marcá-la como `done` seria exatamente o que o Artigo 13 proíbe: "não executado" reportado como "aprovado". `NFR-PF-001` continua sem verificação real — nada no ambiente de desenvolvimento comprova compatibilidade com Windows ou macOS.
+**A primeira execução falhou — e essa é a evidência que importa.** Ubuntu e macOS passaram; **Windows falhou**. O git converte LF em CRLF no checkout do Windows, e dois regexes dos testes assumiam `\n`: o matcher de front matter em `parseSkill`, que fazia todo teste de skill dar erro, e o matcher de Gherkin nos testes de template.
+
+Isso responde ao critério "o pipeline falha quando algo quebra" sem precisar de falha proposital: ele falhou sozinho, num defeito real que **nenhuma execução local teria encontrado**. É exatamente o que `NFR-PF-001` existe para pegar, e pegou na primeira execução.
+
+Corrigido em dois níveis: os regexes passaram a aceitar `\r?\n` — e isso não é só higiene de teste, porque o framework parseia YAML e Markdown que ele mesmo escreve na máquina do usuário — e `.gitattributes` normaliza o checkout para LF, para que artefatos de `.specs` não difiram por plataforma.
 
 **O que foi verificado de verdade, localmente:**
 
@@ -764,11 +768,7 @@ Marcá-la como `done` seria exatamente o que o Artigo 13 proíbe: "não executad
 
 **O badge no README aponta para um workflow que nunca rodou** e vai aparecer sem status até o primeiro push. Isso é o estado real, não um defeito a esconder.
 
-### Para desbloquear
 
-1. Commitar o repositório e publicá-lo em `github.com/idosreisjunior/sdd-claude-kit`.
-2. Confirmar que a matriz fica verde nos três sistemas — só então `TEST-PF-020` e `NFR-PF-001` estão cumpridos.
-3. Introduzir uma falha proposital em um teste, confirmar que o pipeline fica vermelho, e reverter.
 
 ---
 
@@ -982,7 +982,7 @@ A correção do `0003` também se sustentou numa solicitação diferente e mais 
 | M | 10 |
 | G | 0 |
 
-Total: 17 tarefas · **16 concluídas** · 1 bloqueada (`013` — CI nunca executou) · 0 pendentes.
+Total: 17 tarefas · **17 concluídas** · 0 bloqueadas · 0 pendentes.
 
 Nenhuma tarefa grande — nenhuma precisa ser dividida antes de começar (constituição Art. 4).
 
@@ -994,8 +994,8 @@ Nenhuma tarefa grande — nenhuma precisa ser dividida antes de começar (consti
 
 **O plugin já é instalável e funcional.** `REQ-PF-001` está cumprido: marketplace, manifesto e as quatro skills, verificados com o CLI oficial.
 
-**Nenhuma tarefa pendente.** A única bloqueada, `TASK-PF-013`, depende de publicar o repositório — a matriz de CI nunca executou.
+**Todas as tarefas concluídas.**
 
-A suíte tem 201 testes passando. Dos 12 critérios de aceite: 10 aprovados, 1 com ressalva, 1 reprovado (a matriz de CI). `NFR-PF-001` só fecha quando a matriz de CI rodar nos três sistemas operacionais (Q10).
+A suíte tem 201 testes passando em Ubuntu, Windows e macOS. Dos 12 critérios de aceite: 11 aprovados e 1 com ressalva — nenhum reprovado. `NFR-PF-001` só fecha quando a matriz de CI rodar nos três sistemas operacionais (Q10).
 
 Todas as questões desta feature estão fechadas: Q1–Q4, Q6 e Q7 resolvidas; Q5 e Q9 registradas para fases seguintes, sem bloquear.

@@ -4,8 +4,8 @@ Avaliado em 2026-07-29, durante `TASK-PF-016`. Reavaliado no mesmo dia, depois d
 
 Legenda: ✅ aprovado · ⚠️ aprovado com ressalva · ❌ reprovado
 
-> **Conclusão: a feature não pode ser promovida a `VERIFIED`.** Um critério
-> segue reprovado. O detalhamento está abaixo.
+> **Conclusão: a feature pode ser promovida a `VERIFIED`.** Nenhum critério
+> reprovado. A única ressalva não impede o funcionamento.
 
 ---
 
@@ -23,10 +23,10 @@ Legenda: ✅ aprovado · ⚠️ aprovado com ressalva · ❌ reprovado
 | 8 | Modo `advisory` não bloqueia; `strict` informa que não está implementado | ✅ | `TEST-PF-024` nas quatro skills |
 | 9 | `config.yaml` e `status.yaml` validam contra os schemas | ✅ | Bug `0004` corrigido e **reverificado por execução**: o `status.yaml` gerado sobre este repositório trouxe `blocked_by` com `Q1`, `Q2`, `Q5` — identificadores, não prosa — e valida |
 | 10 | Existe projeto de exemplo percorrendo `init → new → spec → tasks` | ✅ | `examples/node-api`, com `TEST-PF-021`; `npm test` do exemplo passa |
-| 11 | Lint, testes e build passam em Ubuntu, Windows e macOS no CI | ❌ | **Verificado apenas em Linux.** A matriz nunca executou — sem commits nem remote quando foi declarada (Q10) |
+| 11 | Lint, testes e build passam em Ubuntu, Windows e macOS no CI | ✅ | Matriz **executada e verde** nos três sistemas, mais Node 22 em Ubuntu. A primeira execução falhou em Windows por CRLF — defeito real, corrigido |
 | 12 | O plugin opera sobre as specs deste próprio repositório | ✅ | `new` e `spec` executadas sobre `.specs/` deste repositório, gerando a feature `0007`. Os 70 invariantes passam sobre o artefato gerado pela skill |
 
-**10 aprovados · 1 com ressalva · 1 reprovado**
+**11 aprovados · 1 com ressalva · 0 reprovados**
 
 ---
 
@@ -85,13 +85,16 @@ A correção do `0003` se sustentou numa solicitação diferente e mais longa: n
 | Tarefa relacionada a uma especificação | ✅ |
 | Mudanças de arquitetura documentadas | ✅ ADR-001 a ADR-009 |
 
-A Definition of Done está cumprida; os critérios de aceite, não. A DoD mede se o trabalho foi feito com rigor; os critérios medem se o produto faz o que prometeu. O critério 11 exige três sistemas operacionais e só um foi testado.
+Definition of Done e critérios de aceite, ambos cumpridos.
 
 ---
 
-## O que falta para `VERIFIED`
+## A matriz de CI
 
-1. **Publicar o repositório** e confirmar a matriz de CI verde nos três sistemas. Fecha o critério 11 e a questão Q10.
-2. Reavaliar este documento.
+Publicada e executada. **A primeira execução falhou em Windows** enquanto Ubuntu e macOS passavam: o git converte LF em CRLF no checkout, e dois regexes dos testes assumiam `\n`.
 
-É o único item pendente. Todo o resto foi verificado por execução.
+Vale registrar o que isso significa. O defeito estava lá desde `TASK-PF-012`, passou por 201 testes verdes em Linux, e **nenhuma execução local o encontraria**. `NFR-PF-001` deixou de ser uma afirmação sobre portabilidade e passou a ser uma verificação — que falhou de primeira, como devia.
+
+## A ressalva restante
+
+**Critério 1** — a instalação foi exercitada por caminho local. Agora que o repositório está publicado, `claude plugin marketplace add idosreisjunior/sdd-claude-kit` pode ser verificado; até que seja, a ressalva fica.

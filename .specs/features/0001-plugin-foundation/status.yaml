@@ -39,21 +39,20 @@ history:
 # Preenchido por /sdd-kit:approve (Fase 2). Nulo significa não aprovado.
 approval: null
 
-# TASK-PF-013 entregou o pipeline, mas ele nunca executou: o repositório não
-# tem commits nem remote. NFR-PF-001 (Windows, Linux, macOS) segue sem
-# verificação real — nada no ambiente de desenvolvimento comprova
-# compatibilidade multiplataforma.
-blocked_by:
-  - question: Q10
-    description: >-
-      A matriz de CI passa em Windows, Linux e macOS? Declarada em
-      TASK-PF-013 mas nunca executada — o repositório não tem commits nem
-      remote. NFR-PF-001 e TEST-PF-020 só podem ser verificados depois da
-      publicação no GitHub. A feature não chega a VERIFIED antes disso.
-    severity: high
-    resolves_with: TASK-PF-013
+# Sem bloqueios. A matriz de CI foi publicada e executada, fechando Q10.
+blocked_by: []
 
 resolved_questions:
+  - question: Q10
+    date: "2026-07-29"
+    resolved_by: TASK-PF-013
+    summary: >-
+      A matriz de CI foi executada e passa em ubuntu-latest, windows-latest e
+      macos-latest, mais Node 22 em Ubuntu. A primeira execução falhou apenas
+      em Windows, por CRLF no checkout quebrando dois regexes dos testes —
+      defeito real que nenhuma execução local encontraria. Corrigido com
+      regexes tolerantes a CRLF e .gitattributes normalizando para LF.
+      NFR-PF-001 passou de afirmação a verificação.
   - question: Q1
     date: "2026-07-29"
     resolved_by: TASK-PF-001
@@ -113,6 +112,6 @@ resolved_questions:
 
 tasks:
   total: 17
-  pending: 1
+  pending: 0
   in_progress: 0
-  done: 16
+  done: 17
