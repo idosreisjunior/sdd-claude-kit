@@ -885,7 +885,7 @@ O tutorial declara isso num aviso inicial em vez de deixar o leitor supor que tu
 **Requisitos:** todos os desta feature
 **Dependências:** TASK-PF-012, TASK-PF-014, TASK-PF-015
 **Complexidade:** P
-**Status:** **blocked** — comparação e avaliação concluídas; a invocação viva exige sessão nova
+**Status:** **blocked** — dogfooding executado; resta rodar as skills sobre `.specs/` deste repositório
 
 ### Descrição
 
@@ -906,13 +906,29 @@ Nenhum automatizado — exercício de validação (constituição Art. 14).
 
 - [x] Divergências registradas — bug `0002-dangling-constitution-reference`.
 - [x] Critérios de aceite avaliados um a um em `acceptance.md`.
-- [~] O plugin opera sobre este repositório: instala e as 4 skills são descobertas. **A invocação viva não foi possível.**
+- [~] O plugin opera sobre este repositório: as skills foram executadas de verdade, mas num projeto de teste limpo, não sobre `.specs/` deste repositório.
 
 ### Resultado
 
-**A invocação real não aconteceu.** Instalei o plugin (`marketplace add ./` + `install`) e `claude plugin list` confirma `enabled`, mas `Skill(sdd-kit:new)` retorna `Unknown skill`: skills de um plugin instalado durante uma sessão só carregam na sessão seguinte, e não há como reiniciar a sessão de dentro dela. Estado da máquina revertido depois do teste.
+**A invocação real aconteceu.** A primeira tentativa falhou — `Skill(sdd-kit:new)` retornava `Unknown skill`, porque skills de um plugin instalado durante uma sessão só carregam na seguinte. Concluí cedo demais que era impossível: o obstáculo era a sessão *em andamento*, não o ambiente. `claude -p` inicia uma sessão nova, que carrega o plugin.
 
-A ação que define a tarefa — rodar `/sdd-kit:new` — não ocorreu, então marcá-la `done` seria overstatement. O restante do trabalho foi feito.
+Duas barreiras no caminho: `--permission-mode acceptEdits` não cobre invocação de Skill (precisou de `--allowed-tools "Skill"`), e a sessão aninhada **recusou-se a improvisar os artefatos** ao bater na permissão — argumentou que arquivos escritos por ela pareceriam saída do plugin sem ser, escondendo o que a sessão existia para testar. Comportamento correto.
+
+O fluxo `init → new → spec → tasks` foi executado num projeto Node limpo, com o mesmo código-fonte do exemplo e sem `.specs/` — para comparar o que a skill gera com o que escrevi à mão a partir da mesma entrada.
+
+**Cinco defeitos encontrados**, todos registrados em `.specs/bugs/` e **todos corrigidos**:
+
+| Bug | Defeito | Verificação da correção |
+| --- | --- | --- |
+| `0003` | `spec` expandia "criar cadastro de clientes" em CRUD completo — 5 requisitos, 4 não pedidos | **Reexecução real**: 5 → 2 requisitos |
+| `0004` | `status.yaml` gerado violava o próprio schema em `blocked_by` | Mutação |
+| `0005` | Artigo 10 exigia lint incondicionalmente; projeto sem linter nunca cumpria a DoD | Mutação |
+| `0006` | `reason` entre aspas quebrava o YAML — e o motivo cita o pedido do usuário | Mutação |
+| `0002` | Referência a artigo inexistente da constituição | Mutação |
+
+O `0003` é o que justifica o dogfooding existir: viola o Artigo 2, a regra central do framework, e **nenhum teste estrutural o pegaria**. Só execução real expõe expansão de escopo.
+
+Também corrigido: `init` relatava "9 arquivos" e criava 8 — encontrado pela própria sessão aninhada.
 
 **A comparação sistemática encontrou nove divergências.** Comparei as seções de cada artefato da Fase 0 contra o template correspondente. Oito são variação legítima: os artefatos foram escritos **antes** dos templates, e diferem em numeração, nomes de seção e estrutura própria de um framework.
 

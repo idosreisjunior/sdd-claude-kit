@@ -82,13 +82,31 @@ para e um ADR é proposto. Não se resolve arquitetura no meio de uma tarefa.
 ## Artigo 10 — Definition of Done
 
 Uma tarefa só é concluída com: código implementado; testes relacionados
-aprovados; lint aprovado; build aprovado quando aplicável; documentação
-atualizada; rastreabilidade atualizada; critérios de aceite avaliados; vínculo
-com uma spec; mudanças de arquitetura documentadas.
+aprovados; **as validações configuradas aprovadas**; documentação atualizada;
+rastreabilidade atualizada; critérios de aceite avaliados; vínculo com uma
+spec; mudanças de arquitetura documentadas.
 
-**Nunca marque uma tarefa como concluída com validação falhando ou não
-executada.** "Não executado" é reportado como "não executado", jamais como
+"Validações configuradas" são as que têm comando em `.specs/config.yaml`. Cada
+uma está em um de três estados, e eles não se confundem:
+
+| Estado | Em `config.yaml` | Conclui a tarefa? |
+| --- | --- | --- |
+| Aprovada | comando definido, executou, passou | Sim |
+| Reprovada | comando definido, executou, falhou | **Não** |
+| Não configurada | `null` | Sim, **se registrada como tal** |
+
+**Nunca marque uma tarefa como concluída com validação configurada falhando ou
+não executada.** "Não executado" é reportado como "não executado", jamais como
 "aprovado".
+
+Uma validação **não configurada** não bloqueia — um projeto sem linter é
+legítimo, e uma regra que ninguém consegue cumprir é uma regra que todo mundo
+aprende a ignorar. Mas ela precisa aparecer no relatório como "não
+configurada", nunca ser omitida: a diferença entre "passou" e "não existe" é
+exatamente o que este artigo protege.
+
+Se a ausência de uma validação for inaceitável para o seu projeto, configure a
+ferramenta — não afrouxe o relatório.
 
 ## Artigo 11 — {{PROJECT_RULE_TITLE}}
 

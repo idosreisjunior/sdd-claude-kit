@@ -4,6 +4,7 @@
 - **Escopo dos identificadores:** BBI
 - **Status:** DRAFT
 - **Severidade:** média
+- **Correção:** aplicada e verificada em 2026-07-29
 
 ---
 
@@ -95,10 +96,37 @@ ENTÃO deve dizer que `question` é `Q<n>` e `resolves_with` é `TASK-<ESCOPO>-N
 
 ## Critérios de aceite
 
-- [ ] Existe teste que falha antes da correção e passa depois.
-- [ ] O guia do template especifica o formato dos dois campos.
-- [ ] `resolved_questions` recebe o mesmo tratamento.
-- [ ] Nenhum teste existente alterado.
+- [x] Existe teste que falha antes da correção e passa depois.
+- [x] O guia do template especifica o formato dos dois campos.
+- [x] `resolved_questions` recebe o mesmo tratamento.
+- [x] Nenhum teste existente alterado.
+
+---
+
+## Correção aplicada
+
+Aplicada em 2026-07-29.
+
+| Arquivo | Mudança |
+| --- | --- |
+| `templates/pt-BR/_shared/status.yaml` | Guia de `blocked_by` e `resolved_questions` passou a declarar o formato de cada campo, com exemplo preenchido |
+| `tests/templates.test.ts` | `SCN-BBI-001` e `SCN-BBI-002` |
+
+O guia antes **enumerava** os campos e omitia o formato de dois deles. Agora
+diz, campo a campo, que `question` é `Q<n>`, `resolves_with` e `resolved_by`
+são `TASK-<ESCOPO>-NNN`, `adr` é `ADR-NNN`, e traz um exemplo concreto — que é
+o que a skill copia na prática.
+
+`resolved_questions` recebeu o mesmo tratamento, como o escopo previa: tinha o
+guia igualmente vago e teria falhado do mesmo jeito na primeira questão
+resolvida.
+
+**Verificação por mutação:** com o template anterior, os dois testes falham;
+com o corrigido, passam. Nenhum teste existente alterado.
+
+> **Não corrigido:** o `status.yaml` já gerado em `dogfood/` era de um
+> diretório temporário, descartado. Nenhum artefato versionado tinha o defeito
+> — os `blocked_by` deste repositório foram escritos à mão, com identificador.
 
 ---
 

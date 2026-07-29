@@ -135,6 +135,47 @@ describe('convenções dos templates', () => {
     }
   })
 
+  it('0004 — o guia declara que question e resolves_with são identificadores', () => {
+    const tpl = read(`${TPL}/pt-BR/_shared/status.yaml`)
+    expect(tpl, 'formato de question').toMatch(/question\s+identificador/)
+    expect(tpl, 'formato de resolves_with').toMatch(/resolves_with\s+opcional; id da tarefa/)
+    expect(tpl, 'exemplo concreto').toMatch(/question: Q3/)
+    // O aviso quebra linha no comentário YAML — casar por palavra, não por frase.
+    expect(tpl, 'aviso de que não é texto livre').toContain('IDENTIFICADORES')
+  })
+
+  it('0004 — status.yaml com blocked_by preenchido valida contra o schema', () => {
+    // Antes da correção, o guia enumerava os campos sem dizer o formato de
+    // dois deles, e a skill preenchia com prosa.
+    const doc = parseYaml(fillTemplate(read(`${TPL}/pt-BR/_shared/status.yaml`), {
+      CHANGE_ID: '0002-x', CHANGE_TYPE: 'feature', CHANGE_TITLE: 'X',
+      DATE: '2026-07-29', CREATION_REASON: 'criada',
+    })) as Record<string, any>
+    doc['blocked_by'] = [{
+      question: 'Q3',
+      description: 'Quais campos são obrigatórios no cadastro?',
+      severity: 'critical',
+      resolves_with: 'TASK-CUST-002',
+    }]
+    doc['resolved_questions'] = [{
+      question: 'Q1', date: '2026-07-29', resolved_by: 'TASK-CUST-001',
+      summary: 'Persistência em arquivo JSON.', adr: 'ADR-001',
+    }]
+    expect(validate(schema('status'), doc)).toEqual([])
+  })
+
+  it('0005 — a Definition of Done é satisfazível sem linter configurado', () => {
+    const art = read(`${TPL}/pt-BR/project/constitution.md`)
+    const dod = /## Artigo 10 — Definition of Done([\s\S]*?)(?=\n## )/.exec(art)?.[1] ?? ''
+    expect(dod, 'artigo encontrado').not.toBe('')
+    // Não pode exigir lint incondicionalmente.
+    expect(dod, 'lint incondicional').not.toMatch(/;\s*lint aprovado;/)
+    expect(dod, 'fala em validações configuradas').toContain('validações configuradas')
+    expect(dod, 'trata o caso não configurado').toContain('não configurada')
+    // E a regra contra passe silencioso continua intacta.
+    expect(dod, 'não executado ≠ aprovado').toMatch(/jamais como\s*\n?"aprovado"/)
+  })
+
   it('campos de texto livre sobrevivem a aspas no valor', () => {
     // `reason` cita o pedido do usuário, e pedidos contêm aspas. Um escalar
     // entre aspas duplas quebra o YAML no primeiro `"` do texto.

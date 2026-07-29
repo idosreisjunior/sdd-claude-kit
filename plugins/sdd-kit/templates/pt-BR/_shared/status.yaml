@@ -29,14 +29,38 @@ history:
 approval: null
 
 # Bloqueios ativos. Lista vazia significa sem bloqueio.
-# {{guia: cada item tem question, description, severity
-#   (critical|high|medium|low) e, opcionalmente, resolves_with }}
+#
+# ATENÇÃO ao formato: `question` e `resolves_with` são IDENTIFICADORES, não
+# texto. O texto da pergunta vai em `description`. Um bloqueio que não aponta
+# para um identificador não pode ser ligado à spec nem ao plano.
+#
+# {{guia: cada item tem:
+#     question       identificador da questão em spec.md — Q1, Q2, …
+#     description    o texto da pergunta, livre
+#     severity       critical | high | medium | low
+#     resolves_with  opcional; id da tarefa que fecha — TASK-<ESCOPO>-NNN
+#
+#   Exemplo:
+#     - question: Q3
+#       description: Quais campos são obrigatórios no cadastro?
+#       severity: critical
+#       resolves_with: TASK-CUST-002
+# }}
 blocked_by: []
 
 # Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
 # rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
-# {{guia: cada item tem question, date, resolved_by, summary e,
-#   opcionalmente, adr }}
+#
+# Mesmo cuidado com identificadores: `question`, `resolved_by` e `adr` não são
+# texto livre.
+#
+# {{guia: cada item tem:
+#     question     identificador — Q1, Q2, …
+#     date         "AAAA-MM-DD", entre aspas
+#     resolved_by  id da tarefa que resolveu — TASK-<ESCOPO>-NNN
+#     summary      o que foi decidido, livre
+#     adr          opcional; ADR-NNN, quando houver decisão registrada
+# }}
 resolved_questions: []
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.

@@ -54,14 +54,12 @@ blocked_by:
     resolves_with: TASK-PF-013
   - question: Q11
     description: >-
-      RESPONDIDA em 2026-07-29 e reaberta com escopo novo. As skills foram
-      invocadas de verdade via claude -p, numa sessão nova. Elas funcionam,
-      mas a skill spec expandiu "criar cadastro de clientes" em cinco
-      requisitos CRUD — quatro não pedidos e não marcados como hipótese, o que
-      viola o Artigo 2. Cinco bugs registrados (0002 a 0006). Enquanto 0003
-      não for corrigido e reverificado, os critérios de aceite 5 e 6 estão
-      REPROVADOS, não apenas com ressalva.
-    severity: critical
+      As skills foram invocadas de verdade via claude -p e funcionam; cinco
+      defeitos foram encontrados e todos corrigidos, o 0003 reverificado por
+      reexecução. Resta o dogfooding literal: rodar as skills sobre .specs/
+      deste repositório, criando a feature 0002 da Fase 2. Fecha o critério
+      de aceite 12.
+    severity: medium
     resolves_with: TASK-PF-016
 
 resolved_questions:

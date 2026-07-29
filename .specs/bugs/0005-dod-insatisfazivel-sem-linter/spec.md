@@ -4,6 +4,7 @@
 - **Escopo dos identificadores:** DIL
 - **Status:** DRAFT
 - **Severidade:** média
+- **Correção:** aplicada e verificada em 2026-07-29
 
 ---
 
@@ -74,10 +75,50 @@ E o relatório deve registrar "lint não executado", nunca "aprovado".
 
 ## Critérios de aceite
 
-- [ ] O Artigo 10 do template distingue validação não configurada de reprovada.
-- [ ] `init` num projeto sem linter gera constituição internamente consistente.
-- [ ] A distinção "não executado" vs "aprovado" permanece explícita.
-- [ ] Nenhum teste existente alterado.
+- [x] O Artigo 10 do template distingue validação não configurada de reprovada.
+- [x] `init` num projeto sem linter gera constituição internamente consistente.
+- [x] A distinção "não executado" vs "aprovado" permanece explícita.
+- [x] Nenhum teste existente alterado.
+
+---
+
+## Correção aplicada
+
+Aplicada em 2026-07-29.
+
+| Arquivo | Mudança |
+| --- | --- |
+| `templates/pt-BR/project/constitution.md` | Artigo 10 reescrito |
+| `examples/node-api/.specs/project/constitution.md` | Artefato regenerado |
+| `tests/templates.test.ts` | `SCN-DIL-001` |
+
+O artigo passou a falar em **"validações configuradas"** e a distinguir três
+estados, numa tabela:
+
+| Estado | Em `config.yaml` | Conclui a tarefa? |
+| --- | --- | --- |
+| Aprovada | comando definido, passou | Sim |
+| Reprovada | comando definido, falhou | **Não** |
+| Não configurada | `null` | Sim, **se registrada como tal** |
+
+### A decisão que a Q1 pedia
+
+A questão em aberto era: "não configurado" deveria bloquear a conclusão, ou
+apenas ser registrado?
+
+**Decidido: não bloqueia, mas precisa aparecer no relatório.** Um projeto sem
+linter é legítimo, e uma regra que ninguém consegue cumprir é uma regra que
+todo mundo aprende a ignorar — o artigo perderia força inclusive onde importa.
+
+A regra contra passe silencioso continua intacta e é o que o teste verifica:
+"não executado" jamais vira "aprovado". A diferença entre *passou* e *não
+existe* é exatamente o que o artigo protege, e omitir a segunda no relatório
+seria a mesma falha que ele proíbe.
+
+O artigo fecha dizendo que, se a ausência de uma validação for inaceitável para
+o projeto, o caminho é configurar a ferramenta — não afrouxar o relatório.
+
+**Verificação por mutação:** com o Artigo 10 anterior, o teste falha.
 
 ---
 
