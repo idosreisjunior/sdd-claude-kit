@@ -8,7 +8,7 @@ id: "0003-ui-shell"
 type: "feature"
 title: "Interface — dashboard da feature e editor de especificações"
 
-status: DRAFT
+status: PLANNED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -23,6 +23,26 @@ history:
       leitura); o editor visual (RF-006) fica para o incremento seguinte, atrelado
       a Q1 (webview vs. custom editor). Segue em DRAFT — requisitos a detalhar e
       três questões em aberto (Q1 alta).
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Q1 (alta), Q2 (média) e Q3 (baixa) resolvidas por ADR-005: webview panel para
+      o dashboard read-only; contagens de fontes estruturadas (status.yaml,
+      traceability.yaml, spec.md); sem botões de ação neste incremento. Nenhuma
+      questão em aberto.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      Design registrado em ADR-005: base webview + modelo puro (dashboardModel) e
+      render puro com CSP/nonce (dashboardHtml), lidos via workspace.fs. Fronteira
+      de módulos coerente com a arquitetura (views → core → arquivos).
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md gerado — 7 tarefas (UI-001..007) ligadas a REQ-UI-001..003 e às NFR
+      em traceability.yaml; TASK-UI-001 (ADR-005) concluída. Sem dependência
+      inválida nem requisito sem cobertura. Aguardando revisão/aprovação antes da
+      implementação.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -32,12 +52,36 @@ approval: null
 blocked_by: []
 
 # Questões já resolvidas. Preservadas em vez de apagadas.
-resolved_questions: []
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-UI-001
+    summary: >-
+      Dashboard read-only como Webview panel (um por mudança, reutilizado por id),
+      com modelo puro e render com CSP/nonce. A base do editor (RF-006) fica para o
+      próprio incremento (candidato a CustomTextEditor).
+    adr: ADR-005
+  - question: Q2
+    date: "2026-07-31"
+    resolved_by: TASK-UI-001
+    summary: >-
+      Contagens de fontes estruturadas: tarefas de status.yaml; requisitos,
+      cenários, testes e arquivos de traceability.yaml; objetivo da seção Objetivo e
+      critérios pela contagem de checkbox do spec.md. Sem parse de estrutura Markdown.
+    adr: ADR-005
+  - question: Q3
+    date: "2026-07-31"
+    resolved_by: TASK-UI-001
+    summary: >-
+      As ações do §13.2 (research, design, implementar…) não aparecem neste
+      incremento: o dashboard é somente-leitura; os botões pertencem ao Workflow
+      Engine e ao adapter (features 0004+).
+    adr: ADR-005
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# tasks.md será gerado por /sdd-kit:tasks a partir da spec detalhada.
+# done: UI-001 · pending: UI-002..007
 tasks:
-  total: 0
-  pending: 0
+  total: 7
+  pending: 6
   in_progress: 0
-  done: 0
+  done: 1

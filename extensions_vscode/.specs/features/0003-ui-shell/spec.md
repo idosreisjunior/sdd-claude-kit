@@ -133,20 +133,18 @@ a UI.
 
 ## Questões pendentes
 
-| # | Questão | Bloqueia | Prioridade |
-| --- | --- | --- | --- |
-| Q1 | Dashboard/editor como **Webview panel** ou **Custom Editor** (`CustomTextEditor`)? Decide a base do RF-006 (edição). Candidato a ADR. | REQ-UI-001 (base) e RF-006 | alta |
-| Q2 | Contagem de requisitos/critérios/cenários vem de `traceability.yaml` (estruturado) ou de parsear `spec.md` (Markdown, frágil)? | REQ-UI-002 | média |
-| Q3 | As ações do §13.2 (research, design, implementar…) aparecem **desabilitadas** já neste dashboard, ou só quando a feature dona existir? | escopo do incremento | baixa |
+Nenhuma em aberto — Q1, Q2 e Q3 resolvidas por **ADR-005** (`decisions/`):
+
+- **Q1 (alta)** → **Webview panel** para o dashboard read-only; a base do editor
+  (RF-006) fica para o próprio incremento (candidato a `CustomTextEditor`).
+- **Q2 (média)** → contagens de fontes estruturadas: tarefas de `status.yaml`;
+  requisitos/cenários/testes/arquivos de `traceability.yaml`; objetivo da seção
+  `## Objetivo` e critérios pela contagem de checkbox (`- [ ]`) do `spec.md`.
+- **Q3 (baixa)** → ações do §13.2 **não** aparecem neste incremento (read-only;
+  pertencem ao Workflow Engine / adapter, features 0004+).
 
 ## Hipóteses assumidas
 
-> HIPÓTESE: este incremento é **somente-leitura**; a edição (RF-006) é o incremento
-> seguinte, decidido junto de Q1.
-
-> HIPÓTESE: as contagens de tarefas vêm de `status.yaml` (já lido em 0002) e as de
-> requisitos/critérios/cenários de `traceability.yaml` (estruturado), evitando
-> parsear Markdown até que Q2 seja resolvida.
-
-> HIPÓTESE: o dashboard é um Webview panel reutilizável por mudança (um painel por
-> feature aberta), coerente com §13.2. Sujeita a Q1.
+Nenhuma pendente — as hipóteses do rascunho viraram decisões em ADR-005 (dashboard
+somente-leitura via webview; contagens de fontes estruturadas; um painel por
+mudança).

@@ -1,0 +1,84 @@
+# Matriz de rastreabilidade — 0003-ui-shell
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+version: 1
+
+feature: "0003-ui-shell"
+
+requirements:
+
+  "REQ-UI-001":
+    title: "Abrir o dashboard da feature"
+    scenarios:
+      - "SCN-UI-001"
+    tasks:
+      - "TASK-UI-004"
+      - "TASK-UI-005"
+    decisions:
+      - "ADR-005"
+    implementation: []
+    tests: []
+
+  "REQ-UI-002":
+    title: "Conteúdo do dashboard (somente-leitura)"
+    scenarios:
+      - "SCN-UI-002"
+    tasks:
+      - "TASK-UI-002"
+      - "TASK-UI-003"
+    decisions:
+      - "ADR-005"
+    implementation: []
+    tests:
+      - "TEST-UI-001"
+      - "TEST-UI-002"
+
+  "REQ-UI-003":
+    title: "Degradação de campos indisponíveis"
+    scenarios:
+      - "SCN-UI-003"
+    tasks:
+      - "TASK-UI-002"
+      - "TASK-UI-003"
+    implementation: []
+    tests:
+      - "TEST-UI-001"
+
+  "NFR-UI-001":
+    title: "Leitura robusta"
+    scenarios:
+      - "SCN-UI-003"
+    tasks:
+      - "TASK-UI-002"
+    implementation: []
+    tests:
+      - "TEST-UI-001"
+
+  "NFR-UI-002":
+    title: "Webview seguro (CSP + nonce)"
+    scenarios: []
+    tasks:
+      - "TASK-UI-003"
+    decisions:
+      - "ADR-005"
+    implementation: []
+    tests:
+      - "TEST-UI-002"
+
+  "NFR-UI-003":
+    title: "Compatibilidade e responsividade"
+    scenarios: []
+    tasks:
+      - "TASK-UI-004"
+    implementation: []
+    tests: []
+
+gaps:
+  - id: "SCN-UI-001"
+    reason: "Abrir e reutilizar o webview é integração com o host; o teste unitário cobre modelo e HTML, não o painel."
+    mitigation: "Verificação por F5 (TASK-UI-006), registrada como evidência."
+  - id: "NFR-UI-003"
+    reason: "Compatibilidade WSL e não-bloqueio da UI só se observam no host."
+    mitigation: "Verificação por F5 (TASK-UI-006); a leitura usa workspace.fs (herdado de 0001/0002)."
