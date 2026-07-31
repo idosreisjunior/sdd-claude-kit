@@ -8,7 +8,7 @@ id: "0012-spec-editor"
 type: "feature"
 title: "Editor de especificações (RF-006)"
 
-status: DRAFT
+status: PLANNED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -24,6 +24,26 @@ history:
       visualização SDD-aware); formulário estruturado e diff ficam para depois.
       Segue em DRAFT — três questões em aberto, sendo Q1 (base do editor) alta e
       candidata a ADR.
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Q1 (alta), Q2 (média) e Q3 (média) resolvidas por ADR-006: base
+      CustomTextEditor (prioridade option) para spec.md, sync sem perda; só spec.md
+      no primeiro incremento; formulário estruturado sem parse frágil (futuro).
+      Nenhuma questão em aberto.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      Design registrado em ADR-006: CustomTextEditor com render SDD-aware puro
+      (specView), HTML do webview puro com CSP/nonce (specEditorHtml) e sync por
+      WorkspaceEdit no provider (specEditor). Fronteira coerente com a arquitetura.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md gerado — 7 tarefas (EDIT-001..007) ligadas a REQ-EDIT-001..003 e às
+      NFR em traceability.yaml; TASK-EDIT-001 (ADR-006) concluída. Sem dependência
+      inválida nem requisito sem cobertura. Aguardando revisão/aprovação antes da
+      implementação.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -33,12 +53,35 @@ approval: null
 blocked_by: []
 
 # Questões já resolvidas. Preservadas em vez de apagadas.
-resolved_questions: []
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-EDIT-001
+    summary: >-
+      Base do editor: CustomTextEditor (prioridade option) para spec.md. O VS Code
+      cuida do ciclo do documento; sync por WorkspaceEdit de documento inteiro com
+      guard de eco e EOL preservado. O arquivo é a fonte de verdade.
+    adr: ADR-006
+  - question: Q2
+    date: "2026-07-31"
+    resolved_by: TASK-EDIT-001
+    summary: >-
+      Primeiro incremento cobre apenas spec.md; request.md e os demais documentos
+      entram em incrementos seguintes.
+    adr: ADR-006
+  - question: Q3
+    date: "2026-07-31"
+    resolved_by: TASK-EDIT-001
+    summary: >-
+      O formulário estruturado (incremento futuro) editará blocos delimitados ou
+      fontes estruturadas, nunca parse-e-serialize de todo o Markdown — evitando a
+      perda de dados da família dos bugs 0006/0011.
+    adr: ADR-006
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# tasks.md será gerado por /sdd-kit:tasks a partir da spec detalhada.
+# done: EDIT-001 · pending: EDIT-002..007
 tasks:
-  total: 0
-  pending: 0
+  total: 7
+  pending: 6
   in_progress: 0
-  done: 0
+  done: 1

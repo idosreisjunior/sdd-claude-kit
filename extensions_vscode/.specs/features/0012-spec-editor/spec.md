@@ -112,19 +112,17 @@ sem execução de código do projeto). A leitura/escrita usa `workspace.fs`
 
 ## Questões pendentes
 
-| # | Questão | Bloqueia | Prioridade |
-| --- | --- | --- | --- |
-| Q1 | Base do editor: **CustomTextEditor** (atado ao arquivo, edição nativa) ou **Webview panel** com edição própria? Deixada em aberto pelo ADR-005. Candidato a ADR. | REQ-EDIT-001/002 (base) | alta |
-| Q2 | Quais documentos entram no primeiro incremento — só `spec.md`, ou também `request.md`? | escopo do incremento | média |
-| Q3 | O formulário estruturado (incremento futuro) parseia o Markdown para campos, ou edita blocos delimitados? A lição do 0006/0011 é evitar parse frágil com perda. | REQ (form, futuro) | média |
+Nenhuma em aberto — Q1, Q2 e Q3 resolvidas por **ADR-006** (`decisions/`):
+
+- **Q1 (alta)** → **CustomTextEditor** (prioridade `option`) para `spec.md`;
+  sincronização por `WorkspaceEdit` de documento inteiro com guard de eco, EOL
+  preservado; o arquivo é a fonte de verdade.
+- **Q2 (média)** → primeiro incremento só `spec.md`; demais documentos depois.
+- **Q3 (média)** → o formulário estruturado (futuro) editará blocos delimitados /
+  fontes estruturadas, nunca parse-e-serialize de todo o Markdown.
 
 ## Hipóteses assumidas
 
-> HIPÓTESE: o primeiro incremento é **Markdown + visualização renderizada** (dois dos
-> quatro modos do PRD); formulário estruturado e diff são incrementos seguintes.
-
-> HIPÓTESE: o arquivo em disco permanece a fonte de verdade; o editor lê e escreve
-> nele via `workspace.fs`, sem estado paralelo.
-
-> HIPÓTESE: a base provável é `CustomTextEditor` (o PRD/§13.2 e o ADR-005 apontam
-> para isso), a confirmar por Q1.
+Nenhuma pendente — as hipóteses do rascunho viraram decisões em ADR-006
+(CustomTextEditor; arquivo como fonte de verdade; primeiro incremento Markdown +
+visão SDD-aware, sem formulário estruturado).
