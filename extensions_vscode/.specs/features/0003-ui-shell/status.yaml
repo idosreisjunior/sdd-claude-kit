@@ -8,7 +8,7 @@ id: "0003-ui-shell"
 type: "feature"
 title: "Interface — dashboard da feature e editor de especificações"
 
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -52,10 +52,22 @@ history:
       pronto, aguardando verificação no host; UI-007 (gate) verde — compile/lint
       exit 0, npm test 42/42. Integração model+HTML com os artefatos reais confere.
       Resta a verificação no host (F5, UI-006) para caminhar a VERIFIED.
+  - status: VERIFIED
+    date: "2026-07-31"
+    reason: >-
+      Verificação no host (F5) D1–D5 ✅ em evidence.md, sem divergência: abrir o
+      dashboard, conteúdo correto (progresso e contagens), reuso do painel, campos
+      pendentes e robustez a artefato ausente. UI-004/005/006 concluídas — 7/7
+      tarefas, todos os critérios de aceite do incremento verificados. Incremento do
+      dashboard (RF-005) aceito pelo usuário (direção de implementar e fechar); o
+      editor visual (RF-006) segue como incremento futuro desta feature.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
-approval: null
+approval:
+  date: "2026-07-31"
+  by: idosreisjunior
+  revision: acaa2b5ba23a6e3ce13359ebcef9d2f75b3dfd45
 
 # Bloqueios ativos. Lista vazia significa sem bloqueio.
 blocked_by: []
@@ -88,9 +100,9 @@ resolved_questions:
     adr: ADR-005
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# done: UI-001, 002, 003, 007 · pending: UI-004, 005, 006 (verificação no host)
+# done: UI-001..007 · pending: nenhum
 tasks:
   total: 7
-  pending: 3
+  pending: 0
   in_progress: 0
-  done: 4
+  done: 7

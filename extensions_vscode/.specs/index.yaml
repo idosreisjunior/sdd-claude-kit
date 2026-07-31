@@ -36,7 +36,7 @@ changes:
   - id: 0003-ui-shell
     type: feature
     title: Interface — dashboard da feature e editor de especificações
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0003-ui-shell
     created: "2026-07-31"
     updated: "2026-07-31"

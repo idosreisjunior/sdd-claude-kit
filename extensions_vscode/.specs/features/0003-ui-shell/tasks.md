@@ -3,10 +3,10 @@
 Complexidade: **P** pequena (≤ meio dia) · **M** média (≈ 1 dia) · **G** grande
 (deve ser dividida antes de começar).
 
-> Estado (2026-07-31): incremento do **dashboard read-only (RF-005)** implementado
-> e testado (compile/lint exit 0, 42 testes). UI-002/003/007 concluídas; UI-004/005
-> têm código pronto e seguem `pending` até a verificação no host (F5, UI-006). A
-> mudança está em IN_PROGRESS. O editor visual (RF-006) é incremento seguinte.
+> Estado (2026-07-31): incremento do **dashboard read-only (RF-005)** completo —
+> 7/7 tarefas. Implementado e testado (compile/lint exit 0, 42 testes) e verificado
+> no host (F5, D1–D5 em `evidence.md`). A mudança está em VERIFIED. O editor visual
+> (RF-006) é o incremento seguinte desta feature.
 
 ---
 
@@ -19,9 +19,9 @@ TASK-UI-001 ✅ (ADR-005: base do dashboard = webview)   [Q1/Q2/Q3 resolvidas]
       │         │
       │         └── TASK-UI-003 ✅ (render HTML seguro: CSP+nonce)  ── TEST-UI-002
       │                   │
-      │                   └── TASK-UI-004 🔧 (webview panel + comando)   [host]
+      │                   └── TASK-UI-004 ✅ (webview panel + comando)
       │                             │
-      │                             └── TASK-UI-005 🔧 (ação no painel Features) [host]
+      │                             └── TASK-UI-005 ✅ (ação no painel Features)
       │
       └── TASK-UI-006 (verificação no host, F5)  ── depende de 004, 005
                                                     │
@@ -126,12 +126,12 @@ escape anti-injeção, contagem indisponível, `esc`). `npm test` 42/42.
 
 ---
 
-## TASK-UI-004 — Webview panel e comando `openDashboard`
+## TASK-UI-004 — Webview panel e comando `openDashboard`  `✅ done`
 
 **Requisitos:** REQ-UI-001, NFR-UI-003
 **Dependências:** TASK-UI-003
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -159,16 +159,17 @@ Implementado: `featureDashboard.ts` cria/reutiliza o `WebviewPanel` por `id`
 (mapa + `onDidDispose`), lê os artefatos via `workspace.fs`, monta o modelo e injeta
 o HTML com `enableScripts: false` e `localResourceRoots: []`; comando
 `sddClaudeKit.openDashboard` registrado em `extension.ts` e no manifest. compile/lint
-exit 0. **Falta para `done`:** verificar a abertura/reuso no host (F5) — TASK-UI-006.
+exit 0. **Verificado no host (2026-07-31):** abertura e reuso do painel confirmados
+(D1/D3 em `evidence.md`).
 
 ---
 
-## TASK-UI-005 — Ação "Abrir dashboard" no painel Features
+## TASK-UI-005 — Ação "Abrir dashboard" no painel Features  `✅ done`
 
 **Requisitos:** REQ-UI-001
 **Dependências:** TASK-UI-004
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -192,17 +193,17 @@ selecionada. O clique simples (abrir a spec) é preservado.
 
 Implementado: `featureChangeOf()` extrai a mudança do nó; menu `view/item/context`
 (inline, `viewItem == sddFeature`) chama `openDashboard` com a feature; o clique
-simples (abrir a spec) é preservado. compile/lint exit 0. **Falta para `done`:**
-verificar a ação no host (F5) — TASK-UI-006.
+simples (abrir a spec) é preservado. compile/lint exit 0. **Verificado no host
+(2026-07-31):** a ação abre o dashboard correto (D1 em `evidence.md`).
 
 ---
 
-## TASK-UI-006 — Verificação no host (F5)
+## TASK-UI-006 — Verificação no host (F5)  `✅ done`
 
 **Requisitos:** REQ-UI-001, REQ-UI-002, REQ-UI-003
 **Dependências:** TASK-UI-004, TASK-UI-005
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -213,7 +214,13 @@ Registrar evidência.
 
 ### Critério de conclusão
 
-- SCN-UI-001, SCN-UI-002 e SCN-UI-003 confirmados no host, em `evidence.md`.
+- ✅ SCN-UI-001, SCN-UI-002 e SCN-UI-003 confirmados no host, em `evidence.md`.
+
+### Resultado (2026-07-31)
+
+D1–D5 ✅ no host (Windows 11 + WSL, VS Code), sem divergência: abrir, conteúdo
+correto (progresso 9/9 e contagens), reuso do painel, campos pendentes e robustez.
+Registro em `evidence.md`.
 
 ---
 
@@ -249,12 +256,12 @@ compile exit 0 · lint exit 0 · `npm test` 42/42 (TEST-UI-001 4 casos, TEST-UI-
 | M | 3 |
 | G | 0 |
 
-Total: 7 tarefas · 4 concluídas (001, 002, 003, 007) · 3 pendentes (004, 005, 006).
+Total: 7 tarefas · **7 concluídas (001–007)** · 0 pendentes.
 
-**Caminho crítico:** UI-001 ✅ → UI-002 ✅ → UI-003 ✅ → UI-004 🔧 → UI-005 🔧 → UI-006.
+**Caminho crítico:** UI-001 ✅ → UI-002 ✅ → UI-003 ✅ → UI-004 ✅ → UI-005 ✅ → UI-006 ✅.
 
-**Bloqueios ativos:** nenhum. Q1/Q2/Q3 → ADR-005. Resta a verificação no host (F5):
-UI-004/005 (código pronto) e UI-006 (o teste em si).
+**Bloqueios ativos:** nenhum. Q1/Q2/Q3 → ADR-005. Incremento do dashboard (RF-005)
+concluído e verificado; próximo incremento: editor visual (RF-006).
 
 **Escopo fora deste incremento:** editor visual (RF-006), tokens/tempo (0005),
 commits (0007), evidências/validação como dados vivos (0008), ações do §13.2.
