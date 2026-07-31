@@ -47,11 +47,11 @@ changes:
   - id: 0004-claude-code-adapter
     type: feature
     title: Adapter do Claude Code (montar/copiar prompt, executar ações)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0004-claude-code-adapter
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 4 — Claude Code"
     covers: [RF-011]
   - id: 0005-context-guardian

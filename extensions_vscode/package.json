@@ -127,6 +127,11 @@
           "command": "sddClaudeKit.editSpec",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "inline"
+        },
+        {
+          "command": "sddClaudeKit.openInClaudeCode",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@1"
         }
       ]
     },

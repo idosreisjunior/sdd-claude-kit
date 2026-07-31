@@ -18,6 +18,8 @@ import {
 } from './sdd/featureCreator'
 import { FeatureDashboard } from './sdd/featureDashboard'
 import { SpecEditorProvider } from './sdd/specEditor'
+import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
+import { ACTIONS, buildLaunchCommand, composePrompt } from './sdd/claudePrompt'
 import { ProjectTreeProvider } from './views/projectTreeProvider'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
@@ -69,7 +71,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.newFeature', () => newFeature(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.openDashboard', (node?: unknown) => openDashboard(dashboard, node)),
     vscode.commands.registerCommand('sddClaudeKit.editSpec', (node?: unknown) => editSpec(node)),
-    vscode.commands.registerCommand('sddClaudeKit.openInClaudeCode', openInClaudeCode),
+    vscode.commands.registerCommand('sddClaudeKit.openInClaudeCode', (node?: unknown) => openInClaudeCode(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -429,9 +431,83 @@ async function editSpec(node: unknown): Promise<void> {
   await vscode.commands.executeCommand('vscode.openWith', uri, SpecEditorProvider.viewType)
 }
 
-async function openInClaudeCode(): Promise<void> {
-  // TODO(0004-claude-code-adapter): abrir a feature no Claude Code (RF-011).
-  vscode.window.showInformationMessage(
-    'SDD: integração com o Claude Code é a feature 0004-claude-code-adapter.',
+const CLAUDE_TERMINAL_NAME = 'SDD · Claude Code'
+
+/**
+ * Abre a mudança no Claude Code (RF-011, feature 0004). Do nó da feature no painel:
+ * pergunta a ação do fluxo SDD (QuickPick), compõe o prompt (`/sdd-kit:<ação> <id>`),
+ * copia-o, e abre/reutiliza o terminal com a CLI detectada, deixando o prompt PRONTO
+ * para revisão — sem enviar (ADR-007, NFR-CC-001). CLI ausente: prompt copiado + orientação.
+ */
+async function openInClaudeCode(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para usar o Claude Code.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Abrir no Claude Code" de uma feature no painel Features.',
+    )
+    return
+  }
+
+  const pick = await vscode.window.showQuickPick(
+    ACTIONS.map((a) => ({ label: a.label, description: `/sdd-kit:${a.id}`, detail: a.objective, id: a.id })),
+    { title: `Claude Code — ${change.id}`, placeHolder: 'Escolha a ação do fluxo SDD' },
   )
+  if (!pick) {
+    return
+  }
+  const prompt = composePrompt(pick.id, change.id)
+
+  // Copia sempre (RF-011 "copiar prompt"; funciona mesmo sem a CLI e sem a UI).
+  await vscode.env.clipboard.writeText(prompt)
+
+  const detection = await detectClaudeCode(hostClaudeEnv())
+  if (!detection.available || !detection.path) {
+    vscode.window.showWarningMessage(
+      `SDD: Claude Code não detectado. Prompt copiado (${prompt}). ` +
+        'Configure "sddClaudeKit.claudeCode.path" ou instale a CLI, cole o prompt e envie você mesmo.',
+    )
+    return
+  }
+
+  // Abre/reutiliza o terminal e deixa o prompt PRONTO — não envia a ação (ADR-007,
+  // NFR-CC-001). Terminal novo inicia a CLI; reutilizado assume a CLI já em uso.
+  const existing = vscode.window.terminals.find(
+    (t) => t.name === CLAUDE_TERMINAL_NAME && t.exitStatus === undefined,
+  )
+  const terminal = existing ?? vscode.window.createTerminal({ name: CLAUDE_TERMINAL_NAME, cwd: root })
+  terminal.show()
+  if (!existing) {
+    terminal.sendText(buildLaunchCommand(detection.path), true)
+  }
+  terminal.sendText(prompt, false) // sem newline: o usuário revisa e pressiona Enter para enviar
+
+  vscode.window.showInformationMessage(
+    `SDD: prompt copiado e pronto no Claude Code (${prompt}). Revise e pressione Enter para enviar.`,
+  )
+}
+
+/** Ambiente para a detecção do Claude Code a partir do host (ADR-002, reuso de 0001). */
+function hostClaudeEnv(): ClaudeCodeEnv {
+  const configured = vscode.workspace
+    .getConfiguration('sddClaudeKit')
+    .get<string>('claudeCode.path', '')
+  return {
+    platform: process.platform,
+    pathVar: process.env.PATH,
+    pathExt: process.env.PATHEXT,
+    configuredPath: configured,
+    isExecutable: async (absPath) => {
+      try {
+        const stat = await vscode.workspace.fs.stat(vscode.Uri.file(absPath))
+        return (stat.type & vscode.FileType.File) !== 0
+      } catch {
+        return false
+      }
+    },
+  }
 }
