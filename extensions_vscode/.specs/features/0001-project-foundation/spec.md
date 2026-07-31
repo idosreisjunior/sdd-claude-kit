@@ -126,17 +126,17 @@ continuar utilizável pela CLI, sem a extensão (PRD §7.6).
 
 ## Critérios de aceite
 
-- [ ] A extensão ativa e a Activity Bar exibe Projeto e Features (SCN-FOUND-001).
-- [ ] Projeto com `.specs/config.yaml` é reconhecido como inicializado
+- [x] A extensão ativa e a Activity Bar exibe Projeto e Features (SCN-FOUND-001).
+- [x] Projeto com `.specs/config.yaml` é reconhecido como inicializado
       (SCN-FOUND-002).
-- [ ] Projeto sem `.specs` oferece "Inicializar SDD" e oculta o indicador
+- [x] Projeto sem `.specs` oferece "Inicializar SDD" e oculta o indicador
       (SCN-FOUND-003).
-- [ ] "Inicializar SDD" mostra prévia, cria `.specs` e não toca em código
+- [x] "Inicializar SDD" mostra prévia, cria `.specs` e não toca em código
       (SCN-FOUND-004).
-- [ ] "Inicializar SDD" recusa sobrescrever projeto já inicializado
+- [x] "Inicializar SDD" recusa sobrescrever projeto já inicializado
       (SCN-FOUND-005).
-- [ ] A status bar exibe o teto configurado quando inicializado (SCN-FOUND-006).
-- [ ] `npm run compile` e `npm run lint` passam após `npm install`.
+- [x] A status bar exibe o teto configurado quando inicializado (SCN-FOUND-006).
+- [x] `npm run compile` e `npm run lint` passam após `npm install`.
 
 ---
 

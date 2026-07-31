@@ -16,7 +16,7 @@ changes:
   - id: 0001-project-foundation
     type: feature
     title: Fundação do projeto e inicialização
-    status: DRAFT
+    status: VERIFIED
     path: features/0001-project-foundation
     created: "2026-07-31"
     updated: "2026-07-31"

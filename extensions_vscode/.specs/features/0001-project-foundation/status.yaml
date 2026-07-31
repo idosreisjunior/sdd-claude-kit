@@ -9,11 +9,8 @@ id: "0001-project-foundation"
 type: "feature"
 title: "Fundação do projeto e inicialização"
 
-# Toda mudança nasce em DRAFT. Mantida em DRAFT: a promoção para PLANNED pularia
-# CLARIFIED e DESIGNED (transição inválida na Fase 1) e há uma questão crítica
-# (Q2) em aberto. O plano foi gravado assim mesmo — tem valor independentemente
-# do estado.
-status: DRAFT
+# Fundação verificada no host (F5) e aprovada. Ver history e o bloco approval.
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -66,10 +63,53 @@ history:
       @types/vscode fixado em ~1.90.0 (tsc compila contra 1.90.0). Configs de
       debug (.vscode/launch.json e tasks.json) adicionadas para a verificação no
       host via F5. Nenhuma questão em aberto. Segue em DRAFT.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Verificação no host (F5) concluída — H1–H7 ✅ em evidence.md: ativação e
+      Activity Bar (Projeto+Features), seção Projeto lista os docs, indicador
+      "— / 200k", tela de boas-vindas, Inicializar com prévia sem tocar em código,
+      watcher sem reload e recusa de sobrescrita. FOUND-002/005/006 concluídas;
+      FOUND-008 (gate) verde (compile/lint/test). 10/10 tarefas.
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Formalização retroativa do estado (as skills clarify/design/approve são de
+      fase posterior). Sem questões em aberto: Q1→ADR-002, Q2→ADR-001, Q3 confirmada.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      O "como" está registrado: ADR-001 (origem/sync dos templates embutidos) e
+      ADR-002 (detecção do Claude Code por varredura do PATH), além do scaffold TS.
+      Arquitetura da fundação decidida.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md decompõe a fundação em 10 tarefas rastreáveis, ligadas a requisitos
+      e cenários em traceability.yaml. Plano completo.
+  - status: APPROVED
+    date: "2026-07-31"
+    reason: >-
+      Aprovada por idosreisjunior contra a revisão ef6cb23 (a spec e a implementação
+      da fundação trazidas ao git no commit "feat: add VS Code extension with
+      foundation and feature management"). Ver o bloco approval.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Registro retroativo da implementação: FOUND-001…010 entregues e testadas (a
+      suíte inclui os 16 testes da fundação — detection, claudeCode, initTemplates).
+  - status: VERIFIED
+    date: "2026-07-31"
+    reason: >-
+      Verificação no host (F5) H1–H7 ✅ em evidence.md; todos os critérios de aceite
+      fechados. Sem defeito aberto. Pronta para arquivamento quando desejado.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
-approval: null
+approval:
+  date: "2026-07-31"
+  by: idosreisjunior
+  revision: ef6cb23fb77ee92d0c2ad4c571d029c7c599e4de
 
 # Bloqueios ativos. Lista vazia significa sem bloqueio.
 blocked_by: []
@@ -103,9 +143,9 @@ resolved_questions:
       a superfície de tipos; tsc compila contra 1.90.0 (verificado).
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# done: 001, 003, 004, 007, 009, 010 · in_progress: 005 · pending: 002, 006, 008
+# done: 001–010 · pending: nenhum
 tasks:
   total: 10
-  pending: 3
-  in_progress: 1
-  done: 6
+  pending: 0
+  in_progress: 0
+  done: 10

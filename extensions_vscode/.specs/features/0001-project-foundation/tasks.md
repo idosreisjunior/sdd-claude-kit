@@ -3,11 +3,10 @@
 Complexidade: **P** pequena (≤ meio dia) · **M** média (≈ 1 dia) · **G** grande
 (deve ser dividida antes de começar).
 
-> Estado (2026-07-31): dependências instaladas; `build`, `lint` e `test` (16)
-> passam (exit 0). FOUND-001, -003, -004, -007, -009 e -010 concluídas.
-> FOUND-002 e -006 têm código escrito, mas seguem `pending` porque a Definição de
-> Pronto (Art. 10) exige verificação no host do editor (F5). FOUND-008 é o gate
-> final (roda quando todo o código estiver pronto).
+> Estado (2026-07-31): **feature completa — 10/10 tarefas.** `build`, `lint` e
+> `test` (34) passam (exit 0). A verificação no host (F5) H1–H7 ✅ em `evidence.md`
+> fechou FOUND-002, -005 e -006; FOUND-008 (gate) verde. Feature verificada e
+> aprovada — ver `status.yaml`.
 
 ---
 
@@ -20,18 +19,18 @@ TASK-FOUND-010 (sync-templates + verificação CI)  ◄─┘  consequência do 
       │
 TASK-FOUND-001 (scaffold TS + manifest)
       │
-      ├── TASK-FOUND-002 (ativação + UI shell)
+      ├── TASK-FOUND-002 ✅ (ativação + UI shell)
       │         │
-      │         └── TASK-FOUND-006 (watcher + setContext)
+      │         └── TASK-FOUND-006 ✅ (watcher + setContext)
       │
       ├── TASK-FOUND-003 ✅ (detector .specs/Git) ── TASK-FOUND-007 ✅ (testes)
       │         │
       │         └── TASK-FOUND-004 ✅ (detectar Claude Code)   [Q1 → ADR-002]
       │
-      └── TASK-FOUND-005 (comando Inicializar SDD)  ── depende de -003, -010
+      └── TASK-FOUND-005 ✅ (comando Inicializar SDD)  ── depende de -003, -010
                                                        (Q2 resolvida por ADR-001)
 
-TASK-FOUND-008 (npm install + build + lint)  ── depende de todo o código acima
+TASK-FOUND-008 ✅ (npm install + build + lint)  ── depende de todo o código acima
 ```
 
 ---
@@ -103,12 +102,12 @@ Estrutura base do projeto: `package.json` (manifest da extensão com
 
 ---
 
-## TASK-FOUND-002 — Ativação e shell da Activity Bar
+## TASK-FOUND-002 — Ativação e shell da Activity Bar  `✅ done`
 
 **Requisitos:** REQ-FOUND-001, REQ-FOUND-004, NFR-FOUND-002
 **Dependências:** TASK-FOUND-001
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -126,8 +125,13 @@ contexto na status bar e os comandos base. Tudo em `context.subscriptions`.
 
 ### Critério de conclusão
 
-- Ao ativar, o container e as duas seções aparecem (SCN-FOUND-001).
-- O indicador de contexto reflete `context.maxTokens` (SCN-FOUND-006).
+- ✅ Ao ativar, o container e as duas seções aparecem (SCN-FOUND-001) — H1.
+- ✅ O indicador de contexto reflete `context.maxTokens` (SCN-FOUND-006) — H3.
+
+### Resultado (2026-07-31)
+
+Verificado no host (F5): H1 (Activity Bar com Projeto+Features) e H3 (`— / 200k`
+na status bar) confirmados em `evidence.md`.
 
 ---
 
@@ -201,12 +205,12 @@ com `fs.access(X_OK)` e expõe `claudeCode` em `detectProject()`. Override
 
 ---
 
-## TASK-FOUND-005 — Comando "Inicializar SDD"  `🔧 in_progress`
+## TASK-FOUND-005 — Comando "Inicializar SDD"  `✅ done`
 
 **Requisitos:** REQ-FOUND-003, NFR-FOUND-003
 **Dependências:** TASK-FOUND-003, TASK-FOUND-010
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -238,20 +242,20 @@ placeholder); os 6 documentos de projeto vêm dos templates embutidos com
 `{{PROJECT_NAME}}`/`{{DATE}}` substituídos. Lógica pura isolada em
 `initTemplates.ts` e coberta por 4 testes (`node --test`, exit 0).
 
-**Falta para `done`:** verificar SCN-FOUND-004/005 no Extension Development Host
-(F5) — o comportamento de UI/FS no host não é executável fora do editor. Registrar
-como evidência na Fase 2. Ver também a questão do preenchimento profundo dos docs
-(marcadores `{{guia}}`/`{{...}}` remanescentes) — decisão adiada; a inicialização
-"instala templates" (RF-001), não faz descoberta.
+**Verificado (2026-07-31):** SCN-FOUND-004/005 confirmados no host (F5) — H5
+(Inicializar com prévia, sem tocar em código) e H7 (recusa de sobrescrita) em
+`evidence.md`. Questão aberta sem bloqueio: o preenchimento profundo dos docs
+(marcadores `{{guia}}`/`{{...}}` remanescentes) segue adiado por decisão — a
+inicialização "instala templates" (RF-001), não faz descoberta.
 
 ---
 
-## TASK-FOUND-006 — Watcher de `.specs/config.yaml` e contexto de UI
+## TASK-FOUND-006 — Watcher de `.specs/config.yaml` e contexto de UI  `✅ done`
 
 **Requisitos:** REQ-FOUND-001, NFR-FOUND-002
 **Dependências:** TASK-FOUND-002
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -270,7 +274,8 @@ reload.
 
 ### Critério de conclusão
 
-- Criar/remover `.specs/config.yaml` alterna a tela de boas-vindas sem reload.
+- ✅ Criar/remover `.specs/config.yaml` alterna a tela de boas-vindas sem reload
+  (H6, `evidence.md`).
 
 ---
 
@@ -349,12 +354,12 @@ negativo confirmou `check exit 1` na divergência.
 
 ---
 
-## TASK-FOUND-008 — Instalar dependências e validar build/lint
+## TASK-FOUND-008 — Instalar dependências e validar build/lint  `✅ done`
 
 **Requisitos:** REQ-FOUND-001, NFR-FOUND-001
 **Dependências:** TASK-FOUND-001, -002, -003, -004, -005, -006, -007
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -371,8 +376,8 @@ saídas como evidência. É a tarefa que transforma "código escrito" em "valida
 
 ### Critério de conclusão
 
-- `npm run compile` e `npm run lint` terminam com código 0.
-- Saídas anexadas às evidências da feature (Fase 2).
+- ✅ `npm run compile` e `npm run lint` terminam com código 0.
+- ✅ Saídas registradas em `evidence.md` (compile/lint/test 34/34).
 
 ---
 
@@ -384,10 +389,10 @@ saídas como evidência. É a tarefa que transforma "código escrito" em "valida
 | M | 4 |
 | G | 0 |
 
-Total: 10 tarefas · 6 concluídas (001, 003, 004, 007, 009, 010) · 1 em andamento (005) · 3 pendentes (002, 006, 008).
+Total: 10 tarefas · **10 concluídas (001–010)** · 0 pendentes.
 
-**Caminho crítico:** FOUND-009 ✅ → FOUND-010 ✅ → FOUND-005 🔧 → FOUND-008.
+**Caminho crítico:** FOUND-009 ✅ → FOUND-010 ✅ → FOUND-005 ✅ → FOUND-008 ✅.
 
-**Bloqueios ativos:** nenhum crítico/alto. Q1 → ADR-002, Q2 → ADR-001; resta Q3 (média, versão do VS Code).
+**Bloqueios ativos:** nenhum. Q1 → ADR-002, Q2 → ADR-001, Q3 confirmada.
 
-**Paralelizáveis agora:** FOUND-002, FOUND-006 (e concluir FOUND-005 no host via F5).
+**Pendente:** nenhum. Feature verificada no host (F5) e aprovada (VERIFIED).
