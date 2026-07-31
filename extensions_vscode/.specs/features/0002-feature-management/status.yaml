@@ -5,7 +5,7 @@ id: "0002-feature-management"
 type: "feature"
 title: "Gerenciamento de features"
 
-status: DRAFT
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -42,8 +42,45 @@ history:
       formulário e caminho de recusa). Registro em evidence.md. Feature completa —
       9/9 tarefas, todos os critérios de aceite verificados. Segue em DRAFT
       aguardando /sdd-kit:approve (a aprovação é passo explícito, não presumido).
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Formalização retroativa do estado (as skills clarify/design/approve são de
+      fase posterior; o status ficou atrás dos artefatos). Spec sem questões em
+      aberto: Q1 e A4 resolvidas por ADR-004 e ADR-003. Nada a clarificar.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      O "como" está registrado: ADR-003 (parser js-yaml, leitura robusta) e
+      ADR-004 (criação determinística — slug/escopo do usuário, status.yaml por
+      template, índice por edição textual). Arquitetura de leitura/escrita decidida.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md decompõe a feature em 9 tarefas rastreáveis, ligadas a requisitos e
+      cenários em traceability.yaml. Plano completo, sem dependência inválida.
+  - status: APPROVED
+    date: "2026-07-31"
+    reason: >-
+      Aprovada por idosreisjunior contra a revisão ef6cb23 (a versão da spec e da
+      implementação trazida ao git no commit "feat: add VS Code extension with
+      foundation and feature management"). Ver o bloco approval.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Registro retroativo da implementação: FEAT-002…007 entregues e testadas
+      (33 testes, compile/lint exit 0). O trabalho ocorreu fora do fluxo formal na
+      Fase 1; o estado é consolidado agora.
+  - status: VERIFIED
+    date: "2026-07-31"
+    reason: >-
+      Verificação no host (F5) E1–E5 ✅ em evidence.md; todos os critérios de aceite
+      fechados. Sem defeito aberto. Pronta para arquivamento quando desejado.
 
-approval: null
+approval:
+  date: "2026-07-31"
+  by: idosreisjunior
+  revision: ef6cb23fb77ee92d0c2ad4c571d029c7c599e4de
 
 blocked_by: []
 

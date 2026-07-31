@@ -8,8 +8,8 @@ version: 1
 # Identificadores nunca são reutilizados nem renumerados.
 next_id: 11
 
-# Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). Apenas 0001 foi
-# materializado em disco (spec + tasks); 0002–0010 estão registradas aqui como
+# Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001 e 0002 foram
+# materializados em disco (spec + tasks); 0003–0010 estão registradas aqui como
 # planejadas (DRAFT) e ainda NÃO possuem diretório — serão criadas com
 # /sdd-kit:new quando o trabalho nelas começar.
 changes:
@@ -26,7 +26,7 @@ changes:
   - id: 0002-feature-management
     type: feature
     title: Gerenciamento de features (criar, listar, status, progresso)
-    status: DRAFT
+    status: VERIFIED
     path: features/0002-feature-management
     created: "2026-07-31"
     updated: "2026-07-31"
