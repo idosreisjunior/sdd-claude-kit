@@ -20,6 +20,16 @@ import { FeatureDashboard } from './sdd/featureDashboard'
 import { SpecEditorProvider } from './sdd/specEditor'
 import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
 import { ACTIONS, buildLaunchCommand, composePrompt } from './sdd/claudePrompt'
+import {
+  LARGE_FILE_BYTES,
+  bandLabel,
+  buildComposition,
+  classifyUsage,
+  isBinary,
+  type Composition,
+  type ContextFile,
+  type Usage,
+} from './sdd/contextGuardian'
 import { ProjectTreeProvider } from './views/projectTreeProvider'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
@@ -51,7 +61,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.StatusBarAlignment.Right,
     100,
   )
-  context.subscriptions.push(contextIndicator)
+  contextIndicator.command = 'sddClaudeKit.measureContext'
+  const contextChannel = vscode.window.createOutputChannel('SDD · Context Guardian')
+  context.subscriptions.push(contextIndicator, contextChannel)
+
+  // Última medição do Context Guardian (feature 0005): pinta a barra de status e
+  // sobrevive a refresh(). Só em memória — não é versionada (arquitetura §5).
+  let lastUsage: Usage | undefined
 
   const refresh = async (): Promise<void> => {
     const detection = await detectProject()
@@ -62,7 +78,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     )
     projectProvider.refresh()
     featuresProvider.refresh()
-    updateContextIndicator(contextIndicator, detection.hasSpecs)
+    updateContextIndicator(contextIndicator, detection.hasSpecs, lastUsage)
+  }
+
+  const measure = async (node?: unknown): Promise<void> => {
+    const usage = await measureContext(node, contextChannel)
+    if (usage) {
+      lastUsage = usage
+      updateContextIndicator(contextIndicator, true, usage)
+    }
   }
 
   context.subscriptions.push(
@@ -72,6 +96,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.openDashboard', (node?: unknown) => openDashboard(dashboard, node)),
     vscode.commands.registerCommand('sddClaudeKit.editSpec', (node?: unknown) => editSpec(node)),
     vscode.commands.registerCommand('sddClaudeKit.openInClaudeCode', (node?: unknown) => openInClaudeCode(node)),
+    vscode.commands.registerCommand('sddClaudeKit.measureContext', (node?: unknown) => measure(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -91,17 +116,26 @@ export function deactivate(): void {
   // Nada a liberar: tudo vive em context.subscriptions.
 }
 
-function updateContextIndicator(item: vscode.StatusBarItem, hasSpecs: boolean): void {
+function updateContextIndicator(
+  item: vscode.StatusBarItem,
+  hasSpecs: boolean,
+  usage?: Usage,
+): void {
   if (!hasSpecs) {
     item.hide()
     return
   }
-  const max = vscode.workspace
-    .getConfiguration('sddClaudeKit')
-    .get<number>('context.maxTokens', 200000)
-  // TODO(0005-context-guardian): estimar o uso real. Por ora, só o teto.
-  item.text = `$(dashboard) SDD Context: — / ${formatTokens(max)}`
-  item.tooltip = 'Context Guardian — estimativa de contexto (feature 0005).'
+  if (usage) {
+    // Estimativa da última medição (feature 0005, ADR-008) — sempre "~".
+    item.text = `$(dashboard) SDD Context: ~${formatTokens(usage.used)} / ${formatTokens(usage.max)} (${bandLabel(usage.band)})`
+    item.tooltip = `Context Guardian — estimativa (~4 caracteres/token; ADR-008). Faixa: ${bandLabel(usage.band)}. Clique/aja numa feature para medir.`
+  } else {
+    const max = vscode.workspace
+      .getConfiguration('sddClaudeKit')
+      .get<number>('context.maxTokens', 200000)
+    item.text = `$(dashboard) SDD Context: — / ${formatTokens(max)}`
+    item.tooltip = 'Context Guardian — meça o contexto de uma feature no painel (feature 0005).'
+  }
   item.show()
 }
 
@@ -489,6 +523,119 @@ async function openInClaudeCode(node: unknown): Promise<void> {
   vscode.window.showInformationMessage(
     `SDD: prompt copiado e pronto no Claude Code (${prompt}). Revise e pressione Enter para enviar.`,
   )
+}
+
+/**
+ * Mede o contexto de uma mudança (RF-012, feature 0005). Coleta os documentos que o
+ * fluxo SDD carrega (docs de projeto + artefatos da mudança), estima os tokens
+ * (heurística local, ADR-008), classifica contra o teto e mostra a composição num
+ * canal de saída. Devolve o uso para pintar a barra de status, ou `undefined` quando
+ * não há o que medir. Arquivo grande é sinalizado por tamanho, sem ser lido (NFR-CTX-004).
+ */
+async function measureContext(
+  node: unknown,
+  channel: vscode.OutputChannel,
+): Promise<Usage | undefined> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para medir o contexto.')
+    return undefined
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Medir contexto" de uma feature no painel Features.',
+    )
+    return undefined
+  }
+
+  // Os documentos que o fluxo SDD carrega para a mudança (Art. 7, contexto sob demanda):
+  // docs de projeto + artefatos da própria mudança que existirem.
+  const rels = [
+    'project/constitution.md',
+    'project/architecture.md',
+    'project/standards.md',
+    ...['spec.md', 'design.md', 'tasks.md'].map((f) => `${change.path}/${f}`),
+  ]
+  const files: ContextFile[] = []
+  for (const rel of rels) {
+    const file = await readContextFile(vscode.Uri.joinPath(root, '.specs', ...rel.split('/')), rel)
+    if (file) {
+      files.push(file)
+    }
+  }
+
+  const cfg = vscode.workspace.getConfiguration('sddClaudeKit')
+  const max = cfg.get<number>('context.maxTokens', 200000)
+  const thresholds = {
+    warning: cfg.get<number>('context.warningThreshold', 0.7),
+    risk: cfg.get<number>('context.riskThreshold', 0.85),
+    block: cfg.get<number>('context.blockThreshold', 0.95),
+  }
+  const composition = buildComposition(files)
+  const usage = classifyUsage(composition.totalTokens, max, thresholds)
+
+  renderComposition(channel, change.id, composition, usage)
+  channel.show(true)
+  vscode.window.showInformationMessage(
+    `SDD: contexto de ${change.id} ≈ ${formatTokens(usage.used)} tokens (${bandLabel(usage.band)}). ` +
+      'Estimativa local — ver o canal "SDD · Context Guardian".',
+  )
+  return usage
+}
+
+/**
+ * Lê um arquivo candidato ao contexto. Robusto (NFR-CTX-002): ausente → ignorado;
+ * grande → sinalizado por tamanho sem ler (NFR-CTX-004); binário → não contado.
+ */
+async function readContextFile(uri: vscode.Uri, rel: string): Promise<ContextFile | undefined> {
+  let stat: vscode.FileStat
+  try {
+    stat = await vscode.workspace.fs.stat(uri)
+  } catch {
+    return undefined // ausente: simplesmente não entra na composição
+  }
+  const bytes = stat.size
+  if (bytes >= LARGE_FILE_BYTES) {
+    return { path: rel, bytes, binary: false } // grande: não lê (NFR-CTX-004)
+  }
+  try {
+    const data = await vscode.workspace.fs.readFile(uri)
+    if (isBinary(data.subarray(0, 4096))) {
+      return { path: rel, bytes, binary: true }
+    }
+    return { path: rel, text: Buffer.from(data).toString('utf8'), bytes, binary: false }
+  } catch {
+    return { path: rel, bytes, binary: false } // ilegível: conta como não-texto
+  }
+}
+
+/** Escreve a composição do contexto no canal de saída, sempre como estimativa. */
+function renderComposition(
+  channel: vscode.OutputChannel,
+  changeId: string,
+  composition: Composition,
+  usage: Usage,
+): void {
+  channel.clear()
+  channel.appendLine(`Context Guardian — ${changeId}`)
+  channel.appendLine(
+    `Estimativa (~4 caracteres/token; ADR-008): ~${usage.used} tokens / ${usage.max} ` +
+      `(${bandLabel(usage.band)}, ${Math.round(usage.fraction * 100)}% do teto)`,
+  )
+  channel.appendLine('')
+  channel.appendLine('Composição (maior → menor):')
+  for (const e of composition.entries) {
+    const flags = [e.large ? 'GRANDE' : '', e.binary ? 'BINÁRIO' : ''].filter(Boolean).join(' ')
+    channel.appendLine(`  ~${String(e.tokens).padStart(7)} tok  ${e.path}${flags ? `  [${flags}]` : ''}`)
+  }
+  if (composition.binary.length > 0) {
+    channel.appendLine('')
+    channel.appendLine(`Binários (não contados): ${composition.binary.join(', ')}`)
+  }
+  if (composition.large.length > 0) {
+    channel.appendLine(`Grandes (estimados por tamanho, não lidos): ${composition.large.join(', ')}`)
+  }
 }
 
 /** Ambiente para a detecção do Claude Code a partir do host (ADR-002, reuso de 0001). */

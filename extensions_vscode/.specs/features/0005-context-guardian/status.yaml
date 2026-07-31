@@ -1,0 +1,76 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0005-context-guardian"
+type: "feature"
+title: "Context Guardian — estimar, classificar e compor o contexto (RF-012)"
+
+status: IN_PROGRESS
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Materializada a partir do backlog (Épico 5 — Context Guardian, RF-012) a pedido do
+      usuário ("start the next feature 0005"). A fundação (0001) deixou o indicador da barra
+      de status como stub e a config já traz teto e limiares; esta mudança entrega o núcleo:
+      estimar, classificar e compor. Context packs (RF-013) e itens avançados ficam para
+      depois.
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Q1 (= questão arquitetural A3) resolvida por ADR-008: contagem por heurística local,
+      rotulada como estimativa, sem tokenizer nativo nem rede. Nenhuma questão em aberto.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      design.md registrado: núcleo puro contextGuardian.ts (estimateTokens, classifyUsage,
+      buildComposition, isBinary, bandLabel) e borda em extension.ts (measureContext, coleta
+      de arquivos, barra de status). Fronteira coerente com standards §6.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md gerado — 5 tarefas (CTX-001..005) ligadas a REQ-CTX-001..004 e NFR-CTX-001..004
+      em traceability.yaml; TASK-CTX-001 (ADR-008) concluída. Sem dependência inválida nem
+      requisito sem cobertura.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Implementação do incremento a pedido do usuário (mesmo precedente de 0004/0012:
+      require_approval é true, mas a implementação seguiu por ato explícito do usuário na
+      conversa; approval permanece null). CTX-002 (contextGuardian) e CTX-004 (gate)
+      concluídas e testadas (TEST-CTX-001..003, +5 casos; compile/lint exit 0, npm test
+      58/58). CTX-003 (borda measureContext + barra de status) com código pronto, aguardando
+      verificação no host. Resta a verificação no host (F5, TASK-CTX-005) para VERIFIED.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas.
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-CTX-001
+    summary: >-
+      Estratégia de contagem de tokens (= questão arquitetural A3): heurística local
+      (~4 caracteres/token), determinística e sempre rotulada como estimativa; sem tokenizer
+      nativo nem rede. Tokenizer preciso ou número real do Claude Code ficam como evolução.
+    adr: ADR-008
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# done: CTX-001, CTX-002, CTX-004 · pending: CTX-003 (código pronto), CTX-005 (host)
+tasks:
+  total: 5
+  pending: 2
+  in_progress: 0
+  done: 3

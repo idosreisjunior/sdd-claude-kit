@@ -2,6 +2,18 @@
 
 Todas as mudanças relevantes desta extensão são registradas aqui.
 
+## [0.0.2] — não lançado
+
+### Alterado
+
+- Novo ícone da Activity Bar: um documento de especificação (SDD, spec-first) com
+  uma faísca de IA, no lugar do documento genérico. Monocromático (currentColor),
+  legível a 24px em temas claro e escuro.
+
+> As features entregues desde 0.0.1 (adapter do Claude Code — 0004; Context
+> Guardian — 0005; editor de spec — 0012) são rastreadas em `.specs/`; este
+> changelog será consolidado na etapa de publicação (Épico 10).
+
 ## [0.0.1] — não lançado
 
 ### Adicionado

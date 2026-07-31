@@ -124,6 +124,7 @@ dentro de uma feature ficam na pasta `decisions/` da feature.
 | ADR-002 | Detectar o Claude Code varrendo o `PATH` (sem executar processo), com override configurável | Aceito | `features/0001-project-foundation/decisions/` |
 | ADR-003 | Ler os YAML das specs com `js-yaml` (dependência de runtime), empacotando as dependências | Aceito | `features/0002-feature-management/decisions/` |
 | ADR-007 | Captura de resultado do terminal fica fora do incremento 0004 (adapter *fire-and-forget* + humano no controle); captura é escopo de 0008 | Aceito | `features/0004-claude-code-adapter/decisions/` |
+| ADR-008 | Contagem de tokens por heurística local (~4 caracteres/token), rotulada como estimativa; sem tokenizer nativo nem rede | Aceito | `features/0005-context-guardian/decisions/` |
 
 ## 10. Questões arquiteturais em aberto
 
@@ -131,5 +132,5 @@ dentro de uma feature ficam na pasta `decisions/` da feature.
 | --- | --- | --- | --- |
 | A1 | Empacotamento: `tsc` puro vs. `esbuild`/bundler | Tamanho do .vsix e tempo de build | Antes da feature 0010 (publicação) |
 | ~~A2~~ | ~~Como o Claude Code Adapter captura resultado~~ **RESOLVIDA por ADR-007** (0004): captura fica FORA do incremento 0004 — adapter *fire-and-forget* + humano no controle; captura de resultado é escopo da feature 0008 | — | — |
-| A3 | Estratégia de contagem de tokens (heurística local vs. tokenizer real) | Precisão do Context Guardian | Feature 0005 |
+| ~~A3~~ | ~~Estratégia de contagem de tokens~~ **RESOLVIDA por ADR-008** (0005): heurística local (~4 caracteres/token), rotulada como estimativa; sem tokenizer nativo nem rede | — | — |
 | ~~A4~~ | ~~Parser de YAML/Markdown das specs~~ **RESOLVIDA por ADR-003** (js-yaml, leitura robusta) | — | — |

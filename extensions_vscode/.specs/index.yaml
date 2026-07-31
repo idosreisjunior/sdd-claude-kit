@@ -57,11 +57,11 @@ changes:
   - id: 0005-context-guardian
     type: feature
     title: Context Guardian (estimar tokens, seleção, alertas)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0005-context-guardian
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 5 — Context Guardian"
     covers: [RF-012, RF-013]
   - id: 0006-project-doctor
