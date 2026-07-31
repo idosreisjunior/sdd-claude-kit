@@ -8,10 +8,10 @@ version: 1
 # Identificadores nunca são reutilizados nem renumerados.
 next_id: 12
 
-# Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001 e 0002 foram
-# materializados em disco (spec + tasks); 0003–0010 estão registradas aqui como
-# planejadas (DRAFT) e ainda NÃO possuem diretório — serão criadas com
-# /sdd-kit:new quando o trabalho nelas começar.
+# Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
+# materializados em disco; 0004–0010 estão registradas aqui como planejadas
+# (DRAFT) e ainda NÃO possuem diretório — serão criadas com /sdd-kit:new quando o
+# trabalho nelas começar.
 changes:
   - id: 0001-project-foundation
     type: feature
@@ -35,12 +35,12 @@ changes:
     covers: [RF-003, RF-004]
   - id: 0003-ui-shell
     type: feature
-    title: Interface — Activity Bar, árvore, dashboard, editor, status bar
+    title: Interface — dashboard da feature e editor de especificações
     status: DRAFT
     path: features/0003-ui-shell
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 3 — Interface"
     covers: [RF-005, RF-006]
   - id: 0004-claude-code-adapter
