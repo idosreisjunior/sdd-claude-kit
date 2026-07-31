@@ -1,0 +1,44 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0012-spec-editor"
+type: "feature"
+title: "Editor de especificações (RF-006)"
+
+status: DRAFT
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Criada para iniciar o RF-006 (editor visual), o incremento seguinte da
+      Interface após o dashboard (RF-005, entregue e verificado na 0003). Modelada
+      como mudança própria por decisão do usuário (a 0003 permanece VERIFIED). Spec
+      inicial rascunhada com um primeiro incremento enxuto (base + Markdown +
+      visualização SDD-aware); formulário estruturado e diff ficam para depois.
+      Segue em DRAFT — três questões em aberto, sendo Q1 (base do editor) alta e
+      candidata a ADR.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# tasks.md será gerado por /sdd-kit:tasks a partir da spec detalhada.
+tasks:
+  total: 0
+  pending: 0
+  in_progress: 0
+  done: 0
