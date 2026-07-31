@@ -1,0 +1,14 @@
+.vscode/**
+.specs/**
+src/**
+scripts/**
+.github/**
+out/test/**
+templates/.sync-manifest.json
+**/*.ts
+**/*.map
+.gitignore
+.gitattributes
+tsconfig.json
+eslint.config.js
+PRD.md

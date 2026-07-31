@@ -1,0 +1,111 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0001-project-foundation"
+# feature | bug | refactor | change
+type: "feature"
+title: "Fundação do projeto e inicialização"
+
+# Toda mudança nasce em DRAFT. Mantida em DRAFT: a promoção para PLANNED pularia
+# CLARIFIED e DESIGNED (transição inválida na Fase 1) e há uma questão crítica
+# (Q2) em aberto. O plano foi gravado assim mesmo — tem valor independentemente
+# do estado.
+status: DRAFT
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Mudança criada a partir da decomposição do PRD (Épico 1, RF-001) como
+      fundação do MVP. Esqueleto da extensão escrito no repositório.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Spec e plano de tarefas gerados (9 tarefas). Mantida em DRAFT: transição
+      para PLANNED pularia CLARIFIED/DESIGNED e Q2 (crítica) segue em aberto.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Q2 (crítica) resolvida por ADR-001 (embutir templates + sync do plugin).
+      TASK-FOUND-009 concluída; TASK-FOUND-010 (script de sync + verificação em
+      CI) adicionada como consequência. Sem questão crítica em aberto; segue em
+      DRAFT porque CLARIFIED/DESIGNED chegam na Fase 2.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      TASK-FOUND-010 concluída (sync/check + job de CI; teste negativo confirmou
+      falha na divergência) e TASK-FOUND-001 concluída (scaffold compila e passa
+      no lint). TASK-FOUND-005 (comando Inicializar SDD) implementada e coberta
+      por testes unitários (build/lint/test exit 0), em in_progress até a
+      verificação no host (F5). Segue em DRAFT.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      TASK-FOUND-003 concluída: detector isolado da API do VS Code (detection.ts)
+      e coberto por TEST-FOUND-001 (5 casos). TASK-FOUND-007 segue in_progress —
+      falta TEST-FOUND-003 (detecção do Claude Code), atrelado a TASK-FOUND-004
+      (Q1). npm test: 9/9. Segue em DRAFT.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Q1 (alta) resolvida por ADR-002 (varredura do PATH sem spawn).
+      TASK-FOUND-004 e TASK-FOUND-007 concluídas (TEST-FOUND-003 entregue, 7
+      casos). npm test: 16/16. Sem bloqueio ativo; restam apenas tarefas de
+      verificação no host (002, 006), o gate final (008) e Q3 (média). Segue em
+      DRAFT porque CLARIFIED/DESIGNED chegam na Fase 2.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Q3 (média) resolvida: engines.vscode ^1.90.0 confirmado adequado e
+      @types/vscode fixado em ~1.90.0 (tsc compila contra 1.90.0). Configs de
+      debug (.vscode/launch.json e tasks.json) adicionadas para a verificação no
+      host via F5. Nenhuma questão em aberto. Segue em DRAFT.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas.
+resolved_questions:
+  - question: Q2
+    date: "2026-07-31"
+    resolved_by: TASK-FOUND-009
+    summary: >-
+      Embutir os templates no pacote da extensão, com plugins/sdd-kit/templates
+      como fonte única no monorepo e sincronização por build (sync-templates) +
+      verificação em CI. A inicialização não depende do plugin instalado.
+    adr: ADR-001
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-FOUND-004
+    summary: >-
+      Detectar o Claude Code varrendo o PATH do host (sem executar processo),
+      com nomes por plataforma (PATHEXT no Windows, bit de execução no POSIX) e
+      override via sddClaudeKit.claudeCode.path. A detecção nunca lança nem trava.
+    adr: ADR-002
+  - question: Q3
+    date: "2026-07-31"
+    resolved_by: TASK-FOUND-001
+    summary: >-
+      engines.vscode ^1.90.0 é adequado: todas as APIs da fundação
+      (TreeDataProvider, workspace.fs, Uri.joinPath, viewsWelcome,
+      createFileSystemWatcher, StatusBarItem, setContext, modais) existem antes
+      de 1.90. @types/vscode fixado em ~1.90.0 para o mínimo declarado casar com
+      a superfície de tipos; tsc compila contra 1.90.0 (verificado).
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# done: 001, 003, 004, 007, 009, 010 · in_progress: 005 · pending: 002, 006, 008
+tasks:
+  total: 10
+  pending: 3
+  in_progress: 1
+  done: 6

@@ -1,0 +1,117 @@
+# Índice de todas as mudanças especificadas neste projeto.
+#
+# Responde "o que existe aqui" sem abrir nenhuma spec — é o que evita carregar
+# a árvore inteira de .specs para se orientar. Ver constitution.md, Art. 7.
+version: 1
+
+# Próximo identificador a ser alocado. Incrementado a cada mudança criada.
+# Identificadores nunca são reutilizados nem renumerados.
+next_id: 11
+
+# Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). Apenas 0001 foi
+# materializado em disco (spec + tasks); 0002–0010 estão registradas aqui como
+# planejadas (DRAFT) e ainda NÃO possuem diretório — serão criadas com
+# /sdd-kit:new quando o trabalho nelas começar.
+changes:
+  - id: 0001-project-foundation
+    type: feature
+    title: Fundação do projeto e inicialização
+    status: DRAFT
+    path: features/0001-project-foundation
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: true
+    epic: "Épico 1 — Estrutura do projeto"
+    covers: [RF-001]
+  - id: 0002-feature-management
+    type: feature
+    title: Gerenciamento de features (criar, listar, status, progresso)
+    status: DRAFT
+    path: features/0002-feature-management
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: true
+    epic: "Épico 2 — Gerenciamento de features"
+    covers: [RF-003, RF-004]
+  - id: 0003-ui-shell
+    type: feature
+    title: Interface — Activity Bar, árvore, dashboard, editor, status bar
+    status: DRAFT
+    path: features/0003-ui-shell
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 3 — Interface"
+    covers: [RF-005, RF-006]
+  - id: 0004-claude-code-adapter
+    type: feature
+    title: Adapter do Claude Code (montar/copiar prompt, executar ações)
+    status: DRAFT
+    path: features/0004-claude-code-adapter
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 4 — Claude Code"
+    covers: [RF-011]
+  - id: 0005-context-guardian
+    type: feature
+    title: Context Guardian (estimar tokens, seleção, alertas)
+    status: DRAFT
+    path: features/0005-context-guardian
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 5 — Context Guardian"
+    covers: [RF-012, RF-013]
+  - id: 0006-project-doctor
+    type: feature
+    title: Project Doctor (validar estrutura e diagnósticos)
+    status: DRAFT
+    path: features/0006-project-doctor
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 6 — Project Doctor"
+    covers: [RF-002]
+  - id: 0007-git-traceability
+    type: feature
+    title: Git e rastreabilidade (diff, fora de escopo, requisito→teste)
+    status: DRAFT
+    path: features/0007-git-traceability
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 7 — Git e rastreabilidade"
+    covers: [RF-014, RF-015, RF-018]
+  - id: 0008-evidence-validation
+    type: feature
+    title: Evidências e validação da feature
+    status: DRAFT
+    path: features/0008-evidence-validation
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 8 — Evidências e validação"
+    covers: [RF-016, RF-017]
+  - id: 0009-metrics
+    type: feature
+    title: Métricas locais (tokens, tempo, produtividade)
+    status: DRAFT
+    path: features/0009-metrics
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 9 — Métricas"
+    covers: [RF-021, RF-022]
+  - id: 0010-publishing
+    type: feature
+    title: Publicação (ícone, Marketplace, docs, pipeline)
+    status: DRAFT
+    path: features/0010-publishing
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: false
+    epic: "Épico 10 — Publicação"
+    covers: [RF-023]
+
+archive: []

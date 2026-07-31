@@ -1,0 +1,155 @@
+{
+  "name": "sdd-claude-kit-vscode",
+  "displayName": "SDD Claude Kit",
+  "description": "Cockpit visual de Spec-Driven Development para Claude Code dentro do VS Code.",
+  "version": "0.0.1",
+  "publisher": "idosreisjunior",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other",
+    "SCM Providers"
+  ],
+  "keywords": [
+    "spec-driven-development",
+    "sdd",
+    "claude-code",
+    "requirements",
+    "traceability"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/idosreisjunior/sdd-claude-kit"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sddClaudeKit",
+          "title": "SDD Claude Kit",
+          "icon": "resources/sdd-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "sddClaudeKit": [
+        {
+          "id": "sddProject",
+          "name": "Projeto"
+        },
+        {
+          "id": "sddFeatures",
+          "name": "Features"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "sddProject",
+        "contents": "Este workspace ainda não tem a estrutura SDD (.specs).\n[Inicializar SDD](command:sddClaudeKit.initProject)\nA inicialização não sobrescreve arquivos de código.",
+        "when": "!sddClaudeKit.initialized"
+      }
+    ],
+    "commands": [
+      {
+        "command": "sddClaudeKit.initProject",
+        "title": "SDD: Inicializar projeto",
+        "category": "SDD Claude Kit"
+      },
+      {
+        "command": "sddClaudeKit.refresh",
+        "title": "SDD: Recarregar",
+        "category": "SDD Claude Kit",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "sddClaudeKit.newFeature",
+        "title": "SDD: Nova feature",
+        "category": "SDD Claude Kit",
+        "icon": "$(add)"
+      },
+      {
+        "command": "sddClaudeKit.openInClaudeCode",
+        "title": "SDD: Abrir no Claude Code",
+        "category": "SDD Claude Kit"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "sddClaudeKit.refresh",
+          "when": "view == sddProject || view == sddFeatures",
+          "group": "navigation"
+        },
+        {
+          "command": "sddClaudeKit.newFeature",
+          "when": "view == sddFeatures",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SDD Claude Kit",
+      "properties": {
+        "sddClaudeKit.context.maxTokens": {
+          "type": "number",
+          "default": 200000,
+          "description": "Teto operacional de tokens de contexto por execução (RF-012)."
+        },
+        "sddClaudeKit.context.warningThreshold": {
+          "type": "number",
+          "default": 0.7,
+          "description": "Fração do teto a partir da qual o indicador entra em 'atenção'."
+        },
+        "sddClaudeKit.context.riskThreshold": {
+          "type": "number",
+          "default": 0.85,
+          "description": "Fração do teto a partir da qual o indicador entra em 'risco'."
+        },
+        "sddClaudeKit.context.blockThreshold": {
+          "type": "number",
+          "default": 0.95,
+          "description": "Fração do teto a partir da qual a execução é bloqueada ou exige ação do usuário."
+        },
+        "sddClaudeKit.metrics.telemetry": {
+          "type": "boolean",
+          "default": false,
+          "description": "Envio de telemetria. Desligado por padrão (RNF-004)."
+        },
+        "sddClaudeKit.claudeCode.path": {
+          "type": "string",
+          "default": "",
+          "description": "Caminho explícito para o executável do Claude Code. Vazio = detectar pelo PATH (ADR-002)."
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src",
+    "test": "node --test ./out/test",
+    "sync-templates": "node scripts/sync-templates.mjs",
+    "check-templates": "node scripts/check-templates.mjs",
+    "vscode:prepublish": "npm run sync-templates && npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "~1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.0"
+  }
+}

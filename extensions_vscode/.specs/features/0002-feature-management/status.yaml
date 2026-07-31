@@ -1,0 +1,68 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+version: 1
+
+id: "0002-feature-management"
+type: "feature"
+title: "Gerenciamento de features"
+
+status: DRAFT
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Materializada a partir do backlog (Épico 2, RF-003/RF-004). Incremento de
+      leitura/listagem implementado: o painel Features lê index.yaml, agrupa por
+      status e abre a spec ao clicar. A4 resolvida por ADR-003 (js-yaml).
+      Criação de feature e progresso ficam para incrementos seguintes.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      TASK-FEAT-007 concluída: progresso done/total por feature. parseTaskProgress
+      (lógica pura, robusta) lê o bloco tasks do status.yaml e o provider exibe no
+      item. Coberto por TEST-FEAT-003. compile/lint exit 0, npm test 23/23. Restam
+      FEAT-006 (bloqueada por Q1) e FEAT-008 (verificação no host). Segue em DRAFT.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Q1 (alta) resolvida por ADR-004 (formulário determinístico: slug/escopo do
+      usuário, status.yaml por template, índice por edição textual, spec delegada a
+      /sdd-kit:spec). TASK-FEAT-006 concluída (featureCreator.ts + comando
+      newFeature), coberta por TEST-FEAT-002 (10 casos) e por verificação de
+      integração. Sem bloqueio ativo; resta FEAT-008 (verificação no host).
+      compile/lint exit 0, npm test 33/33. Segue em DRAFT.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      TASK-FEAT-008 concluída: verificação no host (F5) E1–E5 ✅, sem divergência
+      (listagem agrupada, progresso 6/10 e 8/9, clique abre a spec, criação pelo
+      formulário e caminho de recusa). Registro em evidence.md. Feature completa —
+      9/9 tarefas, todos os critérios de aceite verificados. Segue em DRAFT
+      aguardando /sdd-kit:approve (a aprovação é passo explícito, não presumido).
+
+approval: null
+
+blocked_by: []
+
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-FEAT-006
+    summary: >-
+      O formulário de criação é um scaffolder determinístico: slug e escopo são
+      entradas do usuário (não traduções automáticas), o id é alocado reconciliando
+      next_id com o disco, o status.yaml nasce por substituição de template e a
+      entrada do index.yaml é inserida por edição textual (preserva comentários e
+      layout, campos na ordem da CLI). O rascunho inteligente da spec é delegado a
+      /sdd-kit:spec (Claude Code).
+    adr: ADR-004
+
+# done: 001–009 · pending: nenhum
+tasks:
+  total: 9
+  pending: 0
+  in_progress: 0
+  done: 9

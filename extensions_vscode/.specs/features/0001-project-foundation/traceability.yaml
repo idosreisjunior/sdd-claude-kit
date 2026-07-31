@@ -1,0 +1,120 @@
+# Matriz de rastreabilidade — 0001-project-foundation
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0001-project-foundation"
+
+requirements:
+
+  "REQ-FOUND-001":
+    title: "Ativação e Activity Bar"
+    scenarios:
+      - "SCN-FOUND-001"
+    tasks:
+      - "TASK-FOUND-001"
+      - "TASK-FOUND-002"
+      - "TASK-FOUND-006"
+    implementation: []
+    tests:
+      - "TEST-FOUND-002"
+
+  "REQ-FOUND-002":
+    title: "Diagnóstico do workspace"
+    scenarios:
+      - "SCN-FOUND-002"
+      - "SCN-FOUND-003"
+    tasks:
+      - "TASK-FOUND-003"
+      - "TASK-FOUND-004"
+      - "TASK-FOUND-007"
+    decisions:
+      - "ADR-002"
+    implementation:
+      - "src/sdd/detection.ts"
+      - "src/sdd/claudeCode.ts"
+      - "src/sdd/projectDetector.ts"
+    tests:
+      - "TEST-FOUND-001"    # realizado em src/test/detection.test.ts
+      - "TEST-FOUND-003"    # realizado em src/test/claudeCode.test.ts
+
+  "REQ-FOUND-003":
+    title: "Inicialização da estrutura .specs"
+    scenarios:
+      - "SCN-FOUND-004"
+      - "SCN-FOUND-005"
+    tasks:
+      - "TASK-FOUND-009"
+      - "TASK-FOUND-010"
+      - "TASK-FOUND-005"
+    decisions:
+      - "ADR-001"
+    implementation:
+      - "src/sdd/initializer.ts"
+      - "src/sdd/initTemplates.ts"
+      - "src/extension.ts"
+      - "scripts/sync-templates.mjs"
+      - "scripts/check-templates.mjs"
+      - "scripts/templates-lib.mjs"
+    tests:
+      - "TEST-FOUND-004"
+      - "TEST-FOUND-005"
+
+  "REQ-FOUND-004":
+    title: "Indicador de contexto (shell)"
+    scenarios:
+      - "SCN-FOUND-006"
+    tasks:
+      - "TASK-FOUND-002"
+    implementation: []
+    tests:
+      - "TEST-FOUND-002"
+
+  "NFR-FOUND-001":
+    title: "Compatibilidade Windows/Linux/WSL"
+    scenarios: []
+    tasks:
+      - "TASK-FOUND-003"
+      - "TASK-FOUND-008"
+    implementation:
+      - "src/sdd/detection.ts"
+      - "src/sdd/projectDetector.ts"
+    tests:
+      - "TEST-FOUND-001"
+
+  "NFR-FOUND-002":
+    title: "Não bloquear o editor"
+    scenarios: []
+    tasks:
+      - "TASK-FOUND-002"
+      - "TASK-FOUND-006"
+    implementation: []
+    tests: []
+
+  "NFR-FOUND-003":
+    title: "CLI como base"
+    scenarios: []
+    tasks:
+      - "TASK-FOUND-005"
+      - "TASK-FOUND-010"
+    implementation:
+      - "src/sdd/initTemplates.ts"
+      - "scripts/sync-templates.mjs"
+      - "templates/.sync-manifest.json"
+    tests:
+      - "TEST-FOUND-004"
+      - "TEST-FOUND-005"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "NFR-FOUND-002"
+    reason: "Não bloquear a UI é difícil de afirmar por teste unitário; depende do host do editor."
+    mitigation: "Uso obrigatório de APIs assíncronas (workspace.fs, Promises) e verificação manual no Extension Development Host, registrada em evidence na Fase 2."
+  - id: "SCN-FOUND-006"
+    reason: "O item de status bar é integração com o host; teste unitário cobre o cálculo do rótulo (TEST-FOUND-002), não a renderização."
+    mitigation: "Verificação manual no Extension Development Host."

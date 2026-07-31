@@ -1,0 +1,89 @@
+# Matriz de rastreabilidade — 0002-feature-management
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+version: 1
+
+feature: "0002-feature-management"
+
+requirements:
+
+  "REQ-FEAT-001":
+    title: "Ler o índice de mudanças"
+    scenarios:
+      - "SCN-FEAT-001"
+    tasks:
+      - "TASK-FEAT-002"
+      - "TASK-FEAT-005"
+    decisions:
+      - "ADR-003"
+    implementation:
+      - "src/sdd/specsIndex.ts"
+    tests:
+      - "TEST-FEAT-001"
+
+  "REQ-FEAT-002":
+    title: "Listar agrupado por status"
+    scenarios:
+      - "SCN-FEAT-002"
+    tasks:
+      - "TASK-FEAT-003"
+      - "TASK-FEAT-005"
+    implementation:
+      - "src/sdd/specsIndex.ts"
+      - "src/views/featuresTreeProvider.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-FEAT-001"
+
+  "REQ-FEAT-003":
+    title: "Abrir a spec ao clicar"
+    scenarios:
+      - "SCN-FEAT-003"
+    tasks:
+      - "TASK-FEAT-004"
+    implementation:
+      - "src/views/featuresTreeProvider.ts"
+    tests: []
+
+  "REQ-FEAT-004":
+    title: "Criar feature (formulário)"
+    scenarios: []
+    tasks:
+      - "TASK-FEAT-006"
+    decisions:
+      - "ADR-004"
+    implementation:
+      - "src/sdd/featureCreator.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-FEAT-002"
+
+  "REQ-FEAT-005":
+    title: "Progresso de tarefas"
+    scenarios: []
+    tasks:
+      - "TASK-FEAT-007"
+    implementation:
+      - "src/sdd/specsIndex.ts"
+      - "src/views/featuresTreeProvider.ts"
+    tests:
+      - "TEST-FEAT-003"
+
+  "NFR-FEAT-001":
+    title: "Leitura robusta"
+    scenarios: []
+    tasks:
+      - "TASK-FEAT-002"
+      - "TASK-FEAT-005"
+    implementation:
+      - "src/sdd/specsIndex.ts"
+    tests:
+      - "TEST-FEAT-001"
+
+gaps:
+  - id: "SCN-FEAT-003"
+    reason: "Abrir arquivo é integração com o host; o teste unitário cobre o modelo, não o clique."
+    mitigation: "Verificado por F5 (TASK-FEAT-008, E3) — evidence.md."
+  - id: "TASK-FEAT-006"
+    reason: "O comportamento de UI/FS do formulário só é verificável no host do editor."
+    mitigation: "Verificado por F5 (TASK-FEAT-008, E4/E5); a lógica pura é coberta por TEST-FEAT-002."

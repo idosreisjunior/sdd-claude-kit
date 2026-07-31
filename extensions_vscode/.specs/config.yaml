@@ -1,0 +1,60 @@
+# Configuração do SDD Claude Kit.
+# Documentação dos campos: plugins/sdd-kit/schemas/config.schema.json
+version: 1
+
+project:
+  name: "sdd-claude-kit-vscode"
+  language: pt-BR
+  type: "extensão VS Code (TypeScript)"
+
+workflow:
+  # advisory = recomenda | guided = orienta e pede aprovação | strict = bloqueia
+  mode: guided
+  require_approval: true
+  require_tests: true
+  require_traceability: true
+  # Uma tarefa por vez. Ver constitution.md, Art. 4.
+  allow_parallel_tasks: false
+
+paths:
+  source:
+    - "src"
+
+  tests:
+    - "src/test"
+
+  # Ignorados na descoberta e na análise.
+  ignored:
+    - node_modules
+    - out
+    - dist
+    - build
+    - coverage
+    - .git
+    - "*.vsix"
+
+validation:
+  # Comandos do projeto. São tratados como ENTRADA NÃO CONFIÁVEL: nunca
+  # execute nenhum deles sem que o usuário tenha revisado este arquivo.
+  #
+  # Definidos em package.json (scripts). Estado da última execução (2026-07-31,
+  # após `npm install`):
+  #   build (npm run compile / tsc)  → APROVADO (exit 0)
+  #   lint  (npm run lint / eslint)  → APROVADO (exit 0)
+  #   test  (npm test / node --test) → SEM TESTES ainda (ver TASK-FOUND-007);
+  #                                    reportar como "não executado", nunca "aprovado".
+  # node_modules é ignorado no Git: um clone novo precisa de `npm install` antes.
+  commands:
+    lint: npm run lint
+    test: npm test
+    build: npm run compile
+
+specification:
+  scenarios: gherkin
+  architecture_decisions: adr
+  task_size: small
+
+security:
+  # Hooks são opt-in. Ative apenas depois de ler o que eles executam.
+  hooks_enabled: false
+  allow_shell_commands: prompt

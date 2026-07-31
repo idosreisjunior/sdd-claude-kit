@@ -1,0 +1,15 @@
+# Índice de todas as mudanças especificadas neste projeto.
+#
+# Responde "o que existe aqui" sem abrir nenhuma spec — é o que evita carregar
+# a árvore inteira de .specs para se orientar. Ver constitution.md, Art. 7.
+version: 1
+
+# Próximo identificador a ser alocado. Incrementado a cada mudança criada.
+# Identificadores nunca são reutilizados nem renumerados.
+next_id: 1
+
+# {{guia: cada entrada tem id, type, title, status, path, created, updated.
+#   Datas SEMPRE entre aspas. }}
+changes: []
+
+archive: []

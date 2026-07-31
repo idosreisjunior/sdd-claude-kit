@@ -1,0 +1,3 @@
+# Templates embutidos são normalizados em LF para que a verificação de
+# frescor (check-templates) seja estável entre Windows, Linux e WSL.
+templates/** text eol=lf

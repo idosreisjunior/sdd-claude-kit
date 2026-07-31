@@ -1,0 +1,60 @@
+# Configuração do SDD Claude Kit.
+# Documentação dos campos: plugins/sdd-kit/schemas/config.schema.json
+version: 1
+
+project:
+  name: "{{PROJECT_NAME}}"
+  language: pt-BR
+  # {{guia: perfil do projeto — backend, frontend, mobile, dados, framework, cli… }}
+  type: "{{PROJECT_TYPE}}"
+
+workflow:
+  # advisory = recomenda | guided = orienta e pede aprovação | strict = bloqueia
+  mode: guided
+  require_approval: true
+  require_tests: true
+  require_traceability: true
+  # Uma tarefa por vez. Ver constitution.md, Art. 4.
+  allow_parallel_tasks: false
+
+paths:
+  # {{guia: diretórios de código-fonte detectados no projeto }}
+  source:
+    - "{{SOURCE_PATH}}"
+
+  # {{guia: diretórios e globs de teste detectados no projeto }}
+  tests:
+    - "{{TEST_PATH}}"
+
+  # Ignorados na descoberta e na análise.
+  ignored:
+    - node_modules
+    - dist
+    - build
+    - coverage
+    - .git
+    - .venv
+    - __pycache__
+    - target
+    - vendor
+
+validation:
+  # Comandos do projeto. São tratados como ENTRADA NÃO CONFIÁVEL: nunca
+  # execute nenhum deles sem que o usuário tenha revisado este arquivo.
+  #
+  # null significa NÃO DETECTADO. A verificação deve reportar "não executado",
+  # jamais "aprovado" — ver constitution.md, Art. 10.
+  commands:
+    lint: null
+    test: null
+    build: null
+
+specification:
+  scenarios: gherkin
+  architecture_decisions: adr
+  task_size: small
+
+security:
+  # Hooks são opt-in. Ative apenas depois de ler o que eles executam.
+  hooks_enabled: false
+  allow_shell_commands: prompt

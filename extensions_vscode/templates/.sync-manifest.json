@@ -1,0 +1,25 @@
+{
+  "syncedFrom": "plugins/sdd-kit/templates",
+  "fileCount": 18,
+  "combinedHash": "af1b0a7d0c35eaa190974c24a753ee27e7a678c30e4f68e69cadb26271147a04",
+  "files": {
+    "README.md": "571ba241b2460892eabb622a951fdd0a088b1d8e0d1d0fbfa9a870bf2ccb4d17",
+    "pt-BR/_shared/request.md": "8dd2439ff573cac5e8fcfc22b0fbe9b1084bd01311f0fd62f683b18d80dc799f",
+    "pt-BR/_shared/status.yaml": "65049a294fe0c916d80f3f501996a5e7bbfb6b6433840d06334198b3469eada4",
+    "pt-BR/_shared/tasks.md": "f33bbac61966a4c4d74ebae55f464e827035a672dff6321ec1fb8b51c38985aa",
+    "pt-BR/_shared/traceability.yaml": "0c7dcfd600c7fcb8475b65fa077eb4c3ea7c2da870b14154384c53b8ee38614c",
+    "pt-BR/adr/ADR-template.md": "14db9e4efbfc9aae6421c27587d4339a06872e12fbc07dc4b89798671307fff4",
+    "pt-BR/bug/spec.md": "2ca3126a99ff1b8767e66a9cfab5356c1c5624ccbcd1547f0a06d4396041592d",
+    "pt-BR/change/spec.md": "514ef7cca931ad56ece7298993bcb32caea9f800f9a697c36779e2c795763d7c",
+    "pt-BR/config.yaml": "e86b892321a378cbeaa049dc6beeadf12bb77b87a46f7e701ce401ef36384e40",
+    "pt-BR/feature/spec.md": "c18c758dd0d5e3d822fa4256a4e85eac9d5fdd54de145049a18b23d98e006901",
+    "pt-BR/index.yaml": "38f3a131d956fc6d5b71f1ab65a53ffbb8be21507fd7a800351521411c43f08d",
+    "pt-BR/project/architecture.md": "37db11163b13182e5b9a0d794656f95c3a5d9a2c14be17c7347014000c26cabe",
+    "pt-BR/project/constitution.md": "ecc2d508cbe610427508210e5f68d899625e3bf9150bc58c6644723d61f48365",
+    "pt-BR/project/context.md": "b37d88dc9e17b42488a5116728d3333a907bc1106401bc07823ebfbb71a10147",
+    "pt-BR/project/glossary.md": "e7303d1aa57ab2c5ceb8dcaa9c761fce52ab04bb23f36ae221ce7db1dfc04096",
+    "pt-BR/project/standards.md": "b9fe7f69b1536a296f8845109499939c465045c357c45a4f27aba2b3d12f1d14",
+    "pt-BR/project/vision.md": "022aca4cae11d21b6f8ea2f71ce2b0341d6d685f5ec38f88e78ef0a82fd03e4d",
+    "pt-BR/refactor/spec.md": "c1f31627dd823976f24fd53d086c259701dd3f36e7ce15ea9908f7fa46ba0224"
+  }
+}
