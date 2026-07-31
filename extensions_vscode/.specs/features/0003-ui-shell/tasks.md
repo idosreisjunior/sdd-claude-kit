@@ -3,9 +3,10 @@
 Complexidade: **P** pequena (≤ meio dia) · **M** média (≈ 1 dia) · **G** grande
 (deve ser dividida antes de começar).
 
-> Estado (2026-07-31): plano do **primeiro incremento** (dashboard read-only,
-> RF-005). Q1/Q2/Q3 resolvidas por ADR-005; a mudança está em PLANNED. O editor
-> visual (RF-006) é incremento seguinte e não está neste plano.
+> Estado (2026-07-31): incremento do **dashboard read-only (RF-005)** implementado
+> e testado (compile/lint exit 0, 42 testes). UI-002/003/007 concluídas; UI-004/005
+> têm código pronto e seguem `pending` até a verificação no host (F5, UI-006). A
+> mudança está em IN_PROGRESS. O editor visual (RF-006) é incremento seguinte.
 
 ---
 
@@ -14,13 +15,13 @@ Complexidade: **P** pequena (≤ meio dia) · **M** média (≈ 1 dia) · **G** 
 ```
 TASK-UI-001 ✅ (ADR-005: base do dashboard = webview)   [Q1/Q2/Q3 resolvidas]
       │
-      ├── TASK-UI-002 (modelo puro: lê status/traceability/spec)  ── TEST-UI-001
+      ├── TASK-UI-002 ✅ (modelo puro: lê status/traceability/spec) ── TEST-UI-001
       │         │
-      │         └── TASK-UI-003 (render HTML seguro: CSP+nonce)   ── TEST-UI-002
+      │         └── TASK-UI-003 ✅ (render HTML seguro: CSP+nonce)  ── TEST-UI-002
       │                   │
-      │                   └── TASK-UI-004 (webview panel + comando)
+      │                   └── TASK-UI-004 🔧 (webview panel + comando)   [host]
       │                             │
-      │                             └── TASK-UI-005 (ação no painel Features)
+      │                             └── TASK-UI-005 🔧 (ação no painel Features) [host]
       │
       └── TASK-UI-006 (verificação no host, F5)  ── depende de 004, 005
                                                     │
@@ -47,12 +48,12 @@ sem botões de ação neste incremento.
 
 ---
 
-## TASK-UI-002 — Modelo do dashboard (`dashboardModel.ts`)
+## TASK-UI-002 — Modelo do dashboard (`dashboardModel.ts`)  `✅ done`
 
 **Requisitos:** REQ-UI-002, REQ-UI-003, NFR-UI-001
 **Dependências:** TASK-UI-001
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -75,19 +76,26 @@ inválido resulta em campo indisponível, nunca em exceção (NFR-UI-001).
 
 ### Critério de conclusão
 
-- Contagens vêm das fontes estruturadas (ADR-005/Q2): tarefas de `status.yaml`;
+- ✅ Contagens vêm das fontes estruturadas (ADR-005/Q2): tarefas de `status.yaml`;
   requisitos/cenários/testes/arquivos de `traceability.yaml`; critérios pela
   contagem de checkbox e objetivo da seção `## Objetivo` do `spec.md`.
-- `buildDashboardModel()` nunca lança (SCN-UI-003).
+- ✅ `buildDashboardModel()` nunca lança (SCN-UI-003).
+
+### Resultado (2026-07-31)
+
+`dashboardModel.ts` (puro): monta `DashboardModel` tipado a partir dos artefatos;
+`Count` discrimina disponível vs. indisponível. Coberto por **TEST-UI-001** (4
+casos: modelo completo, traceability ausente, YAML inválido, sem objetivo).
+Integração com os artefatos reais da 0002 confere as contagens. `npm test` 42/42.
 
 ---
 
-## TASK-UI-003 — Renderização HTML segura (`dashboardHtml.ts`)
+## TASK-UI-003 — Renderização HTML segura (`dashboardHtml.ts`)  `✅ done`
 
 **Requisitos:** REQ-UI-002, REQ-UI-003, NFR-UI-002
 **Dependências:** TASK-UI-002
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -107,8 +115,14 @@ campos indisponíveis. Não acessa a rede nem embute recurso remoto (NFR-UI-002)
 
 ### Critério de conclusão
 
-- O HTML gerado tem `<meta http-equiv="Content-Security-Policy">` com `nonce` e
+- ✅ O HTML gerado tem `<meta http-equiv="Content-Security-Policy">` com `nonce` e
   `default-src 'none'`; nenhum texto de artefato entra sem escape.
+
+### Resultado (2026-07-31)
+
+`dashboardHtml.ts` (puro): gera o documento com CSP+nonce, `esc()` em todo texto,
+tema `--vscode-*`, sem `<script>`. Coberto por **TEST-UI-002** (4 casos: CSP/nonce,
+escape anti-injeção, contagem indisponível, `esc`). `npm test` 42/42.
 
 ---
 
@@ -139,6 +153,14 @@ com `localResourceRoots` restrito e `enableScripts` só se necessário. Comando
 - Acionar o comando abre um painel com o dashboard da mudança; reabrir a mesma
   feature reutiliza o painel (SCN-UI-001).
 
+### Resultado parcial (2026-07-31)
+
+Implementado: `featureDashboard.ts` cria/reutiliza o `WebviewPanel` por `id`
+(mapa + `onDidDispose`), lê os artefatos via `workspace.fs`, monta o modelo e injeta
+o HTML com `enableScripts: false` e `localResourceRoots: []`; comando
+`sddClaudeKit.openDashboard` registrado em `extension.ts` e no manifest. compile/lint
+exit 0. **Falta para `done`:** verificar a abertura/reuso no host (F5) — TASK-UI-006.
+
 ---
 
 ## TASK-UI-005 — Ação "Abrir dashboard" no painel Features
@@ -166,6 +188,13 @@ selecionada. O clique simples (abrir a spec) é preservado.
 
 - A ação aparece na feature e abre o dashboard correto (SCN-UI-001).
 
+### Resultado parcial (2026-07-31)
+
+Implementado: `featureChangeOf()` extrai a mudança do nó; menu `view/item/context`
+(inline, `viewItem == sddFeature`) chama `openDashboard` com a feature; o clique
+simples (abrir a spec) é preservado. compile/lint exit 0. **Falta para `done`:**
+verificar a ação no host (F5) — TASK-UI-006.
+
 ---
 
 ## TASK-UI-006 — Verificação no host (F5)
@@ -188,12 +217,12 @@ Registrar evidência.
 
 ---
 
-## TASK-UI-007 — Gate: build, lint e testes
+## TASK-UI-007 — Gate: build, lint e testes  `✅ done`
 
 **Requisitos:** NFR-UI-001, NFR-UI-002
 **Dependências:** TASK-UI-002, -003, -004, -005
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -202,7 +231,13 @@ evidência. Inclui TEST-UI-001 e TEST-UI-002.
 
 ### Critério de conclusão
 
-- `compile` e `lint` terminam com código 0; a suíte passa (novos testes inclusos).
+- ✅ `compile` e `lint` terminam com código 0; a suíte passa (42/42, +8 novos).
+
+### Resultado (2026-07-31)
+
+compile exit 0 · lint exit 0 · `npm test` 42/42 (TEST-UI-001 4 casos, TEST-UI-002
+4 casos). `package.json` válido; integração model+HTML com os artefatos reais da
+0002 confere as contagens e o HTML seguro.
 
 ---
 
@@ -214,11 +249,12 @@ evidência. Inclui TEST-UI-001 e TEST-UI-002.
 | M | 3 |
 | G | 0 |
 
-Total: 7 tarefas · 1 concluída (001) · 6 pendentes (002–007).
+Total: 7 tarefas · 4 concluídas (001, 002, 003, 007) · 3 pendentes (004, 005, 006).
 
-**Caminho crítico:** UI-001 ✅ → UI-002 → UI-003 → UI-004 → UI-005 → UI-006.
+**Caminho crítico:** UI-001 ✅ → UI-002 ✅ → UI-003 ✅ → UI-004 🔧 → UI-005 🔧 → UI-006.
 
-**Bloqueios ativos:** nenhum. Q1/Q2/Q3 → ADR-005.
+**Bloqueios ativos:** nenhum. Q1/Q2/Q3 → ADR-005. Resta a verificação no host (F5):
+UI-004/005 (código pronto) e UI-006 (o teste em si).
 
 **Escopo fora deste incremento:** editor visual (RF-006), tokens/tempo (0005),
 commits (0007), evidências/validação como dados vivos (0008), ações do §13.2.

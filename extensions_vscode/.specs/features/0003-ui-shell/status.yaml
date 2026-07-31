@@ -8,7 +8,7 @@ id: "0003-ui-shell"
 type: "feature"
 title: "Interface — dashboard da feature e editor de especificações"
 
-status: PLANNED
+status: IN_PROGRESS
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -43,6 +43,15 @@ history:
       em traceability.yaml; TASK-UI-001 (ADR-005) concluída. Sem dependência
       inválida nem requisito sem cobertura. Aguardando revisão/aprovação antes da
       implementação.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Implementação do incremento a pedido do usuário. UI-002 (dashboardModel) e
+      UI-003 (dashboardHtml) concluídas e testadas (TEST-UI-001/002, 8 casos);
+      UI-004 (webview + comando openDashboard) e UI-005 (ação no painel) com código
+      pronto, aguardando verificação no host; UI-007 (gate) verde — compile/lint
+      exit 0, npm test 42/42. Integração model+HTML com os artefatos reais confere.
+      Resta a verificação no host (F5, UI-006) para caminhar a VERIFIED.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -79,9 +88,9 @@ resolved_questions:
     adr: ADR-005
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# done: UI-001 · pending: UI-002..007
+# done: UI-001, 002, 003, 007 · pending: UI-004, 005, 006 (verificação no host)
 tasks:
   total: 7
-  pending: 6
+  pending: 3
   in_progress: 0
-  done: 1
+  done: 4

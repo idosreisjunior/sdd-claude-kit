@@ -75,6 +75,12 @@
         "icon": "$(add)"
       },
       {
+        "command": "sddClaudeKit.openDashboard",
+        "title": "SDD: Abrir dashboard",
+        "category": "SDD Claude Kit",
+        "icon": "$(dashboard)"
+      },
+      {
         "command": "sddClaudeKit.openInClaudeCode",
         "title": "SDD: Abrir no Claude Code",
         "category": "SDD Claude Kit"
@@ -91,6 +97,13 @@
           "command": "sddClaudeKit.newFeature",
           "when": "view == sddFeatures",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "sddClaudeKit.openDashboard",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "inline"
         }
       ]
     },

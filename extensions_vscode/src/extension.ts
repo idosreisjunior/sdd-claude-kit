@@ -16,8 +16,9 @@ import {
   type ChangeType,
   type ChangeVars,
 } from './sdd/featureCreator'
+import { FeatureDashboard } from './sdd/featureDashboard'
 import { ProjectTreeProvider } from './views/projectTreeProvider'
-import { FeaturesTreeProvider } from './views/featuresTreeProvider'
+import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
  * Ponto de entrada da extensão (feature 0001-project-foundation).
@@ -31,6 +32,7 @@ import { FeaturesTreeProvider } from './views/featuresTreeProvider'
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   const projectProvider = new ProjectTreeProvider()
   const featuresProvider = new FeaturesTreeProvider()
+  const dashboard = new FeatureDashboard()
 
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider('sddProject', projectProvider),
@@ -59,6 +61,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.refresh', refresh),
     vscode.commands.registerCommand('sddClaudeKit.initProject', () => initProject(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.newFeature', () => newFeature(context, refresh)),
+    vscode.commands.registerCommand('sddClaudeKit.openDashboard', (node?: unknown) => openDashboard(dashboard, node)),
     vscode.commands.registerCommand('sddClaudeKit.openInClaudeCode', openInClaudeCode),
   )
 
@@ -376,6 +379,26 @@ async function exists(uri: vscode.Uri): Promise<boolean> {
 
 function today(): string {
   return new Date().toISOString().slice(0, 10)
+}
+
+/**
+ * Abre o dashboard da feature (RF-005, TASK-UI-004/005). Acionado pela ação no
+ * painel Features (recebe o nó da mudança); pela paleta (sem nó), orienta o uso.
+ */
+async function openDashboard(dashboard: FeatureDashboard, node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para ver o dashboard.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change) {
+    vscode.window.showInformationMessage(
+      'SDD: abra o dashboard pela ação de uma feature no painel Features.',
+    )
+    return
+  }
+  await dashboard.open(root, change)
 }
 
 async function openInClaudeCode(): Promise<void> {

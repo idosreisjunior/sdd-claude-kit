@@ -138,3 +138,15 @@ type FeatureNode =
 function info(label: string): FeatureNode {
   return { kind: 'info', label }
 }
+
+/**
+ * Extrai a mudança de um nó de feature, quando o nó vem do painel (ex.: o comando
+ * "Abrir dashboard" no menu de contexto). Retorna `undefined` para grupos, nós
+ * informativos ou quando o comando é acionado sem nó (paleta).
+ */
+export function featureChangeOf(node: unknown): ChangeEntry | undefined {
+  if (node && typeof node === 'object' && (node as { kind?: unknown }).kind === 'feature') {
+    return (node as { change: ChangeEntry }).change
+  }
+  return undefined
+}

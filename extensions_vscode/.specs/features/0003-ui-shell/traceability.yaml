@@ -18,7 +18,11 @@ requirements:
       - "TASK-UI-005"
     decisions:
       - "ADR-005"
-    implementation: []
+    implementation:
+      - "src/sdd/featureDashboard.ts"
+      - "src/extension.ts"
+      - "src/views/featuresTreeProvider.ts"
+      - "package.json"
     tests: []
 
   "REQ-UI-002":
@@ -30,7 +34,9 @@ requirements:
       - "TASK-UI-003"
     decisions:
       - "ADR-005"
-    implementation: []
+    implementation:
+      - "src/sdd/dashboardModel.ts"
+      - "src/sdd/dashboardHtml.ts"
     tests:
       - "TEST-UI-001"
       - "TEST-UI-002"
@@ -42,7 +48,9 @@ requirements:
     tasks:
       - "TASK-UI-002"
       - "TASK-UI-003"
-    implementation: []
+    implementation:
+      - "src/sdd/dashboardModel.ts"
+      - "src/sdd/dashboardHtml.ts"
     tests:
       - "TEST-UI-001"
 
@@ -52,7 +60,8 @@ requirements:
       - "SCN-UI-003"
     tasks:
       - "TASK-UI-002"
-    implementation: []
+    implementation:
+      - "src/sdd/dashboardModel.ts"
     tests:
       - "TEST-UI-001"
 
@@ -63,7 +72,9 @@ requirements:
       - "TASK-UI-003"
     decisions:
       - "ADR-005"
-    implementation: []
+    implementation:
+      - "src/sdd/dashboardHtml.ts"
+      - "src/sdd/featureDashboard.ts"
     tests:
       - "TEST-UI-002"
 
@@ -72,7 +83,8 @@ requirements:
     scenarios: []
     tasks:
       - "TASK-UI-004"
-    implementation: []
+    implementation:
+      - "src/sdd/featureDashboard.ts"
     tests: []
 
 gaps:
