@@ -49,6 +49,18 @@
         }
       ]
     },
+    "customEditors": [
+      {
+        "viewType": "sddClaudeKit.specEditor",
+        "displayName": "SDD: Editor de spec",
+        "selector": [
+          {
+            "filenamePattern": "**/.specs/**/spec.md"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
     "viewsWelcome": [
       {
         "view": "sddProject",
@@ -81,6 +93,12 @@
         "icon": "$(dashboard)"
       },
       {
+        "command": "sddClaudeKit.editSpec",
+        "title": "SDD: Editar spec",
+        "category": "SDD Claude Kit",
+        "icon": "$(edit)"
+      },
+      {
         "command": "sddClaudeKit.openInClaudeCode",
         "title": "SDD: Abrir no Claude Code",
         "category": "SDD Claude Kit"
@@ -102,6 +120,11 @@
       "view/item/context": [
         {
           "command": "sddClaudeKit.openDashboard",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "inline"
+        },
+        {
+          "command": "sddClaudeKit.editSpec",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "inline"
         }

@@ -17,6 +17,7 @@ import {
   type ChangeVars,
 } from './sdd/featureCreator'
 import { FeatureDashboard } from './sdd/featureDashboard'
+import { SpecEditorProvider } from './sdd/specEditor'
 import { ProjectTreeProvider } from './views/projectTreeProvider'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
@@ -37,6 +38,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider('sddProject', projectProvider),
     vscode.window.registerTreeDataProvider('sddFeatures', featuresProvider),
+    vscode.window.registerCustomEditorProvider(
+      SpecEditorProvider.viewType,
+      new SpecEditorProvider(),
+      { webviewOptions: { retainContextWhenHidden: true } },
+    ),
   )
 
   const contextIndicator = vscode.window.createStatusBarItem(
@@ -62,6 +68,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.initProject', () => initProject(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.newFeature', () => newFeature(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.openDashboard', (node?: unknown) => openDashboard(dashboard, node)),
+    vscode.commands.registerCommand('sddClaudeKit.editSpec', (node?: unknown) => editSpec(node)),
     vscode.commands.registerCommand('sddClaudeKit.openInClaudeCode', openInClaudeCode),
   )
 
@@ -399,6 +406,27 @@ async function openDashboard(dashboard: FeatureDashboard, node: unknown): Promis
     return
   }
   await dashboard.open(root, change)
+}
+
+/**
+ * Abre o `spec.md` da mudança no editor SDD (RF-006, TASK-EDIT-005). Acionado pela
+ * ação no painel Features; pela paleta (sem nó), orienta o uso.
+ */
+async function editSpec(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para editar a spec.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Editar spec" de uma feature no painel Features.',
+    )
+    return
+  }
+  const uri = vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'spec.md')
+  await vscode.commands.executeCommand('vscode.openWith', uri, SpecEditorProvider.viewType)
 }
 
 async function openInClaudeCode(): Promise<void> {

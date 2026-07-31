@@ -18,7 +18,10 @@ requirements:
       - "TASK-EDIT-005"
     decisions:
       - "ADR-006"
-    implementation: []
+    implementation:
+      - "src/sdd/specEditor.ts"
+      - "src/extension.ts"
+      - "package.json"
     tests: []
 
   "REQ-EDIT-002":
@@ -30,7 +33,9 @@ requirements:
       - "TASK-EDIT-004"
     decisions:
       - "ADR-006"
-    implementation: []
+    implementation:
+      - "src/sdd/specEditorHtml.ts"
+      - "src/sdd/specEditor.ts"
     tests:
       - "TEST-EDIT-002"
 
@@ -40,7 +45,8 @@ requirements:
       - "SCN-EDIT-003"
     tasks:
       - "TASK-EDIT-002"
-    implementation: []
+    implementation:
+      - "src/sdd/specView.ts"
     tests:
       - "TEST-EDIT-001"
 
@@ -52,7 +58,8 @@ requirements:
       - "TASK-EDIT-004"
     decisions:
       - "ADR-006"
-    implementation: []
+    implementation:
+      - "src/sdd/specEditor.ts"
     tests: []
 
   "NFR-EDIT-002":
@@ -62,7 +69,8 @@ requirements:
       - "TASK-EDIT-003"
     decisions:
       - "ADR-006"
-    implementation: []
+    implementation:
+      - "src/sdd/specEditorHtml.ts"
     tests:
       - "TEST-EDIT-002"
 

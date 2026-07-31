@@ -125,7 +125,7 @@ changes:
   - id: 0012-spec-editor
     type: feature
     title: Editor de especificações (RF-006)
-    status: PLANNED
+    status: IN_PROGRESS
     path: features/0012-spec-editor
     created: "2026-07-31"
     updated: "2026-07-31"

@@ -8,7 +8,7 @@ id: "0012-spec-editor"
 type: "feature"
 title: "Editor de especificações (RF-006)"
 
-status: PLANNED
+status: IN_PROGRESS
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -44,6 +44,15 @@ history:
       NFR em traceability.yaml; TASK-EDIT-001 (ADR-006) concluída. Sem dependência
       inválida nem requisito sem cobertura. Aguardando revisão/aprovação antes da
       implementação.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Implementação do incremento a pedido do usuário. EDIT-002 (specView) e EDIT-003
+      (specEditorHtml) concluídas e testadas (TEST-EDIT-001/002, 7 casos); EDIT-004
+      (CustomTextEditorProvider + sync) e EDIT-005 (ação no painel) com código pronto,
+      aguardando verificação no host; EDIT-007 (gate) verde — compile/lint exit 0,
+      npm test 49/49. Integração do HTML do editor com o spec.md real confere.
+      Resta a verificação no host (F5, EDIT-006) para caminhar a VERIFIED.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -79,9 +88,9 @@ resolved_questions:
     adr: ADR-006
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# done: EDIT-001 · pending: EDIT-002..007
+# done: EDIT-001, 002, 003, 007 · pending: EDIT-004, 005, 006 (verificação no host)
 tasks:
   total: 7
-  pending: 6
+  pending: 3
   in_progress: 0
-  done: 1
+  done: 4
