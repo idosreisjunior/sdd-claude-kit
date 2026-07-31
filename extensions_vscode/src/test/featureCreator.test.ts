@@ -1,5 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { load } from 'js-yaml'
 import {
   sanitizeSlug,
   isValidSlug,
@@ -11,6 +12,7 @@ import {
   dirNameFor,
   insertChangeEntry,
   yamlInline,
+  yamlDquote,
   substituteChange,
   DIR_FOR,
   type ChangeEntry,
@@ -139,4 +141,27 @@ test('TEST-FEAT-002 — substituteChange preenche os marcadores mecânicos', () 
   assert.match(status, /created: "2026-07-31"/)
   assert.match(status, /reason: criada pelo formulário/)
   assert.ok(!status.includes('{{'), 'nenhum marcador remanescente nos campos conhecidos')
+})
+
+test('SCN-TITLE-001 (bug 0011) — título com aspas gera status.yaml válido', () => {
+  // yamlDquote escapa barra e aspa, as sequências especiais de um escalar "…".
+  assert.equal(yamlDquote('Suporte a "aspas"'), 'Suporte a \\"aspas\\"')
+  assert.equal(yamlDquote('c:\\path'), 'c:\\\\path')
+  assert.equal(yamlDquote('sem nada'), 'sem nada')
+
+  // Regressão do defeito: o título, escapado dentro de "…", parseia de volta ao
+  // texto original — antes da correção, isto lançava YAMLException.
+  const title = 'Suporte a "aspas" e \\ barra'
+  const line = substituteChange('title: "{{CHANGE_TITLE}}"\n', {
+    CHANGE_ID: '0011-x',
+    CHANGE_TYPE: 'bug',
+    CHANGE_TITLE: yamlDquote(title),
+    DATE: '2026-07-31',
+    CREATION_REASON: 'x',
+    ID_SCOPE: 'X',
+    REQUEST_ORIGIN: 'ext',
+    ORIGINAL_REQUEST: 'x',
+  })
+  const doc = load(line) as { title: string }
+  assert.equal(doc.title, title)
 })

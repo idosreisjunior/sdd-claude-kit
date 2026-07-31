@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 11
+next_id: 12
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001 e 0002 foram
 # materializados em disco (spec + tasks); 0003–0010 estão registradas aqui como
@@ -113,5 +113,13 @@ changes:
     materialized: false
     epic: "Épico 10 — Publicação"
     covers: [RF-023]
+  - id: 0011-title-breaks-status-yaml
+    type: bug
+    title: Título com aspas quebra o status.yaml gerado pelo formulário
+    status: DRAFT
+    path: bugs/0011-title-breaks-status-yaml
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: true
 
 archive: []

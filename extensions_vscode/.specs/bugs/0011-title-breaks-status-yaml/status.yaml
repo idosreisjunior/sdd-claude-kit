@@ -1,0 +1,35 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+version: 1
+
+id: "0011-title-breaks-status-yaml"
+type: "bug"
+title: "título com aspas quebra o status.yaml gerado pelo formulário"
+
+status: DRAFT
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Encontrado ao investigar o bug 0006 do plugin (Q1: campos de texto livre
+      entre aspas). O fluxo de criação (FEAT-006) substituía o título cru em
+      title: "{{CHANGE_TITLE}}", quebrando o status.yaml com aspas no título — mesma
+      classe do 0006. Reproduzido com o template real; corrigido com yamlDquote
+      (escape de barra e aspa) ao escrever o status.yaml, mantendo o texto cru no
+      markdown. Coberto por SCN-TITLE-001. compile/lint exit 0, npm test 34/34.
+
+approval: null
+
+blocked_by: []
+
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 0
+  pending: 0
+  in_progress: 0
+  done: 0

@@ -176,6 +176,17 @@ export function yamlInline(value: string): string {
   return safe ? value : JSON.stringify(value)
 }
 
+/**
+ * Escapa um valor para uso DENTRO de um escalar YAML entre aspas duplas
+ * (`title: "…"`). Sem isso, uma aspa no texto livre — como o título digitado no
+ * formulário — quebraria o YAML gerado (bug 0011, mesma classe do 0006). Escapa
+ * a barra invertida e a aspa dupla, as duas sequências especiais de um escalar
+ * `"…"` em uma linha.
+ */
+export function yamlDquote(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+}
+
 export interface ChangeVars {
   CHANGE_ID: string
   CHANGE_TYPE: ChangeType

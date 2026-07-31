@@ -12,6 +12,7 @@ import {
   sanitizeSlug,
   substituteChange,
   suggestScope,
+  yamlDquote,
   type ChangeType,
   type ChangeVars,
 } from './sdd/featureCreator'
@@ -259,7 +260,13 @@ async function newFeature(
   // vazio; tasks.md e traceability.yaml vêm de /sdd-kit:tasks, não daqui.
   await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(changeDir, 'decisions'))
   await writeTemplate(context, changeDir, 'request.md', '_shared/request.md', vars)
-  await writeTemplate(context, changeDir, 'status.yaml', '_shared/status.yaml', vars)
+  // status.yaml traz o título dentro de um escalar YAML entre aspas; escapa para
+  // não quebrar com aspas no título (bug 0011). spec.md/request.md usam o texto
+  // cru (markdown), então recebem `vars` sem escape.
+  await writeTemplate(context, changeDir, 'status.yaml', '_shared/status.yaml', {
+    ...vars,
+    CHANGE_TITLE: yamlDquote(vars.CHANGE_TITLE),
+  })
   await writeTemplate(context, changeDir, 'spec.md', `${type}/spec.md`, vars)
 
   // Atualiza o índice por edição textual, preservando comentários (ADR-004).
