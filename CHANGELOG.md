@@ -15,3 +15,7 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Estrutura `.specs/` com `config.yaml`, `index.yaml` e documentos de projeto (visão, constituição, contexto, arquitetura, glossário, padrões).
 - ADR-001 a ADR-005 registrando as decisões técnicas iniciais.
 - Feature `0001-plugin-foundation` com especificação, design e plano de tarefas.
+
+### Corrigido
+
+- Lint do repositório raiz (`eslint .`) deixava de passar por relintar o subprojeto da extensão (`extensions_vscode/**`) com a config do root, que não define os globals de Node dos scripts `.mjs`/`.cjs` — quebrando o CI com `no-undef` (`require`/`console`/`process`). A extensão tem lint e CI próprios; o root passa a ignorá-la.
