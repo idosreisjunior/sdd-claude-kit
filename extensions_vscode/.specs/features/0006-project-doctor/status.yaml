@@ -1,0 +1,75 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0006-project-doctor"
+type: "feature"
+title: "Project Doctor — diagnóstico estrutural de .specs (RF-002)"
+
+status: IN_PROGRESS
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Materializada a partir do backlog (Épico 6 — Project Doctor, RF-002) a pedido do
+      usuário ("start the next feature 0006"). Entrega o núcleo estrutural: diagnosticar a
+      saúde de .specs e apresentar no painel Problems. Checagens semânticas (0008) e riscos
+      de Git (0007) ficam para as features donas.
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Q1 (superfície de apresentação) resolvida por ADR-009: Diagnostics API / painel
+      Problems, com núcleo de diagnóstico puro. Nenhuma questão em aberto.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      design.md registrado: núcleo puro projectDoctor.ts (diagnose, VALID_STATUSES,
+      REQUIRED_PROJECT_FILES) + parseStatusField em specsIndex, e borda em extension.ts
+      (runDoctor, DiagnosticCollection). Fronteira coerente com standards §6.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md gerado — 5 tarefas (PD-001..005) ligadas a REQ-PD-001..002 e NFR-PD-001..003
+      em traceability.yaml; TASK-PD-001 (ADR-009) concluída. Sem dependência inválida nem
+      requisito sem cobertura.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Implementação do incremento a pedido do usuário (mesmo precedente de 0004/0005/0012:
+      require_approval é true, mas a implementação seguiu por ato explícito do usuário na
+      conversa; approval permanece null). PD-002 (projectDoctor + parseStatusField) e PD-004
+      (gate) concluídas e testadas (TEST-PD-001..003 + parseStatusField, +7 casos;
+      compile/lint exit 0, npm test 65/65). PD-003 (borda runDoctor + DiagnosticCollection)
+      com código pronto, aguardando verificação no host. Resta o F5 (TASK-PD-005) para VERIFIED.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas.
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-PD-001
+    summary: >-
+      Superfície de apresentação do Project Doctor: Diagnostics API alimentando o painel
+      Problems (o que o RF-002 pede), com núcleo de diagnóstico puro e testável. TreeView e
+      webview próprios foram recusados por serem menos idiomáticos e mais trabalho.
+    adr: ADR-009
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# done: PD-001, PD-002, PD-004 · pending: PD-003 (código pronto), PD-005 (host)
+tasks:
+  total: 5
+  pending: 2
+  in_progress: 0
+  done: 3

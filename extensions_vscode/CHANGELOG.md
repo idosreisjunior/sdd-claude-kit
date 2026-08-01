@@ -2,6 +2,20 @@
 
 Todas as mudanças relevantes desta extensão são registradas aqui.
 
+## [0.0.3] — não lançado
+
+### Alterado
+
+- Painel **Projeto** deixa de ser uma lista de links e passa a um resumo vivo
+  (feature 0013, ADR-010): agora é um `WebviewView` com cartões de **saúde
+  estrutural** (Project Doctor), **contexto** (Context Guardian, com barra e faixa)
+  e **contadores de mudanças por status** na ordem do fluxo SDD; os documentos de
+  projeto seguem acessíveis abaixo. Somente leitura, CSP com nonce, sem rede.
+- Clicar numa feature no painel **Features** abre o **dashboard visual** (antes
+  abria o `spec.md` em texto); o editor visual de spec passa a ser o padrão ao
+  abrir um `spec.md`.
+- Painéis com *welcome views* clicáveis quando vazios (Inicializar SDD / Nova feature).
+
 ## [0.0.2] — não lançado
 
 ### Alterado

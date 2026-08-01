@@ -30,7 +30,15 @@ import {
   type ContextFile,
   type Usage,
 } from './sdd/contextGuardian'
-import { ProjectTreeProvider } from './views/projectTreeProvider'
+import { parseChanges, parseStatusField } from './sdd/specsIndex'
+import {
+  REQUIRED_PROJECT_FILES,
+  diagnose,
+  type Diagnostic as DoctorDiagnostic,
+  type DoctorChange,
+} from './sdd/projectDoctor'
+import { ProjectViewProvider } from './views/projectViewProvider'
+import { summarizeDiagnostics, type DoctorHealth } from './sdd/projectOverview'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -43,12 +51,21 @@ import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvi
  * .specs/index.yaml.
  */
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-  const projectProvider = new ProjectTreeProvider()
+  // Estado em memória: última medição do contexto (feature 0005) e último resumo do
+  // Doctor (feature 0013). Pintam a UI e sobrevivem a refresh(); não são versionados
+  // (arquitetura §5). Alimentam o painel Projeto (webview) por injeção.
+  let lastUsage: Usage | undefined
+  let lastDoctorHealth: DoctorHealth | undefined
+
+  const projectProvider = new ProjectViewProvider({
+    getContext: () => lastUsage,
+    getDoctor: () => lastDoctorHealth,
+  })
   const featuresProvider = new FeaturesTreeProvider()
   const dashboard = new FeatureDashboard()
 
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider('sddProject', projectProvider),
+    vscode.window.registerWebviewViewProvider(ProjectViewProvider.viewType, projectProvider),
     vscode.window.registerTreeDataProvider('sddFeatures', featuresProvider),
     vscode.window.registerCustomEditorProvider(
       SpecEditorProvider.viewType,
@@ -63,11 +80,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   )
   contextIndicator.command = 'sddClaudeKit.measureContext'
   const contextChannel = vscode.window.createOutputChannel('SDD · Context Guardian')
-  context.subscriptions.push(contextIndicator, contextChannel)
-
-  // Última medição do Context Guardian (feature 0005): pinta a barra de status e
-  // sobrevive a refresh(). Só em memória — não é versionada (arquitetura §5).
-  let lastUsage: Usage | undefined
+  const doctorDiagnostics = vscode.languages.createDiagnosticCollection('SDD Doctor')
+  context.subscriptions.push(contextIndicator, contextChannel, doctorDiagnostics)
 
   const refresh = async (): Promise<void> => {
     const detection = await detectProject()
@@ -76,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       'sddClaudeKit.initialized',
       detection.hasSpecs,
     )
-    projectProvider.refresh()
+    await projectProvider.refresh()
     featuresProvider.refresh()
     updateContextIndicator(contextIndicator, detection.hasSpecs, lastUsage)
   }
@@ -86,7 +100,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     if (usage) {
       lastUsage = usage
       updateContextIndicator(contextIndicator, true, usage)
+      await projectProvider.refresh() // reflete a nova medição no painel Projeto (0013)
     }
+  }
+
+  // Roda o Doctor, guarda o resumo em memória (feature 0013) e repinta o painel.
+  const runDoctorAndRefresh = async (): Promise<void> => {
+    const diagnostics = await runDoctor(doctorDiagnostics)
+    lastDoctorHealth = summarizeDiagnostics(diagnostics)
+    await projectProvider.refresh()
   }
 
   context.subscriptions.push(
@@ -97,6 +119,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.editSpec', (node?: unknown) => editSpec(node)),
     vscode.commands.registerCommand('sddClaudeKit.openInClaudeCode', (node?: unknown) => openInClaudeCode(node)),
     vscode.commands.registerCommand('sddClaudeKit.measureContext', (node?: unknown) => measure(node)),
+    vscode.commands.registerCommand('sddClaudeKit.runDoctor', () => runDoctorAndRefresh()),
+    vscode.commands.registerCommand('sddClaudeKit.openProjectDoc', (relPath?: unknown) => openProjectDoc(relPath)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -636,6 +660,137 @@ function renderComposition(
   if (composition.large.length > 0) {
     channel.appendLine(`Grandes (estimados por tamanho, não lidos): ${composition.large.join(', ')}`)
   }
+}
+
+/**
+ * Project Doctor (RF-002, feature 0006). Coleta o retrato estrutural do projeto,
+ * chama o núcleo puro `diagnose` e publica os problemas na Diagnostics API — painel
+ * Problems (ADR-009). Somente leitura: nada é alterado (NFR-PD-001). Limpa e repovoa
+ * a coleção, sem duplicar (SCN-PD-006).
+ */
+async function runDoctor(collection: vscode.DiagnosticCollection): Promise<DoctorDiagnostic[]> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para diagnosticar o projeto.')
+    return []
+  }
+
+  // Arquivos de projeto obrigatórios.
+  const files: Record<string, boolean> = {}
+  for (const rel of REQUIRED_PROJECT_FILES) {
+    files[rel] = await exists(vscode.Uri.joinPath(root, ...rel.split('/')))
+  }
+
+  // Mudanças do índice + status/spec em disco.
+  const indexText = (await readText(vscode.Uri.joinPath(root, '.specs', 'index.yaml'))) ?? ''
+  const changes: DoctorChange[] = []
+  for (const entry of parseChanges(indexText)) {
+    const base = entry.path || entry.id
+    const statusText = await readText(vscode.Uri.joinPath(root, '.specs', ...base.split('/'), 'status.yaml'))
+    const hasSpec = await exists(vscode.Uri.joinPath(root, '.specs', ...base.split('/'), 'spec.md'))
+    changes.push({
+      id: entry.id,
+      path: entry.path,
+      indexStatus: entry.status,
+      hasStatusFile: statusText !== undefined,
+      diskStatus: statusText !== undefined ? parseStatusField(statusText) : undefined,
+      hasSpec,
+    })
+  }
+
+  const diskChangeDirs = await collectChangeDirs(root)
+  const detection = await detectProject()
+  const claude = await detectClaudeCode(hostClaudeEnv())
+
+  const diagnostics = diagnose({
+    files,
+    changes,
+    diskChangeDirs,
+    hasGit: detection.hasGit,
+    claudeCodeAvailable: claude.available,
+  })
+
+  publishDoctor(collection, root, diagnostics)
+
+  const errors = diagnostics.filter((d) => d.severity === 'error').length
+  const warnings = diagnostics.filter((d) => d.severity === 'warning').length
+  if (diagnostics.length === 0) {
+    vscode.window.showInformationMessage('SDD Project Doctor: nenhum problema estrutural encontrado.')
+    return diagnostics
+  }
+  await vscode.commands.executeCommand('workbench.actions.view.problems')
+  vscode.window.showInformationMessage(
+    `SDD Project Doctor: ${errors} erro(s), ${warnings} aviso(s). Ver o painel Problems.`,
+  )
+  return diagnostics
+}
+
+/**
+ * Abre um documento de projeto pelo caminho relativo (ação do painel Projeto, RF-005,
+ * feature 0013). Acionada por command: URI do webview; ignora entrada inválida.
+ */
+async function openProjectDoc(relPath: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root || typeof relPath !== 'string' || relPath.length === 0) {
+    return
+  }
+  const uri = vscode.Uri.joinPath(root, ...relPath.split('/'))
+  await vscode.commands.executeCommand('vscode.open', uri)
+}
+
+/** Traduz os diagnósticos puros para a Diagnostics API, agrupados por arquivo. */
+function publishDoctor(
+  collection: vscode.DiagnosticCollection,
+  root: vscode.Uri,
+  diagnostics: DoctorDiagnostic[],
+): void {
+  collection.clear()
+  const byPath = new Map<string, vscode.Diagnostic[]>()
+  const range = new vscode.Range(0, 0, 0, 0)
+  for (const d of diagnostics) {
+    const rel = d.path ?? '.specs/index.yaml'
+    const message = d.suggestion ? `${d.message}\nCorreção: ${d.suggestion}` : d.message
+    const diag = new vscode.Diagnostic(range, message, severityOf(d.severity))
+    diag.source = 'SDD Doctor'
+    diag.code = d.code
+    const list = byPath.get(rel) ?? []
+    list.push(diag)
+    byPath.set(rel, list)
+  }
+  for (const [rel, list] of byPath) {
+    collection.set(vscode.Uri.joinPath(root, ...rel.split('/')), list)
+  }
+}
+
+function severityOf(severity: DoctorDiagnostic['severity']): vscode.DiagnosticSeverity {
+  switch (severity) {
+    case 'error':
+      return vscode.DiagnosticSeverity.Error
+    case 'warning':
+      return vscode.DiagnosticSeverity.Warning
+    case 'info':
+      return vscode.DiagnosticSeverity.Information
+  }
+}
+
+/** Reúne os diretórios de mudança do disco (rel sob .specs, ex.: features/0009-x). */
+async function collectChangeDirs(root: vscode.Uri): Promise<string[]> {
+  const categories = ['features', 'bugs', 'refactors', 'changes', 'archive']
+  const dirs: string[] = []
+  for (const category of categories) {
+    let entries: [string, vscode.FileType][]
+    try {
+      entries = await vscode.workspace.fs.readDirectory(vscode.Uri.joinPath(root, '.specs', category))
+    } catch {
+      continue // categoria ainda não existe
+    }
+    for (const [name, kind] of entries) {
+      if (kind === vscode.FileType.Directory && /^\d{4}-/.test(name)) {
+        dirs.push(`${category}/${name}`)
+      }
+    }
+  }
+  return dirs
 }
 
 /** Ambiente para a detecção do Claude Code a partir do host (ADR-002, reuso de 0001). */

@@ -1,0 +1,80 @@
+# Matriz de rastreabilidade — 0006-project-doctor
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+version: 1
+
+feature: "0006-project-doctor"
+
+requirements:
+
+  "REQ-PD-001":
+    title: "Diagnosticar a estrutura do projeto"
+    scenarios:
+      - "SCN-PD-001"
+      - "SCN-PD-002"
+      - "SCN-PD-003"
+      - "SCN-PD-004"
+      - "SCN-PD-005"
+    tasks:
+      - "TASK-PD-002"
+    implementation:
+      - "src/sdd/projectDoctor.ts"
+      - "src/sdd/specsIndex.ts"
+    tests:
+      - "TEST-PD-001"
+      - "TEST-PD-002"
+      - "TEST-PD-003"
+
+  "REQ-PD-002":
+    title: "Apresentar no painel Problems"
+    scenarios:
+      - "SCN-PD-006"
+    tasks:
+      - "TASK-PD-001"
+      - "TASK-PD-003"
+    decisions:
+      - "ADR-009"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-PD-001":
+    title: "Aponta, não corrige (somente leitura)"
+    scenarios:
+      - "SCN-PD-006"
+    tasks:
+      - "TASK-PD-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-PD-002":
+    title: "Leitura robusta"
+    scenarios:
+      - "SCN-PD-002"
+    tasks:
+      - "TASK-PD-002"
+    implementation:
+      - "src/sdd/projectDoctor.ts"
+      - "src/sdd/specsIndex.ts"
+    tests:
+      - "TEST-PD-003"
+
+  "NFR-PD-003":
+    title: "Núcleo testável fora do host"
+    scenarios: []
+    tasks:
+      - "TASK-PD-002"
+      - "TASK-PD-004"
+    implementation:
+      - "src/sdd/projectDoctor.ts"
+      - "src/test/projectDoctor.test.ts"
+    tests:
+      - "TEST-PD-001"
+      - "TEST-PD-002"
+      - "TEST-PD-003"
+
+gaps:
+  - id: "SCN-PD-006"
+    reason: "Publicar na Diagnostics API, ancorar aos arquivos e revelar o Problems são integração com o host; o teste unitário cobre diagnose(), não a coleção."
+    mitigation: "Verificação por F5 (TASK-PD-005), registrada em evidence.md."
