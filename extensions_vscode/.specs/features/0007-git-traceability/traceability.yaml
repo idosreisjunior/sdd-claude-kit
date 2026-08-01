@@ -61,6 +61,21 @@ requirements:
       - "TEST-TRACE-006"
       - "TEST-TRACE-007"
 
+  "REQ-TRACE-004":
+    title: "Navegação de rastreabilidade"
+    scenarios:
+      - "SCN-TRACE-007"
+    tasks:
+      - "TASK-TRACE-007"
+      - "TASK-TRACE-008"
+    implementation:
+      - "src/sdd/traceabilityNav.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-TRACE-010"
+      - "TEST-TRACE-011"
+
   "NFR-TRACE-001":
     title: "Nenhuma escrita sem autorização"
     scenarios: []
@@ -111,11 +126,6 @@ requirements:
 
 # Itens registrados explicitamente em vez de omitidos.
 gaps:
-  - id: "REQ-TRACE-004"
-    reason: >-
-      Navegação de rastreabilidade — incremento futuro (D-Q2). Ainda sem tarefa
-      neste plano; SCN-TRACE-007 fica pendente até lá.
-    mitigation: "Planejar e implementar em incremento próprio; 0007 segue IN_PROGRESS."
   - id: "REQ-TRACE-005"
     reason: >-
       Sugestões de branch/commit — incremento futuro (D-Q2). Ainda sem tarefa;

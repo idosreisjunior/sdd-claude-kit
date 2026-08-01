@@ -48,6 +48,12 @@ import {
   type ScopeAlert,
 } from './sdd/scopeCheck'
 import { parseTasksPlan, inProgressPlan, type TaskPlan } from './sdd/tasksPlan'
+import {
+  parseTraceabilityNav,
+  artifactsOf,
+  type Artifact,
+  type ArtifactKind,
+} from './sdd/traceabilityNav'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -132,6 +138,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.runDoctor', () => runDoctorAndRefresh()),
     vscode.commands.registerCommand('sddClaudeKit.openProjectDoc', (relPath?: unknown) => openProjectDoc(relPath)),
     vscode.commands.registerCommand('sddClaudeKit.checkScope', (node?: unknown) => checkScope(node, scopeChannel)),
+    vscode.commands.registerCommand('sddClaudeKit.navigateTraceability', (node?: unknown) => navigateTraceability(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -837,6 +844,154 @@ function renderScope(
   channel.appendLine(`${alerts.length} alerta(s):`)
   for (const a of alerts) {
     channel.appendLine(`  [${a.kind}] ${a.message}`)
+  }
+}
+
+/**
+ * Navega a rastreabilidade de uma mudança (RF-015, REQ-TRACE-004, feature 0007). Por
+ * QuickPick: escolhe-se um requisito e, dele, um artefato ligado (cenário/tarefa/arquivo/
+ * teste), que é aberto. Somente leitura. O parsing vive no núcleo puro traceabilityNav.ts.
+ */
+async function navigateTraceability(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para navegar a rastreabilidade.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Navegar rastreabilidade" de uma feature no painel Features.',
+    )
+    return
+  }
+
+  const changeDir = ['.specs', ...change.path.split('/')]
+  const text = await readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml'))
+  if (text === undefined) {
+    vscode.window.showInformationMessage(
+      `SDD: ${change.id} ainda não tem traceability.yaml — gere com /sdd-kit:tasks.`,
+    )
+    return
+  }
+  const nav = parseTraceabilityNav(text)
+  if (nav.requirements.length === 0) {
+    vscode.window.showInformationMessage('SDD: matriz de rastreabilidade vazia.')
+    return
+  }
+
+  const reqPick = await vscode.window.showQuickPick(
+    nav.requirements.map((req) => ({
+      label: req.id,
+      description: req.title,
+      detail: `${req.scenarios.length} cenário(s) · ${req.tasks.length} tarefa(s) · ${req.files.length} arquivo(s) · ${req.tests.length} teste(s)`,
+      req,
+    })),
+    { title: `Rastreabilidade — ${change.id}`, placeHolder: 'Escolha um requisito' },
+  )
+  if (!reqPick) {
+    return
+  }
+
+  const artifacts = artifactsOf(reqPick.req)
+  if (artifacts.length === 0) {
+    vscode.window.showInformationMessage(`SDD: ${reqPick.req.id} sem artefatos ligados.`)
+    return
+  }
+  const artPick = await vscode.window.showQuickPick(
+    artifacts.map((art) => ({
+      label: `$(${iconForArtifact(art.kind)}) ${art.id}`,
+      description: labelForArtifact(art.kind),
+      art,
+    })),
+    { title: `${reqPick.req.id} — abrir artefato`, placeHolder: 'Cenário, tarefa, arquivo ou teste' },
+  )
+  if (!artPick) {
+    return
+  }
+  await openArtifact(root, changeDir, artPick.art)
+}
+
+/** Abre o artefato conforme o tipo: spec.md (req/cenário), tasks.md (tarefa), o arquivo, ou busca (teste). */
+async function openArtifact(root: vscode.Uri, changeDir: string[], art: Artifact): Promise<void> {
+  if (art.kind === 'scenario' || art.kind === 'requirement') {
+    await openAndReveal(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'), art.id)
+  } else if (art.kind === 'task') {
+    await openAndReveal(vscode.Uri.joinPath(root, ...changeDir, 'tasks.md'), art.id)
+  } else if (art.kind === 'file') {
+    const uri = await resolveFile(root, art.id)
+    if (uri) {
+      await vscode.commands.executeCommand('vscode.open', uri)
+    } else {
+      vscode.window.showWarningMessage(`SDD: arquivo não encontrado: ${art.id}`)
+    }
+  } else {
+    // teste: o identificador vive no código de teste; abre a busca no workspace.
+    await vscode.commands.executeCommand('workbench.action.findInFiles', {
+      query: art.id,
+      triggerSearch: true,
+      isRegex: false,
+      isCaseSensitive: true,
+    })
+  }
+}
+
+/** Abre o documento e posiciona no primeiro trecho que contém `id`. */
+async function openAndReveal(uri: vscode.Uri, id: string): Promise<void> {
+  let doc: vscode.TextDocument
+  try {
+    doc = await vscode.workspace.openTextDocument(uri)
+  } catch {
+    vscode.window.showWarningMessage(`SDD: não foi possível abrir ${uri.fsPath}.`)
+    return
+  }
+  const editor = await vscode.window.showTextDocument(doc)
+  const line = doc.getText().split('\n').findIndex((l) => l.includes(id))
+  if (line >= 0) {
+    const pos = new vscode.Position(line, 0)
+    editor.selection = new vscode.Selection(pos, pos)
+    editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenter)
+  }
+}
+
+/** Resolve um arquivo da matriz tentando a raiz e o subprojeto da extensão. */
+async function resolveFile(root: vscode.Uri, rel: string): Promise<vscode.Uri | undefined> {
+  for (const candidate of [rel, `extensions_vscode/${rel}`]) {
+    const uri = vscode.Uri.joinPath(root, ...candidate.split('/'))
+    if (await exists(uri)) {
+      return uri
+    }
+  }
+  return undefined
+}
+
+function iconForArtifact(kind: ArtifactKind): string {
+  switch (kind) {
+    case 'scenario':
+      return 'list-tree'
+    case 'task':
+      return 'checklist'
+    case 'file':
+      return 'file-code'
+    case 'test':
+      return 'beaker'
+    case 'requirement':
+      return 'symbol-property'
+  }
+}
+
+function labelForArtifact(kind: ArtifactKind): string {
+  switch (kind) {
+    case 'scenario':
+      return 'cenário (spec.md)'
+    case 'task':
+      return 'tarefa (tasks.md)'
+    case 'file':
+      return 'arquivo'
+    case 'test':
+      return 'teste (buscar)'
+    case 'requirement':
+      return 'requisito (spec.md)'
   }
 }
 
