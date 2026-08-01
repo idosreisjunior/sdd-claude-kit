@@ -1,7 +1,7 @@
 {
   "syncedFrom": "plugins/sdd-kit/templates",
-  "fileCount": 18,
-  "combinedHash": "af1b0a7d0c35eaa190974c24a753ee27e7a678c30e4f68e69cadb26271147a04",
+  "fileCount": 19,
+  "combinedHash": "b79922c59dffa872fa16d405e9823b1a45ec8e56c6150988a0f495ec752bf2ea",
   "files": {
     "README.md": "571ba241b2460892eabb622a951fdd0a088b1d8e0d1d0fbfa9a870bf2ccb4d17",
     "pt-BR/_shared/request.md": "8dd2439ff573cac5e8fcfc22b0fbe9b1084bd01311f0fd62f683b18d80dc799f",
@@ -12,6 +12,7 @@
     "pt-BR/bug/spec.md": "2ca3126a99ff1b8767e66a9cfab5356c1c5624ccbcd1547f0a06d4396041592d",
     "pt-BR/change/spec.md": "514ef7cca931ad56ece7298993bcb32caea9f800f9a697c36779e2c795763d7c",
     "pt-BR/config.yaml": "e86b892321a378cbeaa049dc6beeadf12bb77b87a46f7e701ce401ef36384e40",
+    "pt-BR/feature/design.md": "172ef25672d3fe793812417f80b1454e5edc96a48acb578a84eaf75ed853c3a2",
     "pt-BR/feature/spec.md": "c18c758dd0d5e3d822fa4256a4e85eac9d5fdd54de145049a18b23d98e006901",
     "pt-BR/index.yaml": "38f3a131d956fc6d5b71f1ab65a53ffbb8be21507fd7a800351521411c43f08d",
     "pt-BR/project/architecture.md": "37db11163b13182e5b9a0d794656f95c3a5d9a2c14be17c7347014000c26cabe",
