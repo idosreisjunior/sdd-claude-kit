@@ -88,18 +88,19 @@ Estados definidos em `PRD.md` §10 / RF-004. O estado vive em `<change>/status.y
 
 ### Transições válidas
 
-| De | Para |
+**A tabela vive em [`plugins/sdd-kit/schemas/workflow.json`](../../plugins/sdd-kit/schemas/workflow.json).** Este documento explica a semântica; o arquivo é a autoridade.
+
+O grafo já esteve escrito à mão em três lugares — aqui, em `tasks/SKILL.md` e numa constante dos testes — sem nenhum derivar dos outros. O teste que deveria ser a rede de proteção validava contra a própria cópia. Ver [ADR-010](./decisions/ADR-010-maquina-de-estados-como-dado.md).
+
+Semântica que o arquivo não expressa sozinho:
+
+| Transição | O que significa |
 | --- | --- |
-| `DRAFT` | `CLARIFIED`, `CANCELLED` |
-| `CLARIFIED` | `DESIGNED`, `DRAFT`, `CANCELLED` |
-| `DESIGNED` | `PLANNED`, `CLARIFIED`, `CANCELLED` |
-| `PLANNED` | `APPROVED`, `DESIGNED`, `CANCELLED` |
-| `APPROVED` | `IN_PROGRESS`, `PLANNED` *(reabertura invalida a aprovação)*, `CANCELLED` |
-| `IN_PROGRESS` | `BLOCKED`, `VERIFIED`, `CANCELLED` |
-| `BLOCKED` | `IN_PROGRESS`, `PLANNED`, `CANCELLED` |
-| `VERIFIED` | `ARCHIVED`, `IN_PROGRESS` *(regressão)* |
-| `ARCHIVED` | — (terminal) |
-| `CANCELLED` | — (terminal) |
+| `PLANNED → IN_PROGRESS` | Existe sempre no grafo. Quem decide se é permitida é `workflow.require_approval` — estrutura e política são separadas ([ADR-013](./decisions/ADR-013-semantica-da-maquina-de-estados.md)) |
+| `APPROVED → PLANNED` | Reabertura; invalida o registro de aprovação. É ato humano — o framework detecta aprovação vencida pelo hash e recusa avançar, mas não regride sozinho |
+| `→ BLOCKED` | Só de `IN_PROGRESS`. Significa que o trabalho **parou** — ter questões abertas é o campo `blocked_by`, que vale em qualquer estado |
+| `VERIFIED → IN_PROGRESS` | Regressão por defeito encontrado depois da verificação |
+| `→ CANCELLED` | De qualquer estado não terminal. Cancelar não exige passar por estado nenhum |
 
 Regras:
 

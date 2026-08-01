@@ -9,7 +9,7 @@ id: "0007-sdd-workflow-completion"
 type: "feature"
 title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
 
-status: PLANNED
+status: APPROVED
 
 created: "2026-07-29"
 updated: "2026-07-29"
@@ -67,9 +67,24 @@ history:
       Esta entrada completa a operação; os identificadores TASK-SWC-* e
       TEST-SWC-* daquela execução foram preservados, nenhum renumerado.
 
+  - status: APPROVED
+    date: "2026-07-29"
+    reason: >-
+      Aprovado pelo mantenedor após revisão do plano de 17 tarefas. Registro
+      conforme ADR-011: `by` vem de git config e só foi gravado após ato
+      humano explícito; `revision` é o SHA-256 de spec.md truncado em 12
+      caracteres. Qualquer edição posterior em spec.md invalida esta
+      aprovação automaticamente.
+
+      Aprovado à mão porque a skill approve é a TASK-SWC-009 deste próprio
+      plano — mas a decisão foi humana, que é o que o Artigo 3 exige.
+
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
-approval: null
+approval:
+  date: "2026-07-29"
+  by: "idosreisjunior <idosreisjunior@gmail.com>"
+  revision: "ce84645cdce5"
 
 # Sem bloqueios: nenhuma questão crítica em aberto.
 blocked_by: []

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/idosreisjunior/sdd-claude-kit/schemas/v1/workflow.json",
+  "title": "SDD Claude Kit — máquina de estados do fluxo",
+  "description": "Fonte única do grafo de transições. Skills, testes e o validador da Fase 4 derivam deste arquivo em vez de redeclarar a tabela. Ver ADR-010. Este arquivo é DADO, não schema de validação: o $schema acima descreve a si mesmo apenas para permitir edição assistida.",
+
+  "version": 1,
+
+  "states": [
+    "DRAFT",
+    "CLARIFIED",
+    "DESIGNED",
+    "PLANNED",
+    "APPROVED",
+    "IN_PROGRESS",
+    "BLOCKED",
+    "VERIFIED",
+    "ARCHIVED",
+    "CANCELLED"
+  ],
+
+  "initial": "DRAFT",
+
+  "terminal": ["ARCHIVED", "CANCELLED"],
+
+  "transitions": {
+    "DRAFT":       ["CLARIFIED", "CANCELLED"],
+    "CLARIFIED":   ["DESIGNED", "DRAFT", "CANCELLED"],
+    "DESIGNED":    ["PLANNED", "CLARIFIED", "CANCELLED"],
+    "PLANNED":     ["APPROVED", "IN_PROGRESS", "DESIGNED", "CANCELLED"],
+    "APPROVED":    ["IN_PROGRESS", "PLANNED", "CANCELLED"],
+    "IN_PROGRESS": ["BLOCKED", "VERIFIED", "CANCELLED"],
+    "BLOCKED":     ["IN_PROGRESS", "PLANNED", "CANCELLED"],
+    "VERIFIED":    ["ARCHIVED", "IN_PROGRESS", "CANCELLED"],
+    "ARCHIVED":    [],
+    "CANCELLED":   []
+  },
+
+  "notes": {
+    "PLANNED->IN_PROGRESS": "Existe no grafo sempre. Quem decide se é permitido é workflow.require_approval em config.yaml — estrutura e política são separadas (ADR-013). Um grafo que se reescreve conforme a configuração deixa de ser verificável.",
+    "APPROVED->PLANNED": "Reabertura. Invalida o registro de aprovação. É ato humano: o framework detecta aprovação vencida pelo hash e recusa avançar, mas não regride o estado sozinho (ADR-013).",
+    "BLOCKED": "Alcançável apenas de IN_PROGRESS. Significa que o trabalho PAROU, não que existem questões abertas — isso é o campo blocked_by, que vale em qualquer estado (ADR-013).",
+    "VERIFIED->IN_PROGRESS": "Regressão por defeito encontrado depois da verificação.",
+    "CANCELLED": "Alcançável de qualquer estado não terminal. Cancelar não exige passar por estado nenhum."
+  }
+}
