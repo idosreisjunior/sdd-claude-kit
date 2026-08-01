@@ -205,25 +205,84 @@ de saída ("SDD · Escopo"). Adiciona a config `sddClaudeKit.scope.*` (sensívei
 
 ---
 
+## TASK-TRACE-007 — Núcleo puro: navegação de rastreabilidade
+
+**Requisitos:** REQ-TRACE-004, NFR-TRACE-002
+**Dependências:** —
+**Complexidade:** M
+**Status:** done
+
+### Descrição
+
+Parser puro de `traceability.yaml` para um modelo navegável: cada requisito com seus cenários,
+tarefas, arquivos (implementation) e testes; e um classificador de artefato pelo identificador
+(SCN-/TASK-/TEST-/REQ-/NFR-/caminho). Robusto (NFR-TRACE-003). Sem `vscode`. Incremento 2 (D-Q6).
+
+### Arquivos prováveis
+
+- `src/sdd/traceabilityNav.ts`
+
+### Testes esperados
+
+- TEST-TRACE-010 — parse do modelo navegável e achatamento dos artefatos
+- TEST-TRACE-011 — classificação por tipo e robustez a YAML inválido
+
+### Critério de conclusão
+
+- Os dois testes passam; nenhum import de `vscode`.
+
+---
+
+## TASK-TRACE-008 — Comando "Navegar rastreabilidade"
+
+**Requisitos:** REQ-TRACE-004
+**Dependências:** TASK-TRACE-007
+**Complexidade:** M
+**Status:** done
+
+### Descrição
+
+Comando `sddClaudeKit.navigateTraceability` (ação numa feature): lê o `traceability.yaml`,
+oferece um QuickPick de requisitos e, do escolhido, um QuickPick dos artefatos ligados; abre o
+artefato — `spec.md` (requisito/cenário, posicionando na linha), `tasks.md` (tarefa), o arquivo
+(implementation) ou uma busca no workspace (teste). Somente leitura (D-Q6, RF-015).
+
+### Arquivos prováveis
+
+- `src/extension.ts`
+- `package.json`
+
+### Testes esperados
+
+- Nenhum automatizado — QuickPick/abertura são integração com a API do VS Code; a lógica de
+  parsing/classificação vive em TASK-TRACE-007. Verificação por revisão manual (`gaps`).
+
+### Critério de conclusão
+
+- Acionar "Navegar rastreabilidade" numa feature abre o artefato escolhido; nenhuma escrita;
+  `npm run compile`/`lint`/`test` limpos.
+
+---
+
 ## Resumo
 
 | Complexidade | Quantidade |
 | --- | --- |
 | P | 2 |
-| M | 4 |
+| M | 6 |
 | G | 0 |
 
-Total: 6 tarefas · 6 concluídas · 0 pendentes.
+Total: 8 tarefas · 8 concluídas · 0 pendentes.
 
-**Caminho crítico:** TASK-TRACE-002 → TASK-TRACE-003 → TASK-TRACE-006 (concluído)
+**Caminho crítico:** TASK-TRACE-002 → TASK-TRACE-003 → TASK-TRACE-006 (incremento 1) ·
+TASK-TRACE-007 → TASK-TRACE-008 (incremento 2)
 
-**Bloqueios ativos:** nenhum (Q1 decidida — D-Q1).
+**Bloqueios ativos:** nenhum.
 
-**Paralelizáveis agora:** nenhum — incremento 1 concluído.
+**Paralelizáveis agora:** nenhum — incrementos 1 e 2 concluídos.
 
-> Incremento 1 implementado em 2026-07-31 (fora da ordem formal do fluxo, sem approve/design —
-> Fase 1). Verificação: `npm run compile`, `npm run lint` e `npm test` (91 testes) limpos, mais
-> um teste ponta-a-ponta do adapter contra o repo real. 0007 fica **IN_PROGRESS**.
+> Incremento 1 (adapter + escopo) e incremento 2 (navegação de rastreabilidade, REQ-TRACE-004)
+> implementados em 2026-07-31, fora da ordem formal do fluxo (sem approve/design — Fase 1).
+> Verificação: compile, lint e testes limpos. 0007 segue **IN_PROGRESS**.
 >
-> Incrementos seguintes (D-Q2): REQ-TRACE-004 (navegação de rastreabilidade) e REQ-TRACE-005
-> (sugestões de branch/commit).
+> Incremento seguinte (D-Q2): REQ-TRACE-005 (sugestões de branch/commit).

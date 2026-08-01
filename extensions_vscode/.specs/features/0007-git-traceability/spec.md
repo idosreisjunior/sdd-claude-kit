@@ -53,6 +53,7 @@ formalizada em ADR no `design.md`.
 | D-Q3 | Defaults de sensíveis (`.env`, `.env.*`, `*.pem`, `*.key`, `**/id_rsa`) e limite (~400 linhas ou 20 arquivos), **configuráveis** em `sddClaudeKit.scope.*`. | REQ-TRACE-003. |
 | D-Q4 | Divergência de escopo é **alerta informativo**, nunca bloqueio ("arquivos prováveis" é previsão). | REQ-TRACE-003. |
 | D-Q5 | A detecção compara o diff contra os arquivos prováveis da **tarefa em andamento** (`in_progress` no `tasks.md`). | REQ-TRACE-003. |
+| D-Q6 | Navegação de rastreabilidade (REQ-TRACE-004) por **QuickPick** (ação numa feature) — não painel/webview — leve e consistente com "Verificar escopo". Incremento 2. | REQ-TRACE-004. |
 
 ---
 

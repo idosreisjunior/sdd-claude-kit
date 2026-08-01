@@ -131,6 +131,12 @@
         "title": "SDD: Verificar escopo (Git)",
         "category": "SDD Claude Kit",
         "icon": "$(git-compare)"
+      },
+      {
+        "command": "sddClaudeKit.navigateTraceability",
+        "title": "SDD: Navegar rastreabilidade",
+        "category": "SDD Claude Kit",
+        "icon": "$(references)"
       }
     ],
     "menus": {
@@ -182,6 +188,11 @@
           "command": "sddClaudeKit.checkScope",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@3"
+        },
+        {
+          "command": "sddClaudeKit.navigateTraceability",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@4"
         }
       ]
     },
