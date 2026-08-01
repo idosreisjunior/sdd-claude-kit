@@ -22,6 +22,7 @@ import { SpecEditorProvider } from './sdd/specEditor'
 import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
 import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
 import { buildDesignSkeleton, canGenerateDesign, extractScope } from './sdd/designGenerator'
+import { buildClarificationsSkeleton, hasRequirements } from './sdd/clarifyGenerator'
 import { load } from 'js-yaml'
 import {
   LARGE_FILE_BYTES,
@@ -160,6 +161,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.collectEvidence', (node?: unknown) => collectEvidence(node)),
     vscode.commands.registerCommand('sddClaudeKit.metricsFeature', (node?: unknown) => metricsFeature(node, context)),
     vscode.commands.registerCommand('sddClaudeKit.generateDesign', (node?: unknown) => generateDesign(context, node)),
+    vscode.commands.registerCommand('sddClaudeKit.clarify', (node?: unknown) => clarify(context, node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -678,6 +680,83 @@ async function generateDesign(context: vscode.ExtensionContext, node: unknown): 
   )
   if (choice === FILL) {
     await launchClaudeAction(root, change.id, 'design')
+  }
+}
+
+/**
+ * Clarifica a spec de uma mudança (RF-008, feature 0015). Pré-condição: a spec tem
+ * requisitos — `REQ-*` presentes (D-Q4, SCN-CLAR-002); a ação NÃO promove o estado.
+ * Escreve o `clarifications.md`-esqueleto a partir do template `feature/clarifications.md`
+ * (nove categorias do RF-008, D-Q5), sem sobrescrever sem confirmação (SCN-CLAR-004), e
+ * oferece analisar o conteúdo com o Claude Code (reuso da ação `clarify` do 0004, ADR-015).
+ */
+async function clarify(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para clarificar a spec.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Clarificar" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  // Pré-condição (D-Q4): só clarifica quando a spec tem requisitos. Não promove estado.
+  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
+  if (!hasRequirements(specMd ?? '')) {
+    vscode.window.showInformationMessage(
+      `SDD: a clarificação exige uma spec com requisitos (REQ-*). Detalhe ${change.id} antes — /sdd-kit:spec.`,
+    )
+    return
+  }
+
+  // A estrutura vem do template (ADR-015, Q2), embutido e sincronizado no pacote.
+  const templateUri = vscode.Uri.joinPath(
+    context.extensionUri,
+    'templates',
+    'pt-BR',
+    'feature',
+    'clarifications.md',
+  )
+  const template = await readText(templateUri)
+  if (template === undefined) {
+    vscode.window.showErrorMessage('SDD: template feature/clarifications.md não encontrado no pacote da extensão.')
+    return
+  }
+  const skeleton = buildClarificationsSkeleton(template, {
+    id: change.id,
+    title: change.title,
+    scope: extractScope(specMd ?? '') ?? '',
+    date: today(),
+  })
+
+  const clarifyUri = vscode.Uri.joinPath(root, ...changeDir, 'clarifications.md')
+  if (await exists(clarifyUri)) {
+    // Não sobrescreve sem confirmação (SCN-CLAR-004): recusada, o arquivo fica intacto.
+    const overwrite = await vscode.window.showWarningMessage(
+      `SDD: ${change.id} já tem clarifications.md. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
+      { modal: true },
+      'Sobrescrever',
+    )
+    if (overwrite !== 'Sobrescrever') {
+      return
+    }
+  }
+  await vscode.workspace.fs.writeFile(clarifyUri, Buffer.from(skeleton, 'utf8'))
+  await vscode.commands.executeCommand('vscode.open', clarifyUri)
+
+  // Oferece analisar o conteúdo com o Claude Code (ADR-015: reuso da ação `clarify` do 0004).
+  const ANALYZE = 'Analisar com o Claude Code'
+  const choice = await vscode.window.showInformationMessage(
+    `SDD: clarifications.md-esqueleto criado em .specs/${change.path}. Preencha as categorias — ou peça a análise ao Claude Code.`,
+    ANALYZE,
+  )
+  if (choice === ANALYZE) {
+    await launchClaudeAction(root, change.id, 'clarify')
   }
 }
 

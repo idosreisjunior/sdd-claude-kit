@@ -1,0 +1,76 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0015-spec-clarify"
+# feature | bug | refactor | change
+type: "feature"
+title: "Clarificação da especificação (RF-008)"
+
+# Toda mudança nasce em DRAFT.
+status: PLANNED
+
+created: "2026-08-01"
+updated: "2026-08-01"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-01"
+    reason: >-
+      Criada por /sdd-kit:new para materializar o RF-008 (clarificação da
+      especificação) — requisito pós-MVP sem cobertura no index.yaml. Rascunho
+      com objetivo e contexto derivados da solicitação; decisões de integração
+      (delegar a análise ao Claude Code vs. heurística própria, scaffold do
+      clarifications.md, gatilho e pré-condição) registradas como questões
+      pendentes. Detalhar com /sdd-kit:spec.
+  - status: PLANNED
+    date: "2026-08-01"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (3 tarefas: 1 P,
+      2 M; caminho crítico linear TASK-CLAR-001 → 002 → 003). Transição
+      DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, confirmada pelo usuário:
+      as skills clarify e design chegam na Fase 2. O plano não considera design
+      técnico — Q1 e Q2 são resolvidas em TASK-CLAR-001 (ADR-015) e podem ajustar
+      as tarefas seguintes. Cobertura completa (5 requisitos com tarefa); sem
+      requisito descoberto, tarefa órfã, ciclo ou tarefa G.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q3–Q5 decididas na spec (Decisões de escopo). Q1 e Q2 resolvidas por
+# TASK-CLAR-001 (ADR-015). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-01"
+    resolved_by: TASK-CLAR-001
+    summary: >-
+      A análise reusa a ação `clarify` do adapter 0004 (/sdd-kit:clarify), sem
+      análise heurística própria; a extensão escreve o clarifications.md-esqueleto.
+      Modelo híbrido, como no ADR-014.
+    adr: ADR-015
+  - question: Q2
+    date: "2026-08-01"
+    resolved_by: TASK-CLAR-001
+    summary: >-
+      A estrutura das nove categorias vem de um novo template
+      templates/pt-BR/feature/clarifications.md, com fonte no plugin e
+      sincronizado para a extensão (.sync-manifest.json).
+    adr: ADR-015
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3

@@ -177,6 +177,12 @@
         "title": "SDD: Gerar design",
         "category": "SDD Claude Kit",
         "icon": "$(symbol-structure)"
+      },
+      {
+        "command": "sddClaudeKit.clarify",
+        "title": "SDD: Clarificar",
+        "category": "SDD Claude Kit",
+        "icon": "$(question)"
       }
     ],
     "menus": {
@@ -258,6 +264,11 @@
           "command": "sddClaudeKit.generateDesign",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@9"
+        },
+        {
+          "command": "sddClaudeKit.clarify",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@10"
         }
       ]
     },

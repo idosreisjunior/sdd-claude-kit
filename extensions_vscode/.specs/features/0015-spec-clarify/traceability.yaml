@@ -1,0 +1,105 @@
+# Matriz de rastreabilidade — 0015-spec-clarify
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0015-spec-clarify"
+
+requirements:
+
+  "REQ-CLAR-001":
+    title: "Análise de clarificação da spec"
+    scenarios:
+      - "SCN-CLAR-001"
+      - "SCN-CLAR-002"
+    tasks:
+      - "TASK-CLAR-002"
+      - "TASK-CLAR-003"
+    implementation:
+      - "src/sdd/clarifyGenerator.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-CLAR-001"
+
+  "REQ-CLAR-002":
+    title: "Registro em clarifications.md"
+    scenarios:
+      - "SCN-CLAR-003"
+      - "SCN-CLAR-004"
+    tasks:
+      - "TASK-CLAR-001"
+      - "TASK-CLAR-002"
+      - "TASK-CLAR-003"
+    implementation:
+      - ".specs/features/0015-spec-clarify/decisions/ADR-015-mecanismo-de-clarificacao.md"
+      - "plugins/sdd-kit/templates/pt-BR/feature/clarifications.md"
+      - "extensions_vscode/templates/pt-BR/feature/clarifications.md"
+      - "src/sdd/clarifyGenerator.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-CLAR-002"
+
+  "NFR-CLAR-001":
+    title: "Sem rede própria"
+    scenarios: []
+    tasks:
+      - "TASK-CLAR-001"
+      - "TASK-CLAR-002"
+    implementation:
+      - ".specs/features/0015-spec-clarify/decisions/ADR-015-mecanismo-de-clarificacao.md"
+      - "src/sdd/clarifyGenerator.ts"
+    tests: []
+
+  "NFR-CLAR-002":
+    title: "Compatibilidade Windows/Linux/WSL"
+    scenarios: []
+    tasks:
+      - "TASK-CLAR-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-CLAR-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-CLAR-002"
+    implementation:
+      - "src/sdd/clarifyGenerator.ts"
+    tests:
+      - "TEST-CLAR-001"
+      - "TEST-CLAR-002"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-CLAR-001"
+    reason: >-
+      A análise das nove categorias em si é conteúdo de IA, produzido pelo Claude
+      Code via a ação `clarify` (skill /sdd-kit:clarify, Fase 2) — não há como um
+      teste automatizado verificar a qualidade da análise. A extensão cobre a
+      pré-condição e a estrutura (TEST-CLAR-001/002).
+    mitigation: >-
+      Revisão manual em TASK-CLAR-003; a camada assistida ativa-se quando
+      /sdd-kit:clarify existir (Fase 2), como no 0014.
+  - id: "REQ-CLAR-002"
+    reason: >-
+      A confirmação de sobrescrita e a escrita do clarifications.md são integração
+      com o host do VS Code (diálogo + fs), não cobertas por teste automatizado.
+    mitigation: >-
+      Revisão manual em TASK-CLAR-003: clarificar sobre um clarifications.md
+      existente pede confirmação e, se recusada, não altera o arquivo.
+  - id: "NFR-CLAR-002"
+    reason: >-
+      Compatibilidade Windows/Linux/WSL depende de caminhos de arquivo no host,
+      não reproduzível de forma determinística em teste unitário.
+    mitigation: >-
+      Revisão manual em TASK-CLAR-003 usando os utilitários de caminho de .specs/
+      já validados pelas demais features.
