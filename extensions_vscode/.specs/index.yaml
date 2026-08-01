@@ -87,11 +87,11 @@ changes:
   - id: 0008-evidence-validation
     type: feature
     title: Evidências e validação da feature
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0008-evidence-validation
     created: "2026-07-31"
-    updated: "2026-07-31"
-    materialized: false
+    updated: "2026-08-01"
+    materialized: true
     epic: "Épico 8 — Evidências e validação"
     covers: [RF-016, RF-017]
   - id: 0009-metrics
