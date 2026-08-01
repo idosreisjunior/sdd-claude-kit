@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 15
+next_id: 16
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -151,5 +151,15 @@ changes:
     materialized: true
     epic: "pós-MVP — Fase 2"
     covers: [RF-009]
+  - id: 0015-spec-clarify
+    type: feature
+    title: Clarificação da especificação (RF-008)
+    status: PLANNED
+    path: features/0015-spec-clarify
+    created: "2026-08-01"
+    updated: "2026-08-01"
+    materialized: true
+    epic: "pós-MVP — Fase 2"
+    covers: [RF-008]
 
 archive: []
