@@ -117,7 +117,7 @@ changes:
   - id: 0011-title-breaks-status-yaml
     type: bug
     title: Título com aspas quebra o status.yaml gerado pelo formulário
-    status: DRAFT
+    status: VERIFIED
     path: bugs/0011-title-breaks-status-yaml
     created: "2026-07-31"
     updated: "2026-07-31"
@@ -135,7 +135,7 @@ changes:
   - id: 0013-project-overview-panel
     type: feature
     title: Painel Projeto — resumo vivo (saúde, contexto, contadores)
-    status: DRAFT
+    status: VERIFIED
     path: features/0013-project-overview-panel
     created: "2026-07-31"
     updated: "2026-07-31"

@@ -12,7 +12,7 @@ title: "Painel Projeto — resumo vivo (saúde, contexto, contadores)"
 # Toda mudança nasce em DRAFT. Segue em DRAFT: a implementação foi feita fora da
 # ordem formal (sem approve/design, indisponíveis na Fase 1) a pedido do autor; a
 # promoção a IN_PROGRESS/VERIFIED cabe às etapas approve/verify.
-status: DRAFT
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -45,6 +45,14 @@ history:
       do Doctor em memória, comando openProjectDoc) e manifesto em package.json;
       projectTreeProvider.ts removido. Verificação: compile, lint e 79 testes limpos.
       Estado formal segue DRAFT até as etapas approve/verify.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. Painel Projeto (webview) funcional na extensão empacotada
+      (0.0.7) e instalada — o autor confirmou os cartões estilizados. Validação limpa: 9
+      requisitos, 7 atendidos, 2 não aplicáveis (NFR de borda), 0 pendente. Verificação global
+      verde (compile, lint, 115 testes). Transição DRAFT → VERIFIED fora da ordem formal (pulados
+      CLARIFIED/DESIGNED/PLANNED/APPROVED/IN_PROGRESS; approval segue null), confirmada pelo autor.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

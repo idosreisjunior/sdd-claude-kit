@@ -5,7 +5,7 @@ id: "0011-title-breaks-status-yaml"
 type: "bug"
 title: "título com aspas quebra o status.yaml gerado pelo formulário"
 
-status: DRAFT
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -20,6 +20,13 @@ history:
       classe do 0006. Reproduzido com o template real; corrigido com yamlDquote
       (escape de barra e aspa) ao escrever o status.yaml, mantendo o texto cru no
       markdown. Coberto por SCN-TITLE-001. compile/lint exit 0, npm test 34/34.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Fechado a pedido do usuário. A correção (yamlDquote no status.yaml gerado pelo formulário,
+      em featureCreator.ts/extension.ts) está no código em main e coberta pelo cenário
+      SCN-TITLE-001; verificação global verde (compile, lint, 115 testes). Transição DRAFT →
+      VERIFIED fora da ordem formal (approval segue null; approve é da Fase 2), confirmada pelo usuário.
 
 approval: null
 
