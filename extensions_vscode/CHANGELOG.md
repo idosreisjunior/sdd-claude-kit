@@ -5,10 +5,10 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [Não publicado]
+## [0.1.0] — 2026-08-01
 
-Primeira versão publicável — consolida o desenvolvimento das iterações `0.0.1`–`0.0.7`, todas
-não publicadas. O próprio desenvolvimento foi organizado com o método SDD, em `.specs/`; cada
+Primeira versão publicada — consolida o desenvolvimento das iterações `0.0.1`–`0.0.7`, todas
+internas. O próprio desenvolvimento foi organizado com o método SDD, em `.specs/`; cada
 recurso abaixo tem uma feature rastreável (`00NN`) e ADRs para as decisões arquiteturais.
 
 ### Adicionado
