@@ -85,3 +85,35 @@ jobs:
       # de uma quebra de código na lista de checks do PR.
       - name: Invariantes das especificações
         run: npx vitest run tests/specs-invariants.test.ts
+
+  # A extensão VS Code é um subprojeto npm próprio em extensions_vscode/.
+  # Job separado com working-directory próprio (TASK-FOUND-010, TASK-FOUND-008).
+  extension:
+    name: Extensão VS Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: extensions_vscode
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: extensions_vscode/package-lock.json
+
+      - run: npm ci
+
+      # Frescor dos templates embutidos: falha se a cópia versionada divergir
+      # da fonte em plugins/sdd-kit/templates (ADR-001, TEST-FOUND-005).
+      - name: Templates em sincronia
+        run: npm run check-templates
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Compilar (tsc)
+        run: npm run compile

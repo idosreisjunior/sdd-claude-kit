@@ -1,0 +1,110 @@
+# Matriz de rastreabilidade — 0005-context-guardian
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+version: 1
+
+feature: "0005-context-guardian"
+
+requirements:
+
+  "REQ-CTX-001":
+    title: "Estimar tokens de um texto"
+    scenarios:
+      - "SCN-CTX-001"
+    tasks:
+      - "TASK-CTX-002"
+    decisions:
+      - "ADR-008"
+    implementation:
+      - "src/sdd/contextGuardian.ts"
+    tests:
+      - "TEST-CTX-001"
+
+  "REQ-CTX-002":
+    title: "Classificar o uso contra o teto"
+    scenarios:
+      - "SCN-CTX-002"
+    tasks:
+      - "TASK-CTX-002"
+    implementation:
+      - "src/sdd/contextGuardian.ts"
+    tests:
+      - "TEST-CTX-002"
+
+  "REQ-CTX-003":
+    title: "Compor o contexto de uma mudança"
+    scenarios:
+      - "SCN-CTX-003"
+    tasks:
+      - "TASK-CTX-002"
+    implementation:
+      - "src/sdd/contextGuardian.ts"
+    tests:
+      - "TEST-CTX-003"
+
+  "REQ-CTX-004":
+    title: "Indicar na barra de status e detalhar sob demanda"
+    scenarios:
+      - "SCN-CTX-004"
+    tasks:
+      - "TASK-CTX-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-CTX-001":
+    title: "Estimativa honesta (local, sem rede/telemetria)"
+    scenarios: []
+    tasks:
+      - "TASK-CTX-002"
+      - "TASK-CTX-003"
+    decisions:
+      - "ADR-008"
+    implementation:
+      - "src/sdd/contextGuardian.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-CTX-001"
+
+  "NFR-CTX-002":
+    title: "Leitura robusta"
+    scenarios:
+      - "SCN-CTX-003"
+    tasks:
+      - "TASK-CTX-003"
+    implementation:
+      - "src/sdd/contextGuardian.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-CTX-003"
+
+  "NFR-CTX-003":
+    title: "Núcleo testável fora do host"
+    scenarios: []
+    tasks:
+      - "TASK-CTX-002"
+      - "TASK-CTX-004"
+    implementation:
+      - "src/sdd/contextGuardian.ts"
+      - "src/test/contextGuardian.test.ts"
+    tests:
+      - "TEST-CTX-001"
+      - "TEST-CTX-002"
+      - "TEST-CTX-003"
+
+  "NFR-CTX-004":
+    title: "Não bloquear a UI (arquivo grande não é lido por inteiro)"
+    scenarios: []
+    tasks:
+      - "TASK-CTX-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+gaps:
+  - id: "SCN-CTX-004"
+    reason: "Medir, atualizar a barra de status e mostrar a composição são integração com o host (fs, StatusBarItem, canal de saída); o teste unitário cobre estimar/classificar/compor, não a UI."
+    mitigation: "Verificação por F5 (TASK-CTX-005), registrada em evidence.md."
+  - id: "NFR-CTX-004"
+    reason: "O corte por tamanho (stat antes de ler) e o não-bloqueio da UI só se observam no host."
+    mitigation: "Verificação por F5 (TASK-CTX-005); a leitura usa workspace.fs (herdado de 0001/0002)."

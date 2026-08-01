@@ -1,0 +1,94 @@
+# Matriz de rastreabilidade — 0004-claude-code-adapter
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` preenchido durante a implementação deste incremento.
+version: 1
+
+feature: "0004-claude-code-adapter"
+
+requirements:
+
+  "REQ-CC-001":
+    title: "Compor o prompt de uma ação SDD"
+    scenarios:
+      - "SCN-CC-001"
+      - "SCN-CC-004"
+    tasks:
+      - "TASK-CC-002"
+    implementation:
+      - "src/sdd/claudePrompt.ts"
+    tests:
+      - "TEST-CC-001"
+
+  "REQ-CC-002":
+    title: "Copiar o prompt"
+    scenarios:
+      - "SCN-CC-002"
+    tasks:
+      - "TASK-CC-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "REQ-CC-003":
+    title: "Abrir a mudança no Claude Code"
+    scenarios:
+      - "SCN-CC-003"
+      - "SCN-CC-005"
+    tasks:
+      - "TASK-CC-003"
+    decisions:
+      - "ADR-007"
+    implementation:
+      - "src/extension.ts"
+      - "src/sdd/claudeCode.ts"
+    tests: []
+
+  "NFR-CC-001":
+    title: "Nada é executado sem ação humana"
+    scenarios:
+      - "SCN-CC-003"
+      - "SCN-CC-005"
+    tasks:
+      - "TASK-CC-003"
+    decisions:
+      - "ADR-007"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-CC-002":
+    title: "Config como não confiável e compatibilidade"
+    scenarios:
+      - "SCN-CC-004"
+    tasks:
+      - "TASK-CC-002"
+    implementation:
+      - "src/sdd/claudePrompt.ts"
+    tests:
+      - "TEST-CC-002"
+
+  "NFR-CC-003":
+    title: "Núcleo testável fora do host"
+    scenarios: []
+    tasks:
+      - "TASK-CC-002"
+      - "TASK-CC-004"
+    implementation:
+      - "src/sdd/claudePrompt.ts"
+      - "src/test/claudePrompt.test.ts"
+    tests:
+      - "TEST-CC-001"
+      - "TEST-CC-002"
+
+gaps:
+  - id: "SCN-CC-002"
+    reason: "Copiar para a área de transferência é integração com o host (vscode.env.clipboard); o teste unitário cobre a composição do prompt, não o clipboard."
+    mitigation: "Verificação por F5 (TASK-CC-005), registrada em evidence.md."
+  - id: "SCN-CC-003"
+    reason: "Abrir/reutilizar o terminal e iniciar a CLI só se observam no host."
+    mitigation: "Verificação por F5 (TASK-CC-005); a detecção usa claudeCode.ts (coberto por TEST-FOUND-003) e a citação por TEST-CC-002."
+  - id: "SCN-CC-005"
+    reason: "A degradação sem CLI depende da detecção real e das mensagens do host."
+    mitigation: "Verificação por F5 (TASK-CC-005) com a config vazia e sem claude no PATH."

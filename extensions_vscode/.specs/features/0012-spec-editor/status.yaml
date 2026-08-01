@@ -1,0 +1,96 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0012-spec-editor"
+type: "feature"
+title: "Editor de especificações (RF-006)"
+
+status: IN_PROGRESS
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Criada para iniciar o RF-006 (editor visual), o incremento seguinte da
+      Interface após o dashboard (RF-005, entregue e verificado na 0003). Modelada
+      como mudança própria por decisão do usuário (a 0003 permanece VERIFIED). Spec
+      inicial rascunhada com um primeiro incremento enxuto (base + Markdown +
+      visualização SDD-aware); formulário estruturado e diff ficam para depois.
+      Segue em DRAFT — três questões em aberto, sendo Q1 (base do editor) alta e
+      candidata a ADR.
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Q1 (alta), Q2 (média) e Q3 (média) resolvidas por ADR-006: base
+      CustomTextEditor (prioridade option) para spec.md, sync sem perda; só spec.md
+      no primeiro incremento; formulário estruturado sem parse frágil (futuro).
+      Nenhuma questão em aberto.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      Design registrado em ADR-006: CustomTextEditor com render SDD-aware puro
+      (specView), HTML do webview puro com CSP/nonce (specEditorHtml) e sync por
+      WorkspaceEdit no provider (specEditor). Fronteira coerente com a arquitetura.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md gerado — 7 tarefas (EDIT-001..007) ligadas a REQ-EDIT-001..003 e às
+      NFR em traceability.yaml; TASK-EDIT-001 (ADR-006) concluída. Sem dependência
+      inválida nem requisito sem cobertura. Aguardando revisão/aprovação antes da
+      implementação.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Implementação do incremento a pedido do usuário. EDIT-002 (specView) e EDIT-003
+      (specEditorHtml) concluídas e testadas (TEST-EDIT-001/002, 7 casos); EDIT-004
+      (CustomTextEditorProvider + sync) e EDIT-005 (ação no painel) com código pronto,
+      aguardando verificação no host; EDIT-007 (gate) verde — compile/lint exit 0,
+      npm test 49/49. Integração do HTML do editor com o spec.md real confere.
+      Resta a verificação no host (F5, EDIT-006) para caminhar a VERIFIED.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas.
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-EDIT-001
+    summary: >-
+      Base do editor: CustomTextEditor (prioridade option) para spec.md. O VS Code
+      cuida do ciclo do documento; sync por WorkspaceEdit de documento inteiro com
+      guard de eco e EOL preservado. O arquivo é a fonte de verdade.
+    adr: ADR-006
+  - question: Q2
+    date: "2026-07-31"
+    resolved_by: TASK-EDIT-001
+    summary: >-
+      Primeiro incremento cobre apenas spec.md; request.md e os demais documentos
+      entram em incrementos seguintes.
+    adr: ADR-006
+  - question: Q3
+    date: "2026-07-31"
+    resolved_by: TASK-EDIT-001
+    summary: >-
+      O formulário estruturado (incremento futuro) editará blocos delimitados ou
+      fontes estruturadas, nunca parse-e-serialize de todo o Markdown — evitando a
+      perda de dados da família dos bugs 0006/0011.
+    adr: ADR-006
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# done: EDIT-001, 002, 003, 007 · pending: EDIT-004, 005, 006 (verificação no host)
+tasks:
+  total: 7
+  pending: 3
+  in_progress: 0
+  done: 4

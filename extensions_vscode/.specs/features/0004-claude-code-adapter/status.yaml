@@ -1,0 +1,77 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0004-claude-code-adapter"
+type: "feature"
+title: "Claude Code Adapter — montar/copiar prompt e abrir no terminal (RF-011)"
+
+status: IN_PROGRESS
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Materializada a partir do backlog (Épico 4 — Claude Code, RF-011) a pedido do
+      usuário ("continuar o desenvolvimento da extensão"). A detecção da CLI já foi
+      entregue por 0001 (claudeCode.ts, ADR-002); esta mudança cobre o núcleo restante:
+      montar/copiar prompt e abrir a mudança no Claude Code. Escopo enxuto — tamanho de
+      contexto é 0005 e captura de resultado é 0008.
+  - status: CLARIFIED
+    date: "2026-07-31"
+    reason: >-
+      Q1 (= questão arquitetural A2) resolvida por ADR-007: a captura de resultado do
+      terminal fica FORA deste incremento; o adapter é fire-and-forget + humano no
+      controle. Nenhuma questão em aberto.
+  - status: DESIGNED
+    date: "2026-07-31"
+    reason: >-
+      design.md registrado: núcleo puro claudePrompt.ts (ACTIONS, composePrompt,
+      quoteCliPath, buildLaunchCommand) e borda em extension.ts (QuickPick, clipboard,
+      detecção, terminal), reusando claudeCode.ts. Fronteira coerente com standards §6.
+  - status: PLANNED
+    date: "2026-07-31"
+    reason: >-
+      tasks.md gerado — 5 tarefas (CC-001..005) ligadas a REQ-CC-001..003 e NFR-CC-001..003
+      em traceability.yaml; TASK-CC-001 (ADR-007) concluída. Sem dependência inválida nem
+      requisito sem cobertura.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Implementação do incremento a pedido do usuário (mesmo precedente da 0012:
+      require_approval é true, mas a implementação seguiu por ato explícito do usuário na
+      conversa; approval permanece null). CC-002 (claudePrompt) e CC-004 (gate) concluídas
+      e testadas (TEST-CC-001/002, +4 casos; compile/lint exit 0, npm test 53/53). CC-003
+      (borda openInClaudeCode + menu) com código pronto, aguardando verificação no host.
+      Resta a verificação no host (F5, TASK-CC-005) para caminhar a VERIFIED.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas.
+resolved_questions:
+  - question: Q1
+    date: "2026-07-31"
+    resolved_by: TASK-CC-001
+    summary: >-
+      Captura de resultado do terminal (= questão arquitetural A2): fora deste incremento.
+      O terminal integrado não expõe stdout de forma estável; o adapter é fire-and-forget
+      e humano no controle. Captura de resultado é escopo da feature 0008.
+    adr: ADR-007
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# done: CC-001, CC-002, CC-004 · pending: CC-003 (código pronto), CC-005 (host)
+tasks:
+  total: 5
+  pending: 2
+  in_progress: 0
+  done: 3

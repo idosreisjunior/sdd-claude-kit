@@ -17,19 +17,80 @@ import { readYaml, read, exists, changeDirs, schema, validate, unfilledMarkers }
 const index = readYaml('.specs/index.yaml') as Record<string, any>
 const dirs = changeDirs()
 
-/** Transições válidas — .specs/project/architecture.md §3. */
-const TRANSICOES: Record<string, string[]> = {
-  DRAFT: ['CLARIFIED', 'CANCELLED'],
-  CLARIFIED: ['DESIGNED', 'DRAFT', 'CANCELLED'],
-  DESIGNED: ['PLANNED', 'CLARIFIED', 'CANCELLED'],
-  PLANNED: ['APPROVED', 'DESIGNED', 'CANCELLED'],
-  APPROVED: ['IN_PROGRESS', 'PLANNED', 'CANCELLED'],
-  IN_PROGRESS: ['BLOCKED', 'VERIFIED', 'CANCELLED'],
-  BLOCKED: ['IN_PROGRESS', 'PLANNED', 'CANCELLED'],
-  VERIFIED: ['ARCHIVED', 'IN_PROGRESS'],
-  ARCHIVED: [],
-  CANCELLED: [],
+/**
+ * Transições válidas, carregadas de `schemas/workflow.json`.
+ *
+ * Antes esta constante redeclarava o grafo à mão, e o teste validava contra a
+ * própria cópia — uma edição em `architecture.md` esquecida aqui deixava a
+ * suíte verde enquanto o framework divergia da spec. Ver ADR-010.
+ */
+const workflow = JSON.parse(read('plugins/sdd-kit/schemas/workflow.json')) as {
+  states: string[]
+  initial: string
+  terminal: string[]
+  transitions: Record<string, string[]>
 }
+const TRANSICOES = workflow.transitions
+
+describe('workflow.json — o grafo como fonte única (ADR-010)', () => {
+  it('declara os dez estados de RF-004', () => {
+    expect(workflow.states).toHaveLength(10)
+    expect(workflow.states).toContain('DRAFT')
+    expect(workflow.states).toContain('ARCHIVED')
+  })
+
+  it('toda transição aponta para um estado declarado', () => {
+    const invalidas: string[] = []
+    for (const [de, paras] of Object.entries(workflow.transitions)) {
+      if (!workflow.states.includes(de)) invalidas.push(`origem ${de}`)
+      for (const para of paras) {
+        if (!workflow.states.includes(para)) invalidas.push(`${de} → ${para}`)
+      }
+    }
+    expect(invalidas).toEqual([])
+  })
+
+  it('todo estado tem transições declaradas', () => {
+    expect(Object.keys(workflow.transitions).sort()).toEqual([...workflow.states].sort())
+  })
+
+  it('estados terminais não têm saída', () => {
+    for (const t of workflow.terminal) {
+      expect(workflow.transitions[t], t).toEqual([])
+    }
+  })
+
+  it('todo estado não terminal alcança CANCELLED', () => {
+    const semSaida = workflow.states
+      .filter((s) => !workflow.terminal.includes(s))
+      .filter((s) => !(workflow.transitions[s] ?? []).includes('CANCELLED'))
+    expect(semSaida, 'cancelar não exige passar por estado nenhum').toEqual([])
+  })
+
+  it('BLOCKED é alcançável apenas de IN_PROGRESS (ADR-013)', () => {
+    const origens = Object.entries(workflow.transitions)
+      .filter(([, paras]) => paras.includes('BLOCKED'))
+      .map(([de]) => de)
+    expect(origens).toEqual(['IN_PROGRESS'])
+  })
+
+  it('todo estado é alcançável a partir do inicial', () => {
+    const vistos = new Set([workflow.initial])
+    const fila = [workflow.initial]
+    while (fila.length) {
+      for (const p of workflow.transitions[fila.shift() as string] ?? []) {
+        if (!vistos.has(p)) { vistos.add(p); fila.push(p) }
+      }
+    }
+    expect([...vistos].sort()).toEqual([...workflow.states].sort())
+  })
+
+  it('architecture.md aponta para o arquivo em vez de repetir a tabela', () => {
+    const arch = read('.specs/project/architecture.md')
+    expect(arch, 'referencia workflow.json').toContain('workflow.json')
+    expect(arch, 'não repete a tabela').not.toMatch(/^\| `DRAFT` \| `CLARIFIED`/m)
+  })
+})
 
 describe('TEST-PF-011 — identificadores são únicos e sequenciais', () => {
   const ids = dirs.map((d) => (d.split('/')[1] as string).slice(0, 4))

@@ -32,6 +32,10 @@ export default [
       'examples/**',
       // Templates contêm marcadores {{…}} e não são código executável.
       'plugins/sdd-kit/templates/**',
+      // A extensão VS Code é um subprojeto npm próprio, com eslint e CI próprios
+      // (job "Extensão VS Code"). O lint do root não deve relintá-la com esta
+      // config — que não define os globals de Node dos scripts .mjs/.cjs dela.
+      'extensions_vscode/**',
     ],
   },
   js.configs.recommended,

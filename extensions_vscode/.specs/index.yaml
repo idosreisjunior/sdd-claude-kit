@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 12
+next_id: 13
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -35,32 +35,33 @@ changes:
     covers: [RF-003, RF-004]
   - id: 0003-ui-shell
     type: feature
-    title: Interface — dashboard da feature e editor de especificações
+    title: Interface — dashboard da feature (RF-005)
     status: VERIFIED
     path: features/0003-ui-shell
     created: "2026-07-31"
     updated: "2026-07-31"
     materialized: true
     epic: "Épico 3 — Interface"
-    covers: [RF-005, RF-006]
+    covers: [RF-005]
+    # RF-006 (editor visual) foi separado na mudança 0012-spec-editor.
   - id: 0004-claude-code-adapter
     type: feature
     title: Adapter do Claude Code (montar/copiar prompt, executar ações)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0004-claude-code-adapter
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 4 — Claude Code"
     covers: [RF-011]
   - id: 0005-context-guardian
     type: feature
     title: Context Guardian (estimar tokens, seleção, alertas)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0005-context-guardian
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 5 — Context Guardian"
     covers: [RF-012, RF-013]
   - id: 0006-project-doctor
@@ -121,5 +122,15 @@ changes:
     created: "2026-07-31"
     updated: "2026-07-31"
     materialized: true
+  - id: 0012-spec-editor
+    type: feature
+    title: Editor de especificações (RF-006)
+    status: IN_PROGRESS
+    path: features/0012-spec-editor
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: true
+    epic: "Épico 3 — Interface"
+    covers: [RF-006]
 
 archive: []

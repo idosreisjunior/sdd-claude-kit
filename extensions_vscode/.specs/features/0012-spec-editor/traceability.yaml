@@ -1,0 +1,83 @@
+# Matriz de rastreabilidade — 0012-spec-editor
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+version: 1
+
+feature: "0012-spec-editor"
+
+requirements:
+
+  "REQ-EDIT-001":
+    title: "Abrir um documento de spec no editor"
+    scenarios:
+      - "SCN-EDIT-001"
+    tasks:
+      - "TASK-EDIT-004"
+      - "TASK-EDIT-005"
+    decisions:
+      - "ADR-006"
+    implementation:
+      - "src/sdd/specEditor.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests: []
+
+  "REQ-EDIT-002":
+    title: "Editar e salvar Markdown com segurança"
+    scenarios:
+      - "SCN-EDIT-002"
+    tasks:
+      - "TASK-EDIT-003"
+      - "TASK-EDIT-004"
+    decisions:
+      - "ADR-006"
+    implementation:
+      - "src/sdd/specEditorHtml.ts"
+      - "src/sdd/specEditor.ts"
+    tests:
+      - "TEST-EDIT-002"
+
+  "REQ-EDIT-003":
+    title: "Visão consciente de SDD"
+    scenarios:
+      - "SCN-EDIT-003"
+    tasks:
+      - "TASK-EDIT-002"
+    implementation:
+      - "src/sdd/specView.ts"
+    tests:
+      - "TEST-EDIT-001"
+
+  "NFR-EDIT-001":
+    title: "Sem perda de dados no salvamento"
+    scenarios:
+      - "SCN-EDIT-002"
+    tasks:
+      - "TASK-EDIT-004"
+    decisions:
+      - "ADR-006"
+    implementation:
+      - "src/sdd/specEditor.ts"
+    tests: []
+
+  "NFR-EDIT-002":
+    title: "Superfície segura (CSP + nonce)"
+    scenarios: []
+    tasks:
+      - "TASK-EDIT-003"
+    decisions:
+      - "ADR-006"
+    implementation:
+      - "src/sdd/specEditorHtml.ts"
+    tests:
+      - "TEST-EDIT-002"
+
+gaps:
+  - id: "SCN-EDIT-001"
+    reason: "Abrir o CustomTextEditor é integração com o host; o teste unitário cobre render e HTML, não a abertura."
+    mitigation: "Verificação por F5 (TASK-EDIT-006), registrada como evidência."
+  - id: "NFR-EDIT-001"
+    reason: "A ausência de perda no salvar depende do ciclo do TextDocument no host (WorkspaceEdit + EOL)."
+    mitigation: "Verificação por F5 (TASK-EDIT-006): comparar o arquivo antes/depois; a base (ADR-006) não transforma o conteúdo."

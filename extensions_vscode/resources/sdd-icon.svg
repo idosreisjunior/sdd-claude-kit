@@ -1,3 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <path fill="currentColor" fill-rule="evenodd" d="M5 3h9l5 5v13H5V3Zm8 1.5V8h3.5L13 4.5ZM7.5 11h9v1.5h-9V11Zm0 3.5h9V16h-9v-1.5Zm0 3.5h6v1.5h-6V18Z"/>
+  <!--
+    SDD Claude Kit — ícone da Activity Bar.
+    Documento de especificação (SDD, spec-first) com linhas de texto vazadas,
+    acompanhado de uma faísca de IA (o glifo "sparkle") à direita. Renderizado como
+    máscara monocromática pelo VS Code: formas sólidas, legível a 24px. Usa
+    currentColor para herdar o tema (claro/escuro).
+  -->
+  <path fill="currentColor" fill-rule="evenodd" d="M3 4h7.5L13 6.5V20H3V4Zm2.2 4.4h5.6v1.5H5.2V8.4Zm0 3.4h5.6v1.5H5.2v-1.5Zm0 3.4h3.8v1.5H5.2v-1.5Z"/>
+  <path fill="currentColor" d="M18.4 6.2l1.05 3.05 3.05 1.05-3.05 1.05-1.05 3.05-1.05-3.05-3.05-1.05 3.05-1.05L18.4 6.2Zm2.9 8.9l.6 1.75 1.75.6-1.75.6-.6 1.75-.6-1.75-1.75-.6 1.75-.6.6-1.75Z"/>
 </svg>
