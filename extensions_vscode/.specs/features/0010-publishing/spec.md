@@ -116,10 +116,15 @@ Nenhuma publicação ocorre sem o segredo `VSCE_PAT` e sem o gatilho explícito 
 
 ## Critérios de aceite
 
-- [ ] O `.vsix` empacotado não inclui `.specs/`, `src/` nem testes (REQ-PUB-001).
-- [ ] O `README` lista os comandos e configurações atuais (REQ-PUB-002).
-- [ ] O workflow publica só sob release e só com `VSCE_PAT` (REQ-PUB-003, NFR-PUB-002).
-- [ ] O checklist de passos manuais está documentado (REQ-PUB-004).
+- [x] O `.vsix` empacotado não inclui `.specs/`, `src/` nem testes (REQ-PUB-001).
+- [x] O `README` lista os comandos e configurações atuais (REQ-PUB-002).
+- [x] O workflow publica só sob release e só com `VSCE_PAT` (REQ-PUB-003, NFR-PUB-002).
+- [x] O checklist de passos manuais está documentado (REQ-PUB-004).
+
+> **Publicado (2026-08-01):** `idosreisjunior.sdd-claude-kit-vscode v0.1.0` no VS Code
+> Marketplace. Publisher `idosreisjunior` criado; `VSCE_PAT` configurado; Release `v0.1.0`
+> disparou `publish.yml` (run 30715541304, conclusão `success`). Open VSX pulado (sem `OVSX_PAT`).
+> Encerra o Épico 10.
 
 ---
 
