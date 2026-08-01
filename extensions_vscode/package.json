@@ -125,6 +125,12 @@
         "command": "sddClaudeKit.openProjectDoc",
         "title": "SDD: Abrir documento de projeto",
         "category": "SDD Claude Kit"
+      },
+      {
+        "command": "sddClaudeKit.checkScope",
+        "title": "SDD: Verificar escopo (Git)",
+        "category": "SDD Claude Kit",
+        "icon": "$(git-compare)"
       }
     ],
     "menus": {
@@ -171,6 +177,11 @@
           "command": "sddClaudeKit.measureContext",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@2"
+        },
+        {
+          "command": "sddClaudeKit.checkScope",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@3"
         }
       ]
     },
@@ -206,6 +217,28 @@
           "type": "string",
           "default": "",
           "description": "Caminho explícito para o executável do Claude Code. Vazio = detectar pelo PATH (ADR-002)."
+        },
+        "sddClaudeKit.scope.sensitiveGlobs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [".env", ".env.*", "**/*.pem", "**/*.key", "**/id_rsa"],
+          "description": "Globs de arquivos sensíveis: alterá-los gera alerta de escopo (RF-014, feature 0007)."
+        },
+        "sddClaudeKit.scope.maxLines": {
+          "type": "number",
+          "default": 400,
+          "description": "Limite de linhas (adições+remoções) do diff antes de alertar (RF-014)."
+        },
+        "sddClaudeKit.scope.maxFiles": {
+          "type": "number",
+          "default": 20,
+          "description": "Limite de arquivos alterados antes de alertar (RF-014)."
+        },
+        "sddClaudeKit.scope.dependencyManifests": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"],
+          "description": "Manifestos cuja alteração indica dependência nova/alterada (RF-014)."
         }
       }
     }
