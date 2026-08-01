@@ -97,11 +97,11 @@ changes:
   - id: 0009-metrics
     type: feature
     title: Métricas locais (tokens, tempo, produtividade)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0009-metrics
-    created: "2026-07-31"
-    updated: "2026-07-31"
-    materialized: false
+    created: "2026-08-01"
+    updated: "2026-08-01"
+    materialized: true
     epic: "Épico 9 — Métricas"
     covers: [RF-021, RF-022]
   - id: 0010-publishing

@@ -1,0 +1,57 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0009-metrics"
+# feature | bug | refactor | change
+type: "feature"
+title: "Métricas locais"
+
+# Incremento 1 (métricas por feature + relatório) implementado. Segue IN_PROGRESS:
+# agregações (projeto/período) e formatos CSV/PDF (RF-022) faltam.
+status: IN_PROGRESS
+
+created: "2026-08-01"
+updated: "2026-08-01"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-01"
+    reason: >-
+      Materializada a partir do backlog (Épico 9) a pedido do usuário, para
+      especificar e implementar. spec.md rascunhada a partir dos RF-021, RF-022 e
+      RNF-004 do PRD, com as decisões de escopo/design registradas como questões
+      abertas (Q1–Q5). Nenhuma é crítica.
+  - status: IN_PROGRESS
+    date: "2026-08-01"
+    reason: >-
+      Q1–Q5 respondidas pelo autor (D-Q1..D-Q5): webview (ADR-013), persistência
+      local por snapshot (workspaceState, RNF-004), subconjunto de métricas aprovado,
+      exportação MD/JSON, config sddClaudeKit.metrics.enabled. Incremento 1
+      implementado, fora da ordem formal do fluxo (sem approve/design da Fase 1):
+      núcleos puros metrics.ts (cálculo/comparação/export) e metricsHtml.ts (webview),
+      comando "Métricas da feature" com persistência e delta. 7 testes novos.
+      Verificação: compile, lint e 115 testes limpos, mais e2e do cálculo contra o
+      repo real. Transição DRAFT → IN_PROGRESS confirmada pelo autor. Faltam as
+      agregações e formatos do RF-022.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+# Q1–Q5 estão na seção "Decisões de escopo" da spec.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 4
+  pending: 0
+  in_progress: 0
+  done: 4

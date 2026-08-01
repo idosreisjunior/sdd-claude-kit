@@ -1,0 +1,103 @@
+# Matriz de rastreabilidade — 0009-metrics
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0009-metrics"
+
+requirements:
+
+  "REQ-METR-001":
+    title: "Cálculo de métricas da feature"
+    scenarios:
+      - "SCN-METR-001"
+      - "SCN-METR-002"
+    tasks:
+      - "TASK-METR-002"
+      - "TASK-METR-004"
+    implementation:
+      - "src/sdd/metrics.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-METR-001"
+      - "TEST-METR-002"
+
+  "REQ-METR-002":
+    title: "Relatório da feature"
+    scenarios:
+      - "SCN-METR-003"
+    tasks:
+      - "TASK-METR-001"
+      - "TASK-METR-003"
+      - "TASK-METR-004"
+    implementation:
+      - "src/sdd/metricsHtml.ts"
+      - "src/sdd/metrics.ts"
+      - "src/extension.ts"
+      - "package.json"
+      - ".specs/features/0009-metrics/decisions/ADR-013-metricas-webview-e-persistencia.md"
+    tests:
+      - "TEST-METR-003"
+      - "TEST-METR-004"
+
+  "REQ-METR-003":
+    title: "Privacidade e coleta local"
+    scenarios:
+      - "SCN-METR-004"
+    tasks:
+      - "TASK-METR-004"
+    implementation:
+      - "src/extension.ts"
+      - "package.json"
+    tests: []
+
+  "NFR-METR-001":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-METR-002"
+      - "TASK-METR-003"
+    implementation:
+      - "src/sdd/metrics.ts"
+      - "src/sdd/metricsHtml.ts"
+    tests:
+      - "TEST-METR-001"
+      - "TEST-METR-002"
+      - "TEST-METR-003"
+      - "TEST-METR-004"
+
+  "NFR-METR-002":
+    title: "Robustez"
+    scenarios: []
+    tasks:
+      - "TASK-METR-002"
+    implementation:
+      - "src/sdd/metrics.ts"
+    tests:
+      - "TEST-METR-002"
+
+  "NFR-METR-003":
+    title: "Sem rede"
+    scenarios: []
+    tasks:
+      - "TASK-METR-004"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+# Itens registrados explicitamente em vez de omitidos.
+gaps:
+  - id: "REQ-METR-003"
+    reason: >-
+      Privacidade/coleta local (RNF-004) é propriedade da borda (config e ausência
+      de rede), não expressável em teste unitário puro. SCN-METR-004 (coleta
+      desativada) é verificado por revisão manual.
+    mitigation: >-
+      Revisão manual: com sddClaudeKit.metrics.enabled=false nada é calculado nem
+      persistido; a persistência é workspaceState local; nenhum I/O de rede.
+  - id: "NFR-METR-003"
+    reason: "Ausência de rede é propriedade da borda, não testável no núcleo."
+    mitigation: "Revisão manual: o comando só lê arquivos locais e o workspaceState."

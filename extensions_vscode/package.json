@@ -155,6 +155,12 @@
         "title": "SDD: Coletar evidências",
         "category": "SDD Claude Kit",
         "icon": "$(notebook)"
+      },
+      {
+        "command": "sddClaudeKit.metricsFeature",
+        "title": "SDD: Métricas da feature",
+        "category": "SDD Claude Kit",
+        "icon": "$(graph)"
       }
     ],
     "menus": {
@@ -226,6 +232,11 @@
           "command": "sddClaudeKit.collectEvidence",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@7"
+        },
+        {
+          "command": "sddClaudeKit.metricsFeature",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@8"
         }
       ]
     },
@@ -256,6 +267,11 @@
           "type": "boolean",
           "default": false,
           "description": "Envio de telemetria. Desligado por padrão (RNF-004)."
+        },
+        "sddClaudeKit.metrics.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Coleta local de métricas (feature 0009). Desligado, nada é calculado nem persistido (RNF-004). Dados ficam apenas na máquina."
         },
         "sddClaudeKit.claudeCode.path": {
           "type": "string",

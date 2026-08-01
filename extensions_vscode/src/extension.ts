@@ -26,6 +26,7 @@ import {
   bandLabel,
   buildComposition,
   classifyUsage,
+  estimateTokens,
   isBinary,
   type Composition,
   type ContextFile,
@@ -59,6 +60,14 @@ import { buildCommitSuggestion } from './sdd/commitSuggest'
 import { buildValidationReport } from './sdd/validationReport'
 import { renderValidationHtml } from './sdd/validationHtml'
 import { buildEvidenceMarkdown } from './sdd/evidenceDoc'
+import {
+  computeMetrics,
+  compareSnapshots,
+  renderMetricsMarkdown,
+  toMetricsJson,
+  type MetricsSnapshot,
+} from './sdd/metrics'
+import { renderMetricsHtml } from './sdd/metricsHtml'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -147,6 +156,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.suggestCommit', (node?: unknown) => suggestCommit(node)),
     vscode.commands.registerCommand('sddClaudeKit.validateChange', (node?: unknown) => validateChange(node)),
     vscode.commands.registerCommand('sddClaudeKit.collectEvidence', (node?: unknown) => collectEvidence(node)),
+    vscode.commands.registerCommand('sddClaudeKit.metricsFeature', (node?: unknown) => metricsFeature(node, context)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -1165,6 +1175,96 @@ async function collectEvidence(node: unknown): Promise<void> {
   await vscode.workspace.fs.writeFile(evidenceUri, Buffer.from(markdown, 'utf8'))
   await vscode.commands.executeCommand('vscode.open', evidenceUri)
   vscode.window.showInformationMessage(`SDD: evidence.md criado em .specs/${change.path}.`)
+}
+
+/**
+ * Métricas locais de uma mudança (RF-021/RF-022, feature 0009). Calcula o subconjunto viável
+ * a partir de .specs/+Git (núcleo puro), persiste um snapshot local no workspaceState (RNF-004,
+ * ADR-013) para o delta vs. a medição anterior, e apresenta num WebviewPanel. Desativável por
+ * `sddClaudeKit.metrics.enabled`. Nada é enviado para fora.
+ */
+async function metricsFeature(node: unknown, context: vscode.ExtensionContext): Promise<void> {
+  if (!vscode.workspace.getConfiguration('sddClaudeKit').get<boolean>('metrics.enabled', true)) {
+    vscode.window.showInformationMessage(
+      'SDD: a coleta de métricas está desativada (sddClaudeKit.metrics.enabled).',
+    )
+    return
+  }
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para calcular métricas.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Métricas da feature" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  const statusYaml = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
+  const traceabilityYaml = await readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml'))
+
+  let git: { changedFiles: number; added: number; removed: number } | undefined
+  const raw = await readGit(root.fsPath)
+  if (raw) {
+    const status = parseStatus(raw.statusV2)
+    const stats = parseNumstat(raw.numstat)
+    git = {
+      changedFiles: status.files.length,
+      added: stats.reduce((sum, e) => sum + (e.added ?? 0), 0),
+      removed: stats.reduce((sum, e) => sum + (e.removed ?? 0), 0),
+    }
+  }
+
+  // Contexto estimado (0005): tokens do texto dos artefatos da mudança.
+  const texts = await Promise.all(
+    ['spec.md', 'design.md', 'tasks.md'].map((f) => readText(vscode.Uri.joinPath(root, ...changeDir, f))),
+  )
+  const joined = texts.filter((t): t is string => t !== undefined).join('\n')
+  const contextTokens = joined.length > 0 ? estimateTokens(joined) : undefined
+
+  const snapshot = computeMetrics({
+    changeId: change.id,
+    type: change.type,
+    title: change.title,
+    status: change.status,
+    timestamp: new Date().toISOString(),
+    statusYaml,
+    traceabilityYaml,
+    git,
+    contextTokens,
+  })
+
+  const key = `metrics:${change.id}`
+  const prev = context.workspaceState.get<MetricsSnapshot>(key)
+  const delta = prev ? compareSnapshots(prev, snapshot) : undefined
+  await context.workspaceState.update(key, snapshot) // persistência local (RNF-004)
+
+  const panel = vscode.window.createWebviewPanel(
+    'sddMetrics',
+    `Métricas — ${change.id}`,
+    vscode.ViewColumn.Active,
+    { enableScripts: false, localResourceRoots: [] },
+  )
+  panel.webview.html = renderMetricsHtml(snapshot, delta, nonce())
+
+  const MD = 'Exportar Markdown'
+  const JSON_LABEL = 'Exportar JSON'
+  const choice = await vscode.window.showInformationMessage(
+    `SDD: métricas de ${change.id} — ${snapshot.validatedPct}% validado, ${snapshot.tasksDone}/${snapshot.tasksTotal} tarefa(s).`,
+    MD,
+    JSON_LABEL,
+  )
+  if (choice === MD) {
+    await vscode.env.clipboard.writeText(renderMetricsMarkdown(snapshot))
+    vscode.window.showInformationMessage('SDD: métricas (Markdown) copiadas.')
+  } else if (choice === JSON_LABEL) {
+    await vscode.env.clipboard.writeText(toMetricsJson(snapshot))
+    vscode.window.showInformationMessage('SDD: métricas (JSON) copiadas.')
+  }
 }
 
 /** Traduz os diagnósticos puros para a Diagnostics API, agrupados por arquivo. */
