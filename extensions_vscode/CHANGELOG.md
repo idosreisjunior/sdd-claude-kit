@@ -2,6 +2,18 @@
 
 Todas as mudanças relevantes desta extensão são registradas aqui.
 
+## [0.0.5] — não lançado
+
+### Adicionado
+
+- Comando **"Verificar escopo (Git)"** (feature 0007, incremento 1): a partir de uma
+  feature no painel Features, compara os arquivos alterados (lidos do Git) com os
+  arquivos prováveis da tarefa em andamento e alerta sobre arquivos não previstos,
+  sensíveis, remoções, diff acima do limite e dependências novas. Os alertas aparecem
+  no canal "SDD · Escopo". Adapter de Git **somente leitura** (ADR-011) — nunca
+  escreve no repositório. Config `sddClaudeKit.scope.*` (globs sensíveis, limites,
+  manifestos).
+
 ## [0.0.4] — não lançado
 
 ### Corrigido
