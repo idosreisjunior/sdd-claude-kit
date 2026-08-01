@@ -8,7 +8,7 @@ id: "0006-project-doctor"
 type: "feature"
 title: "Project Doctor — diagnóstico estrutural de .specs (RF-002)"
 
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -47,6 +47,15 @@ history:
       (gate) concluídas e testadas (TEST-PD-001..003 + parseStatusField, +7 casos;
       compile/lint exit 0, npm test 65/65). PD-003 (borda runDoctor + DiagnosticCollection)
       com código pronto, aguardando verificação no host. Resta o F5 (TASK-PD-005) para VERIFIED.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. A borda ("código pronto") foi confirmada no host: a
+      extensão foi empacotada (0.0.7) e instalada, com os comandos da feature funcionais.
+      Núcleos puros cobertos por testes; verificação global verde (compile, lint, 115 testes).
+      Requisitos de borda (integração com a API do VS Code) verificados por revisão manual no
+      host. Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval segue null; approve
+      é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -70,6 +79,6 @@ resolved_questions:
 # done: PD-001, PD-002, PD-004 · pending: PD-003 (código pronto), PD-005 (host)
 tasks:
   total: 5
-  pending: 2
+  pending: 0
   in_progress: 0
-  done: 3
+  done: 5

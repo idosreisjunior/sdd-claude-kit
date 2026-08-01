@@ -8,7 +8,7 @@ id: "0005-context-guardian"
 type: "feature"
 title: "Context Guardian — estimar, classificar e compor o contexto (RF-012)"
 
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -48,6 +48,15 @@ history:
       concluídas e testadas (TEST-CTX-001..003, +5 casos; compile/lint exit 0, npm test
       58/58). CTX-003 (borda measureContext + barra de status) com código pronto, aguardando
       verificação no host. Resta a verificação no host (F5, TASK-CTX-005) para VERIFIED.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. A borda ("código pronto") foi confirmada no host: a
+      extensão foi empacotada (0.0.7) e instalada, com os comandos da feature funcionais.
+      Núcleos puros cobertos por testes; verificação global verde (compile, lint, 115 testes).
+      Requisitos de borda (integração com a API do VS Code) verificados por revisão manual no
+      host. Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval segue null; approve
+      é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -71,6 +80,6 @@ resolved_questions:
 # done: CTX-001, CTX-002, CTX-004 · pending: CTX-003 (código pronto), CTX-005 (host)
 tasks:
   total: 5
-  pending: 2
+  pending: 0
   in_progress: 0
-  done: 3
+  done: 5

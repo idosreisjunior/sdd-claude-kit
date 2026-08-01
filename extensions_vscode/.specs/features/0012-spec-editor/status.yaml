@@ -8,7 +8,7 @@ id: "0012-spec-editor"
 type: "feature"
 title: "Editor de especificações (RF-006)"
 
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -53,6 +53,15 @@ history:
       aguardando verificação no host; EDIT-007 (gate) verde — compile/lint exit 0,
       npm test 49/49. Integração do HTML do editor com o spec.md real confere.
       Resta a verificação no host (F5, EDIT-006) para caminhar a VERIFIED.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. A borda ("código pronto") foi confirmada no host: a
+      extensão foi empacotada (0.0.7) e instalada, com os comandos da feature funcionais.
+      Núcleos puros cobertos por testes; verificação global verde (compile, lint, 115 testes).
+      Requisitos de borda (integração com a API do VS Code) verificados por revisão manual no
+      host. Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval segue null; approve
+      é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -91,6 +100,6 @@ resolved_questions:
 # done: EDIT-001, 002, 003, 007 · pending: EDIT-004, 005, 006 (verificação no host)
 tasks:
   total: 7
-  pending: 3
+  pending: 0
   in_progress: 0
-  done: 4
+  done: 7

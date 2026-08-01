@@ -8,7 +8,7 @@ id: "0004-claude-code-adapter"
 type: "feature"
 title: "Claude Code Adapter — montar/copiar prompt e abrir no terminal (RF-011)"
 
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -49,6 +49,15 @@ history:
       e testadas (TEST-CC-001/002, +4 casos; compile/lint exit 0, npm test 53/53). CC-003
       (borda openInClaudeCode + menu) com código pronto, aguardando verificação no host.
       Resta a verificação no host (F5, TASK-CC-005) para caminhar a VERIFIED.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. A borda ("código pronto") foi confirmada no host: a
+      extensão foi empacotada (0.0.7) e instalada, com os comandos da feature funcionais.
+      Núcleos puros cobertos por testes; verificação global verde (compile, lint, 115 testes).
+      Requisitos de borda (integração com a API do VS Code) verificados por revisão manual no
+      host. Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval segue null; approve
+      é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -72,6 +81,6 @@ resolved_questions:
 # done: CC-001, CC-002, CC-004 · pending: CC-003 (código pronto), CC-005 (host)
 tasks:
   total: 5
-  pending: 2
+  pending: 0
   in_progress: 0
-  done: 3
+  done: 5

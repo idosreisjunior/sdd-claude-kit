@@ -11,7 +11,7 @@ title: "Evidências e validação da feature"
 
 # Incrementos 1 (validação, RF-017) e 2 (coleta de evidências, RF-016) implementados.
 # Segue IN_PROGRESS: REQ-EVID-003 (trava de conclusão) fica como lacuna (D-Q6).
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-08-01"
@@ -44,6 +44,14 @@ history:
       comando "Coletar evidências". 3 testes novos. Verificação: compile, lint e 108
       testes limpos, mais e2e da coleta contra o repo real. REQ-EVID-003 (trava de
       conclusão) fica lacuna: a extensão não executa a conclusão (D-Q6).
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. RF-016 e RF-017 cobertos (a trava de conclusão REQ-EVID-003
+      é lacuna consciente, D-Q6), com os comandos Validar/Coletar funcionais na extensão
+      empacotada (0.0.7) e instalada. Núcleos puros cobertos por testes; verificação global verde
+      (compile, lint, 115 testes). Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval
+      segue null; approve é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
