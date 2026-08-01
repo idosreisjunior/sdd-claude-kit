@@ -1,0 +1,50 @@
+# Publicação da extensão VS Code (feature 0010, REQ-PUB-003).
+# Dispara ao PUBLICAR um GitHub Release (D-Q1). Publica no VS Code Marketplace (vsce) e no
+# Open VSX (ovsx) — cada um protegido pelo seu segredo (D-Q2). Sem o segredo, o passo é
+# pulado com aviso: nada é publicado sem credencial (NFR-PUB-002, SCN-PUB-004).
+name: Publicar extensão
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Publicar (Marketplace + Open VSX)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: extensions_vscode
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: extensions_vscode/package-lock.json
+
+      - run: npm ci
+
+      # Embute os templates e compila (o vscode:prepublish do vsce também faria isso;
+      # aqui é explícito para falhar cedo se algo divergir).
+      - run: npm run sync-templates
+      - run: npm run compile
+
+      - name: Publicar no VS Code Marketplace
+        if: ${{ env.VSCE_PAT != '' }}
+        run: npx --yes @vscode/vsce publish -p "$VSCE_PAT"
+
+      - name: Publicar no Open VSX
+        if: ${{ env.OVSX_PAT != '' }}
+        run: npx --yes ovsx publish -p "$OVSX_PAT"
+
+      - name: Aviso se faltar segredo
+        if: ${{ env.VSCE_PAT == '' && env.OVSX_PAT == '' }}
+        run: |
+          echo "::warning::Nenhum segredo de publicação (VSCE_PAT/OVSX_PAT) configurado — nada foi publicado."
+          exit 1

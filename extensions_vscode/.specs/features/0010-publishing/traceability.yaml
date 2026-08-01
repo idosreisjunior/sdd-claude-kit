@@ -1,0 +1,90 @@
+# Matriz de rastreabilidade — 0010-publishing
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Este incremento é config/docs/CI: sem núcleos puros, a verificação é por ferramenta
+# (vsce ls) e revisão. Os requisitos ficam sem teste automatizado (registrado em gaps).
+version: 1
+
+feature: "0010-publishing"
+
+requirements:
+
+  "REQ-PUB-001":
+    title: "Empacotamento enxuto e metadados"
+    scenarios:
+      - "SCN-PUB-001"
+    tasks:
+      - "TASK-PUB-001"
+    implementation:
+      - ".vscodeignore"
+      - "package.json"
+    tests: []
+
+  "REQ-PUB-002":
+    title: "README como página do Marketplace"
+    scenarios:
+      - "SCN-PUB-002"
+    tasks:
+      - "TASK-PUB-002"
+    implementation:
+      - "README.md"
+    tests: []
+
+  "REQ-PUB-003":
+    title: "Pipeline de publicação sob demanda"
+    scenarios:
+      - "SCN-PUB-003"
+      - "SCN-PUB-004"
+    tasks:
+      - "TASK-PUB-003"
+    implementation:
+      - ".github/workflows/publish.yml"
+    tests: []
+
+  "REQ-PUB-004":
+    title: "Checklist de passos manuais"
+    scenarios:
+      - "SCN-PUB-005"
+    tasks:
+      - "TASK-PUB-002"
+    implementation:
+      - "README.md"
+    tests: []
+
+  "NFR-PUB-001":
+    title: "Pacote verificável"
+    scenarios: []
+    tasks:
+      - "TASK-PUB-001"
+    implementation:
+      - ".vscodeignore"
+    tests: []
+
+  "NFR-PUB-002":
+    title: "Nenhuma publicação sem credenciais/ação"
+    scenarios: []
+    tasks:
+      - "TASK-PUB-003"
+    implementation:
+      - ".github/workflows/publish.yml"
+    tests: []
+
+# Todos os requisitos são de config/docs/CI: verificados por ferramenta e revisão, não por
+# teste unitário. Registrado aqui para a lacuna não ficar invisível.
+gaps:
+  - id: "REQ-PUB-001"
+    reason: "Empacotamento é verificável por `vsce ls`, não por teste unitário."
+    mitigation: "`npx @vscode/vsce ls` confirma ausência de .specs/src/testes no pacote."
+  - id: "REQ-PUB-002"
+    reason: "README é documentação; sem teste automatizado."
+    mitigation: "Revisão manual: comandos e configs vigentes listados."
+  - id: "REQ-PUB-003"
+    reason: "Workflow de CI; a publicação real depende dos segredos do autor."
+    mitigation: "YAML válido, dispara só em release; publicação testada pelo autor com os segredos."
+  - id: "REQ-PUB-004"
+    reason: "Checklist é documentação."
+    mitigation: "Revisão manual: passos manuais listados no README."
+  - id: "NFR-PUB-002"
+    reason: "Propriedade do workflow (guarda por segredo); verificável por revisão."
+    mitigation: "Passos de publish têm `if: env.*_PAT != ''`; sem segredo, são pulados."

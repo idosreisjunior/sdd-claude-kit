@@ -12,3 +12,6 @@ templates/.sync-manifest.json
 tsconfig.json
 eslint.config.js
 PRD.md
+**/*.vsix
+**/tsconfig.tsbuildinfo
+**/.gitkeep
