@@ -2,6 +2,19 @@
 
 Todas as mudanças relevantes desta extensão são registradas aqui.
 
+## [0.0.7] — não lançado
+
+### Adicionado
+
+- Comando **"Validar mudança"** (feature 0008, RF-017): classifica cada requisito de uma
+  feature em atendido / parcial / não testado / não atendido / não aplicável, num webview.
+- Comando **"Coletar evidências"** (feature 0008, RF-016): reúne validação, git, commits e
+  progresso num `evidence.md` (não sobrescreve conteúdo humano; não executa comandos).
+- Comando **"Métricas da feature"** (feature 0009, RF-021/022): calcula métricas locais
+  (tarefas, % validado, testes, arquivos, duração, contexto estimado) num webview com delta
+  vs. a medição anterior; exporta Markdown/JSON. Local, sem telemetria. Nova configuração
+  `sddClaudeKit.metrics.enabled` (padrão true) desativa a coleta (RNF-004).
+
 ## [0.0.6] — não lançado
 
 ### Adicionado
