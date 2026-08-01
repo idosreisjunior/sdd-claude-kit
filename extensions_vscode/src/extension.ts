@@ -20,7 +20,9 @@ import {
 import { FeatureDashboard } from './sdd/featureDashboard'
 import { SpecEditorProvider } from './sdd/specEditor'
 import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
-import { ACTIONS, buildLaunchCommand, composePrompt } from './sdd/claudePrompt'
+import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
+import { buildDesignSkeleton, canGenerateDesign, extractScope } from './sdd/designGenerator'
+import { load } from 'js-yaml'
 import {
   LARGE_FILE_BYTES,
   bandLabel,
@@ -157,6 +159,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.validateChange', (node?: unknown) => validateChange(node)),
     vscode.commands.registerCommand('sddClaudeKit.collectEvidence', (node?: unknown) => collectEvidence(node)),
     vscode.commands.registerCommand('sddClaudeKit.metricsFeature', (node?: unknown) => metricsFeature(node, context)),
+    vscode.commands.registerCommand('sddClaudeKit.generateDesign', (node?: unknown) => generateDesign(context, node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -554,7 +557,21 @@ async function openInClaudeCode(node: unknown): Promise<void> {
   if (!pick) {
     return
   }
-  const prompt = composePrompt(pick.id, change.id)
+  await launchClaudeAction(root, change.id, pick.id)
+}
+
+/**
+ * Compõe o prompt de uma ação SDD, copia-o (RF-011) e deixa-o PRONTO num terminal
+ * com a CLI detectada — sem enviar (ADR-007, NFR-CC-001). CLI ausente: prompt
+ * copiado + orientação. Reusado por "Abrir no Claude Code" (0004) e por "Gerar
+ * design" para preencher o conteúdo (0014, ADR-014).
+ */
+async function launchClaudeAction(
+  root: vscode.Uri,
+  changeId: string,
+  action: SddAction,
+): Promise<void> {
+  const prompt = composePrompt(action, changeId)
 
   // Copia sempre (RF-011 "copiar prompt"; funciona mesmo sem a CLI e sem a UI).
   await vscode.env.clipboard.writeText(prompt)
@@ -583,6 +600,100 @@ async function openInClaudeCode(node: unknown): Promise<void> {
   vscode.window.showInformationMessage(
     `SDD: prompt copiado e pronto no Claude Code (${prompt}). Revise e pressione Enter para enviar.`,
   )
+}
+
+/**
+ * Gera o design técnico de uma mudança (RF-009, feature 0014). Pré-condição: spec
+ * aprovada — `approval != null` no status.yaml (D-Q4, SCN-DSGN-002). Escreve o
+ * `design.md`-esqueleto a partir do template `feature/design.md` (seções do RF-009 com
+ * lacunas, D-Q6), sem sobrescrever sem confirmação (D-Q5, SCN-DSGN-004), e oferece
+ * preencher o conteúdo com o Claude Code (reuso da ação `design` do 0004, ADR-014).
+ */
+async function generateDesign(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para gerar o design.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Gerar design" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  // Pré-condição (D-Q4): a etapa de design só é oferecida com a spec aprovada.
+  const statusText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
+  if (!canGenerateDesign({ approval: readApproval(statusText) })) {
+    vscode.window.showInformationMessage(
+      `SDD: a etapa de design exige a spec aprovada (campo approval no status.yaml). ` +
+        `Aprove ${change.id} antes — /sdd-kit:approve no Claude Code.`,
+    )
+    return
+  }
+
+  // A estrutura vem do template (ADR-014, Q2), embutido e sincronizado no pacote.
+  const templateUri = vscode.Uri.joinPath(
+    context.extensionUri,
+    'templates',
+    'pt-BR',
+    'feature',
+    'design.md',
+  )
+  const template = await readText(templateUri)
+  if (template === undefined) {
+    vscode.window.showErrorMessage('SDD: template feature/design.md não encontrado no pacote da extensão.')
+    return
+  }
+  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
+  const skeleton = buildDesignSkeleton(template, {
+    id: change.id,
+    title: change.title,
+    scope: extractScope(specMd ?? '') ?? '',
+    date: today(),
+  })
+
+  const designUri = vscode.Uri.joinPath(root, ...changeDir, 'design.md')
+  if (await exists(designUri)) {
+    // Não sobrescreve sem confirmação (D-Q5, SCN-DSGN-004): recusada, o arquivo fica intacto.
+    const overwrite = await vscode.window.showWarningMessage(
+      `SDD: ${change.id} já tem design.md. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
+      { modal: true },
+      'Sobrescrever',
+    )
+    if (overwrite !== 'Sobrescrever') {
+      return
+    }
+  }
+  await vscode.workspace.fs.writeFile(designUri, Buffer.from(skeleton, 'utf8'))
+  await vscode.commands.executeCommand('vscode.open', designUri)
+
+  // Oferece preencher o conteúdo com o Claude Code (ADR-014: reuso da ação `design` do 0004).
+  const FILL = 'Preencher com o Claude Code'
+  const choice = await vscode.window.showInformationMessage(
+    `SDD: design.md-esqueleto criado em .specs/${change.path}. Preencha as lacunas — ou peça ao Claude Code.`,
+    FILL,
+  )
+  if (choice === FILL) {
+    await launchClaudeAction(root, change.id, 'design')
+  }
+}
+
+/** Lê o campo `approval` do status.yaml (null/ausente/ilegível = não aprovado). */
+function readApproval(statusText: string | undefined): unknown {
+  if (statusText === undefined) {
+    return null
+  }
+  try {
+    const doc = load(statusText)
+    return doc !== null && typeof doc === 'object'
+      ? (doc as Record<string, unknown>)['approval']
+      : null
+  } catch {
+    return null
+  }
 }
 
 /**

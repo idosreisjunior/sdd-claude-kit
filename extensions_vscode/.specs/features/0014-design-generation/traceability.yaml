@@ -1,0 +1,111 @@
+# Matriz de rastreabilidade — 0014-design-generation
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0014-design-generation"
+
+requirements:
+
+  "REQ-DSGN-001":
+    title: "Geração/assistência do design a partir da spec aprovada"
+    scenarios:
+      - "SCN-DSGN-001"
+      - "SCN-DSGN-002"
+    tasks:
+      - "TASK-DSGN-002"
+      - "TASK-DSGN-003"
+    implementation:
+      - "src/sdd/designGenerator.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-DSGN-001"
+      - "TEST-DSGN-003"
+
+  "REQ-DSGN-002":
+    title: "Estrutura do design.md com lacunas marcadas"
+    scenarios:
+      - "SCN-DSGN-003"
+    tasks:
+      - "TASK-DSGN-001"
+      - "TASK-DSGN-002"
+    implementation:
+      - ".specs/features/0014-design-generation/decisions/ADR-014-mecanismo-de-geracao-de-design.md"
+      - "plugins/sdd-kit/templates/pt-BR/feature/design.md"
+      - "extensions_vscode/templates/pt-BR/feature/design.md"
+      - "src/sdd/designGenerator.ts"
+    tests:
+      - "TEST-DSGN-002"
+
+  "REQ-DSGN-003":
+    title: "Rascunho revisável, sem sobrescrever em silêncio"
+    scenarios:
+      - "SCN-DSGN-004"
+    tasks:
+      - "TASK-DSGN-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-DSGN-001":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-DSGN-002"
+    implementation:
+      - "src/sdd/designGenerator.ts"
+    tests:
+      - "TEST-DSGN-001"
+      - "TEST-DSGN-002"
+
+  "NFR-DSGN-002":
+    title: "Sem rede própria"
+    scenarios: []
+    tasks:
+      - "TASK-DSGN-001"
+      - "TASK-DSGN-002"
+    implementation:
+      - ".specs/features/0014-design-generation/decisions/ADR-014-mecanismo-de-geracao-de-design.md"
+      - "src/sdd/designGenerator.ts"
+    tests: []
+
+  "NFR-DSGN-003":
+    title: "Compatibilidade Windows/Linux/WSL"
+    scenarios: []
+    tasks:
+      - "TASK-DSGN-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-DSGN-003"
+    reason: >-
+      A confirmação de sobrescrita e a escrita do design.md são integração com o
+      host do VS Code (diálogo + fs), não cobertas por teste automatizado.
+    mitigation: >-
+      Revisão manual em TASK-DSGN-003: gerar sobre um design.md existente pede
+      confirmação e, se recusada, não altera o arquivo.
+  - id: "NFR-DSGN-002"
+    reason: >-
+      "Sem rede" é uma propriedade de ausência — verificada pela inexistência de
+      imports de rede, não por um teste positivo. Decidido em ADR-014 (o "gerar"
+      por IA é reuso do adapter 0004, não I/O de rede próprio).
+    mitigation: >-
+      Revisão de código em TASK-DSGN-002 (nenhum import de rede/vscode em
+      designGenerator.ts) e lint.
+  - id: "NFR-DSGN-003"
+    reason: >-
+      Compatibilidade Windows/Linux/WSL depende de caminhos de arquivo no host,
+      não reproduzível de forma determinística em teste unitário.
+    mitigation: >-
+      Revisão manual em TASK-DSGN-003 usando os mesmos utilitários de caminho de
+      .specs/ já validados pelas demais features.

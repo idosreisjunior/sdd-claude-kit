@@ -171,6 +171,12 @@
         "title": "SDD: Métricas da feature",
         "category": "SDD Claude Kit",
         "icon": "$(graph)"
+      },
+      {
+        "command": "sddClaudeKit.generateDesign",
+        "title": "SDD: Gerar design",
+        "category": "SDD Claude Kit",
+        "icon": "$(symbol-structure)"
       }
     ],
     "menus": {
@@ -247,6 +253,11 @@
           "command": "sddClaudeKit.metricsFeature",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@8"
+        },
+        {
+          "command": "sddClaudeKit.generateDesign",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@9"
         }
       ]
     },
