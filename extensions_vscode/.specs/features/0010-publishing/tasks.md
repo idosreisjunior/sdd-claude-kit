@@ -121,5 +121,9 @@ Total: 3 tarefas · 3 concluídas · 0 pendentes.
 
 > Incremento 1 (preparação para o Marketplace) implementado em 2026-08-01. Verificação: `vsce ls`
 > (pacote limpo), `package.json`/`publish.yml` válidos. A **publicação** é ato do autor (ícone
-> PNG, conta/PAT, disparar o Release) — documentada no README. 0010 fica **IN_PROGRESS** (parte
-> automatizável completa; a publicação manual encerra o épico).
+> PNG, conta/PAT, disparar o Release) — documentada no README.
+>
+> **Publicado em 2026-08-01:** o autor criou o publisher `idosreisjunior`, cadastrou o segredo
+> `VSCE_PAT` e publicou o Release `v0.1.0`, que disparou `publish.yml` (run 30715541304,
+> conclusão `success`) e publicou `idosreisjunior.sdd-claude-kit-vscode v0.1.0` no VS Code
+> Marketplace (Open VSX pulado, sem `OVSX_PAT`). 0010 → **VERIFIED**; Épico 10 encerrado.

@@ -9,9 +9,9 @@ id: "0010-publishing"
 type: "feature"
 title: "Publicação no Marketplace"
 
-# Parte automatizável (empacotamento, metadados, README, pipeline) implementada.
-# Segue IN_PROGRESS: a publicação em si é ato manual do autor (ícone/PAT/Release).
-status: IN_PROGRESS
+# Publicação concluída: v0.1.0 publicada no VS Code Marketplace pelo autor
+# (publisher idosreisjunior, VSCE_PAT configurado, Release v0.1.0 → workflow success).
+status: VERIFIED
 
 created: "2026-08-01"
 updated: "2026-08-01"
@@ -37,6 +37,16 @@ history:
       Verificação: `vsce ls` (pacote sem .specs/src/testes), package.json e
       publish.yml válidos. Transição DRAFT → IN_PROGRESS confirmada pelo autor.
       A publicação (ícone PNG, conta/PAT, disparar o Release) encerra o épico.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Publicação concluída pelo autor. Publisher `idosreisjunior` criado no
+      VS Code Marketplace; segredo `VSCE_PAT` cadastrado no repositório; Release
+      `v0.1.0` disparou o workflow `publish.yml`, que empacotou (`.vsix` sem
+      `.specs/`/`src/`/testes) e publicou `idosreisjunior.sdd-claude-kit-vscode
+      v0.1.0` no Marketplace — run 30715541304 com conclusão `success`. Open VSX
+      pulado (sem `OVSX_PAT`, opcional). Todos os critérios de aceite atendidos
+      (REQ-PUB-001..004, NFR-PUB-001/002). Encerra o Épico 10 (MVP).
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
