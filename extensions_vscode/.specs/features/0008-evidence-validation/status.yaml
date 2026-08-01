@@ -1,0 +1,56 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0008-evidence-validation"
+# feature | bug | refactor | change
+type: "feature"
+title: "Evidências e validação da feature"
+
+# Incremento 1 (relatório de validação, RF-017) implementado. Segue IN_PROGRESS:
+# faltam a coleta de evidências (RF-016) e a trava de conclusão.
+status: IN_PROGRESS
+
+created: "2026-07-31"
+updated: "2026-08-01"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Materializada a partir do backlog (Épico 8) a pedido do usuário, para
+      especificar e implementar. spec.md rascunhada a partir dos RF-016 e RF-017 do
+      PRD, com as decisões de escopo/design registradas como questões abertas (Q1–Q5).
+  - status: IN_PROGRESS
+    date: "2026-08-01"
+    reason: >-
+      Q1–Q4 respondidas pelo autor (D-Q1..D-Q4): primeiro incremento = relatório de
+      validação (RF-017) em webview (ADR-012), heurística aprovada, coleta de
+      evidências futura sem executar comandos. Incremento 1 implementado, fora da
+      ordem formal do fluxo (sem approve/design da Fase 1): núcleos puros
+      validationReport.ts (classificação) e validationHtml.ts (render), comando
+      "Validar mudança". 7 testes novos. Verificação: compile, lint e 105 testes
+      limpos. Transição DRAFT → IN_PROGRESS confirmada pelo autor. Faltam
+      REQ-EVID-002 (coleta de evidências) e REQ-EVID-003 (trava de conclusão).
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+# Q1–Q4 e a heurística D-Q3 estão na seção "Decisões de escopo" da spec. Q5
+# (evidence.md gerado vs. preenchido) fica para o incremento de RF-016.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 4
+  pending: 0
+  in_progress: 0
+  done: 4

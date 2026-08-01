@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { randomBytes } from 'node:crypto'
 import { detectProject } from './sdd/projectDetector'
 import { isInitialized, planFiles, runInitialization } from './sdd/initializer'
 import {
@@ -55,6 +56,8 @@ import {
   type ArtifactKind,
 } from './sdd/traceabilityNav'
 import { buildCommitSuggestion } from './sdd/commitSuggest'
+import { buildValidationReport } from './sdd/validationReport'
+import { renderValidationHtml } from './sdd/validationHtml'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -141,6 +144,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.checkScope', (node?: unknown) => checkScope(node, scopeChannel)),
     vscode.commands.registerCommand('sddClaudeKit.navigateTraceability', (node?: unknown) => navigateTraceability(node)),
     vscode.commands.registerCommand('sddClaudeKit.suggestCommit', (node?: unknown) => suggestCommit(node)),
+    vscode.commands.registerCommand('sddClaudeKit.validateChange', (node?: unknown) => validateChange(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -1027,6 +1031,57 @@ async function suggestCommit(node: unknown): Promise<void> {
     await vscode.env.clipboard.writeText(suggestion.branch)
     vscode.window.showInformationMessage('SDD: nome de branch copiado.')
   }
+}
+
+/**
+ * Valida uma mudança (RF-017, REQ-EVID-001, feature 0008). Lê o traceability.yaml, classifica
+ * cada requisito pela cobertura declarada (heurística D-Q3) e apresenta o relatório num
+ * WebviewPanel (ADR-012). Somente leitura: nada é executado nem escrito (NFR-EVID-004).
+ */
+async function validateChange(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para validar a mudança.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Validar mudança" de uma feature no painel Features.',
+    )
+    return
+  }
+
+  const text = await readText(
+    vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'traceability.yaml'),
+  )
+  if (text === undefined) {
+    vscode.window.showInformationMessage(
+      `SDD: ${change.id} ainda não tem traceability.yaml — gere com /sdd-kit:tasks.`,
+    )
+    return
+  }
+
+  const report = buildValidationReport(text, change.id)
+  const panel = vscode.window.createWebviewPanel(
+    'sddValidation',
+    `Validação — ${change.id}`,
+    vscode.ViewColumn.Active,
+    { enableScripts: false, localResourceRoots: [] },
+  )
+  panel.webview.html = renderValidationHtml(report, nonce())
+
+  const pend = report.summary['nao-atendido'] + report.summary['nao-testado'] + report.summary.parcial
+  vscode.window.showInformationMessage(
+    pend === 0
+      ? `SDD: validação de ${change.id} — ${report.summary.atendido} atendido(s), sem pendências.`
+      : `SDD: validação de ${change.id} — ${pend} requisito(s) com pendência. Ver o relatório.`,
+  )
+}
+
+/** Nonce alfanumérico para a CSP dos webviews (RF-017/ADR-012). */
+function nonce(): string {
+  return randomBytes(16).toString('base64').replace(/[^a-zA-Z0-9]/g, '')
 }
 
 /** Traduz os diagnósticos puros para a Diagnostics API, agrupados por arquivo. */

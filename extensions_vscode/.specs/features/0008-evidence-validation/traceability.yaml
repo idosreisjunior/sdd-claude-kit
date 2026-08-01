@@ -1,0 +1,89 @@
+# Matriz de rastreabilidade — 0008-evidence-validation
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` preenchido no incremento 1 (relatório de validação).
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0008-evidence-validation"
+
+requirements:
+
+  "REQ-EVID-001":
+    title: "Relatório de validação"
+    scenarios:
+      - "SCN-EVID-001"
+      - "SCN-EVID-002"
+      - "SCN-EVID-003"
+      - "SCN-EVID-004"
+    tasks:
+      - "TASK-EVID-001"
+      - "TASK-EVID-002"
+      - "TASK-EVID-003"
+      - "TASK-EVID-004"
+    implementation:
+      - "src/sdd/validationReport.ts"
+      - "src/sdd/validationHtml.ts"
+      - "src/extension.ts"
+      - "package.json"
+      - ".specs/features/0008-evidence-validation/decisions/ADR-012-relatorio-validacao-webview.md"
+    tests:
+      - "TEST-EVID-001"
+      - "TEST-EVID-002"
+      - "TEST-EVID-003"
+
+  "NFR-EVID-001":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-EVID-002"
+      - "TASK-EVID-003"
+    implementation:
+      - "src/sdd/validationReport.ts"
+      - "src/sdd/validationHtml.ts"
+    tests:
+      - "TEST-EVID-001"
+      - "TEST-EVID-002"
+      - "TEST-EVID-003"
+
+  "NFR-EVID-002":
+    title: "Robustez"
+    scenarios: []
+    tasks:
+      - "TASK-EVID-002"
+    implementation:
+      - "src/sdd/validationReport.ts"
+    tests:
+      - "TEST-EVID-002"
+
+  "NFR-EVID-004":
+    title: "Nada roda nem se escreve à revelia"
+    scenarios: []
+    tasks:
+      - "TASK-EVID-004"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+# Itens registrados explicitamente em vez de omitidos.
+gaps:
+  - id: "REQ-EVID-002"
+    reason: >-
+      Coleta de evidências (RF-016) — incremento futuro. Ainda sem tarefa;
+      SCN-EVID-005 fica pendente até lá.
+    mitigation: "Planejar e implementar em incremento próprio; 0008 segue IN_PROGRESS."
+  - id: "REQ-EVID-003"
+    reason: >-
+      Trava de conclusão sem evidência (RF-016) — incremento futuro. Ainda sem
+      tarefa; SCN-EVID-006 fica pendente até lá.
+    mitigation: "Planejar e implementar em incremento próprio; 0008 segue IN_PROGRESS."
+  - id: "NFR-EVID-003"
+    reason: "Ausência de rede é propriedade da borda, não testável no núcleo."
+    mitigation: "Revisão manual: a validação só lê arquivos locais; nenhum I/O de rede."
+  - id: "NFR-EVID-004"
+    reason: >-
+      "Nada roda nem se escreve" é propriedade da borda (TASK-EVID-004), não
+      expressável em teste unitário puro.
+    mitigation: "Revisão manual: o comando só lê o traceability.yaml e renderiza; sem escrita."

@@ -143,6 +143,12 @@
         "title": "SDD: Sugerir commit (Git)",
         "category": "SDD Claude Kit",
         "icon": "$(git-commit)"
+      },
+      {
+        "command": "sddClaudeKit.validateChange",
+        "title": "SDD: Validar mudança",
+        "category": "SDD Claude Kit",
+        "icon": "$(verified)"
       }
     ],
     "menus": {
@@ -204,6 +210,11 @@
           "command": "sddClaudeKit.suggestCommit",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@5"
+        },
+        {
+          "command": "sddClaudeKit.validateChange",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@6"
         }
       ]
     },
