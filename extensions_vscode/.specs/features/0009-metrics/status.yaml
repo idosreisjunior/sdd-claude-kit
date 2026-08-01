@@ -11,7 +11,7 @@ title: "Métricas locais"
 
 # Incremento 1 (métricas por feature + relatório) implementado. Segue IN_PROGRESS:
 # agregações (projeto/período) e formatos CSV/PDF (RF-022) faltam.
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-08-01"
 updated: "2026-08-01"
@@ -37,6 +37,14 @@ history:
       Verificação: compile, lint e 115 testes limpos, mais e2e do cálculo contra o
       repo real. Transição DRAFT → IN_PROGRESS confirmada pelo autor. Faltam as
       agregações e formatos do RF-022.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. O incremento 1 (métricas por feature, RF-021/022) está
+      funcional na extensão empacotada (0.0.7) e instalada; agregações e CSV/PDF são incrementos
+      futuros. Núcleos puros cobertos por testes; verificação global verde (compile, lint, 115
+      testes). Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval segue null; approve
+      é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

@@ -47,7 +47,7 @@ changes:
   - id: 0004-claude-code-adapter
     type: feature
     title: Adapter do Claude Code (montar/copiar prompt, executar ações)
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0004-claude-code-adapter
     created: "2026-07-31"
     updated: "2026-07-31"
@@ -57,7 +57,7 @@ changes:
   - id: 0005-context-guardian
     type: feature
     title: Context Guardian (estimar tokens, seleção, alertas)
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0005-context-guardian
     created: "2026-07-31"
     updated: "2026-07-31"
@@ -67,7 +67,7 @@ changes:
   - id: 0006-project-doctor
     type: feature
     title: Project Doctor (validar estrutura e diagnósticos)
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0006-project-doctor
     created: "2026-07-31"
     updated: "2026-07-31"
@@ -77,7 +77,7 @@ changes:
   - id: 0007-git-traceability
     type: feature
     title: Git e rastreabilidade (diff, fora de escopo, requisito→teste)
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0007-git-traceability
     created: "2026-07-31"
     updated: "2026-07-31"
@@ -87,7 +87,7 @@ changes:
   - id: 0008-evidence-validation
     type: feature
     title: Evidências e validação da feature
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0008-evidence-validation
     created: "2026-07-31"
     updated: "2026-08-01"
@@ -97,7 +97,7 @@ changes:
   - id: 0009-metrics
     type: feature
     title: Métricas locais (tokens, tempo, produtividade)
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0009-metrics
     created: "2026-08-01"
     updated: "2026-08-01"
@@ -125,7 +125,7 @@ changes:
   - id: 0012-spec-editor
     type: feature
     title: Editor de especificações (RF-006)
-    status: IN_PROGRESS
+    status: VERIFIED
     path: features/0012-spec-editor
     created: "2026-07-31"
     updated: "2026-07-31"

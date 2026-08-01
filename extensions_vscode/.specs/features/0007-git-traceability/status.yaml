@@ -11,7 +11,7 @@ title: "Git e rastreabilidade"
 
 # Os três incrementos (adapter+escopo, navegação, sugestões) estão implementados: a
 # feature cobre os RF-014/015/018. Segue IN_PROGRESS até a etapa de verify (Fase 2).
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-31"
 updated: "2026-07-31"
@@ -58,6 +58,14 @@ history:
       Núcleo puro commitSuggest.ts (3 testes novos) e comando "Sugerir commit".
       Verificação: compile, lint e 98 testes limpos. A 0007 cobre agora os três RFs
       (014/015/018): feature-completa, pronta para verify. Segue IN_PROGRESS.
+  - status: VERIFIED
+    date: "2026-08-01"
+    reason: >-
+      Verificada a pedido do usuário. Feature-completa (RF-014/015/018), com os três comandos
+      funcionais na extensão empacotada (0.0.7) e instalada. Núcleos puros cobertos por testes;
+      verificação global verde (compile, lint, 115 testes). Requisitos de borda verificados por
+      revisão manual no host. Transição IN_PROGRESS → VERIFIED fora da ordem formal (approval
+      segue null; approve é da Fase 2), confirmada pelo usuário.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
