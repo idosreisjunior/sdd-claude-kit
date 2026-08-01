@@ -2,6 +2,21 @@
 
 Todas as mudanças relevantes desta extensão são registradas aqui.
 
+## [0.0.6] — não lançado
+
+### Adicionado
+
+- Comando **"Navegar rastreabilidade"** (feature 0007, incremento 2): a partir de uma
+  feature, um QuickPick de requisitos → dos artefatos ligados (cenário/tarefa/arquivo/
+  teste), abrindo o artefato — `spec.md`/`tasks.md` na linha do identificador, o arquivo,
+  ou uma busca no workspace para testes. Somente leitura (RF-015).
+- Comando **"Sugerir commit (Git)"** (feature 0007, incremento 3): sugere um nome de branch
+  (`<prefixo>/<id>`) e uma mensagem de commit conventional (`<tipo>: <título> (<NNNN>)`)
+  para a mudança, com botões Copiar. **Nunca executa git** (RF-018).
+
+Com isso a feature 0007 (Git e rastreabilidade) cobre os três RFs (014/015/018): os três
+comandos — Verificar escopo, Navegar rastreabilidade e Sugerir commit — estão disponíveis.
+
 ## [0.0.5] — não lançado
 
 ### Adicionado
