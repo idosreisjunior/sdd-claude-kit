@@ -9,8 +9,8 @@ id: "0007-git-traceability"
 type: "feature"
 title: "Git e rastreabilidade"
 
-# Incrementos 1 (adapter + escopo) e 2 (navegação) implementados. Segue IN_PROGRESS:
-# falta o incremento de sugestões de branch/commit (REQ-TRACE-005).
+# Os três incrementos (adapter+escopo, navegação, sugestões) estão implementados: a
+# feature cobre os RF-014/015/018. Segue IN_PROGRESS até a etapa de verify (Fase 2).
 status: IN_PROGRESS
 
 created: "2026-07-31"
@@ -50,6 +50,14 @@ history:
       novos) e comando "Navegar rastreabilidade" — abre spec.md/tasks.md/arquivo ou
       busca o teste, somente leitura. Verificação: compile, lint e 95 testes limpos.
       Falta apenas o incremento REQ-TRACE-005 (sugestões de branch/commit).
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Incremento 3 implementado: sugestões de branch/commit (REQ-TRACE-005,
+      SCN-TRACE-008) por diálogo com botões Copiar (D-Q7) — nunca executa git.
+      Núcleo puro commitSuggest.ts (3 testes novos) e comando "Sugerir commit".
+      Verificação: compile, lint e 98 testes limpos. A 0007 cobre agora os três RFs
+      (014/015/018): feature-completa, pronta para verify. Segue IN_PROGRESS.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -60,14 +68,13 @@ approval: null
 blocked_by: []
 
 # Questões já resolvidas.
-# Q1–Q5 e a decisão D-Q6 (superfície da navegação) estão na seção "Decisões de
-# escopo" da spec.
+# Q1–Q5 e as decisões D-Q6/D-Q7 estão na seção "Decisões de escopo" da spec.
 resolved_questions: []
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
-# Incrementos 1 e 2 (8 tarefas).
+# Incrementos 1, 2 e 3 (10 tarefas).
 tasks:
-  total: 8
+  total: 10
   pending: 0
   in_progress: 0
-  done: 8
+  done: 10

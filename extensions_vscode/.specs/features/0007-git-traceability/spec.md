@@ -54,6 +54,7 @@ formalizada em ADR no `design.md`.
 | D-Q4 | Divergência de escopo é **alerta informativo**, nunca bloqueio ("arquivos prováveis" é previsão). | REQ-TRACE-003. |
 | D-Q5 | A detecção compara o diff contra os arquivos prováveis da **tarefa em andamento** (`in_progress` no `tasks.md`). | REQ-TRACE-003. |
 | D-Q6 | Navegação de rastreabilidade (REQ-TRACE-004) por **QuickPick** (ação numa feature) — não painel/webview — leve e consistente com "Verificar escopo". Incremento 2. | REQ-TRACE-004. |
+| D-Q7 | Sugestões de branch/commit (REQ-TRACE-005) via mensagem com botões **Copiar** — nunca executa git. Convenção: branch `<prefixo>/<id>`; commit conventional `<tipo>: <título> (<NNNN>)`, editável. Incremento 3. | REQ-TRACE-005. |
 
 ---
 
