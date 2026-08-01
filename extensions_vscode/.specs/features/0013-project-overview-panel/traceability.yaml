@@ -1,0 +1,162 @@
+# Matriz de rastreabilidade — 0013-project-overview-panel
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0013-project-overview-panel"
+
+requirements:
+
+  "REQ-PROJ-001":
+    title: "Cabeçalho de saúde estrutural"
+    scenarios:
+      - "SCN-PROJ-001"
+      - "SCN-PROJ-002"
+      - "SCN-PROJ-003"
+    tasks:
+      - "TASK-PROJ-002"
+      - "TASK-PROJ-004"
+      - "TASK-PROJ-006"
+    implementation:
+      - "src/sdd/projectOverview.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/views/projectViewProvider.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-PROJ-003"
+
+  "REQ-PROJ-002":
+    title: "Indicador de contexto no painel"
+    scenarios:
+      - "SCN-PROJ-004"
+      - "SCN-PROJ-005"
+    tasks:
+      - "TASK-PROJ-002"
+      - "TASK-PROJ-004"
+    implementation:
+      - "src/sdd/projectOverview.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/views/projectViewProvider.ts"
+    tests:
+      - "TEST-PROJ-003"
+
+  "REQ-PROJ-003":
+    title: "Contadores de mudanças por status"
+    scenarios:
+      - "SCN-PROJ-006"
+      - "SCN-PROJ-007"
+    tasks:
+      - "TASK-PROJ-002"
+      - "TASK-PROJ-004"
+    implementation:
+      - "src/sdd/projectOverview.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/views/projectViewProvider.ts"
+    tests:
+      - "TEST-PROJ-001"
+      - "TEST-PROJ-002"
+
+  "REQ-PROJ-004":
+    title: "Documentos de projeto preservados"
+    scenarios:
+      - "SCN-PROJ-008"
+    tasks:
+      - "TASK-PROJ-002"
+      - "TASK-PROJ-004"
+    implementation:
+      - "src/sdd/projectOverview.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/views/projectViewProvider.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-PROJ-002"
+
+  "REQ-PROJ-005":
+    title: "Apresentação visual em cartões"
+    scenarios:
+      - "SCN-PROJ-009"
+    tasks:
+      - "TASK-PROJ-001"
+      - "TASK-PROJ-003"
+      - "TASK-PROJ-004"
+      - "TASK-PROJ-005"
+    implementation:
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/views/projectViewProvider.ts"
+      - "package.json"
+      - ".specs/features/0013-project-overview-panel/decisions/ADR-010-painel-projeto-webview.md"
+    tests:
+      - "TEST-PROJ-004"
+
+  "NFR-PROJ-001":
+    title: "Somente leitura"
+    scenarios: []
+    tasks:
+      - "TASK-PROJ-004"
+    implementation:
+      - "src/views/projectViewProvider.ts"
+    tests: []
+
+  "NFR-PROJ-002":
+    title: "Robustez a dados ausentes ou inválidos"
+    scenarios:
+      - "SCN-PROJ-003"
+      - "SCN-PROJ-005"
+      - "SCN-PROJ-007"
+    tasks:
+      - "TASK-PROJ-002"
+      - "TASK-PROJ-003"
+    implementation:
+      - "src/sdd/projectOverview.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+    tests:
+      - "TEST-PROJ-002"
+      - "TEST-PROJ-005"
+
+  "NFR-PROJ-003":
+    title: "Custo de abertura contido"
+    scenarios: []
+    tasks:
+      - "TASK-PROJ-004"
+      - "TASK-PROJ-006"
+    implementation:
+      - "src/views/projectViewProvider.ts"
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-PROJ-004":
+    title: "Segurança do webview"
+    scenarios: []
+    tasks:
+      - "TASK-PROJ-001"
+      - "TASK-PROJ-003"
+    implementation:
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/views/projectViewProvider.ts"
+      - ".specs/features/0013-project-overview-panel/decisions/ADR-010-painel-projeto-webview.md"
+    tests:
+      - "TEST-PROJ-004"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "NFR-PROJ-001"
+    reason: >-
+      "Somente leitura" é uma propriedade de integração com a API do VS Code
+      (TASK-PROJ-004): não há escrita a assertar num teste unitário puro.
+    mitigation: >-
+      Revisão manual do provider — confirmar que nenhuma escrita ocorre além da
+      DiagnosticCollection sob ação explícita; núcleos puros (PROJ-002/003) não
+      importam `vscode`.
+  - id: "NFR-PROJ-003"
+    reason: >-
+      "Não varrer o repositório nem rodar Doctor ao abrir" é comportamento do
+      provider e do manifesto, não expressável em teste unitário do núcleo.
+    mitigation: >-
+      Revisão manual: o painel consome o último resultado do Doctor (PROJ-006) e
+      a última medição; abrir o painel não dispara diagnóstico nem medição.

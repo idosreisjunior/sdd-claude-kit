@@ -125,6 +125,7 @@ dentro de uma feature ficam na pasta `decisions/` da feature.
 | ADR-003 | Ler os YAML das specs com `js-yaml` (dependência de runtime), empacotando as dependências | Aceito | `features/0002-feature-management/decisions/` |
 | ADR-007 | Captura de resultado do terminal fica fora do incremento 0004 (adapter *fire-and-forget* + humano no controle); captura é escopo de 0008 | Aceito | `features/0004-claude-code-adapter/decisions/` |
 | ADR-008 | Contagem de tokens por heurística local (~4 caracteres/token), rotulada como estimativa; sem tokenizer nativo nem rede | Aceito | `features/0005-context-guardian/decisions/` |
+| ADR-009 | Project Doctor apresenta via Diagnostics API (painel Problems), com núcleo de diagnóstico puro | Aceito | `features/0006-project-doctor/decisions/` |
 
 ## 10. Questões arquiteturais em aberto
 

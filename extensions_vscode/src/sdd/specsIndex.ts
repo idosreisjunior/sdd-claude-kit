@@ -124,6 +124,21 @@ export function parseTaskProgress(yamlText: string): TaskProgress | undefined {
   return { done, total }
 }
 
+/**
+ * Extrai o campo `status` de um `status.yaml` (usado pelo Project Doctor, 0006).
+ * Robusto: YAML inválido, ausência do campo ou tipo inesperado resultam em
+ * `undefined`, nunca em exceção (NFR-PD-002).
+ */
+export function parseStatusField(yamlText: string): string | undefined {
+  let doc: unknown
+  try {
+    doc = load(yamlText)
+  } catch {
+    return undefined
+  }
+  return isRecord(doc) ? asString(doc['status']) : undefined
+}
+
 function normalize(raw: unknown): ChangeEntry | undefined {
   if (!isRecord(raw)) {
     return undefined

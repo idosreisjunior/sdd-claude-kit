@@ -47,13 +47,13 @@ export class FeaturesTreeProvider implements vscode.TreeDataProvider<FeatureNode
       : `${node.change.id} · ${node.change.type} · ${node.change.status}`
     item.iconPath = new vscode.ThemeIcon('file-symlink-file')
     item.contextValue = 'sddFeature'
-    const specUri = this.specUri(node.change)
-    if (specUri) {
-      item.command = {
-        command: 'vscode.open',
-        title: 'Abrir spec',
-        arguments: [specUri],
-      }
+    // Clicar na feature abre o dashboard visual (RF-005), não o spec.md em texto:
+    // é a visão que resume a mudança. O `spec.md` continua a um clique — pela ação
+    // inline "Editar spec" (editor visual) ou abrindo o arquivo no explorador.
+    item.command = {
+      command: 'sddClaudeKit.openDashboard',
+      title: 'Abrir dashboard',
+      arguments: [node],
     }
     return item
   }
@@ -79,11 +79,11 @@ export class FeaturesTreeProvider implements vscode.TreeDataProvider<FeatureNode
 
     const text = await this.readIndex(root)
     if (text === undefined) {
-      return [info('Projeto sem .specs — use "SDD: Inicializar projeto".')]
+      return [] // sem índice → o viewsWelcome "Inicializar SDD" assume (package.json)
     }
     const groups = groupByStatus(parseChanges(text))
     if (groups.length === 0) {
-      return [info('Nenhuma feature ainda — use "SDD: Nova feature".')]
+      return [] // sem mudanças → o viewsWelcome "Nova feature" assume (package.json)
     }
     return groups.map((group) => ({ kind: 'group', label: group.label, changes: group.changes }))
   }
@@ -119,14 +119,6 @@ export class FeaturesTreeProvider implements vscode.TreeDataProvider<FeatureNode
     } catch {
       return undefined
     }
-  }
-
-  private specUri(change: ChangeEntry): vscode.Uri | undefined {
-    const root = vscode.workspace.workspaceFolders?.[0]?.uri
-    if (!root || !change.path) {
-      return undefined
-    }
-    return vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'spec.md')
   }
 }
 

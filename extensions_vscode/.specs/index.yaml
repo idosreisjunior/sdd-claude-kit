@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 13
+next_id: 14
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -67,11 +67,11 @@ changes:
   - id: 0006-project-doctor
     type: feature
     title: Project Doctor (validar estrutura e diagnósticos)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0006-project-doctor
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 6 — Project Doctor"
     covers: [RF-002]
   - id: 0007-git-traceability
@@ -132,5 +132,14 @@ changes:
     materialized: true
     epic: "Épico 3 — Interface"
     covers: [RF-006]
+  - id: 0013-project-overview-panel
+    type: feature
+    title: Painel Projeto — resumo vivo (saúde, contexto, contadores)
+    status: DRAFT
+    path: features/0013-project-overview-panel
+    created: "2026-07-31"
+    updated: "2026-07-31"
+    materialized: true
+    epic: "Épico 3 — Interface"
 
 archive: []

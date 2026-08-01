@@ -2,7 +2,7 @@
   "name": "sdd-claude-kit-vscode",
   "displayName": "SDD Claude Kit",
   "description": "Cockpit visual de Spec-Driven Development para Claude Code dentro do VS Code.",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "publisher": "idosreisjunior",
   "license": "Apache-2.0",
   "engines": {
@@ -41,7 +41,8 @@
       "sddClaudeKit": [
         {
           "id": "sddProject",
-          "name": "Projeto"
+          "name": "Projeto",
+          "type": "webview"
         },
         {
           "id": "sddFeatures",
@@ -58,14 +59,19 @@
             "filenamePattern": "**/.specs/**/spec.md"
           }
         ],
-        "priority": "option"
+        "priority": "default"
       }
     ],
     "viewsWelcome": [
       {
-        "view": "sddProject",
-        "contents": "Este workspace ainda não tem a estrutura SDD (.specs).\n[Inicializar SDD](command:sddClaudeKit.initProject)\nA inicialização não sobrescreve arquivos de código.",
+        "view": "sddFeatures",
+        "contents": "Este workspace ainda não tem a estrutura SDD (.specs).\n[Inicializar SDD](command:sddClaudeKit.initProject)",
         "when": "!sddClaudeKit.initialized"
+      },
+      {
+        "view": "sddFeatures",
+        "contents": "Nenhuma mudança especificada ainda.\n[Nova feature](command:sddClaudeKit.newFeature)\nApós criar, detalhe a spec com /sdd-kit:spec no Claude Code.",
+        "when": "sddClaudeKit.initialized"
       }
     ],
     "commands": [
@@ -108,9 +114,26 @@
         "title": "SDD: Medir contexto",
         "category": "SDD Claude Kit",
         "icon": "$(dashboard)"
+      },
+      {
+        "command": "sddClaudeKit.runDoctor",
+        "title": "SDD: Diagnosticar projeto (Project Doctor)",
+        "category": "SDD Claude Kit",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "sddClaudeKit.openProjectDoc",
+        "title": "SDD: Abrir documento de projeto",
+        "category": "SDD Claude Kit"
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "sddClaudeKit.openProjectDoc",
+          "when": "false"
+        }
+      ],
       "view/title": [
         {
           "command": "sddClaudeKit.refresh",
@@ -120,6 +143,11 @@
         {
           "command": "sddClaudeKit.newFeature",
           "when": "view == sddFeatures",
+          "group": "navigation"
+        },
+        {
+          "command": "sddClaudeKit.runDoctor",
+          "when": "view == sddProject",
           "group": "navigation"
         }
       ],

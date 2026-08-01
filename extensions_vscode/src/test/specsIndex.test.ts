@@ -1,6 +1,12 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseChanges, groupByStatus, groupFor, parseTaskProgress } from '../sdd/specsIndex'
+import {
+  parseChanges,
+  groupByStatus,
+  groupFor,
+  parseTaskProgress,
+  parseStatusField,
+} from '../sdd/specsIndex'
 
 const INDEX = `version: 1
 next_id: 4
@@ -92,4 +98,11 @@ test('TEST-FEAT-001 — entradas sem id são descartadas; defaults aplicados', (
   assert.equal(changes[0].id, '0009-x')
   assert.equal(changes[0].status, 'DRAFT')
   assert.equal(changes[0].title, '0009-x')
+})
+
+test('TEST-PD-003 — parseStatusField lê o status e é robusto a YAML inválido/ausente (0006)', () => {
+  assert.equal(parseStatusField('version: 1\nstatus: IN_PROGRESS\n'), 'IN_PROGRESS')
+  assert.equal(parseStatusField(':\n  - [inválido'), undefined) // YAML inválido
+  assert.equal(parseStatusField('id: 0001\n'), undefined) // sem campo status
+  assert.equal(parseStatusField('status: 123'), undefined) // status não-string
 })

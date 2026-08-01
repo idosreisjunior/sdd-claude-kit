@@ -1,0 +1,68 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0013-project-overview-panel"
+# feature | bug | refactor | change
+type: "feature"
+title: "Painel Projeto — resumo vivo (saúde, contexto, contadores)"
+
+# Toda mudança nasce em DRAFT. Segue em DRAFT: a implementação foi feita fora da
+# ordem formal (sem approve/design, indisponíveis na Fase 1) a pedido do autor; a
+# promoção a IN_PROGRESS/VERIFIED cabe às etapas approve/verify.
+status: DRAFT
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Mudança criada com /sdd-kit:new a partir do pedido do usuário de enriquecer
+      a interface gráfica da extensão, agregando no painel Projeto os dados que o
+      Project Doctor (0006) e o Context Guardian (0005) já produzem.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      /sdd-kit:spec e /sdd-kit:tasks. Requisitos detalhados (REQ-PROJ-001..005,
+      NFR-PROJ-001..004, SCN-PROJ-001..009); as quatro questões de escopo Q1–Q4
+      foram respondidas pelo autor e registradas na seção "Decisões de escopo" da
+      spec (D-Q1..D-Q4), encerrando o bloqueio crítico Q2 (Doctor sob demanda) —
+      blocked_by esvaziado. Plano gerado: 6 tarefas (TASK-PROJ-001..006), matriz
+      de rastreabilidade criada. Mantido em DRAFT por decisão do autor: a promoção
+      a CLARIFIED/DESIGNED/PLANNED cabe às skills da Fase 2, ainda inexistentes.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Implementação das 6 tarefas a pedido do autor, fora da ordem formal do fluxo
+      (sem approve/design da Fase 1). Painel Projeto reescrito como WebviewView
+      (ADR-010): núcleos puros projectOverview.ts e projectOverviewHtml.ts (14 testes
+      novos), provider projectViewProvider.ts, wiring em extension.ts (último resumo
+      do Doctor em memória, comando openProjectDoc) e manifesto em package.json;
+      projectTreeProvider.ts removido. Verificação: compile, lint e 79 testes limpos.
+      Estado formal segue DRAFT até as etapas approve/verify.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q2 (Doctor automático vs. sob demanda) foi decidida na spec — ver D-Q2.
+blocked_by: []
+
+# Questões já resolvidas.
+# Q1–Q4 estão registradas na seção "Decisões de escopo" da spec. Não entram aqui
+# porque o schema exige `resolved_by` = id de tarefa (TASK-*), e a resolução foi
+# uma decisão de escopo do autor, não o resultado de uma tarefa.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 6
+  pending: 0
+  in_progress: 0
+  done: 6
