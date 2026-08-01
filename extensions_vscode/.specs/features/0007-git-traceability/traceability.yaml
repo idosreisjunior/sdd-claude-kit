@@ -76,6 +76,21 @@ requirements:
       - "TEST-TRACE-010"
       - "TEST-TRACE-011"
 
+  "REQ-TRACE-005":
+    title: "Sugestões sem commit automático"
+    scenarios:
+      - "SCN-TRACE-008"
+    tasks:
+      - "TASK-TRACE-009"
+      - "TASK-TRACE-010"
+    implementation:
+      - "src/sdd/commitSuggest.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-TRACE-012"
+      - "TEST-TRACE-013"
+
   "NFR-TRACE-001":
     title: "Nenhuma escrita sem autorização"
     scenarios: []
@@ -126,11 +141,6 @@ requirements:
 
 # Itens registrados explicitamente em vez de omitidos.
 gaps:
-  - id: "REQ-TRACE-005"
-    reason: >-
-      Sugestões de branch/commit — incremento futuro (D-Q2). Ainda sem tarefa;
-      SCN-TRACE-008 fica pendente até lá.
-    mitigation: "Planejar e implementar em incremento próprio; 0007 segue IN_PROGRESS."
   - id: "NFR-TRACE-001"
     reason: >-
       "Somente leitura" é propriedade da borda (TASK-TRACE-005/006), não expressável

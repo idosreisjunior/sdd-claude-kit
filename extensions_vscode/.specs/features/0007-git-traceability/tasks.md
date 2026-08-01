@@ -264,25 +264,83 @@ artefato — `spec.md` (requisito/cenário, posicionando na linha), `tasks.md` (
 
 ---
 
+## TASK-TRACE-009 — Núcleo puro: sugestão de branch/commit
+
+**Requisitos:** REQ-TRACE-005, NFR-TRACE-002
+**Dependências:** —
+**Complexidade:** P
+**Status:** done
+
+### Descrição
+
+Função pura que deriva, da mudança (id, tipo, título), um nome de branch (`<prefixo>/<id>`) e
+uma mensagem de commit conventional (`<tipo>: <título> (<NNNN>)`), conforme D-Q7. Sem `vscode`;
+não executa nada — é sugestão.
+
+### Arquivos prováveis
+
+- `src/sdd/commitSuggest.ts`
+
+### Testes esperados
+
+- TEST-TRACE-012 — sugestão por tipo (feature/bug/refactor/change)
+- TEST-TRACE-013 — tipo desconhecido/título vazio/id sem número usam defaults
+
+### Critério de conclusão
+
+- Os dois testes passam; nenhum import de `vscode`.
+
+---
+
+## TASK-TRACE-010 — Comando "Sugerir commit"
+
+**Requisitos:** REQ-TRACE-005, NFR-TRACE-001
+**Dependências:** TASK-TRACE-009
+**Complexidade:** P
+**Status:** done
+
+### Descrição
+
+Comando `sddClaudeKit.suggestCommit` (ação numa feature): apresenta a sugestão de branch e
+mensagem num diálogo com botões "Copiar mensagem"/"Copiar branch" (área de transferência).
+**Nunca executa git** (NFR-TRACE-001, RF-018).
+
+### Arquivos prováveis
+
+- `src/extension.ts`
+- `package.json`
+
+### Testes esperados
+
+- Nenhum automatizado — diálogo/clipboard são integração; a lógica vive em TASK-TRACE-009.
+  Verificação por revisão manual (`gaps`).
+
+### Critério de conclusão
+
+- Acionar "Sugerir commit" mostra a sugestão e copia sob demanda; nenhuma escrita nem commit;
+  `npm run compile`/`lint`/`test` limpos.
+
+---
+
 ## Resumo
 
 | Complexidade | Quantidade |
 | --- | --- |
-| P | 2 |
+| P | 4 |
 | M | 6 |
 | G | 0 |
 
-Total: 8 tarefas · 8 concluídas · 0 pendentes.
+Total: 10 tarefas · 10 concluídas · 0 pendentes.
 
-**Caminho crítico:** TASK-TRACE-002 → TASK-TRACE-003 → TASK-TRACE-006 (incremento 1) ·
-TASK-TRACE-007 → TASK-TRACE-008 (incremento 2)
+**Caminho crítico:** incremento 1 (TRACE-002→003→006) · incremento 2 (TRACE-007→008) ·
+incremento 3 (TRACE-009→010) — todos concluídos.
 
 **Bloqueios ativos:** nenhum.
 
-**Paralelizáveis agora:** nenhum — incrementos 1 e 2 concluídos.
+**Paralelizáveis agora:** nenhum — os três incrementos concluídos.
 
-> Incremento 1 (adapter + escopo) e incremento 2 (navegação de rastreabilidade, REQ-TRACE-004)
-> implementados em 2026-07-31, fora da ordem formal do fluxo (sem approve/design — Fase 1).
-> Verificação: compile, lint e testes limpos. 0007 segue **IN_PROGRESS**.
->
-> Incremento seguinte (D-Q2): REQ-TRACE-005 (sugestões de branch/commit).
+> Incrementos 1 (adapter + escopo, RF-018/RF-014), 2 (navegação, RF-015) e 3 (sugestões de
+> branch/commit, REQ-TRACE-005) implementados em 2026-07-31, fora da ordem formal do fluxo
+> (sem approve/design — Fase 1). Verificação: compile, lint e 98 testes limpos. **A 0007 cobre
+> agora os três RFs (014/015/018)** — feature-completa, pronta para verify. Segue IN_PROGRESS
+> até a etapa de verificação (Fase 2).

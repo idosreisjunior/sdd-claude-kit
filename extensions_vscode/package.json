@@ -137,6 +137,12 @@
         "title": "SDD: Navegar rastreabilidade",
         "category": "SDD Claude Kit",
         "icon": "$(references)"
+      },
+      {
+        "command": "sddClaudeKit.suggestCommit",
+        "title": "SDD: Sugerir commit (Git)",
+        "category": "SDD Claude Kit",
+        "icon": "$(git-commit)"
       }
     ],
     "menus": {
@@ -193,6 +199,11 @@
           "command": "sddClaudeKit.navigateTraceability",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@4"
+        },
+        {
+          "command": "sddClaudeKit.suggestCommit",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@5"
         }
       ]
     },

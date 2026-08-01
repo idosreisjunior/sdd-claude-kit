@@ -54,6 +54,7 @@ import {
   type Artifact,
   type ArtifactKind,
 } from './sdd/traceabilityNav'
+import { buildCommitSuggestion } from './sdd/commitSuggest'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -139,6 +140,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.openProjectDoc', (relPath?: unknown) => openProjectDoc(relPath)),
     vscode.commands.registerCommand('sddClaudeKit.checkScope', (node?: unknown) => checkScope(node, scopeChannel)),
     vscode.commands.registerCommand('sddClaudeKit.navigateTraceability', (node?: unknown) => navigateTraceability(node)),
+    vscode.commands.registerCommand('sddClaudeKit.suggestCommit', (node?: unknown) => suggestCommit(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -992,6 +994,38 @@ function labelForArtifact(kind: ArtifactKind): string {
       return 'teste (buscar)'
     case 'requirement':
       return 'requisito (spec.md)'
+  }
+}
+
+/**
+ * Sugere um nome de branch e uma mensagem de commit para a mudança (RF-018,
+ * REQ-TRACE-005, feature 0007). NUNCA executa git: apenas apresenta a sugestão e
+ * oferece copiar para a área de transferência (NFR-TRACE-001). Lógica pura em
+ * commitSuggest.ts.
+ */
+async function suggestCommit(node: unknown): Promise<void> {
+  const change = featureChangeOf(node)
+  if (!change) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Sugerir commit" de uma feature no painel Features.',
+    )
+    return
+  }
+  const suggestion = buildCommitSuggestion({ id: change.id, type: change.type, title: change.title })
+  const COPY_MSG = 'Copiar mensagem'
+  const COPY_BRANCH = 'Copiar branch'
+  const choice = await vscode.window.showInformationMessage(
+    `SDD: sugestão para ${change.id} (revise e aplique você mesmo — nada é commitado).`,
+    { modal: true, detail: `Branch:\n  ${suggestion.branch}\n\nCommit:\n  ${suggestion.message}` },
+    COPY_MSG,
+    COPY_BRANCH,
+  )
+  if (choice === COPY_MSG) {
+    await vscode.env.clipboard.writeText(suggestion.message)
+    vscode.window.showInformationMessage('SDD: mensagem de commit copiada.')
+  } else if (choice === COPY_BRANCH) {
+    await vscode.env.clipboard.writeText(suggestion.branch)
+    vscode.window.showInformationMessage('SDD: nome de branch copiado.')
   }
 }
 
