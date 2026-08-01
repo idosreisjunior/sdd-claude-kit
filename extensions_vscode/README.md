@@ -88,8 +88,9 @@ Para depurar: abra a pasta `extensions_vscode/` no VS Code e pressione `F5`.
 
 O empacotamento e a publicação são preparados na feature 0010. **Passos manuais** do mantenedor:
 
-1. Criar o **ícone PNG** do Marketplace (128×128) em `resources/icon.png` e referenciá-lo no
-   campo `"icon"` do `package.json` (o SVG da Activity Bar não serve como ícone de Marketplace).
+1. Substituir o **placeholder** `resources/icon.png` (128×128) pelo ícone real do Marketplace —
+   o campo `"icon"` do `package.json` já aponta para ele. (O SVG da Activity Bar não serve como
+   ícone de Marketplace.)
 2. Ter uma conta de **publisher** (`idosreisjunior`) no Marketplace e no Open VSX.
 3. Gerar os tokens e cadastrá-los como **segredos do repositório**: `VSCE_PAT` (Marketplace) e
    `OVSX_PAT` (Open VSX).
