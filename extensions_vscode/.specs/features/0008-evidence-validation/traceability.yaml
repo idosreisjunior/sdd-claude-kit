@@ -34,6 +34,23 @@ requirements:
       - "TEST-EVID-002"
       - "TEST-EVID-003"
 
+  "REQ-EVID-002":
+    title: "Coleta de evidências"
+    scenarios:
+      - "SCN-EVID-005"
+    tasks:
+      - "TASK-EVID-005"
+      - "TASK-EVID-006"
+    implementation:
+      - "src/sdd/evidenceDoc.ts"
+      - "src/sdd/gitParse.ts"
+      - "src/sdd/gitAdapter.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-EVID-004"
+      - "TEST-EVID-005"
+
   "NFR-EVID-001":
     title: "Núcleo puro e testável"
     scenarios: []
@@ -69,16 +86,14 @@ requirements:
 
 # Itens registrados explicitamente em vez de omitidos.
 gaps:
-  - id: "REQ-EVID-002"
-    reason: >-
-      Coleta de evidências (RF-016) — incremento futuro. Ainda sem tarefa;
-      SCN-EVID-005 fica pendente até lá.
-    mitigation: "Planejar e implementar em incremento próprio; 0008 segue IN_PROGRESS."
   - id: "REQ-EVID-003"
     reason: >-
-      Trava de conclusão sem evidência (RF-016) — incremento futuro. Ainda sem
-      tarefa; SCN-EVID-006 fica pendente até lá.
-    mitigation: "Planejar e implementar em incremento próprio; 0008 segue IN_PROGRESS."
+      Trava de conclusão sem evidência (RF-016, D-Q6): a extensão NÃO executa a
+      conclusão/verificação de uma mudança (é ação das skills / /sdd-kit:verify),
+      logo não há gatilho para a trava. SCN-EVID-006 fica sem cobertura na extensão.
+    mitigation: >-
+      Candidata a uma ação futura de "concluir mudança" na extensão, que então
+      exigiria evidência; até lá, a trava vive na skill /sdd-kit:verify.
   - id: "NFR-EVID-003"
     reason: "Ausência de rede é propriedade da borda, não testável no núcleo."
     mitigation: "Revisão manual: a validação só lê arquivos locais; nenhum I/O de rede."

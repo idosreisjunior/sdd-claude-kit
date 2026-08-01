@@ -149,6 +149,12 @@
         "title": "SDD: Validar mudança",
         "category": "SDD Claude Kit",
         "icon": "$(verified)"
+      },
+      {
+        "command": "sddClaudeKit.collectEvidence",
+        "title": "SDD: Coletar evidências",
+        "category": "SDD Claude Kit",
+        "icon": "$(notebook)"
       }
     ],
     "menus": {
@@ -215,6 +221,11 @@
           "command": "sddClaudeKit.validateChange",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@6"
+        },
+        {
+          "command": "sddClaudeKit.collectEvidence",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@7"
         }
       ]
     },

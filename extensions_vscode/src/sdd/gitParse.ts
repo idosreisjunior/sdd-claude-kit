@@ -124,3 +124,27 @@ function numOrNull(value: string): number | null {
   const n = Number(value)
   return Number.isInteger(n) && n >= 0 ? n : null
 }
+
+/** Um commit do `git log --oneline`. */
+export interface LogEntry {
+  hash: string
+  subject: string
+}
+
+/** Faz parsing de `git log --oneline` ("<hash> <assunto>"). Puro e robusto. */
+export function parseLog(oneline: string): LogEntry[] {
+  const out: LogEntry[] = []
+  for (const raw of oneline.split('\n')) {
+    const line = raw.replace(/\r$/, '').trim()
+    if (line.length === 0) {
+      continue
+    }
+    const space = line.indexOf(' ')
+    if (space < 0) {
+      out.push({ hash: line, subject: '' })
+    } else {
+      out.push({ hash: line.slice(0, space), subject: line.slice(space + 1) })
+    }
+  }
+  return out
+}

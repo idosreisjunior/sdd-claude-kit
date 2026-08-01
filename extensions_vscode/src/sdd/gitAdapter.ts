@@ -29,6 +29,15 @@ export async function readGit(cwd: string): Promise<GitRaw | undefined> {
   return { statusV2, numstat }
 }
 
+/**
+ * Lê os commits (mais recentes) que mencionam `grep` na mensagem, em `--oneline`. Somente
+ * leitura. Devolve '' quando não há repositório/commits ou o `git` falha.
+ */
+export async function readCommits(cwd: string, grep: string, limit = 20): Promise<string> {
+  // `-i --grep` filtra por menção; `--` encerra as opções (grep é dado, não flag).
+  return (await tryGit(cwd, ['log', `-n${limit}`, '--oneline', '-i', '--grep', grep, '--'])) ?? ''
+}
+
 async function tryGit(cwd: string, args: string[]): Promise<string | undefined> {
   try {
     const { stdout } = await run('git', args, { cwd, maxBuffer: MAX_BUFFER, windowsHide: true })

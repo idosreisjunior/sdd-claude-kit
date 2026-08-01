@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseStatus, parseNumstat } from '../sdd/gitParse'
+import { parseStatus, parseNumstat, parseLog } from '../sdd/gitParse'
 
 const STATUS = [
   '# branch.oid abc123',
@@ -49,6 +49,16 @@ test('TEST-TRACE-003 — entrada vazia/malformada não lança e degrada para vaz
   assert.doesNotThrow(() => parseStatus('lixo\n! ignored.ts\nxyz'))
   assert.deepEqual(parseNumstat(''), [])
   assert.deepEqual(parseNumstat('linha sem tabs'), [])
+})
+
+test('TEST-EVID-005 — parseLog lê hash e assunto de cada commit (0008)', () => {
+  const log = ['abc1234 feat: algo (0007)', 'def5678 fix: outro (0007)', 'ghi9012'].join('\n')
+  assert.deepEqual(parseLog(log), [
+    { hash: 'abc1234', subject: 'feat: algo (0007)' },
+    { hash: 'def5678', subject: 'fix: outro (0007)' },
+    { hash: 'ghi9012', subject: '' },
+  ])
+  assert.deepEqual(parseLog(''), [])
 })
 
 function pick(f: { staged: boolean; unstaged: boolean; untracked: boolean; conflict: boolean } | undefined) {
