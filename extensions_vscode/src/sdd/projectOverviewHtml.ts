@@ -25,9 +25,14 @@ function formatTokens(n: number): string {
   return n >= 1000 ? `${Math.round(n / 1000)}k` : String(n)
 }
 
-/** Gera o documento HTML do painel. `nonce` deve ser alfanumérico. */
-export function renderProjectOverviewHtml(model: ProjectOverview, nonce: string): string {
-  const csp = `default-src 'none'; style-src 'nonce-${nonce}'; img-src data:;`
+/**
+ * Gera o documento HTML do painel. `nonce` deve ser alfanumérico. `cspSource` é o
+ * `webview.cspSource` do VS Code: liberá-lo no `style-src` permite que as variáveis
+ * de tema (`--vscode-*`) injetadas pelo host apliquem num WebviewView (sem ele, a
+ * CSP `default-src 'none'` as bloqueia e os cartões perdem borda/cor). NFR-PROJ-004.
+ */
+export function renderProjectOverviewHtml(model: ProjectOverview, nonce: string, cspSource: string): string {
+  const csp = `default-src 'none'; style-src ${cspSource} 'nonce-${nonce}'; img-src ${cspSource} data:;`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -67,8 +72,8 @@ export function renderProjectOverviewHtml(model: ProjectOverview, nonce: string)
  * HTML do painel quando o workspace ainda não tem a estrutura SDD. O webview não
  * usa `viewsWelcome` (isso é de TreeView), então o estado de boas-vindas mora aqui.
  */
-export function renderNotInitializedHtml(nonce: string): string {
-  const csp = `default-src 'none'; style-src 'nonce-${nonce}';`
+export function renderNotInitializedHtml(nonce: string, cspSource: string): string {
+  const csp = `default-src 'none'; style-src ${cspSource} 'nonce-${nonce}';`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>

@@ -59,9 +59,10 @@ export class ProjectViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async html(): Promise<string> {
+    const cspSource = this.view?.webview.cspSource ?? ''
     const root = vscode.workspace.workspaceFolders?.[0]?.uri
     if (!root || !(await exists(vscode.Uri.joinPath(root, '.specs', 'config.yaml')))) {
-      return renderNotInitializedHtml(nonce())
+      return renderNotInitializedHtml(nonce(), cspSource)
     }
 
     // Índice ausente/ilegível → changes undefined (estado "no-index"); presente mas
@@ -85,7 +86,7 @@ export class ProjectViewProvider implements vscode.WebviewViewProvider {
       changes,
       docExists,
     })
-    return renderProjectOverviewHtml(overview, nonce())
+    return renderProjectOverviewHtml(overview, nonce(), cspSource)
   }
 }
 

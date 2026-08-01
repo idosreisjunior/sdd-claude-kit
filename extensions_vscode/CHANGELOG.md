@@ -2,6 +2,15 @@
 
 Todas as mudanças relevantes desta extensão são registradas aqui.
 
+## [0.0.4] — não lançado
+
+### Corrigido
+
+- Painel **Projeto** (webview) renderizava sem estilo — cartões sem borda nem cor.
+  A CSP `default-src 'none'` bloqueava as variáveis de tema (`--vscode-*`) que o VS
+  Code injeta num `WebviewView`. Correção: liberar `webview.cspSource` no `style-src`
+  (e `img-src`), mantendo o nonce para os estilos próprios (feature 0013).
+
 ## [0.0.3] — não lançado
 
 ### Alterado
