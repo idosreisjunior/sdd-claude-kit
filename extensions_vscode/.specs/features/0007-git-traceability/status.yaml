@@ -1,0 +1,64 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0007-git-traceability"
+# feature | bug | refactor | change
+type: "feature"
+title: "Git e rastreabilidade"
+
+# Incremento 1 implementado (adapter de Git + detecção de escopo). Segue IN_PROGRESS:
+# os incrementos de navegação (REQ-TRACE-004) e sugestões (REQ-TRACE-005) faltam.
+status: IN_PROGRESS
+
+created: "2026-07-31"
+updated: "2026-07-31"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Materializada a partir do backlog (Épico 7) a pedido do usuário, para
+      especificar e implementar. spec.md rascunhada a partir dos RF-014, RF-015 e
+      RF-018 do PRD, com as decisões de design registradas como questões abertas.
+  - status: DRAFT
+    date: "2026-07-31"
+    reason: >-
+      Spec detalhada (REQ-TRACE-001..005, NFR-TRACE-001..004, SCN-TRACE-001..008).
+      As cinco questões Q1–Q5 foram respondidas pelo autor e registradas na seção
+      "Decisões de escopo" (D-Q1..D-Q5); o bloqueio crítico Q1 (acesso ao Git via
+      binário + parser puro) foi encerrado. Primeiro incremento definido.
+  - status: IN_PROGRESS
+    date: "2026-07-31"
+    reason: >-
+      Incremento 1 implementado a pedido do autor, fora da ordem formal do fluxo
+      (sem approve/design da Fase 1). Adapter de Git somente-leitura (ADR-011):
+      núcleos puros gitParse.ts, scopeCheck.ts e tasksPlan.ts (12 testes novos),
+      borda gitAdapter.ts, comando "Verificar escopo" e config sddClaudeKit.scope.*.
+      Verificação: compile, lint e 91 testes limpos, mais teste ponta-a-ponta do
+      adapter contra o repo real. Transição DRAFT → IN_PROGRESS (pulados
+      CLARIFIED/DESIGNED/PLANNED/APPROVED da Fase 2) confirmada pelo autor.
+      Faltam os incrementos REQ-TRACE-004 (navegação) e REQ-TRACE-005 (sugestões).
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1 (acesso ao Git) foi decidida na spec — ver D-Q1 (binário + parser puro).
+blocked_by: []
+
+# Questões já resolvidas.
+# Q1–Q5 estão registradas na seção "Decisões de escopo" da spec.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+# Referem-se ao plano do incremento 1 (6 tarefas).
+tasks:
+  total: 6
+  pending: 0
+  in_progress: 0
+  done: 6

@@ -1,0 +1,131 @@
+# Matriz de rastreabilidade — 0007-git-traceability
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` preenchido no incremento 1 (adapter + detecção de escopo).
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0007-git-traceability"
+
+requirements:
+
+  "REQ-TRACE-001":
+    title: "Estado do Git"
+    scenarios:
+      - "SCN-TRACE-001"
+      - "SCN-TRACE-002"
+    tasks:
+      - "TASK-TRACE-002"
+      - "TASK-TRACE-005"
+    implementation:
+      - "src/sdd/gitParse.ts"
+      - "src/sdd/gitAdapter.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-TRACE-001"
+
+  "REQ-TRACE-002":
+    title: "Diff da mudança"
+    scenarios:
+      - "SCN-TRACE-003"
+    tasks:
+      - "TASK-TRACE-002"
+      - "TASK-TRACE-005"
+    implementation:
+      - "src/sdd/gitParse.ts"
+      - "src/sdd/gitAdapter.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-TRACE-002"
+
+  "REQ-TRACE-003":
+    title: "Detecção de mudanças fora do escopo"
+    scenarios:
+      - "SCN-TRACE-004"
+      - "SCN-TRACE-005"
+      - "SCN-TRACE-006"
+    tasks:
+      - "TASK-TRACE-003"
+      - "TASK-TRACE-004"
+      - "TASK-TRACE-006"
+    implementation:
+      - "src/sdd/scopeCheck.ts"
+      - "src/sdd/tasksPlan.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-TRACE-004"
+      - "TEST-TRACE-005"
+      - "TEST-TRACE-006"
+      - "TEST-TRACE-007"
+
+  "NFR-TRACE-001":
+    title: "Nenhuma escrita sem autorização"
+    scenarios: []
+    tasks:
+      - "TASK-TRACE-005"
+      - "TASK-TRACE-006"
+    implementation:
+      - "src/sdd/gitAdapter.ts"
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-TRACE-002":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-TRACE-002"
+      - "TASK-TRACE-003"
+      - "TASK-TRACE-004"
+    implementation:
+      - "src/sdd/gitParse.ts"
+      - "src/sdd/scopeCheck.ts"
+      - "src/sdd/tasksPlan.ts"
+    tests:
+      - "TEST-TRACE-003"
+
+  "NFR-TRACE-003":
+    title: "Robustez"
+    scenarios:
+      - "SCN-TRACE-002"
+    tasks:
+      - "TASK-TRACE-002"
+      - "TASK-TRACE-004"
+    implementation:
+      - "src/sdd/gitParse.ts"
+      - "src/sdd/tasksPlan.ts"
+    tests:
+      - "TEST-TRACE-003"
+      - "TEST-TRACE-009"
+
+  "NFR-TRACE-004":
+    title: "Sem rede"
+    scenarios: []
+    tasks:
+      - "TASK-TRACE-005"
+    implementation:
+      - "src/sdd/gitAdapter.ts"
+    tests: []
+
+# Itens registrados explicitamente em vez de omitidos.
+gaps:
+  - id: "REQ-TRACE-004"
+    reason: >-
+      Navegação de rastreabilidade — incremento futuro (D-Q2). Ainda sem tarefa
+      neste plano; SCN-TRACE-007 fica pendente até lá.
+    mitigation: "Planejar e implementar em incremento próprio; 0007 segue IN_PROGRESS."
+  - id: "REQ-TRACE-005"
+    reason: >-
+      Sugestões de branch/commit — incremento futuro (D-Q2). Ainda sem tarefa;
+      SCN-TRACE-008 fica pendente até lá.
+    mitigation: "Planejar e implementar em incremento próprio; 0007 segue IN_PROGRESS."
+  - id: "NFR-TRACE-001"
+    reason: >-
+      "Somente leitura" é propriedade da borda (TASK-TRACE-005/006), não expressável
+      em teste unitário puro.
+    mitigation: "Revisão manual do adapter — apenas comandos de leitura; nenhuma escrita."
+  - id: "NFR-TRACE-004"
+    reason: "Ausência de rede é propriedade da borda (adapter), não testável no núcleo."
+    mitigation: "Revisão manual: o adapter só executa git local; nenhum I/O de rede."

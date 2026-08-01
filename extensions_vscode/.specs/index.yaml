@@ -77,11 +77,11 @@ changes:
   - id: 0007-git-traceability
     type: feature
     title: Git e rastreabilidade (diff, fora de escopo, requisito→teste)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0007-git-traceability
     created: "2026-07-31"
     updated: "2026-07-31"
-    materialized: false
+    materialized: true
     epic: "Épico 7 — Git e rastreabilidade"
     covers: [RF-014, RF-015, RF-018]
   - id: 0008-evidence-validation

@@ -39,6 +39,15 @@ import {
 } from './sdd/projectDoctor'
 import { ProjectViewProvider } from './views/projectViewProvider'
 import { summarizeDiagnostics, type DoctorHealth } from './sdd/projectOverview'
+import { readGit } from './sdd/gitAdapter'
+import { parseStatus, parseNumstat, type GitStatus } from './sdd/gitParse'
+import {
+  checkScope as evaluateScope,
+  DEFAULT_SCOPE_CONFIG,
+  type ScopeConfig,
+  type ScopeAlert,
+} from './sdd/scopeCheck'
+import { parseTasksPlan, inProgressPlan, type TaskPlan } from './sdd/tasksPlan'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -80,8 +89,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   )
   contextIndicator.command = 'sddClaudeKit.measureContext'
   const contextChannel = vscode.window.createOutputChannel('SDD · Context Guardian')
+  const scopeChannel = vscode.window.createOutputChannel('SDD · Escopo')
   const doctorDiagnostics = vscode.languages.createDiagnosticCollection('SDD Doctor')
-  context.subscriptions.push(contextIndicator, contextChannel, doctorDiagnostics)
+  context.subscriptions.push(contextIndicator, contextChannel, scopeChannel, doctorDiagnostics)
 
   const refresh = async (): Promise<void> => {
     const detection = await detectProject()
@@ -121,6 +131,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.measureContext', (node?: unknown) => measure(node)),
     vscode.commands.registerCommand('sddClaudeKit.runDoctor', () => runDoctorAndRefresh()),
     vscode.commands.registerCommand('sddClaudeKit.openProjectDoc', (relPath?: unknown) => openProjectDoc(relPath)),
+    vscode.commands.registerCommand('sddClaudeKit.checkScope', (node?: unknown) => checkScope(node, scopeChannel)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -736,6 +747,97 @@ async function openProjectDoc(relPath: unknown): Promise<void> {
   }
   const uri = vscode.Uri.joinPath(root, ...relPath.split('/'))
   await vscode.commands.executeCommand('vscode.open', uri)
+}
+
+/**
+ * Verifica mudanças fora do escopo de uma mudança (RF-014, feature 0007). Lê o estado do
+ * Git (somente leitura, ADR-011), compara os arquivos alterados com os arquivos prováveis da
+ * tarefa em andamento (D-Q5) e apresenta os alertas num canal. Nada é escrito (NFR-TRACE-001).
+ */
+async function checkScope(node: unknown, channel: vscode.OutputChannel): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para verificar o escopo.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Verificar escopo" de uma feature no painel Features.',
+    )
+    return
+  }
+
+  const raw = await readGit(root.fsPath)
+  if (!raw) {
+    vscode.window.showInformationMessage('SDD: sem repositório Git neste workspace — nada a verificar.')
+    return
+  }
+  const status = parseStatus(raw.statusV2)
+  const diffStats = parseNumstat(raw.numstat)
+  const changedFiles = status.files.map((f) => f.path)
+
+  const tasksMd = await readText(
+    vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'tasks.md'),
+  )
+  const current = tasksMd ? inProgressPlan(parseTasksPlan(tasksMd)) : undefined
+
+  const alerts = evaluateScope({
+    changedFiles,
+    plannedFiles: current?.plannedFiles ?? [],
+    diffStats,
+    config: scopeConfig(),
+  })
+
+  renderScope(channel, change.id, status, current, changedFiles.length, alerts)
+  channel.show(true)
+  vscode.window.showInformationMessage(
+    alerts.length === 0
+      ? `SDD: escopo de ${change.id} sem alertas (branch ${status.branch ?? '—'}, ${changedFiles.length} arquivo(s)).`
+      : `SDD: ${alerts.length} alerta(s) de escopo em ${change.id}. Ver o canal "SDD · Escopo".`,
+  )
+}
+
+/** Config de escopo (D-Q3): defaults mesclados com sddClaudeKit.scope.*. */
+function scopeConfig(): ScopeConfig {
+  const cfg = vscode.workspace.getConfiguration('sddClaudeKit')
+  return {
+    sensitiveGlobs: cfg.get<string[]>('scope.sensitiveGlobs', DEFAULT_SCOPE_CONFIG.sensitiveGlobs),
+    maxLines: cfg.get<number>('scope.maxLines', DEFAULT_SCOPE_CONFIG.maxLines),
+    maxFiles: cfg.get<number>('scope.maxFiles', DEFAULT_SCOPE_CONFIG.maxFiles),
+    dependencyManifests: cfg.get<string[]>(
+      'scope.dependencyManifests',
+      DEFAULT_SCOPE_CONFIG.dependencyManifests,
+    ),
+  }
+}
+
+/** Escreve o resultado da verificação de escopo no canal de saída. */
+function renderScope(
+  channel: vscode.OutputChannel,
+  changeId: string,
+  status: GitStatus,
+  current: TaskPlan | undefined,
+  changedCount: number,
+  alerts: ScopeAlert[],
+): void {
+  channel.clear()
+  channel.appendLine(`Escopo — ${changeId}`)
+  channel.appendLine(`Branch: ${status.branch ?? '(destacado)'} · ${changedCount} arquivo(s) alterado(s)`)
+  channel.appendLine(
+    current
+      ? `Tarefa em andamento: ${current.id} · ${current.plannedFiles.length} arquivo(s) previsto(s)`
+      : 'Sem tarefa in_progress no tasks.md — sem base para "fora do previsto".',
+  )
+  channel.appendLine('')
+  if (alerts.length === 0) {
+    channel.appendLine('Nenhum alerta de escopo.')
+    return
+  }
+  channel.appendLine(`${alerts.length} alerta(s):`)
+  for (const a of alerts) {
+    channel.appendLine(`  [${a.kind}] ${a.message}`)
+  }
 }
 
 /** Traduz os diagnósticos puros para a Diagnostics API, agrupados por arquivo. */
