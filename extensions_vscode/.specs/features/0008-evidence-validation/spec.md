@@ -48,7 +48,9 @@ As questões Q1–Q5 foram respondidas pelo autor; a de natureza arquitetural vi
 | D-Q1 | **Primeiro incremento**: relatório de validação (RF-017 / REQ-EVID-001). Coleta de evidências (RF-016) e trava de conclusão vêm depois; 0008 fica IN_PROGRESS. | tasks. |
 | D-Q2 | O relatório de validação é um **webview** (tabela por requisito, categorias). **Requer ADR** (segue o padrão do dashboard/painel Projeto). | REQ-EVID-001; NFR-EVID-001. |
 | D-Q3 | **Heurística** aprovada: `não aplicável` = requisito em `gaps`; `não atendido` = sem implementação; `não testado` = implementação sem teste; `parcial` = implementação + teste sem tarefa ligada; `atendido` = tarefa + teste + implementação. | REQ-EVID-001. |
-| D-Q4 | A coleta de evidências (RF-016, incremento futuro) **só reúne o que já existe** (commits/diff/status/resultados fornecidos) — **não executa** os comandos do `config.yaml`. | REQ-EVID-002; NFR-EVID-004. |
+| D-Q4 | A coleta de evidências (RF-016) **só reúne o que já existe** (commits/diff/status/validação) — **não executa** os comandos do `config.yaml`. Incremento 2. | REQ-EVID-002; NFR-EVID-004. |
+| D-Q5 | O `evidence.md` é **gerado** (preview + confirmação) quando ausente; **não sobrescreve** um existente — copia o conteúdo para o usuário mesclar, preservando texto humano (Art. 5). Incremento 2. | REQ-EVID-002. |
+| D-Q6 | A **trava de conclusão sem evidência** (REQ-EVID-003) fica fora do escopo desta feature na extensão: a extensão não executa a conclusão/verificação de uma mudança (é ação das skills / `/sdd-kit:verify`). Registrada como lacuna; candidata a uma ação futura de "concluir". | REQ-EVID-003. |
 
 ---
 

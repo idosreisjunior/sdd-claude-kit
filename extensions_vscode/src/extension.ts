@@ -31,7 +31,7 @@ import {
   type ContextFile,
   type Usage,
 } from './sdd/contextGuardian'
-import { parseChanges, parseStatusField } from './sdd/specsIndex'
+import { parseChanges, parseStatusField, parseTaskProgress } from './sdd/specsIndex'
 import {
   REQUIRED_PROJECT_FILES,
   diagnose,
@@ -40,8 +40,8 @@ import {
 } from './sdd/projectDoctor'
 import { ProjectViewProvider } from './views/projectViewProvider'
 import { summarizeDiagnostics, type DoctorHealth } from './sdd/projectOverview'
-import { readGit } from './sdd/gitAdapter'
-import { parseStatus, parseNumstat, type GitStatus } from './sdd/gitParse'
+import { readGit, readCommits } from './sdd/gitAdapter'
+import { parseStatus, parseNumstat, parseLog, type GitStatus } from './sdd/gitParse'
 import {
   checkScope as evaluateScope,
   DEFAULT_SCOPE_CONFIG,
@@ -58,6 +58,7 @@ import {
 import { buildCommitSuggestion } from './sdd/commitSuggest'
 import { buildValidationReport } from './sdd/validationReport'
 import { renderValidationHtml } from './sdd/validationHtml'
+import { buildEvidenceMarkdown } from './sdd/evidenceDoc'
 import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
 
 /**
@@ -145,6 +146,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.navigateTraceability', (node?: unknown) => navigateTraceability(node)),
     vscode.commands.registerCommand('sddClaudeKit.suggestCommit', (node?: unknown) => suggestCommit(node)),
     vscode.commands.registerCommand('sddClaudeKit.validateChange', (node?: unknown) => validateChange(node)),
+    vscode.commands.registerCommand('sddClaudeKit.collectEvidence', (node?: unknown) => collectEvidence(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -1082,6 +1084,87 @@ async function validateChange(node: unknown): Promise<void> {
 /** Nonce alfanumérico para a CSP dos webviews (RF-017/ADR-012). */
 function nonce(): string {
   return randomBytes(16).toString('base64').replace(/[^a-zA-Z0-9]/g, '')
+}
+
+/**
+ * Coleta evidências de uma mudança (RF-016, REQ-EVID-002, feature 0008). Reúne o que JÁ
+ * existe — resumo da validação, estado do Git, diff, commits, progresso — e organiza num
+ * evidence.md (D-Q4: nada é executado). Não sobrescreve um evidence.md existente (D-Q5):
+ * nesse caso copia o conteúdo para a área de transferência e oferece abrir o atual.
+ */
+async function collectEvidence(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para coletar evidências.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Coletar evidências" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  const traceText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml'))
+  const validation = traceText ? buildValidationReport(traceText, change.id).summary : undefined
+
+  const statusText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
+  const progress = statusText ? parseTaskProgress(statusText) : undefined
+
+  let git: { branch?: string; changedCount: number; totalAdded: number; totalRemoved: number } | undefined
+  const raw = await readGit(root.fsPath)
+  if (raw) {
+    const status = parseStatus(raw.statusV2)
+    const stats = parseNumstat(raw.numstat)
+    git = {
+      branch: status.branch,
+      changedCount: status.files.length,
+      totalAdded: stats.reduce((sum, e) => sum + (e.added ?? 0), 0),
+      totalRemoved: stats.reduce((sum, e) => sum + (e.removed ?? 0), 0),
+    }
+  }
+  const numeric = /^(\d+)/.exec(change.id)?.[1] ?? change.id
+  const commits = parseLog(await readCommits(root.fsPath, numeric))
+
+  const markdown = buildEvidenceMarkdown({
+    changeId: change.id,
+    title: change.title,
+    type: change.type,
+    status: change.status,
+    date: today(),
+    tasks: progress ? { total: progress.total, done: progress.done } : undefined,
+    validation,
+    git,
+    commits,
+  })
+
+  const evidenceUri = vscode.Uri.joinPath(root, ...changeDir, 'evidence.md')
+  if (await exists(evidenceUri)) {
+    // Não sobrescreve conteúdo humano (D-Q5): copia e oferece abrir o existente.
+    await vscode.env.clipboard.writeText(markdown)
+    const open = await vscode.window.showWarningMessage(
+      `SDD: ${change.id} já tem evidence.md — não sobrescrevo. As evidências coletadas foram copiadas para você mesclar.`,
+      'Abrir evidence.md',
+    )
+    if (open === 'Abrir evidence.md') {
+      await vscode.commands.executeCommand('vscode.open', evidenceUri)
+    }
+    return
+  }
+
+  const confirm = await vscode.window.showInformationMessage(
+    `SDD: criar evidence.md de ${change.id} com as evidências coletadas? Revise e complete o que ficou marcado.`,
+    { modal: true, detail: markdown.slice(0, 1500) },
+    'Criar',
+  )
+  if (confirm !== 'Criar') {
+    return
+  }
+  await vscode.workspace.fs.writeFile(evidenceUri, Buffer.from(markdown, 'utf8'))
+  await vscode.commands.executeCommand('vscode.open', evidenceUri)
+  vscode.window.showInformationMessage(`SDD: evidence.md criado em .specs/${change.path}.`)
 }
 
 /** Traduz os diagnósticos puros para a Diagnostics API, agrupados por arquivo. */

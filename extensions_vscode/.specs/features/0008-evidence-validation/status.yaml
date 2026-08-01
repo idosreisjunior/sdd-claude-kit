@@ -9,8 +9,8 @@ id: "0008-evidence-validation"
 type: "feature"
 title: "Evidências e validação da feature"
 
-# Incremento 1 (relatório de validação, RF-017) implementado. Segue IN_PROGRESS:
-# faltam a coleta de evidências (RF-016) e a trava de conclusão.
+# Incrementos 1 (validação, RF-017) e 2 (coleta de evidências, RF-016) implementados.
+# Segue IN_PROGRESS: REQ-EVID-003 (trava de conclusão) fica como lacuna (D-Q6).
 status: IN_PROGRESS
 
 created: "2026-07-31"
@@ -31,10 +31,19 @@ history:
       validação (RF-017) em webview (ADR-012), heurística aprovada, coleta de
       evidências futura sem executar comandos. Incremento 1 implementado, fora da
       ordem formal do fluxo (sem approve/design da Fase 1): núcleos puros
-      validationReport.ts (classificação) e validationHtml.ts (render), comando
-      "Validar mudança". 7 testes novos. Verificação: compile, lint e 105 testes
-      limpos. Transição DRAFT → IN_PROGRESS confirmada pelo autor. Faltam
-      REQ-EVID-002 (coleta de evidências) e REQ-EVID-003 (trava de conclusão).
+      validationReport.ts e validationHtml.ts, comando "Validar mudança". 7 testes
+      novos. Verificação: compile, lint e 105 testes limpos. Transição DRAFT →
+      IN_PROGRESS confirmada pelo autor.
+  - status: IN_PROGRESS
+    date: "2026-08-01"
+    reason: >-
+      Incremento 2 implementado: coleta de evidências (RF-016, REQ-EVID-002). Reúne
+      validação, git (branch/diff), commits (git log, só leitura, D-Q4) e progresso
+      num evidence.md, sem sobrescrever conteúdo humano (D-Q5). Núcleos puros
+      evidenceDoc.ts e parseLog (gitParse.ts), leitura readCommits (gitAdapter.ts),
+      comando "Coletar evidências". 3 testes novos. Verificação: compile, lint e 108
+      testes limpos, mais e2e da coleta contra o repo real. REQ-EVID-003 (trava de
+      conclusão) fica lacuna: a extensão não executa a conclusão (D-Q6).
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -44,13 +53,12 @@ approval: null
 blocked_by: []
 
 # Questões já resolvidas.
-# Q1–Q4 e a heurística D-Q3 estão na seção "Decisões de escopo" da spec. Q5
-# (evidence.md gerado vs. preenchido) fica para o incremento de RF-016.
+# Q1–Q6 estão na seção "Decisões de escopo" da spec.
 resolved_questions: []
 
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
-  total: 4
+  total: 6
   pending: 0
   in_progress: 0
-  done: 4
+  done: 6
