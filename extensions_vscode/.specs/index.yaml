@@ -107,11 +107,11 @@ changes:
   - id: 0010-publishing
     type: feature
     title: Publicação (ícone, Marketplace, docs, pipeline)
-    status: DRAFT
+    status: IN_PROGRESS
     path: features/0010-publishing
-    created: "2026-07-31"
-    updated: "2026-07-31"
-    materialized: false
+    created: "2026-08-01"
+    updated: "2026-08-01"
+    materialized: true
     epic: "Épico 10 — Publicação"
     covers: [RF-023]
   - id: 0011-title-breaks-status-yaml
