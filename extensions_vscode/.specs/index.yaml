@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 21
+next_id: 22
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -209,5 +209,15 @@ changes:
     materialized: true
     epic: "pós-MVP — Fase 2"
     covers: [RF-024]
+  - id: 0021-github-integration
+    type: feature
+    title: Integração com GitHub (RF-019)
+    status: PLANNED
+    path: features/0021-github-integration
+    created: "2026-08-02"
+    updated: "2026-08-02"
+    materialized: true
+    epic: "pós-MVP — Fase 3"
+    covers: [RF-019]
 
 archive: []
