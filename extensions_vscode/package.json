@@ -207,6 +207,12 @@
         "title": "SDD: Tarefas",
         "category": "SDD Claude Kit",
         "icon": "$(checklist)"
+      },
+      {
+        "command": "sddClaudeKit.sqlGuard",
+        "title": "SDD: SQL Guard — analisar SQL",
+        "category": "SDD Claude Kit",
+        "icon": "$(database)"
       }
     ],
     "menus": {
@@ -214,6 +220,17 @@
         {
           "command": "sddClaudeKit.openProjectDoc",
           "when": "false"
+        },
+        {
+          "command": "sddClaudeKit.sqlGuard",
+          "when": "editorLangId == sql"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "sddClaudeKit.sqlGuard",
+          "when": "editorLangId == sql",
+          "group": "sdd"
         }
       ],
       "view/title": [

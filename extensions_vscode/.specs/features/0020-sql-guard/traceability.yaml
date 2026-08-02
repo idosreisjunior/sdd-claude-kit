@@ -1,0 +1,101 @@
+# Matriz de rastreabilidade — 0020-sql-guard
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0020-sql-guard"
+
+requirements:
+
+  "REQ-SQL-001":
+    title: "Análise heurística de riscos em SQL"
+    scenarios:
+      - "SCN-SQL-001"
+      - "SCN-SQL-002"
+      - "SCN-SQL-003"
+      - "SCN-SQL-004"
+    tasks:
+      - "TASK-SQL-001"
+      - "TASK-SQL-002"
+      - "TASK-SQL-003"
+    implementation:
+      - "src/sdd/sqlGuard.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-SQL-001"
+      - "TEST-SQL-002"
+
+  "REQ-SQL-002":
+    title: "Apresentação dos achados"
+    scenarios:
+      - "SCN-SQL-005"
+    tasks:
+      - "TASK-SQL-001"
+      - "TASK-SQL-003"
+    implementation:
+      - ".specs/features/0020-sql-guard/decisions/ADR-019-superficie-e-gatilho-do-sql-guard.md"
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-SQL-001":
+    title: "Somente leitura, sem executar SQL"
+    scenarios: []
+    tasks:
+      - "TASK-SQL-001"
+      - "TASK-SQL-002"
+    implementation:
+      - ".specs/features/0020-sql-guard/decisions/ADR-019-superficie-e-gatilho-do-sql-guard.md"
+      - "src/sdd/sqlGuard.ts"
+    tests:
+      - "TEST-SQL-001"
+      - "TEST-SQL-002"
+
+  "NFR-SQL-002":
+    title: "Sem rede"
+    scenarios: []
+    tasks:
+      - "TASK-SQL-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-SQL-003":
+    title: "Núcleo puro e testável, sem dependência"
+    scenarios: []
+    tasks:
+      - "TASK-SQL-002"
+    implementation:
+      - "src/sdd/sqlGuard.ts"
+    tests:
+      - "TEST-SQL-001"
+      - "TEST-SQL-002"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-SQL-001"
+    reason: >-
+      Ler o SQL do editor ativo e publicar os diagnósticos são integração com o
+      host do VS Code; a análise (as quatro verificações) vive no núcleo puro
+      (TEST-SQL-001/002).
+    mitigation: >-
+      Revisão manual em TASK-SQL-003: sobre um SQL no editor, o Guard sinaliza as
+      quatro verificações com posição.
+  - id: "REQ-SQL-002"
+    reason: >-
+      A apresentação (diagnósticos/superfície do ADR-019) é integração com o host,
+      não coberta por teste automatizado.
+    mitigation: >-
+      Revisão manual em TASK-SQL-003: cada risco aparece com categoria, mensagem e
+      posição no SQL.
+  - id: "NFR-SQL-002"
+    reason: >-
+      "Sem rede" é uma propriedade de ausência — verificada por revisão/lint.
+    mitigation: >-
+      Revisão de código na borda (TASK-SQL-003) e no núcleo puro.

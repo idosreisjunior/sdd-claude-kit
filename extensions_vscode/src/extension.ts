@@ -25,6 +25,7 @@ import { canGenerateDesign, extractScope } from './sdd/designGenerator'
 import { hasRequirements } from './sdd/clarifyGenerator'
 import { buildSkeleton } from './sdd/skeleton'
 import { analyzeTasks } from './sdd/taskAnalysis'
+import { analyzeSql, type SqlFindingKind } from './sdd/sqlGuard'
 import { aggregateHistory } from './sdd/historyModel'
 import { renderHistoryHtml } from './sdd/historyHtml'
 import { nextAdrNumber, adrSlug, padAdr, buildAdr } from './sdd/adrCreator'
@@ -120,12 +121,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const scopeChannel = vscode.window.createOutputChannel('SDD · Escopo')
   const doctorDiagnostics = vscode.languages.createDiagnosticCollection('SDD Doctor')
   const taskDiagnostics = vscode.languages.createDiagnosticCollection('SDD Tarefas')
+  const sqlDiagnostics = vscode.languages.createDiagnosticCollection('SQL Guard')
   context.subscriptions.push(
     contextIndicator,
     contextChannel,
     scopeChannel,
     doctorDiagnostics,
     taskDiagnostics,
+    sqlDiagnostics,
   )
 
   const refresh = async (): Promise<void> => {
@@ -178,6 +181,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.newAdr', (node?: unknown) => newAdr(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.research', (node?: unknown) => research(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.analyzeTasks', (node?: unknown) => analyzeTasksCommand(node, taskDiagnostics)),
+    vscode.commands.registerCommand('sddClaudeKit.sqlGuard', () => sqlGuardCommand(sqlDiagnostics)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -1030,6 +1034,51 @@ async function collectAdrNumbers(root: vscode.Uri): Promise<number[]> {
     dirs.map((rel) => listAdrFiles(vscode.Uri.joinPath(root, ...rel))),
   )
   return lists.flat().map((f) => f.number)
+}
+
+/**
+ * SQL Guard (RF-024, feature 0020). Analisa o SQL do editor ativo — a seleção se
+ * houver, senão o documento (D-Q2) — com `analyzeSql` (núcleo puro) e publica os
+ * riscos como diagnósticos no documento (ADR-019, molde do Project Doctor 0006).
+ * Somente análise: nada é executado (NFR-SQL-001).
+ */
+function sqlGuardCommand(collection: vscode.DiagnosticCollection): void {
+  const editor = vscode.window.activeTextEditor
+  if (!editor) {
+    vscode.window.showInformationMessage('SDD: abra um SQL no editor para analisar com o SQL Guard.')
+    return
+  }
+  const doc = editor.document
+  const selection = editor.selection
+  const text = selection.isEmpty ? doc.getText() : doc.getText(selection)
+  const baseLine = selection.isEmpty ? 0 : selection.start.line
+
+  const findings = analyzeSql(text)
+  collection.delete(doc.uri)
+  if (findings.length > 0) {
+    const diagnostics = findings.map((f) => {
+      const line = Math.min(baseLine + f.line, doc.lineCount - 1)
+      const diag = new vscode.Diagnostic(doc.lineAt(line).range, f.message, sqlSeverity(f.kind))
+      diag.source = 'SQL Guard'
+      diag.code = f.kind
+      return diag
+    })
+    collection.set(doc.uri, diagnostics)
+    void vscode.commands.executeCommand('workbench.actions.view.problems')
+  }
+
+  vscode.window.showInformationMessage(
+    findings.length === 0
+      ? 'SDD: SQL Guard — nenhum risco encontrado no SQL.'
+      : `SDD: SQL Guard — ${findings.length} risco(s) no SQL. Ver o painel Problems.`,
+  )
+}
+
+/** Severidade do diagnóstico por tipo: full scan é dica; os demais são aviso. */
+function sqlSeverity(kind: SqlFindingKind): vscode.DiagnosticSeverity {
+  return kind === 'full-scan'
+    ? vscode.DiagnosticSeverity.Information
+    : vscode.DiagnosticSeverity.Warning
 }
 
 /** Lê o campo `approval` do status.yaml (null/ausente/ilegível = não aprovado). */

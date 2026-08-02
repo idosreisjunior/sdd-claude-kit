@@ -1,0 +1,74 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0020-sql-guard"
+# feature | bug | refactor | change
+type: "feature"
+title: "SQL Guard (RF-024)"
+
+# Toda mudança nasce em DRAFT.
+status: PLANNED
+
+created: "2026-08-02"
+updated: "2026-08-02"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-02"
+    reason: >-
+      Criada por /sdd-kit:new para materializar o RF-024 (SQL Guard) — requisito
+      pós-MVP sem cobertura no index.yaml. Rascunho: das 11 categorias, só o
+      subconjunto heurístico é realizável; as demais exigem parser + esquema.
+  - status: PLANNED
+    date: "2026-08-02"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (3 tarefas: 1 P,
+      2 M; caminho crítico linear TASK-SQL-001 → 002 → 003). Transição
+      DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, confirmada pelo usuário:
+      as skills clarify e design chegam na Fase 2. Q1/Q2/Q5/Q6 decididas na spec
+      (subconjunto heurístico de 4 verificações, editor SQL, sem dependência,
+      dialeto-agnóstico); Q3 (superfície) e Q4 (gatilho) são de design, em
+      TASK-SQL-001 (ADR-019). Cobertura completa (5 requisitos com tarefa); sem
+      requisito descoberto, tarefa órfã, ciclo ou tarefa G. Não depende da Fase 2.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1/Q2/Q5/Q6 decididas na spec (Decisões de escopo). Q3 e Q4 resolvidas por
+# TASK-SQL-001 (ADR-019). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q3
+    date: "2026-08-02"
+    resolved_by: TASK-SQL-001
+    summary: >-
+      Diagnósticos no editor/Problems (molde do Project Doctor 0006 e da análise
+      de tarefas 0018): o núcleo devolve achados com posição; a borda os publica
+      via DiagnosticCollection sobre o documento ativo. Sem webview.
+    adr: ADR-019
+  - question: Q4
+    date: "2026-08-02"
+    resolved_by: TASK-SQL-001
+    summary: >-
+      Comando "SQL Guard: analisar SQL" na paleta e no menu de contexto do editor
+      quando é SQL (when: editorLangId == sql); analisa a seleção, senão o
+      documento. Sem ação no painel Features.
+    adr: ADR-019
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3
