@@ -1,0 +1,60 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0019-tasks-evidence-field"
+# feature | bug | refactor | change
+type: "bug"
+title: "Template tasks.md sem o campo 'evidências necessárias' (RF-010)"
+
+# Toda mudança nasce em DRAFT.
+status: PLANNED
+
+created: "2026-08-02"
+updated: "2026-08-02"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-02"
+    reason: >-
+      Criada por /sdd-kit:new. Bug descoberto na implementação do 0018 (D-Q2b): o
+      template _shared/tasks.md tem 10 dos 11 campos que o RF-010 exige — falta
+      "evidências necessárias". A correção acrescenta o campo ao template-fonte e
+      sincroniza. Causa raiz conhecida; reprodução direta.
+  - status: PLANNED
+    date: "2026-08-02"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (1 tarefa P: acrescentar a seção
+      `### Evidências necessárias` ao template + sync + teste de regressão).
+      Transição DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, confirmada pelo
+      usuário: as skills chegam na Fase 2 e, para um bug pequeno, o design é
+      dispensável. Q1 (formato) decidida na spec. Cobertura: a regra violada
+      (RF-010) via SCN-TEVF-001/002; sem tarefa órfã, ciclo ou tarefa G.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-02"
+    resolved_by: null
+    summary: >-
+      Formato do campo decidido pelo autor: seção de conteúdo
+      `### Evidências necessárias` (como Descrição/Testes/Critério), não metadado.
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 1
+  pending: 0
+  in_progress: 0
+  done: 1
