@@ -3,20 +3,17 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import {
   canGenerateDesign,
-  buildDesignSkeleton,
   extractScope,
   DESIGN_SECTIONS,
   LACUNA_MARK,
 } from '../sdd/designGenerator'
+import { buildSkeleton } from '../sdd/skeleton'
 
 // TEST-DSGN-001 — pré-condição: só gera com a spec aprovada (D-Q4).
 test('TEST-DSGN-001: canGenerateDesign exige approval != null', () => {
-  assert.equal(canGenerateDesign({ approval: null }), false)
-  assert.equal(canGenerateDesign({ approval: undefined }), false)
-  assert.equal(
-    canGenerateDesign({ approval: { by: 'autor', date: '2026-08-01', revision: 1 } }),
-    true,
-  )
+  assert.equal(canGenerateDesign(null), false)
+  assert.equal(canGenerateDesign(undefined), false)
+  assert.equal(canGenerateDesign({ by: 'autor', date: '2026-08-01', revision: 1 }), true)
 })
 
 // A estrutura vive no template (ADR-014). `npm test` roda de extensions_vscode/,
@@ -25,8 +22,8 @@ const TEMPLATE = readFileSync('templates/pt-BR/feature/design.md', 'utf8')
 
 // TEST-DSGN-002 — o esqueleto contém todas as seções do RF-009, cada uma como
 // lacuna, sem marcadores residuais.
-test('TEST-DSGN-002: buildDesignSkeleton traz as seções do RF-009 com lacunas', () => {
-  const out = buildDesignSkeleton(TEMPLATE, {
+test('TEST-DSGN-002: buildSkeleton traz as seções do RF-009 com lacunas', () => {
+  const out = buildSkeleton(TEMPLATE, {
     id: '0014-design-generation',
     title: 'Geração do design técnico (RF-009)',
     scope: 'DSGN',

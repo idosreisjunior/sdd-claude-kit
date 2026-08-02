@@ -21,13 +21,13 @@ import { FeatureDashboard } from './sdd/featureDashboard'
 import { SpecEditorProvider } from './sdd/specEditor'
 import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
 import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
-import { buildDesignSkeleton, canGenerateDesign, extractScope } from './sdd/designGenerator'
-import { buildClarificationsSkeleton, hasRequirements } from './sdd/clarifyGenerator'
-import { buildResearchSkeleton } from './sdd/researchGenerator'
+import { canGenerateDesign, extractScope } from './sdd/designGenerator'
+import { hasRequirements } from './sdd/clarifyGenerator'
+import { buildSkeleton } from './sdd/skeleton'
 import { aggregateHistory } from './sdd/historyModel'
 import { renderHistoryHtml } from './sdd/historyHtml'
 import { nextAdrNumber, adrSlug, padAdr, buildAdr } from './sdd/adrCreator'
-import { load } from 'js-yaml'
+import { parseYaml, get } from './sdd/yamlUtils'
 import {
   LARGE_FILE_BYTES,
   bandLabel,
@@ -612,63 +612,92 @@ async function launchClaudeAction(
 }
 
 /**
- * Gera o design técnico de uma mudança (RF-009, feature 0014). Pré-condição: spec
- * aprovada — `approval != null` no status.yaml (D-Q4, SCN-DSGN-002). Escreve o
- * `design.md`-esqueleto a partir do template `feature/design.md` (seções do RF-009 com
- * lacunas, D-Q6), sem sobrescrever sem confirmação (D-Q5, SCN-DSGN-004), e oferece
- * preencher o conteúdo com o Claude Code (reuso da ação `design` do 0004, ADR-014).
+ * Contexto passado à pré-condição de um passo híbrido.
  */
-async function generateDesign(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+interface HybridPreconditionCtx {
+  root: vscode.Uri
+  changeDir: string[]
+  changeId: string
+  specMd: string | undefined
+}
+
+/**
+ * Descreve um "passo híbrido" do fluxo SDD (research 0017, design 0014, clarify
+ * 0015): scaffolda um arquivo-esqueleto de um template sincronizado e oferece
+ * delegar a análise ao Claude Code. As três ações diferem só nestes dados.
+ */
+interface HybridStep {
+  /** Basename do template e do arquivo de saída (ex.: `design.md`). */
+  fileName: string
+  /** Ação do 0004 delegada ao Claude Code. */
+  action: SddAction
+  /** Mensagem quando não há pasta aberta. */
+  noRootMessage: string
+  /** Rótulo da ação no aviso "use a ação X de uma feature". */
+  menuLabel: string
+  /** Rótulo do botão que delega ao Claude Code. */
+  offerLabel: string
+  /** Mensagem de sucesso; recebe `change.path`. */
+  createdMessage: (changePath: string) => string
+  /** Pré-condição opcional; devolve a mensagem de bloqueio, ou `undefined` se ok. */
+  precondition?: (ctx: HybridPreconditionCtx) => Promise<string | undefined>
+}
+
+/**
+ * Executa um passo híbrido (RF-007/008/009): valida o nó, a pré-condição e o
+ * template, monta o esqueleto (`buildSkeleton`), grava sem sobrescrever sem
+ * confirmação, e oferece delegar ao Claude Code. Somente esta função conhece o
+ * fluxo; as três ações são só descritores.
+ */
+async function runHybridStep(
+  context: vscode.ExtensionContext,
+  node: unknown,
+  step: HybridStep,
+): Promise<void> {
   const root = vscode.workspace.workspaceFolders?.[0]?.uri
   if (!root) {
-    vscode.window.showWarningMessage('SDD: abra uma pasta para gerar o design.')
+    vscode.window.showWarningMessage(step.noRootMessage)
     return
   }
   const change = featureChangeOf(node)
   if (!change || !change.path) {
     vscode.window.showInformationMessage(
-      'SDD: use a ação "Gerar design" de uma feature no painel Features.',
+      `SDD: use a ação "${step.menuLabel}" de uma feature no painel Features.`,
     )
     return
   }
   const changeDir = ['.specs', ...change.path.split('/')]
+  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
 
-  // Pré-condição (D-Q4): a etapa de design só é oferecida com a spec aprovada.
-  const statusText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
-  if (!canGenerateDesign({ approval: readApproval(statusText) })) {
-    vscode.window.showInformationMessage(
-      `SDD: a etapa de design exige a spec aprovada (campo approval no status.yaml). ` +
-        `Aprove ${change.id} antes — /sdd-kit:approve no Claude Code.`,
+  if (step.precondition) {
+    const blocked = await step.precondition({ root, changeDir, changeId: change.id, specMd })
+    if (blocked !== undefined) {
+      vscode.window.showInformationMessage(blocked)
+      return
+    }
+  }
+
+  const template = await readText(
+    vscode.Uri.joinPath(context.extensionUri, 'templates', 'pt-BR', 'feature', step.fileName),
+  )
+  if (template === undefined) {
+    vscode.window.showErrorMessage(
+      `SDD: template feature/${step.fileName} não encontrado no pacote da extensão.`,
     )
     return
   }
-
-  // A estrutura vem do template (ADR-014, Q2), embutido e sincronizado no pacote.
-  const templateUri = vscode.Uri.joinPath(
-    context.extensionUri,
-    'templates',
-    'pt-BR',
-    'feature',
-    'design.md',
-  )
-  const template = await readText(templateUri)
-  if (template === undefined) {
-    vscode.window.showErrorMessage('SDD: template feature/design.md não encontrado no pacote da extensão.')
-    return
-  }
-  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
-  const skeleton = buildDesignSkeleton(template, {
+  const skeleton = buildSkeleton(template, {
     id: change.id,
     title: change.title,
     scope: extractScope(specMd ?? '') ?? '',
     date: today(),
   })
 
-  const designUri = vscode.Uri.joinPath(root, ...changeDir, 'design.md')
-  if (await exists(designUri)) {
-    // Não sobrescreve sem confirmação (D-Q5, SCN-DSGN-004): recusada, o arquivo fica intacto.
+  const outUri = vscode.Uri.joinPath(root, ...changeDir, step.fileName)
+  if (await exists(outUri)) {
+    // Não sobrescreve sem confirmação: recusada, o arquivo fica intacto.
     const overwrite = await vscode.window.showWarningMessage(
-      `SDD: ${change.id} já tem design.md. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
+      `SDD: ${change.id} já tem ${step.fileName}. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
       { modal: true },
       'Sobrescrever',
     )
@@ -676,165 +705,80 @@ async function generateDesign(context: vscode.ExtensionContext, node: unknown): 
       return
     }
   }
-  await vscode.workspace.fs.writeFile(designUri, Buffer.from(skeleton, 'utf8'))
-  await vscode.commands.executeCommand('vscode.open', designUri)
+  await vscode.workspace.fs.writeFile(outUri, Buffer.from(skeleton, 'utf8'))
+  await vscode.commands.executeCommand('vscode.open', outUri)
 
-  // Oferece preencher o conteúdo com o Claude Code (ADR-014: reuso da ação `design` do 0004).
-  const FILL = 'Preencher com o Claude Code'
   const choice = await vscode.window.showInformationMessage(
-    `SDD: design.md-esqueleto criado em .specs/${change.path}. Preencha as lacunas — ou peça ao Claude Code.`,
-    FILL,
+    step.createdMessage(change.path),
+    step.offerLabel,
   )
-  if (choice === FILL) {
-    await launchClaudeAction(root, change.id, 'design')
+  if (choice === step.offerLabel) {
+    await launchClaudeAction(root, change.id, step.action)
   }
+}
+
+/**
+ * Gera o design técnico de uma mudança (RF-009, feature 0014). Pré-condição: spec
+ * aprovada — `approval != null` no status.yaml (D-Q4, SCN-DSGN-002). Sem sobrescrever
+ * sem confirmação (D-Q5, SCN-DSGN-004). Ver `runHybridStep` e ADR-014.
+ */
+function generateDesign(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  return runHybridStep(context, node, {
+    fileName: 'design.md',
+    action: 'design',
+    noRootMessage: 'SDD: abra uma pasta para gerar o design.',
+    menuLabel: 'Gerar design',
+    offerLabel: 'Preencher com o Claude Code',
+    createdMessage: (p) =>
+      `SDD: design.md-esqueleto criado em .specs/${p}. Preencha as lacunas — ou peça ao Claude Code.`,
+    precondition: async ({ root, changeDir, changeId }) => {
+      const statusText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
+      return canGenerateDesign(readApproval(statusText))
+        ? undefined
+        : `SDD: a etapa de design exige a spec aprovada (campo approval no status.yaml). ` +
+            `Aprove ${changeId} antes — /sdd-kit:approve no Claude Code.`
+    },
+  })
 }
 
 /**
  * Clarifica a spec de uma mudança (RF-008, feature 0015). Pré-condição: a spec tem
- * requisitos — `REQ-*` presentes (D-Q4, SCN-CLAR-002); a ação NÃO promove o estado.
- * Escreve o `clarifications.md`-esqueleto a partir do template `feature/clarifications.md`
- * (nove categorias do RF-008, D-Q5), sem sobrescrever sem confirmação (SCN-CLAR-004), e
- * oferece analisar o conteúdo com o Claude Code (reuso da ação `clarify` do 0004, ADR-015).
+ * requisitos — `REQ-*` presentes (D-Q4, SCN-CLAR-002); NÃO promove o estado. Sem
+ * sobrescrever sem confirmação (SCN-CLAR-004). Ver `runHybridStep` e ADR-015.
  */
-async function clarify(context: vscode.ExtensionContext, node: unknown): Promise<void> {
-  const root = vscode.workspace.workspaceFolders?.[0]?.uri
-  if (!root) {
-    vscode.window.showWarningMessage('SDD: abra uma pasta para clarificar a spec.')
-    return
-  }
-  const change = featureChangeOf(node)
-  if (!change || !change.path) {
-    vscode.window.showInformationMessage(
-      'SDD: use a ação "Clarificar" de uma feature no painel Features.',
-    )
-    return
-  }
-  const changeDir = ['.specs', ...change.path.split('/')]
-
-  // Pré-condição (D-Q4): só clarifica quando a spec tem requisitos. Não promove estado.
-  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
-  if (!hasRequirements(specMd ?? '')) {
-    vscode.window.showInformationMessage(
-      `SDD: a clarificação exige uma spec com requisitos (REQ-*). Detalhe ${change.id} antes — /sdd-kit:spec.`,
-    )
-    return
-  }
-
-  // A estrutura vem do template (ADR-015, Q2), embutido e sincronizado no pacote.
-  const templateUri = vscode.Uri.joinPath(
-    context.extensionUri,
-    'templates',
-    'pt-BR',
-    'feature',
-    'clarifications.md',
-  )
-  const template = await readText(templateUri)
-  if (template === undefined) {
-    vscode.window.showErrorMessage('SDD: template feature/clarifications.md não encontrado no pacote da extensão.')
-    return
-  }
-  const skeleton = buildClarificationsSkeleton(template, {
-    id: change.id,
-    title: change.title,
-    scope: extractScope(specMd ?? '') ?? '',
-    date: today(),
+function clarify(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  return runHybridStep(context, node, {
+    fileName: 'clarifications.md',
+    action: 'clarify',
+    noRootMessage: 'SDD: abra uma pasta para clarificar a spec.',
+    menuLabel: 'Clarificar',
+    offerLabel: 'Analisar com o Claude Code',
+    createdMessage: (p) =>
+      `SDD: clarifications.md-esqueleto criado em .specs/${p}. Preencha as categorias — ou peça a análise ao Claude Code.`,
+    precondition: ({ changeId, specMd }) =>
+      Promise.resolve(
+        hasRequirements(specMd ?? '')
+          ? undefined
+          : `SDD: a clarificação exige uma spec com requisitos (REQ-*). Detalhe ${changeId} antes — /sdd-kit:spec.`,
+      ),
   })
-
-  const clarifyUri = vscode.Uri.joinPath(root, ...changeDir, 'clarifications.md')
-  if (await exists(clarifyUri)) {
-    // Não sobrescreve sem confirmação (SCN-CLAR-004): recusada, o arquivo fica intacto.
-    const overwrite = await vscode.window.showWarningMessage(
-      `SDD: ${change.id} já tem clarifications.md. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
-      { modal: true },
-      'Sobrescrever',
-    )
-    if (overwrite !== 'Sobrescrever') {
-      return
-    }
-  }
-  await vscode.workspace.fs.writeFile(clarifyUri, Buffer.from(skeleton, 'utf8'))
-  await vscode.commands.executeCommand('vscode.open', clarifyUri)
-
-  // Oferece analisar o conteúdo com o Claude Code (ADR-015: reuso da ação `clarify` do 0004).
-  const ANALYZE = 'Analisar com o Claude Code'
-  const choice = await vscode.window.showInformationMessage(
-    `SDD: clarifications.md-esqueleto criado em .specs/${change.path}. Preencha as categorias — ou peça a análise ao Claude Code.`,
-    ANALYZE,
-  )
-  if (choice === ANALYZE) {
-    await launchClaudeAction(root, change.id, 'clarify')
-  }
 }
 
 /**
- * Inicia o research de uma mudança (RF-007, feature 0017). Roda ANTES da spec:
- * a pré-condição é apenas a mudança existir (D-Q4), sem exigir REQ-* nem aprovação.
- * Escreve o `research.md`-esqueleto a partir do template `feature/research.md` (oito
- * frentes do RF-007, D-Q6), sem sobrescrever sem confirmação (SCN-RES-003), e oferece
- * analisar o conteúdo com o Claude Code (reuso da nova ação `research` do 0004, ADR-017).
- * A incorporação à spec é manual (D-Q5).
+ * Inicia o research de uma mudança (RF-007, feature 0017). Roda ANTES da spec: a
+ * pré-condição é apenas a mudança existir (D-Q4). Sem sobrescrever sem confirmação
+ * (SCN-RES-003). A incorporação à spec é manual (D-Q5). Ver `runHybridStep` e ADR-017.
  */
-async function research(context: vscode.ExtensionContext, node: unknown): Promise<void> {
-  const root = vscode.workspace.workspaceFolders?.[0]?.uri
-  if (!root) {
-    vscode.window.showWarningMessage('SDD: abra uma pasta para fazer o research.')
-    return
-  }
-  const change = featureChangeOf(node)
-  if (!change || !change.path) {
-    vscode.window.showInformationMessage(
-      'SDD: use a ação "Research" de uma feature no painel Features.',
-    )
-    return
-  }
-  const changeDir = ['.specs', ...change.path.split('/')]
-
-  // A estrutura vem do template (ADR-017, Q2), embutido e sincronizado no pacote.
-  const templateUri = vscode.Uri.joinPath(
-    context.extensionUri,
-    'templates',
-    'pt-BR',
-    'feature',
-    'research.md',
-  )
-  const template = await readText(templateUri)
-  if (template === undefined) {
-    vscode.window.showErrorMessage('SDD: template feature/research.md não encontrado no pacote da extensão.')
-    return
-  }
-  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
-  const skeleton = buildResearchSkeleton(template, {
-    id: change.id,
-    title: change.title,
-    scope: extractScope(specMd ?? '') ?? '',
-    date: today(),
+function research(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  return runHybridStep(context, node, {
+    fileName: 'research.md',
+    action: 'research',
+    noRootMessage: 'SDD: abra uma pasta para fazer o research.',
+    menuLabel: 'Research',
+    offerLabel: 'Analisar com o Claude Code',
+    createdMessage: (p) =>
+      `SDD: research.md-esqueleto criado em .specs/${p}. Preencha as frentes — ou peça a análise ao Claude Code. Depois incorpore à spec com /sdd-kit:spec.`,
   })
-
-  const researchUri = vscode.Uri.joinPath(root, ...changeDir, 'research.md')
-  if (await exists(researchUri)) {
-    // Não sobrescreve sem confirmação (SCN-RES-003): recusada, o arquivo fica intacto.
-    const overwrite = await vscode.window.showWarningMessage(
-      `SDD: ${change.id} já tem research.md. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
-      { modal: true },
-      'Sobrescrever',
-    )
-    if (overwrite !== 'Sobrescrever') {
-      return
-    }
-  }
-  await vscode.workspace.fs.writeFile(researchUri, Buffer.from(skeleton, 'utf8'))
-  await vscode.commands.executeCommand('vscode.open', researchUri)
-
-  // Oferece analisar o conteúdo com o Claude Code (ADR-017: nova ação `research` do 0004).
-  const ANALYZE = 'Analisar com o Claude Code'
-  const choice = await vscode.window.showInformationMessage(
-    `SDD: research.md-esqueleto criado em .specs/${change.path}. Preencha as frentes — ou peça a análise ao Claude Code. Depois incorpore à spec com /sdd-kit:spec.`,
-    ANALYZE,
-  )
-  if (choice === ANALYZE) {
-    await launchClaudeAction(root, change.id, 'research')
-  }
 }
 
 /**
@@ -858,19 +802,19 @@ async function showHistory(node: unknown): Promise<void> {
   }
   const changeDir = ['.specs', ...change.path.split('/')]
 
-  const statusYaml = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
-  const adrs = await readChangeAdrs(root, changeDir)
+  // As quatro fontes são independentes — reúne em paralelo (o git log domina).
+  const numeric = /^(\d+)/.exec(change.id)?.[1] ?? change.id
+  const [statusYaml, adrs, commitLog, traceText] = await Promise.all([
+    readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml')),
+    readChangeAdrs(root, changeDir),
+    readCommits(root.fsPath, numeric),
+    readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml')),
+  ])
 
   // Commits do 0007: `git log --oneline` não traz data, então entram sem data.
-  const numeric = /^(\d+)/.exec(change.id)?.[1] ?? change.id
-  const commits = parseLog(await readCommits(root.fsPath, numeric)).map((c) => ({
-    hash: c.hash,
-    date: '',
-    subject: c.subject,
-  }))
+  const commits = parseLog(commitLog).map((c) => ({ hash: c.hash, date: '', subject: c.subject }))
 
   const tasks = statusYaml ? parseTaskProgress(statusYaml) : undefined
-  const traceText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml'))
   let validation: { atendido: number; pendentes: number } | undefined
   if (traceText) {
     const s = buildValidationReport(traceText, change.id).summary
@@ -959,68 +903,56 @@ async function newAdr(context: vscode.ExtensionContext, node: unknown): Promise<
   )
 }
 
-/** Lê os ADRs da pasta decisions/ de uma mudança, para o timeline (RF-020). */
-async function readChangeAdrs(
-  root: vscode.Uri,
-  changeDir: string[],
-): Promise<{ number: number; title: string; date?: string }[]> {
-  const dir = vscode.Uri.joinPath(root, ...changeDir, 'decisions')
+/** Lista os arquivos `ADR-NNN…` de uma pasta `decisions/`, com o número. Ausente → []. */
+async function listAdrFiles(dir: vscode.Uri): Promise<{ name: string; number: number }[]> {
   let entries: [string, vscode.FileType][]
   try {
     entries = await vscode.workspace.fs.readDirectory(dir)
   } catch {
     return []
   }
-  const adrs: { number: number; title: string; date?: string }[] = []
+  const out: { name: string; number: number }[] = []
   for (const [name, kind] of entries) {
     const m = /^ADR-(\d+)/.exec(name)
     if (kind === vscode.FileType.File && m) {
-      const content = (await readText(vscode.Uri.joinPath(dir, name))) ?? ''
-      adrs.push({
-        number: Number(m[1]),
-        title: /^#\s*ADR-\d+\s*—\s*(.+)$/m.exec(content)?.[1]?.trim() ?? name,
-        date: /\*\*Data:\*\*\s*"?([0-9][0-9-]+)"?/.exec(content)?.[1],
-      })
+      out.push({ name, number: Number(m[1]) })
     }
   }
-  return adrs
+  return out
+}
+
+/** Lê os ADRs da pasta decisions/ de uma mudança, para o timeline (RF-020). */
+async function readChangeAdrs(
+  root: vscode.Uri,
+  changeDir: string[],
+): Promise<{ number: number; title: string; date?: string }[]> {
+  const dir = vscode.Uri.joinPath(root, ...changeDir, 'decisions')
+  const files = await listAdrFiles(dir)
+  return Promise.all(
+    files.map(async ({ name, number }) => {
+      const content = (await readText(vscode.Uri.joinPath(dir, name))) ?? ''
+      return {
+        number,
+        title: /^#\s*ADR-\d+\s*—\s*(.+)$/m.exec(content)?.[1]?.trim() ?? name,
+        date: /\*\*Data:\*\*\s*"?([0-9][0-9-]+)"?/.exec(content)?.[1],
+      }
+    }),
+  )
 }
 
 /** Coleta os números de ADR de TODOS os `decisions/` do projeto (numeração global). */
 async function collectAdrNumbers(root: vscode.Uri): Promise<number[]> {
   const dirs = (await collectChangeDirs(root)).map((d) => ['.specs', ...d.split('/'), 'decisions'])
   dirs.push(['.specs', 'project', 'decisions'])
-  const numbers: number[] = []
-  for (const rel of dirs) {
-    let entries: [string, vscode.FileType][]
-    try {
-      entries = await vscode.workspace.fs.readDirectory(vscode.Uri.joinPath(root, ...rel))
-    } catch {
-      continue
-    }
-    for (const [name, kind] of entries) {
-      const m = /^ADR-(\d+)/.exec(name)
-      if (kind === vscode.FileType.File && m) {
-        numbers.push(Number(m[1]))
-      }
-    }
-  }
-  return numbers
+  const lists = await Promise.all(
+    dirs.map((rel) => listAdrFiles(vscode.Uri.joinPath(root, ...rel))),
+  )
+  return lists.flat().map((f) => f.number)
 }
 
 /** Lê o campo `approval` do status.yaml (null/ausente/ilegível = não aprovado). */
 function readApproval(statusText: string | undefined): unknown {
-  if (statusText === undefined) {
-    return null
-  }
-  try {
-    const doc = load(statusText)
-    return doc !== null && typeof doc === 'object'
-      ? (doc as Record<string, unknown>)['approval']
-      : null
-  } catch {
-    return null
-  }
+  return get(parseYaml(statusText), 'approval') ?? null
 }
 
 /**

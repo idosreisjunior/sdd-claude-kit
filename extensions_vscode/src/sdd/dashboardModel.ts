@@ -7,7 +7,7 @@
 // por extração simples (seção Objetivo, contagem de checkbox). Nunca parseia a
 // estrutura do Markdown. Robusto por contrato (NFR-UI-001): fonte ausente ou
 // inválida vira um campo indisponível, nunca uma exceção.
-import { load } from 'js-yaml'
+import { parseYaml, get, isRecord, str } from './yamlUtils'
 
 /** Um valor derivado que pode não estar disponível (fonte ausente/ inválida). */
 export type Count = { available: true; value: number } | { available: false; note: string }
@@ -204,29 +204,6 @@ function extractHistory(status: unknown): HistoryEntry[] {
     }
   }
   return out
-}
-
-function parseYaml(text: string | undefined): unknown {
-  if (text === undefined) {
-    return undefined
-  }
-  try {
-    return load(text)
-  } catch {
-    return undefined
-  }
-}
-
-function get(obj: unknown, key: string): unknown {
-  return isRecord(obj) ? obj[key] : undefined
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-function str(value: unknown): string | undefined {
-  return typeof value === 'string' && value.length > 0 ? value : undefined
 }
 
 function num(value: unknown): number | undefined {

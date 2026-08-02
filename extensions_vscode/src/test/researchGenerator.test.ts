@@ -1,7 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { buildResearchSkeleton, RESEARCH_TOPICS } from '../sdd/researchGenerator'
+import { RESEARCH_TOPICS } from '../sdd/researchGenerator'
+import { buildSkeleton } from '../sdd/skeleton'
 import { ACTIONS, composePrompt } from '../sdd/claudePrompt'
 
 // A estrutura vive no template (ADR-017). `npm test` roda de extensions_vscode/.
@@ -9,7 +10,7 @@ const TEMPLATE = readFileSync('templates/pt-BR/feature/research.md', 'utf8')
 
 // TEST-RES-001 — o esqueleto traz as oito frentes do RF-007 como seções.
 test('TEST-RES-001: buildResearchSkeleton traz as oito frentes do RF-007', () => {
-  const out = buildResearchSkeleton(TEMPLATE, {
+  const out = buildSkeleton(TEMPLATE, {
     id: '0017-research',
     title: 'Research assistido (RF-007)',
     scope: 'RES',
