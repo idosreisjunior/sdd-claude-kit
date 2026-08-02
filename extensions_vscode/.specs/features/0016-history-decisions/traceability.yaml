@@ -1,0 +1,112 @@
+# Matriz de rastreabilidade — 0016-history-decisions
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0016-history-decisions"
+
+requirements:
+
+  "REQ-HIST-001":
+    title: "Visão do histórico da mudança"
+    scenarios:
+      - "SCN-HIST-001"
+      - "SCN-HIST-002"
+    tasks:
+      - "TASK-HIST-001"
+      - "TASK-HIST-002"
+      - "TASK-HIST-004"
+    implementation:
+      - ".specs/features/0016-history-decisions/decisions/ADR-016-historico-e-novo-adr.md"
+      - "src/sdd/historyModel.ts"
+      - "src/sdd/historyHtml.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-HIST-001"
+      - "TEST-HIST-002"
+
+  "REQ-HIST-002":
+    title: "Registrar uma decisão como ADR"
+    scenarios:
+      - "SCN-HIST-003"
+      - "SCN-HIST-004"
+    tasks:
+      - "TASK-HIST-001"
+      - "TASK-HIST-003"
+      - "TASK-HIST-004"
+    implementation:
+      - ".specs/features/0016-history-decisions/decisions/ADR-016-historico-e-novo-adr.md"
+      - "src/sdd/adrCreator.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-HIST-003"
+      - "TEST-HIST-004"
+
+  "NFR-HIST-001":
+    title: "Somente leitura (exceto criar ADR)"
+    scenarios: []
+    tasks:
+      - "TASK-HIST-002"
+      - "TASK-HIST-004"
+    implementation:
+      - "src/sdd/historyModel.ts"
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-HIST-002":
+    title: "Sem rede"
+    scenarios: []
+    tasks:
+      - "TASK-HIST-002"
+    implementation:
+      - "src/sdd/historyModel.ts"
+    tests: []
+
+  "NFR-HIST-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-HIST-002"
+      - "TASK-HIST-003"
+    implementation:
+      - "src/sdd/historyModel.ts"
+      - "src/sdd/historyHtml.ts"
+      - "src/sdd/adrCreator.ts"
+    tests:
+      - "TEST-HIST-001"
+      - "TEST-HIST-002"
+      - "TEST-HIST-003"
+      - "TEST-HIST-004"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-HIST-001"
+    reason: >-
+      O comando "Histórico" e a exibição no webview são integração com o host do
+      VS Code; a agregação e o render vivem no núcleo puro (TEST-HIST-001/002),
+      mas a apresentação em si não é coberta por teste automatizado.
+    mitigation: >-
+      Revisão manual em TASK-HIST-004: o timeline aparece agregado e marca as
+      categorias indisponíveis.
+  - id: "REQ-HIST-002"
+    reason: >-
+      O diálogo de título, a varredura dos decisions/ do projeto e a escrita do
+      arquivo são integração com o host; a numeração/slug/montagem vivem no núcleo
+      puro (TEST-HIST-003/004).
+    mitigation: >-
+      Revisão manual em TASK-HIST-004: "Novo ADR" cria o arquivo com o próximo
+      número reconciliado e não sobrescreve um existente (SCN-HIST-004).
+  - id: "NFR-HIST-002"
+    reason: >-
+      "Sem rede" é uma propriedade de ausência — verificada pela inexistência de
+      imports de rede, não por um teste positivo.
+    mitigation: >-
+      Revisão de código e lint nos núcleos puros e na borda.
