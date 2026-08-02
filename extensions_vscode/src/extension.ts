@@ -24,6 +24,7 @@ import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sd
 import { canGenerateDesign, extractScope } from './sdd/designGenerator'
 import { hasRequirements } from './sdd/clarifyGenerator'
 import { buildSkeleton } from './sdd/skeleton'
+import { analyzeTasks } from './sdd/taskAnalysis'
 import { aggregateHistory } from './sdd/historyModel'
 import { renderHistoryHtml } from './sdd/historyHtml'
 import { nextAdrNumber, adrSlug, padAdr, buildAdr } from './sdd/adrCreator'
@@ -118,7 +119,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const contextChannel = vscode.window.createOutputChannel('SDD · Context Guardian')
   const scopeChannel = vscode.window.createOutputChannel('SDD · Escopo')
   const doctorDiagnostics = vscode.languages.createDiagnosticCollection('SDD Doctor')
-  context.subscriptions.push(contextIndicator, contextChannel, scopeChannel, doctorDiagnostics)
+  const taskDiagnostics = vscode.languages.createDiagnosticCollection('SDD Tarefas')
+  context.subscriptions.push(
+    contextIndicator,
+    contextChannel,
+    scopeChannel,
+    doctorDiagnostics,
+    taskDiagnostics,
+  )
 
   const refresh = async (): Promise<void> => {
     const detection = await detectProject()
@@ -169,6 +177,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.history', (node?: unknown) => showHistory(node)),
     vscode.commands.registerCommand('sddClaudeKit.newAdr', (node?: unknown) => newAdr(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.research', (node?: unknown) => research(context, node)),
+    vscode.commands.registerCommand('sddClaudeKit.analyzeTasks', (node?: unknown) => analyzeTasksCommand(node, taskDiagnostics)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -779,6 +788,79 @@ function research(context: vscode.ExtensionContext, node: unknown): Promise<void
     createdMessage: (p) =>
       `SDD: research.md-esqueleto criado em .specs/${p}. Preencha as frentes — ou peça a análise ao Claude Code. Depois incorpore à spec com /sdd-kit:spec.`,
   })
+}
+
+/**
+ * Analisa as tarefas de uma mudança (RF-010, feature 0018). Lê o `tasks.md`, roda
+ * `analyzeTasks` (núcleo puro) e publica os achados — tarefas grandes (G) e campos
+ * obrigatórios ausentes — como diagnósticos no painel Problems (ADR-018, molde do
+ * Project Doctor 0006). Sem `tasks.md`, informa e oferece gerar (SCN-TGEN-004).
+ * Oferece gerar/refinar reusando a ação `tasks` do 0004 (REQ-TGEN-002). Somente
+ * leitura (NFR-TGEN-001).
+ */
+async function analyzeTasksCommand(
+  node: unknown,
+  collection: vscode.DiagnosticCollection,
+): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para analisar as tarefas.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Tarefas" de uma feature no painel Features.',
+    )
+    return
+  }
+  const tasksUri = vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'tasks.md')
+  const tasksMd = await readText(tasksUri)
+
+  const GEN = 'Gerar/refinar com o Claude Code'
+
+  // Sem tasks.md (SCN-TGEN-004): informa e oferece gerar.
+  if (tasksMd === undefined) {
+    collection.delete(tasksUri)
+    const choice = await vscode.window.showInformationMessage(
+      `SDD: ${change.id} ainda não tem tasks.md. Gere as tarefas com o Claude Code (/sdd-kit:tasks).`,
+      GEN,
+    )
+    if (choice === GEN) {
+      await launchClaudeAction(root, change.id, 'tasks')
+    }
+    return
+  }
+
+  const findings = analyzeTasks(tasksMd)
+  collection.delete(tasksUri)
+  if (findings.length > 0) {
+    const diagnostics = findings.map((f) => {
+      const diag = new vscode.Diagnostic(
+        new vscode.Range(f.line, 0, f.line, 0),
+        f.message,
+        f.kind === 'oversized'
+          ? vscode.DiagnosticSeverity.Warning
+          : vscode.DiagnosticSeverity.Information,
+      )
+      diag.source = 'SDD Tarefas'
+      diag.code = f.kind
+      return diag
+    })
+    collection.set(tasksUri, diagnostics)
+    await vscode.commands.executeCommand('workbench.actions.view.problems')
+  }
+
+  const oversized = findings.filter((f) => f.kind === 'oversized').length
+  const missing = findings.filter((f) => f.kind === 'missing-field').length
+  const summary =
+    findings.length === 0
+      ? `SDD: tarefas de ${change.id} — sem alertas.`
+      : `SDD: tarefas de ${change.id} — ${oversized} grande(s), ${missing} campo(s) ausente(s). Ver o painel Problems.`
+  const choice = await vscode.window.showInformationMessage(summary, GEN)
+  if (choice === GEN) {
+    await launchClaudeAction(root, change.id, 'tasks')
+  }
 }
 
 /**
