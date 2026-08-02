@@ -95,6 +95,12 @@ history:
       válida pelo grafo; spec.md não foi tocada, então o hash de aprovação
       continua válido. As dez tarefas restantes são as seis skills (007–014) e
       a auditoria/percurso e2e (016/017), que exigem execução real via claude -p.
+      NOTA (2026-08-02): escritos depois os seis SKILL.md das skills 007–014
+      (clarify, design, approve, implement, verify, archive), verificados por
+      skills.test.ts, tsc, eslint e claude plugin validate --strict. As tarefas
+      passaram de pending a in_progress (não done): falta a execução real via
+      claude -p com a saída registrada (design §10). Sem transição de estado — a
+      mudança segue em IN_PROGRESS; o avanço está nos contadores, não no history.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -221,6 +227,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 17
-  pending: 10
-  in_progress: 0
+  pending: 2
+  in_progress: 8
   done: 7

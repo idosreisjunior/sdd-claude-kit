@@ -23,7 +23,8 @@ requirements:
     tasks:
       - "TASK-SWC-007"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/skills/clarify/SKILL.md"
     tests:
       - "TEST-SWC-009"
       - "TEST-SWC-010"
@@ -41,6 +42,7 @@ requirements:
       - "TASK-SWC-017"
     implementation:
       - "plugins/sdd-kit/templates/pt-BR/_shared/design.md"
+      - "plugins/sdd-kit/skills/design/SKILL.md"
     tests:
       - "TEST-SWC-007"
       - "TEST-SWC-013"
@@ -58,7 +60,8 @@ requirements:
       - "TASK-SWC-009"
       - "TASK-SWC-010"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/skills/approve/SKILL.md"
     tests:
       - "TEST-SWC-016"
       - "TEST-SWC-017"
@@ -83,7 +86,8 @@ requirements:
       - "TASK-SWC-010"
       - "TASK-SWC-011"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/skills/implement/SKILL.md"
     tests:
       - "TEST-SWC-020"
       - "TEST-SWC-022"
@@ -106,6 +110,7 @@ requirements:
     implementation:
       - "plugins/sdd-kit/templates/pt-BR/_shared/acceptance.md"
       - "plugins/sdd-kit/templates/pt-BR/_shared/validation.md"
+      - "plugins/sdd-kit/skills/verify/SKILL.md"
     tests:
       - "TEST-SWC-008"
       - "TEST-SWC-027"
@@ -124,6 +129,7 @@ requirements:
       - "TASK-SWC-017"
     implementation:
       - ".specs/project/standards.md"
+      - "plugins/sdd-kit/skills/archive/SKILL.md"
     tests:
       - "TEST-SWC-031"
       - "TEST-SWC-032"
