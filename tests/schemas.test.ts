@@ -135,6 +135,18 @@ describe('schemas — invariantes de forma', () => {
     expect(validate(status, doc).map((f) => f.path)).toContain('tasks/done')
   })
 
+  it('resolved_by aceita tarefa ou nome de skill, mas não texto livre (ADR-014)', () => {
+    const doc = baseStatus()
+    const base = { question: 'Q1', date: '2026-07-29', summary: 'x' }
+    doc['resolved_questions'] = [{ ...base, resolved_by: 'TASK-CUST-001' }]
+    expect(validate(status, doc), 'tarefa').toEqual([])
+    doc['resolved_questions'] = [{ ...base, resolved_by: 'clarify' }]
+    expect(validate(status, doc), 'nome de skill').toEqual([])
+    doc['resolved_questions'] = [{ ...base, resolved_by: 'Ana Souza' }]
+    expect(validate(status, doc).map((f) => f.path), 'nome de pessoa é rejeitado')
+      .toContain('resolved_questions/0/resolved_by')
+  })
+
   it('os schemas declaram $schema e $id versionado', () => {
     for (const name of ['config', 'status', 'traceability']) {
       const raw = JSON.parse(read(`plugins/sdd-kit/schemas/${name}.schema.json`))
