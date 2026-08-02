@@ -38,21 +38,21 @@ SDD Claude Kit (sdd-kit) 0.1.0
   Source: sdd-kit@sdd-claude-kit
 
 Component inventory
-  Skills (4)  init, new, spec, tasks
+  Skills (10) init, new, spec, tasks, clarify, design, approve, implement, verify, archive
   Agents (0)
   Hooks (0)
   MCP servers (0)
   LSP servers (0)
 
 Projected token cost
-  Always-on:   ~971 tok   added to every session
+  Always-on:   ~2.5k tok  added to every session
 ```
 
-Quatro skills. Se aparecerem menos, algo deu errado na instalação.
+Dez skills. Se aparecerem menos, algo deu errado na instalação.
 
 ### Custo de contexto
 
-Os **~971 tokens sempre ativos** são as descrições das quatro skills, presentes em toda sessão para que o Claude saiba que elas existem. O corpo de cada skill — 3,9k a 4,5k tokens — só é carregado quando ela é invocada.
+Os **~2,5k tokens sempre ativos** são as descrições das dez skills, presentes em toda sessão para que o Claude saiba que elas existem. O corpo de cada skill — cerca de 4k tokens — só é carregado quando ela é invocada.
 
 ## Instalar a partir de um clone local
 
@@ -96,15 +96,18 @@ Ver a [política de segurança](../../SECURITY.md).
 
 ## Estado atual
 
-Apenas quatro das treze skills existem:
+Dez das treze skills já estão no plugin — quatro prontas e seis em validação:
 
 | Skill | Estado |
 | --- | --- |
-| `/sdd-kit:init` | ✅ Fase 1 |
-| `/sdd-kit:new` | ✅ Fase 1 |
-| `/sdd-kit:spec` | ✅ Fase 1 |
-| `/sdd-kit:tasks` | ✅ Fase 1 |
-| `clarify`, `design`, `approve`, `implement`, `verify`, `review`, `archive`, `discover`, `status` | Fase 2 — [ROADMAP](../../ROADMAP.md) |
+| `/sdd-kit:init` | ✅ Fase 1 — pronta |
+| `/sdd-kit:new` | ✅ Fase 1 — pronta |
+| `/sdd-kit:spec` | ✅ Fase 1 — pronta |
+| `/sdd-kit:tasks` | ✅ Fase 1 — pronta |
+| `clarify`, `design`, `approve`, `implement`, `verify`, `archive` | 🚧 Fase 2 — escritas e invocáveis, **em validação por execução real** |
+| `review`, `discover`, `status` | Fase 2 — planejadas ([ROADMAP](../../ROADMAP.md)) |
+
+As seis skills da Fase 2 já respondem ao serem invocadas e passam pela validação estrutural do plugin, mas ainda **não** foram certificadas por execução real ponta a ponta — trate-as como experimentais até o fluxo `DRAFT → ARCHIVED` ser validado. Ver o [ROADMAP](../../ROADMAP.md).
 
 O modo `strict` também é da Fase 4. Configurá-lo agora faz as skills informarem que ele não está implementado e operarem como `guided` — elas **não** fingem bloqueio.
 

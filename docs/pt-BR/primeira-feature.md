@@ -237,7 +237,9 @@ ele **preserva** os identificadores existentes e continua a numeração a partir
 do maior, para que nada que apontava para `REQ-CUST-001` quebre.
 
 As skills que fecham o ciclo — `clarify`, `design`, `approve`, `implement`,
-`verify`, `archive` — chegam na Fase 2. Ver o [ROADMAP](../../ROADMAP.md).
+`verify`, `archive` — já foram escritas (Fase 2) e estão **em validação por
+execução real**; até serem certificadas, trate-as como experimentais. Ver o
+[ROADMAP](../../ROADMAP.md).
 
 ---
 

@@ -22,31 +22,35 @@ Feature: [`0001-plugin-foundation`](./.specs/features/0001-plugin-foundation/) (
 | Guia de contribuição | ✅ |
 | Código de conduta | ✅ |
 | Política de segurança | ✅ |
-| Repositório publicado no GitHub | ⬜ |
+| Repositório publicado no GitHub | ✅ |
 
-## Fase 1 — Plugin mínimo ⬜
+## Fase 1 — Plugin mínimo ✅
 
 Feature: `0001-plugin-foundation`
 
 | Entrega | Status |
 | --- | --- |
-| Manifesto do plugin (`plugin.json`) | ⬜ |
-| Marketplace (`marketplace.json`) | ⬜ |
-| Skill `init` | ⬜ |
-| Skill `new` | ⬜ |
-| Skill `spec` | ⬜ |
-| Skill `tasks` | ⬜ |
-| Templates iniciais | ⬜ |
-| Projeto de exemplo | ⬜ |
+| Manifesto do plugin (`plugin.json`) | ✅ |
+| Marketplace (`marketplace.json`) | ✅ |
+| Skill `init` | ✅ |
+| Skill `new` | ✅ |
+| Skill `spec` | ✅ |
+| Skill `tasks` | ✅ |
+| Templates iniciais | ✅ |
+| Projeto de exemplo | ✅ |
 
-## Fase 2 — Fluxo SDD completo ⬜
+## Fase 2 — Fluxo SDD completo 🚧
+
+Feature: `0007-sdd-workflow-completion` (em andamento). 🚧 = escrita e validada
+estruturalmente, aguardando certificação por execução real (ver o
+`execution-runbook.md` da feature).
 
 | Entrega | Status |
 | --- | --- |
-| Skills `clarify`, `design`, `approve` | ⬜ |
-| Skills `implement`, `verify`, `archive` | ⬜ |
-| Máquina de estados do workflow | ⬜ |
-| Rastreabilidade básica | ⬜ |
+| Skills `clarify`, `design`, `approve` | 🚧 |
+| Skills `implement`, `verify`, `archive` | 🚧 |
+| Máquina de estados do workflow | ✅ |
+| Rastreabilidade básica | ✅ |
 
 ## Fase 3 — Agentes especializados ⬜
 
