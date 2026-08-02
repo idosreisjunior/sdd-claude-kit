@@ -502,6 +502,26 @@ Portões, na ordem, todos antes da primeira escrita:
 - [ ] O `SKILL.md` declara explicitamente que a skill escreve **apenas** nos arquivos declarados na tarefa, e que sair disso exige justificativa explícita (design §8).
 - [ ] `TEST-SWC-020` a `TEST-SWC-023` passam.
 
+### Resultado (parcial)
+
+Os dois portões marquee foram executados de verdade via `claude -p` na mudança-cobaia em `APPROVED`
+(`require_approval: true`), 2026-08-02, e **nenhum** escreveu código (verificado por `git status`):
+
+- **SCN-SWC-013 (dependência pendente):** `implement … TASK-CUST-003` (depende de `TASK-CUST-001`,
+  não concluída) **recusou**, nomeando `TASK-CUST-001` como o passo anterior; status inalterado
+  (`APPROVED`), **0 arquivos rastreados alterados**. ✅
+- **SCN-SWC-020 (aprovação vencida):** editado o `spec.md` (hash `a5494bc1fe27` → `0ae1a8892892`),
+  `implement` **acusou a aprovação vencida** ("a recusa vem da aprovação vencida, não do modo") e
+  **não regrediu o estado** (segue `APPROVED`) — detecta, não muta (ADR-013); **0 código escrito**. ✅
+
+**Ainda a verificar (deslocados para o percurso e2e, TASK-SWC-017):** SCN-SWC-012 (`require_approval:
+true` + `approval: null` → recusa) e SCN-SWC-022 (`require_approval: false` → prossegue de `PLANNED`)
+dependem de configs/estados diferentes; e a **execução de tarefa** (TASK-SWC-011: SCN-SWC-004 contadores/
+`IN_PROGRESS`, SCN-SWC-017 rastreabilidade, SCN-SWC-019 `BLOCKED`) precisa de uma tarefa **trivialmente
+implementável** — o cobaia atual (cadastro de clientes) está travado na decisão A1 (linguagem/runtime),
+então uma conclusão limpa de tarefa será demonstrada no e2e com um toy simples (ex.: "somar dois números").
+Por isso TASK-SWC-010 e TASK-SWC-011 seguem `in_progress`.
+
 ---
 
 ## TASK-SWC-011 — Skill `implement`: execução, contadores e rastreabilidade
