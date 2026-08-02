@@ -23,6 +23,7 @@ import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
 import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
 import { buildDesignSkeleton, canGenerateDesign, extractScope } from './sdd/designGenerator'
 import { buildClarificationsSkeleton, hasRequirements } from './sdd/clarifyGenerator'
+import { buildResearchSkeleton } from './sdd/researchGenerator'
 import { aggregateHistory } from './sdd/historyModel'
 import { renderHistoryHtml } from './sdd/historyHtml'
 import { nextAdrNumber, adrSlug, padAdr, buildAdr } from './sdd/adrCreator'
@@ -167,6 +168,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.clarify', (node?: unknown) => clarify(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.history', (node?: unknown) => showHistory(node)),
     vscode.commands.registerCommand('sddClaudeKit.newAdr', (node?: unknown) => newAdr(context, node)),
+    vscode.commands.registerCommand('sddClaudeKit.research', (node?: unknown) => research(context, node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -762,6 +764,76 @@ async function clarify(context: vscode.ExtensionContext, node: unknown): Promise
   )
   if (choice === ANALYZE) {
     await launchClaudeAction(root, change.id, 'clarify')
+  }
+}
+
+/**
+ * Inicia o research de uma mudança (RF-007, feature 0017). Roda ANTES da spec:
+ * a pré-condição é apenas a mudança existir (D-Q4), sem exigir REQ-* nem aprovação.
+ * Escreve o `research.md`-esqueleto a partir do template `feature/research.md` (oito
+ * frentes do RF-007, D-Q6), sem sobrescrever sem confirmação (SCN-RES-003), e oferece
+ * analisar o conteúdo com o Claude Code (reuso da nova ação `research` do 0004, ADR-017).
+ * A incorporação à spec é manual (D-Q5).
+ */
+async function research(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para fazer o research.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Research" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  // A estrutura vem do template (ADR-017, Q2), embutido e sincronizado no pacote.
+  const templateUri = vscode.Uri.joinPath(
+    context.extensionUri,
+    'templates',
+    'pt-BR',
+    'feature',
+    'research.md',
+  )
+  const template = await readText(templateUri)
+  if (template === undefined) {
+    vscode.window.showErrorMessage('SDD: template feature/research.md não encontrado no pacote da extensão.')
+    return
+  }
+  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
+  const skeleton = buildResearchSkeleton(template, {
+    id: change.id,
+    title: change.title,
+    scope: extractScope(specMd ?? '') ?? '',
+    date: today(),
+  })
+
+  const researchUri = vscode.Uri.joinPath(root, ...changeDir, 'research.md')
+  if (await exists(researchUri)) {
+    // Não sobrescreve sem confirmação (SCN-RES-003): recusada, o arquivo fica intacto.
+    const overwrite = await vscode.window.showWarningMessage(
+      `SDD: ${change.id} já tem research.md. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
+      { modal: true },
+      'Sobrescrever',
+    )
+    if (overwrite !== 'Sobrescrever') {
+      return
+    }
+  }
+  await vscode.workspace.fs.writeFile(researchUri, Buffer.from(skeleton, 'utf8'))
+  await vscode.commands.executeCommand('vscode.open', researchUri)
+
+  // Oferece analisar o conteúdo com o Claude Code (ADR-017: nova ação `research` do 0004).
+  const ANALYZE = 'Analisar com o Claude Code'
+  const choice = await vscode.window.showInformationMessage(
+    `SDD: research.md-esqueleto criado em .specs/${change.path}. Preencha as frentes — ou peça a análise ao Claude Code. Depois incorpore à spec com /sdd-kit:spec.`,
+    ANALYZE,
+  )
+  if (choice === ANALYZE) {
+    await launchClaudeAction(root, change.id, 'research')
   }
 }
 

@@ -195,6 +195,12 @@
         "title": "SDD: Novo ADR",
         "category": "SDD Claude Kit",
         "icon": "$(note)"
+      },
+      {
+        "command": "sddClaudeKit.research",
+        "title": "SDD: Research",
+        "category": "SDD Claude Kit",
+        "icon": "$(search)"
       }
     ],
     "menus": {
@@ -291,6 +297,11 @@
           "command": "sddClaudeKit.newAdr",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@12"
+        },
+        {
+          "command": "sddClaudeKit.research",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@13"
         }
       ]
     },

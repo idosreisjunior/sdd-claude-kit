@@ -1,0 +1,104 @@
+# Matriz de rastreabilidade — 0017-research
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0017-research"
+
+requirements:
+
+  "REQ-RES-001":
+    title: "Etapa de research da mudança"
+    scenarios:
+      - "SCN-RES-001"
+    tasks:
+      - "TASK-RES-002"
+      - "TASK-RES-003"
+    implementation:
+      - "src/sdd/researchGenerator.ts"
+      - "src/sdd/claudePrompt.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-RES-002"
+
+  "REQ-RES-002":
+    title: "Registro revisável em research.md"
+    scenarios:
+      - "SCN-RES-002"
+      - "SCN-RES-003"
+    tasks:
+      - "TASK-RES-001"
+      - "TASK-RES-002"
+      - "TASK-RES-003"
+    implementation:
+      - ".specs/features/0017-research/decisions/ADR-017-mecanismo-de-research.md"
+      - "plugins/sdd-kit/templates/pt-BR/feature/research.md"
+      - "extensions_vscode/templates/pt-BR/feature/research.md"
+      - "src/sdd/researchGenerator.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-RES-001"
+
+  "NFR-RES-001":
+    title: "Sem rede própria"
+    scenarios: []
+    tasks:
+      - "TASK-RES-001"
+      - "TASK-RES-002"
+    implementation:
+      - ".specs/features/0017-research/decisions/ADR-017-mecanismo-de-research.md"
+      - "src/sdd/researchGenerator.ts"
+    tests: []
+
+  "NFR-RES-002":
+    title: "Compatibilidade Windows/Linux/WSL"
+    scenarios: []
+    tasks:
+      - "TASK-RES-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-RES-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-RES-002"
+    implementation:
+      - "src/sdd/researchGenerator.ts"
+    tests:
+      - "TEST-RES-001"
+      - "TEST-RES-002"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-RES-001"
+    reason: >-
+      A análise das oito frentes em si é conteúdo de IA, produzido pelo Claude
+      Code via a nova ação `research` (skill /sdd-kit:research, Fase 2). A extensão
+      cobre a estrutura e o disparo (TEST-RES-001/002).
+    mitigation: >-
+      Revisão manual em TASK-RES-003; a camada assistida ativa-se quando
+      /sdd-kit:research existir (Fase 2), como no 0014/0015.
+  - id: "REQ-RES-002"
+    reason: >-
+      A confirmação de sobrescrita e a escrita do research.md são integração com o
+      host do VS Code (diálogo + fs), não cobertas por teste automatizado.
+    mitigation: >-
+      Revisão manual em TASK-RES-003: research sobre um research.md existente pede
+      confirmação e, se recusada, não altera o arquivo.
+  - id: "NFR-RES-002"
+    reason: >-
+      Compatibilidade Windows/Linux/WSL depende de caminhos de arquivo no host,
+      não reproduzível de forma determinística em teste unitário.
+    mitigation: >-
+      Revisão manual em TASK-RES-003 usando os utilitários de caminho de .specs/
+      já validados pelas demais features.
