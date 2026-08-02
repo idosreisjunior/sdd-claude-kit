@@ -22,7 +22,7 @@ test('TEST-CC-001 — composePrompt monta /sdd-kit:<ação> <id> (SCN-CC-001)', 
 test('TEST-CC-001 — ACTIONS é conjunto fechado; actionDef desconhecido é undefined (SCN-CC-004)', () => {
   assert.deepEqual(
     ACTIONS.map((a) => a.id),
-    ['spec', 'clarify', 'design', 'tasks', 'implement', 'verify'],
+    ['research', 'spec', 'clarify', 'design', 'tasks', 'implement', 'verify'],
   )
   assert.equal(actionDef('spec')?.id, 'spec')
   assert.equal(actionDef('deploy'), undefined)

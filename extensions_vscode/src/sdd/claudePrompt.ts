@@ -6,7 +6,7 @@
 // o prompt e abre a CLI; não envia a ação nem captura resultado (isso é 0008).
 
 /** Ações do fluxo SDD que a extensão sabe compor como comando do plugin sdd-kit. */
-export type SddAction = 'spec' | 'clarify' | 'design' | 'tasks' | 'implement' | 'verify'
+export type SddAction = 'research' | 'spec' | 'clarify' | 'design' | 'tasks' | 'implement' | 'verify'
 
 export interface ActionDef {
   id: SddAction
@@ -21,6 +21,11 @@ export interface ActionDef {
  * daqui não é oferecida nem produz comando (SCN-CC-004).
  */
 export const ACTIONS: readonly ActionDef[] = [
+  {
+    id: 'research',
+    label: 'Research',
+    objective: 'Reunir material sobre o projeto antes da spec (/sdd-kit:research).',
+  },
   {
     id: 'spec',
     label: 'Detalhar a especificação',
