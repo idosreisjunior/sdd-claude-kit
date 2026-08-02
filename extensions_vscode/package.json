@@ -201,6 +201,12 @@
         "title": "SDD: Research",
         "category": "SDD Claude Kit",
         "icon": "$(search)"
+      },
+      {
+        "command": "sddClaudeKit.analyzeTasks",
+        "title": "SDD: Tarefas",
+        "category": "SDD Claude Kit",
+        "icon": "$(checklist)"
       }
     ],
     "menus": {
@@ -302,6 +308,11 @@
           "command": "sddClaudeKit.research",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@13"
+        },
+        {
+          "command": "sddClaudeKit.analyzeTasks",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@14"
         }
       ]
     },

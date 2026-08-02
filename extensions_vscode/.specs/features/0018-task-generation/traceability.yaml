@@ -1,0 +1,100 @@
+# Matriz de rastreabilidade — 0018-task-generation
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0018-task-generation"
+
+requirements:
+
+  "REQ-TGEN-001":
+    title: "Análise do tasks.md"
+    scenarios:
+      - "SCN-TGEN-001"
+      - "SCN-TGEN-002"
+      - "SCN-TGEN-003"
+      - "SCN-TGEN-004"
+    tasks:
+      - "TASK-TGEN-001"
+      - "TASK-TGEN-002"
+      - "TASK-TGEN-003"
+    implementation:
+      - ".specs/features/0018-task-generation/decisions/ADR-018-superficie-e-parser-da-analise.md"
+      - "src/sdd/taskAnalysis.ts"
+      - "src/extension.ts"
+      - "package.json"
+    tests:
+      - "TEST-TGEN-001"
+      - "TEST-TGEN-002"
+
+  "REQ-TGEN-002":
+    title: "Geração/refino via Claude Code"
+    scenarios:
+      - "SCN-TGEN-005"
+    tasks:
+      - "TASK-TGEN-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-TGEN-001":
+    title: "Somente leitura"
+    scenarios: []
+    tasks:
+      - "TASK-TGEN-002"
+    implementation:
+      - "src/sdd/taskAnalysis.ts"
+    tests:
+      - "TEST-TGEN-001"
+      - "TEST-TGEN-002"
+
+  "NFR-TGEN-002":
+    title: "Sem rede"
+    scenarios: []
+    tasks:
+      - "TASK-TGEN-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-TGEN-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-TGEN-001"
+      - "TASK-TGEN-002"
+    implementation:
+      - ".specs/features/0018-task-generation/decisions/ADR-018-superficie-e-parser-da-analise.md"
+      - "src/sdd/taskAnalysis.ts"
+    tests:
+      - "TEST-TGEN-001"
+      - "TEST-TGEN-002"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-TGEN-001"
+    reason: >-
+      A apresentação da análise (webview/canal) e a leitura do tasks.md em disco
+      são integração com o host; a análise (tarefas G + campos) vive no núcleo puro
+      (TEST-TGEN-001/002).
+    mitigation: >-
+      Revisão manual em TASK-TGEN-003: "Tarefas" sinaliza G e campos ausentes; sem
+      tasks.md, informa e oferece gerar.
+  - id: "REQ-TGEN-002"
+    reason: >-
+      O atalho de geração reusa a ação `tasks` do 0004 (terminal/host), não coberta
+      por teste automatizado nesta feature; a composição já é testada no 0004.
+    mitigation: >-
+      Revisão manual em TASK-TGEN-003: o atalho prepara /sdd-kit:tasks no Claude Code.
+  - id: "NFR-TGEN-002"
+    reason: >-
+      "Sem rede" é uma propriedade de ausência — verificada por revisão/lint, não por
+      um teste positivo.
+    mitigation: >-
+      Revisão de código na borda (TASK-TGEN-003) e no núcleo puro.

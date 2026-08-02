@@ -1,0 +1,74 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0018-task-generation"
+# feature | bug | refactor | change
+type: "feature"
+title: "Geração de tarefas (RF-010)"
+
+# Toda mudança nasce em DRAFT.
+status: PLANNED
+
+created: "2026-08-02"
+updated: "2026-08-02"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-02"
+    reason: >-
+      Criada por /sdd-kit:new para materializar o RF-010 (geração de tarefas) —
+      requisito pós-MVP sem cobertura no index.yaml. Rascunho com objetivo e
+      contexto derivados da solicitação. A geração já existe (/sdd-kit:tasks +
+      ação tasks do 0004); o incremento novo é a análise do tasks.md.
+  - status: PLANNED
+    date: "2026-08-02"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (3 tarefas: 1 P,
+      2 M; caminho crítico linear TASK-TGEN-001 → 002 → 003). Transição
+      DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, confirmada pelo usuário:
+      as skills clarify e design chegam na Fase 2. O plano não considera design
+      técnico — Q1 (superfície) e Q3 (parser) são resolvidas em TASK-TGEN-001
+      (ADR-018). Cobertura completa (5 requisitos com tarefa); sem requisito
+      descoberto, tarefa órfã, ciclo ou tarefa G. Não depende da Fase 2.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q2/Q4/Q5 decididas na spec (Decisões de escopo). Q1 e Q3 resolvidas por
+# TASK-TGEN-001 (ADR-018). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-02"
+    resolved_by: TASK-TGEN-001
+    summary: >-
+      A análise é apresentada como diagnósticos no painel Problems (molde do
+      Project Doctor 0006): o núcleo devolve achados com linha; a borda os publica
+      via DiagnosticCollection. Sem webview/HTML.
+    adr: ADR-018
+  - question: Q3
+    date: "2026-08-02"
+    resolved_by: TASK-TGEN-001
+    summary: >-
+      Parser próprio em taskAnalysis.ts (divide o tasks.md em blocos por cabeçalho
+      de tarefa; extrai complexidade e presença dos onze campos), sem estender o
+      parseTasksPlan do 0007 (modelo diferente).
+    adr: ADR-018
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3
