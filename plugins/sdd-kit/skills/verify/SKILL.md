@@ -70,7 +70,7 @@ Requisito verificável só por revisão humana vai para `gaps` em `traceability.
 
 ### 4. Promover, ou não
 
-Promova a `VERIFIED` **somente** quando nenhum comando está *executada sem efeito* sob `require_tests`, nenhum falhou, e nenhum critério ficou "não satisfeito". A transição `IN_PROGRESS → VERIFIED` é verificada no grafo (`${CLAUDE_PLUGIN_ROOT}/schemas/workflow.json`); **acrescente** uma entrada a `history` com `reason` não vazio. Ordem: `validation.md`/`acceptance.md`, depois `status.yaml`, `.specs/index.yaml` por último.
+Promova a `VERIFIED` **somente** quando nenhum comando está *executada sem efeito* sob `require_tests`, nenhum falhou, e nenhum critério ficou "não satisfeito". A transição `IN_PROGRESS → VERIFIED` é verificada no grafo (`${CLAUDE_PLUGIN_ROOT}/schemas/workflow.json`); **acrescente** uma entrada a `history` com `reason` não vazio. Ordem: `validation.md`/`acceptance.md`, depois `status.yaml`, `.specs/index.yaml` por último. Como `Edit` está fora do conjunto desta skill, atualize `status.yaml` e `index.yaml` **reescrevendo o arquivo inteiro com `Write`**, preservando o conteúdo e acrescentando o necessário.
 
 ### 5. Reportar
 

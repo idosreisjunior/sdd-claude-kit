@@ -77,6 +77,8 @@ O `design.md` referencia o ADR pelo identificador; a decisão mora no ADR.
 
 Verifique que `CLARIFIED → DESIGNED` é válida no grafo (`${CLAUDE_PLUGIN_ROOT}/schemas/workflow.json`) e **acrescente** uma entrada a `history` com `reason` não vazio, sem reescrever as anteriores. Ordem de escrita: `design.md` e os ADRs, depois `status.yaml`, `.specs/index.yaml` por último.
 
+Como `Edit` está **fora do conjunto** desta skill (`disallowed-tools`), atualize `status.yaml` e `index.yaml` **reescrevendo o arquivo inteiro com `Write`** — todo o conteúdo atual preservado, mais a mudança de `status` e a entrada nova de `history`. No modo `guided`, uma autorização explícita do usuário para promover já é suficiente: escreva as duas atualizações, não peça a mesma confirmação de novo.
+
 ### 5. Reportar
 
 ```

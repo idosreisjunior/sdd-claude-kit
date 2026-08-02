@@ -345,7 +345,7 @@ comportamental acima cobre os mesmos cenários pela execução real, registrada 
 **Requisitos:** REQ-SWC-002, REQ-SWC-007
 **Dependências:** TASK-SWC-001, TASK-SWC-003, TASK-SWC-005
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -376,6 +376,27 @@ Comportamento exigido pelos cenários:
 - [ ] Na execução recusada, verificado por hash que `status.yaml` não foi tocado.
 - [ ] O `design.md` gerado não contém nenhum `{{`.
 - [ ] `TEST-SWC-013` a `TEST-SWC-015` passam.
+
+### Resultado
+
+Executada de verdade via `claude -p` num projeto-cobaia limpo, 2026-08-02:
+
+- **SCN-SWC-002 (CLARIFIED → DESIGNED):** o design **criou o `design.md`** a partir do
+  template (15 seções, **0 marcadores `{{`**), com conteúdo de qualidade (recusou `COLLATE
+  NOCASE` por dobrar só ASCII; não inventou coluna de "cliente ativo" que a spec deixou
+  indefinida). Depois **promoveu** a mudança para `DESIGNED`: `history` ganhou a entrada
+  `CLARIFIED → DESIGNED`, as anteriores e as `resolved_questions` intactas, `index.yaml`
+  atualizado. ✅
+- **SCN-SWC-010 (recusa a partir de DRAFT):** rodando design numa mudança em `DRAFT`, a skill
+  **recusou** (apontou `/sdd-kit:clarify` como próximo passo), **não criou `design.md`**, e o
+  `status.yaml` ficou **byte a byte inalterado** (hash idêntico antes/depois). ✅
+- **Defeito encontrado e corrigido:** na primeira tentativa a promoção não completava — a skill
+  tentava `Edit` para atualizar o `status.yaml`, que está em `disallowed-tools`, e travava. O
+  `SKILL.md` passou a instruir explicitamente **atualizar `status.yaml`/`index.yaml` reescrevendo
+  com `Write`** (Edit fora do conjunto), e a não repetir a confirmação quando a promoção já foi
+  autorizada. A mesma correção foi propagada preventivamente a `approve`, `implement`, `verify` e
+  `archive`, que atualizam `status.yaml` pelo mesmo mecanismo. Após o fix, a promoção completou.
+  `claude plugin validate --strict` limpo.
 
 ---
 
@@ -731,14 +752,15 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 8 concluídas · 7 em progresso · 2 pendentes.
+Total: 17 tarefas · 9 concluídas · 6 em progresso · 2 pendentes.
 
-Concluídas: a leva de infraestrutura (001–006, 015) e **TASK-SWC-007 (clarify)**, esta última
-fechada por **execução real** via `claude -p` — os dois cenários (SCN-SWC-009 e SCN-SWC-001/016)
-verificados, um defeito de schema encontrado e corrigido (ADR-014), com o resultado registrado na
-seção "Resultado" da tarefa.
+Concluídas: a leva de infraestrutura (001–006, 015) e as skills **007 (clarify)** e **008
+(design)**, fechadas por **execução real** via `claude -p` — todos os cenários verificados, com
+dois defeitos encontrados e corrigidos (ADR-014 para o `resolved_by` do clarify; uso de `Write`
+em vez de `Edit` para atualizar o `status.yaml` nas skills que promovem estado), e os resultados
+registrados nas seções "Resultado" das tarefas.
 
-Em progresso (008–014): os cinco `SKILL.md` restantes das skills design, approve, implement
+Em progresso (009–014): os quatro `SKILL.md` restantes das skills approve, implement
 (010+011), verify (012+013) e archive estão **escritos** e passam nas checagens estruturais
 (`skills.test.ts`) e no `claude plugin validate --strict`. O critério de conclusão de cada uma
 exige, além disso, **execução real via `claude -p`** com a saída registrada na seção "Resultado"

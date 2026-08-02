@@ -64,7 +64,7 @@ Passados os portões, execute **uma** tarefa:
 - Atualize a linha do requisito em `traceability.yaml`, apontando os arquivos e os testes produzidos, fechando a cadeia requisito → cenário → tarefa → arquivo → teste (`SCN-SWC-017`). O documento resultante segue `${CLAUDE_PLUGIN_ROOT}/schemas/traceability.schema.json`.
 - **Decisão arquitetural não prevista interrompe** (Art. 8): passe a mudança para `BLOCKED`, com o motivo nomeando a decisão pendente, e proponha um ADR. Seguir adiante inventando a decisão é exatamente o que o Artigo existe para impedir (`SCN-SWC-019`).
 
-Ordem de escrita: código e testes, depois `tasks.md` e `traceability.yaml`, depois `status.yaml`, `.specs/index.yaml` por último.
+Ordem de escrita: código e testes, depois `tasks.md` e `traceability.yaml`, depois `status.yaml`, `.specs/index.yaml` por último. Como `Edit` está fora do conjunto desta skill, atualize os artefatos de `.specs/` (`tasks.md`, `traceability.yaml`, `status.yaml`, `index.yaml`) **reescrevendo o arquivo inteiro com `Write`**, preservando o conteúdo e acrescentando o necessário — o código da tarefa é escrito normalmente.
 
 ### Reportar
 

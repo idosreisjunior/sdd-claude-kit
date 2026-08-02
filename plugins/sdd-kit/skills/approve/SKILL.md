@@ -63,7 +63,7 @@ A aprovação é um ato, não uma dedução. **Só prossiga se o usuário aprovo
 
 ### 4. Gravar ou registrar a recusa
 
-- **Aprovada:** grave `approval` com os três campos e **acrescente** uma entrada a `history` com `status: APPROVED` e `reason` não vazio, sem reescrever as anteriores. `status.yaml` primeiro, `.specs/index.yaml` por último.
+- **Aprovada:** grave `approval` com os três campos e **acrescente** uma entrada a `history` com `status: APPROVED` e `reason` não vazio, sem reescrever as anteriores. `status.yaml` primeiro, `.specs/index.yaml` por último. Como `Edit` está fora do conjunto desta skill, atualize `status.yaml` e `index.yaml` **reescrevendo o arquivo inteiro com `Write`**, preservando o conteúdo e acrescentando o necessário.
 - **Negada:** deixe `approval: null` e o `status` em `PLANNED`. **Sem entrada de histórico** — não houve transição (`SCN-SWC-011`).
 
 ### 5. Reportar
