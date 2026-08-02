@@ -56,7 +56,7 @@ Liste as questões pendentes com a sua prioridade. Uma questão **crítica** (se
 Para cada questão que o usuário respondeu:
 
 - Mova-a de "Questões pendentes" para uma seção "Questões resolvidas" em `spec.md`, com a resposta.
-- Acrescente uma entrada em `resolved_questions` de `status.yaml`, com `question`, `date` (entre aspas), `resolved_by` e `summary` (`SCN-SWC-001`).
+- Acrescente uma entrada em `resolved_questions` de `status.yaml`, com `question`, `date` (entre aspas), `resolved_by` e `summary` (`SCN-SWC-001`). Como a resolução veio de uma resposta humana registrada aqui — não de uma tarefa —, `resolved_by` é **`clarify`** (o nome desta skill), não um nome de pessoa nem `user`. O schema aceita um `TASK-<ESCOPO>-NNN` ou um nome de skill (ADR-014).
 - Se a questão estava em `blocked_by`, remova-a de lá.
 
 Questão não respondida **permanece** pendente. Não a resolva por dedução.

@@ -116,7 +116,7 @@
         "properties": {
           "question": { "$ref": "#/$defs/questionId" },
           "date": { "$ref": "#/$defs/date" },
-          "resolved_by": { "$ref": "#/$defs/taskId" },
+          "resolved_by": { "$ref": "#/$defs/resolvedBy" },
           "adr": {
             "type": "string",
             "pattern": "^ADR-[0-9]{3}$",
@@ -172,6 +172,14 @@
       "type": "string",
       "pattern": "^TASK-[A-Z0-9]+-[0-9]{3}$",
       "description": "TASK-<ESCOPO>-NNN (standards §2)."
+    },
+    "resolvedBy": {
+      "type": "string",
+      "anyOf": [
+        { "pattern": "^TASK-[A-Z0-9]+-[0-9]{3}$" },
+        { "pattern": "^[a-z][a-z0-9-]{1,29}$" }
+      ],
+      "description": "O que resolveu a questão: uma tarefa (TASK-<ESCOPO>-NNN), quando a resolução veio da implementação, OU o nome de uma skill (ex.: clarify), quando veio de uma resposta humana registrada na conversa. Não é texto livre: um nome de pessoa não valida. Ver ADR-014."
     },
     "questionId": {
       "type": "string",

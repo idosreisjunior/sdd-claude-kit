@@ -278,7 +278,7 @@ O template de `validation.md` é o que impede a repetição do buraco em que est
 **Requisitos:** REQ-SWC-001, REQ-SWC-007
 **Dependências:** TASK-SWC-001, TASK-SWC-003
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -314,6 +314,29 @@ Refinar não é transicionar: uma segunda passagem que responde questões não c
 - [ ] Na execução real, nenhuma questão foi respondida pela própria skill sem ato do usuário: resposta inventada é o defeito que `0003` documenta em outra skill.
 - [ ] `status.yaml` gerado valida contra `status.schema.json`.
 - [ ] `TEST-SWC-009` a `TEST-SWC-012` passam.
+
+### Resultado
+
+Executada de verdade via `claude -p` num projeto-cobaia limpo (`/sdd-kit:init → new →
+spec → clarify`), 2026-08-02:
+
+- **SCN-SWC-009 (crítica sem resposta):** rodando `clarify` sem responder, a mudança
+  **permaneceu em `DRAFT`**, com as questões críticas ainda em `blocked_by`. A skill
+  recusou promover ("a promoção a `CLARIFIED` só acontece quando as quatro críticas
+  estiverem fechadas") e **não inventou resposta** ("não reclassifiquei por conta própria"). ✅
+- **SCN-SWC-001 / SCN-SWC-016 (responder e promover):** respondidas as quatro críticas, a
+  mudança foi para **`CLARIFIED`**, `blocked_by` esvaziou, `resolved_questions` recebeu as
+  entradas com `date` e `summary` citando as respostas do usuário, e o `history` ganhou uma
+  entrada nova sem reescrever a anterior. A skill marcou hipóteses (case-sensitivity, "cliente
+  ativo") e **não inventou** o `REQ-CUST-002` da consulta (Art. 2). ✅
+- **Defeito encontrado e corrigido:** o `status.yaml` gerado gravava `resolved_by: user`, que
+  falhava contra `status.schema.json` (padrão `TASK-*`). Corrigido por **ADR-014**: `resolved_by`
+  passa a aceitar um `TASK-<ESCOPO>-NNN` **ou** um nome de skill; `clarify` grava `clarify`. O
+  `status.yaml` real da execução foi **re-validado contra o schema corrigido: válido**. `TEST-SWC-009`
+  (estrutural) e o novo teste de `resolved_by` passam; `claude plugin validate --strict` limpo.
+
+TEST-SWC-010/011/012 (harness dedicado) permanecem no gap de execução declarado; a verificação
+comportamental acima cobre os mesmos cenários pela execução real, registrada aqui (design §10).
 
 ---
 
@@ -708,14 +731,14 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 7 concluídas · 8 em progresso · 2 pendentes.
+Total: 17 tarefas · 8 concluídas · 7 em progresso · 2 pendentes.
 
-Concluídas (leva de infraestrutura): TASK-SWC-001 (workflow.json), 002 (testes derivam o
-grafo), 003 (architecture.md aponta para o grafo), 004 (traceability.schema.json), 005
-(template design.md), 006 (templates acceptance.md/validation.md), 015 (referência por
-identificador em standards.md).
+Concluídas: a leva de infraestrutura (001–006, 015) e **TASK-SWC-007 (clarify)**, esta última
+fechada por **execução real** via `claude -p` — os dois cenários (SCN-SWC-009 e SCN-SWC-001/016)
+verificados, um defeito de schema encontrado e corrigido (ADR-014), com o resultado registrado na
+seção "Resultado" da tarefa.
 
-Em progresso (007–014): os seis `SKILL.md` das skills clarify, design, approve, implement
+Em progresso (008–014): os cinco `SKILL.md` restantes das skills design, approve, implement
 (010+011), verify (012+013) e archive estão **escritos** e passam nas checagens estruturais
 (`skills.test.ts`) e no `claude plugin validate --strict`. O critério de conclusão de cada uma
 exige, além disso, **execução real via `claude -p`** com a saída registrada na seção "Resultado"
