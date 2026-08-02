@@ -66,7 +66,7 @@ O gargalo é a cadeia das skills: nove tarefas em série, de `TASK-SWC-007` a `T
 **Requisitos:** REQ-SWC-007, NFR-SWC-003
 **Dependências:** nenhuma
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -105,7 +105,7 @@ O arquivo é dado, não código: legível sem runtime.
 **Requisitos:** REQ-SWC-007, NFR-SWC-003
 **Dependências:** TASK-SWC-001
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -140,7 +140,7 @@ Acrescentar também a verificação de `SCN-SWC-018`: artefatos reais com `block
 **Requisitos:** REQ-SWC-007
 **Dependências:** TASK-SWC-001
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -173,7 +173,7 @@ O diagrama ASCII de §3 pode permanecer: ele ilustra, não é consumido por nada
 **Requisitos:** REQ-SWC-008, NFR-SWC-003
 **Dependências:** nenhuma
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -210,7 +210,7 @@ Na Fase 4 o script assume a escrita e as skills passam a chamá-lo. Até lá, o 
 **Requisitos:** REQ-SWC-002
 **Dependências:** nenhuma
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -243,7 +243,7 @@ Seguir a convenção dos templates existentes: marcadores `{{guia: …}}` para i
 **Requisitos:** REQ-SWC-005
 **Dependências:** nenhuma
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -599,7 +599,7 @@ Criar `plugins/sdd-kit/skills/archive/SKILL.md`. Contrato (design §4.3): lê tu
 **Requisitos:** REQ-SWC-006
 **Dependências:** nenhuma
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -708,7 +708,13 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 0 concluídas · 17 pendentes.
+Total: 17 tarefas · 7 concluídas · 10 pendentes.
+
+Concluídas (leva de infraestrutura): TASK-SWC-001 (workflow.json), 002 (testes derivam o
+grafo), 003 (architecture.md aponta para o grafo), 004 (traceability.schema.json), 005
+(template design.md), 006 (templates acceptance.md/validation.md), 015 (referência por
+identificador em standards.md). Pendentes: as seis skills (007–014), a auditoria (016) e o
+percurso e2e (017) — dependem de execução real via `claude -p`.
 
 **Caminho crítico:** `TASK-SWC-001 → 003 → 007 → 009 → 010 → 011 → 012 → 013 → 014 → 016 → 017` — onze tarefas, das quais oito são M.
 

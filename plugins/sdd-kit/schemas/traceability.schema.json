@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/idosreisjunior/sdd-claude-kit/schemas/v1/traceability.schema.json",
+  "title": "SDD Claude Kit — traceability.yaml",
+  "description": "Matriz de rastreabilidade de uma mudança, em .specs/<tipo>/<id>/traceability.yaml. Referência: PRD §14 e RF-011 (requisito → cenário → tarefa → arquivo → teste). Usa additionalProperties:false pelo mesmo motivo do status.schema.json: seis skills escrevem este arquivo à mão até a Fase 4, e um campo com erro de digitação seria perdido em silêncio. As exigências que o schema torna mecânicas: todo requisito tem ao menos uma tarefa (minItems:1), implementation existe sempre ainda que vazio, e os identificadores seguem standards.md §2.",
+  "type": "object",
+  "required": ["version", "feature", "requirements"],
+  "additionalProperties": false,
+
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Versão do schema de rastreabilidade."
+    },
+
+    "feature": {
+      "$ref": "#/$defs/changeId",
+      "description": "Identificador da mudança. Deve coincidir com o nome do diretório."
+    },
+
+    "requirements": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Mapa de requisito → cobertura. A chave é o identificador do requisito (REQ-* ou NFR-*).",
+      "propertyNames": { "$ref": "#/$defs/requirementId" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["title", "scenarios", "tasks", "implementation", "tests"],
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "scenarios": {
+            "type": "array",
+            "description": "Cenários de aceite. Pode ser vazio para um NFR sem cenário próprio.",
+            "items": { "$ref": "#/$defs/scenarioId" }
+          },
+          "tasks": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Tarefas que cobrem o requisito. Ao menos uma: requisito sem tarefa é trabalho fora de escopo (Art. 6).",
+            "items": { "$ref": "#/$defs/taskId" }
+          },
+          "implementation": {
+            "type": "array",
+            "description": "Arquivos que implementam o requisito. Obrigatório e pode ser []: começa vazio e é preenchido por /sdd-kit:implement.",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "tests": {
+            "type": "array",
+            "description": "Testes esperados que cobrem o requisito.",
+            "items": { "$ref": "#/$defs/testId" }
+          },
+          "implementation_tests": {
+            "type": "array",
+            "description": "Arquivos de teste que exercitam a implementação (distintos dos testes esperados TEST-*, que são identificadores).",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Observação livre sobre a cobertura do requisito, quando ela precisa de explicação (ex.: cenário testado por outra skill)."
+          }
+        }
+      }
+    },
+
+    "gaps": {
+      "type": "array",
+      "description": "Itens sem cobertura automatizada, registrados explicitamente. Uma lacuna omitida vira cobertura aparente (Art. 6).",
+      "items": {
+        "type": "object",
+        "required": ["id", "reason", "mitigation"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "O item descoberto: pode ser um requisito, cenário, teste ou questão (REQ-*, NFR-*, SCN-*, TEST-* ou Q*)."
+          },
+          "reason": { "type": "string", "minLength": 1 },
+          "mitigation": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "changeId": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "NNNN-slug, com slug em minúsculas e hifens (standards §3)."
+    },
+    "requirementId": {
+      "type": "string",
+      "pattern": "^(REQ|NFR)-[A-Z0-9]+-[0-9]{3}$",
+      "description": "REQ-<ESCOPO>-NNN ou NFR-<ESCOPO>-NNN (standards §2)."
+    },
+    "scenarioId": {
+      "type": "string",
+      "pattern": "^SCN-[A-Z0-9]+-[0-9]{3}$"
+    },
+    "taskId": {
+      "type": "string",
+      "pattern": "^TASK-[A-Z0-9]+-[0-9]{3}$"
+    },
+    "testId": {
+      "type": "string",
+      "pattern": "^TEST-[A-Z0-9]+-[0-9]{3}$"
+    }
+  }
+}

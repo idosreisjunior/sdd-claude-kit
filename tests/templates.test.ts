@@ -211,3 +211,64 @@ describe('convenções dos templates', () => {
     expect(exists(`${TPL}/pt-BR/_shared/spec.md`)).toBe(false)
   })
 })
+
+describe('TEST-SWC-007 — template de design.md', () => {
+  const design = read(`${TPL}/pt-BR/_shared/design.md`)
+
+  it('existe, em pt-BR, com um único H1 e sem marcador desbalanceado', () => {
+    expect(exists(`${TPL}/pt-BR/_shared/design.md`)).toBe(true)
+    expect((design.match(/^# /gm) ?? []).length).toBe(1)
+    expect(design.split('{{').length).toBe(design.split('}}').length)
+  })
+
+  it('declara as seções mínimas que SCN-SWC-002 exige', () => {
+    for (const secao of [
+      'Contexto', 'Solução proposta', 'Componentes afetados', 'Contratos',
+      'Fluxo de dados', 'Persistência', 'Dependências', 'Segurança',
+      'Observabilidade', 'Estratégia de testes', 'Migração e rollback', 'Riscos',
+      'Alternativas consideradas', 'Questões fechadas pelo design', 'Questões ainda em aberto',
+    ]) {
+      expect(design, secao).toContain(secao)
+    }
+  })
+
+  it('a seção de alternativas exige o motivo da recusa, não só a lista', () => {
+    expect(design).toMatch(/Por que não/)
+  })
+
+  it('a seção de riscos exige mitigação por risco', () => {
+    const riscos = /## 12\. Riscos([\s\S]*?)(?=\r?\n## )/.exec(design)?.[1] ?? ''
+    expect(riscos, 'seção de riscos encontrada').not.toBe('')
+    expect(riscos, 'mitigação por risco').toMatch(/[Mm]itiga/)
+  })
+})
+
+describe('TEST-SWC-008 — templates de acceptance.md e validation.md', () => {
+  const acceptance = read(`${TPL}/pt-BR/_shared/acceptance.md`)
+  const validation = read(`${TPL}/pt-BR/_shared/validation.md`)
+
+  it('os dois templates existem, em pt-BR, com um único H1', () => {
+    for (const [nome, body] of [['acceptance', acceptance], ['validation', validation]] as const) {
+      expect(exists(`${TPL}/pt-BR/_shared/${nome}.md`), nome).toBe(true)
+      expect((body.match(/^# /gm) ?? []).length, nome).toBe(1)
+    }
+  })
+
+  it('acceptance.md exige evidência por critério', () => {
+    expect(acceptance, 'coluna de evidência').toContain('Evidência')
+    expect(acceptance, 'sem evidência não conta como satisfeito')
+      .toMatch(/sem evidência não conta|não conta como satisfeito/i)
+  })
+
+  it('validation.md distingue os três estados e não oferece um "passou" genérico', () => {
+    expect(validation).toContain('não configurada')
+    expect(validation).toContain('executada sem efeito')
+    expect(validation).toContain('aprovada')
+  })
+
+  it('validation.md exige a contagem de testes e trata o caso indeterminado (Q13)', () => {
+    expect(validation, 'contagem de testes').toContain('Testes executados')
+    expect(validation, 'saída obtida por comando').toContain('Saída obtida')
+    expect(validation, 'indeterminado bloqueia').toContain('não foi possível confirmar execução')
+  })
+})

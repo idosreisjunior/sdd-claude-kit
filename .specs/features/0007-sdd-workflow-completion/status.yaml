@@ -9,10 +9,10 @@ id: "0007-sdd-workflow-completion"
 type: "feature"
 title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
 
-status: APPROVED
+status: IN_PROGRESS
 
 created: "2026-07-29"
-updated: "2026-07-29"
+updated: "2026-08-02"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 history:
@@ -78,6 +78,23 @@ history:
 
       Aprovado à mão porque a skill approve é a TASK-SWC-009 deste próprio
       plano — mas a decisão foi humana, que é o que o Artigo 3 exige.
+
+  - status: IN_PROGRESS
+    date: "2026-08-02"
+    reason: >-
+      Implementação iniciada pela leva de infraestrutura (7 de 17 tarefas):
+      TASK-SWC-001 (workflow.json — já entrara no commit 5c71ed7 sem atualizar
+      este tracking; a escrituração é regularizada agora), 002 (testes derivam
+      o grafo de workflow.json, sem redeclarar TRANSICOES/ESTADOS), 003
+      (architecture.md aponta para o grafo, com a aresta PLANNED → IN_PROGRESS
+      no diagrama e a semântica BLOCKED vs blocked_by), 004
+      (traceability.schema.json, a contenção do PRD §14), 005 (template
+      design.md), 006 (templates acceptance.md/validation.md) e 015 (referência
+      por identificador em standards.md §11). Verificado: tsc --noEmit, eslint e
+      vitest limpos (249 testes, 16 novos). Transição APPROVED → IN_PROGRESS
+      válida pelo grafo; spec.md não foi tocada, então o hash de aprovação
+      continua válido. As dez tarefas restantes são as seis skills (007–014) e
+      a auditoria/percurso e2e (016/017), que exigem execução real via claude -p.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -204,6 +221,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 17
-  pending: 17
+  pending: 10
   in_progress: 0
-  done: 0
+  done: 7
