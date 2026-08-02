@@ -213,6 +213,12 @@
         "title": "SDD: SQL Guard — analisar SQL",
         "category": "SDD Claude Kit",
         "icon": "$(database)"
+      },
+      {
+        "command": "sddClaudeKit.github",
+        "title": "SDD: GitHub — criar issue/PR",
+        "category": "SDD Claude Kit",
+        "icon": "$(github)"
       }
     ],
     "menus": {
@@ -330,6 +336,11 @@
           "command": "sddClaudeKit.analyzeTasks",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@14"
+        },
+        {
+          "command": "sddClaudeKit.github",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@15"
         }
       ]
     },

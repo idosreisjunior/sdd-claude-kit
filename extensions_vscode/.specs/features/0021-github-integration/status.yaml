@@ -1,0 +1,83 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0021-github-integration"
+# feature | bug | refactor | change
+type: "feature"
+title: "Integração com GitHub (RF-019)"
+
+# Toda mudança nasce em DRAFT.
+status: PLANNED
+
+created: "2026-08-02"
+updated: "2026-08-02"
+
+# As 3 tarefas do plano estão implementadas (TASK-GH-001/002/003). O estado
+# permanece PLANNED: approve/verify são de Fase 2 — promover aqui afirmaria uma
+# aprovação que não houve.
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-02"
+    reason: >-
+      Criada por /sdd-kit:new para materializar o RF-019 (integração com GitHub)
+      — requisito pós-MVP (Fase 3, "could have") sem cobertura no index.yaml.
+      Rascunho: mecanismo (gh CLI vs REST vs auth) e recorte das 9 operações.
+  - status: PLANNED
+    date: "2026-08-02"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (3 tarefas: 1 P,
+      2 M; TASK-GH-001 e 002 paralelizáveis; caminho crítico TASK-GH-002 → 003).
+      Transição DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, confirmada pelo
+      usuário: as skills clarify e design chegam na Fase 2. Q1/Q2/Q3/Q6 decididas
+      na spec (mecanismo gh CLI; incremento = gerar descrição + criar issue/PR;
+      corpo = requisitos+validação+evidências; issue OU PR sem atualizar status);
+      Q4 (detecção) e Q5 (gatilho) em TASK-GH-001 (ADR-020). Cobertura completa
+      (5 requisitos com tarefa); sem requisito descoberto, tarefa órfã, ciclo ou G.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1/Q2/Q3/Q6 decididas na spec (Decisões de escopo). Q1/Q4/Q5 formalizadas/
+# resolvidas por TASK-GH-001 (ADR-020). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-02"
+    resolved_by: TASK-GH-001
+    summary: >-
+      Mecanismo: gh CLI (shell-out, como git 0007/Claude Code 0004). Sem rede
+      própria, sem token/auth próprios, sem dependência. Formalizado em ADR-020.
+    adr: ADR-020
+  - question: Q4
+    date: "2026-08-02"
+    resolved_by: TASK-GH-001
+    summary: >-
+      Detecção reusa o padrão do 0004 (gh no PATH); auth/remoto por tentar-e-
+      reportar (a borda usa a saída do gh, sem reimplementar a checagem).
+    adr: ADR-020
+  - question: Q5
+    date: "2026-08-02"
+    resolved_by: TASK-GH-001
+    summary: >-
+      Gatilho: comando "GitHub" no item da feature (a issue/PR é criada a partir
+      da feature).
+    adr: ADR-020
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3

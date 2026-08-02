@@ -1,0 +1,97 @@
+# Matriz de rastreabilidade — 0021-github-integration
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0021-github-integration"
+
+requirements:
+
+  "REQ-GH-001":
+    title: "Gerar a descrição de issue/PR a partir da feature"
+    scenarios:
+      - "SCN-GH-001"
+      - "SCN-GH-002"
+    tasks:
+      - "TASK-GH-002"
+      - "TASK-GH-003"
+    implementation:
+      - "src/sdd/githubBody.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-GH-001"
+      - "TEST-GH-002"
+
+  "REQ-GH-002":
+    title: "Criar issue ou PR no GitHub via gh"
+    scenarios:
+      - "SCN-GH-003"
+      - "SCN-GH-004"
+    tasks:
+      - "TASK-GH-001"
+      - "TASK-GH-003"
+    implementation:
+      - ".specs/features/0021-github-integration/decisions/ADR-020-mecanismo-github-via-gh.md"
+      - "src/sdd/githubAdapter.ts"
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-GH-001":
+    title: "Humano no controle (outward-facing)"
+    scenarios: []
+    tasks:
+      - "TASK-GH-003"
+    implementation:
+      - "src/extension.ts"
+    tests: []
+
+  "NFR-GH-002":
+    title: "Sem rede própria (gh CLI)"
+    scenarios: []
+    tasks:
+      - "TASK-GH-001"
+      - "TASK-GH-003"
+    implementation:
+      - ".specs/features/0021-github-integration/decisions/ADR-020-mecanismo-github-via-gh.md"
+      - "src/sdd/githubAdapter.ts"
+    tests: []
+
+  "NFR-GH-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-GH-002"
+    implementation:
+      - "src/sdd/githubBody.ts"
+    tests:
+      - "TEST-GH-001"
+      - "TEST-GH-002"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-GH-002"
+    reason: >-
+      Detectar/executar o `gh`, o diálogo de confirmação e a criação da issue/PR
+      são integração com o host e com uma ferramenta externa; a geração do corpo
+      vive no núcleo puro (TEST-GH-001/002).
+    mitigation: >-
+      Revisão manual em TASK-GH-003: publica só sob confirmação, informa a
+      pré-condição faltante, devolve o link.
+  - id: "NFR-GH-001"
+    reason: >-
+      "Humano no controle" é verificado pelo fluxo de confirmação na borda, não
+      por um teste unitário.
+    mitigation: >-
+      Revisão manual em TASK-GH-003: nada é publicado sem o "ok" explícito.
+  - id: "NFR-GH-002"
+    reason: >-
+      "Sem rede própria" é uma propriedade de ausência — verificada por revisão
+      (nenhum HTTP; só `gh`)/lint.
+    mitigation: >-
+      Revisão de código na borda (TASK-GH-003).

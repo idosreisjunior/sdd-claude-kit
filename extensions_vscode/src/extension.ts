@@ -66,6 +66,8 @@ import {
   type ArtifactKind,
 } from './sdd/traceabilityNav'
 import { buildCommitSuggestion } from './sdd/commitSuggest'
+import { buildGithubBody } from './sdd/githubBody'
+import { ghAvailable, ghCreate, type GhKind } from './sdd/githubAdapter'
 import { buildValidationReport } from './sdd/validationReport'
 import { renderValidationHtml } from './sdd/validationHtml'
 import { buildEvidenceMarkdown } from './sdd/evidenceDoc'
@@ -182,6 +184,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.research', (node?: unknown) => research(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.analyzeTasks', (node?: unknown) => analyzeTasksCommand(node, taskDiagnostics)),
     vscode.commands.registerCommand('sddClaudeKit.sqlGuard', () => sqlGuardCommand(sqlDiagnostics)),
+    vscode.commands.registerCommand('sddClaudeKit.github', (node?: unknown) => github(node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -1676,6 +1679,115 @@ async function collectEvidence(node: unknown): Promise<void> {
   await vscode.workspace.fs.writeFile(evidenceUri, Buffer.from(markdown, 'utf8'))
   await vscode.commands.executeCommand('vscode.open', evidenceUri)
   vscode.window.showInformationMessage(`SDD: evidence.md criado em .specs/${change.path}.`)
+}
+
+/**
+ * Integração com GitHub (RF-019, feature 0021, TASK-GH-003). Do nó da feature (D-Q5):
+ * monta o corpo da issue/PR (`buildGithubBody`, 0021) a partir dos requisitos (rastreabilidade),
+ * do resumo da validação (0008) e do evidence.md — robusto a artefatos parciais — e copia-o
+ * sempre. Detecta o `gh` (ADR-020, Q4): ausente → informa a pré-condição e NÃO publica
+ * (SCN-GH-004). Com o `gh`, oferece criar issue OU PR (D-Q6) e publica só sob confirmação
+ * explícita (NFR-GH-001, Art. 9), devolvendo o link. Não altera o `status.yaml` (D-Q6).
+ * Sem rede própria — só o `gh` (NFR-GH-002).
+ */
+async function github(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para usar a integração com GitHub.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "GitHub" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  // Reúne os artefatos que JÁ existem — o núcleo marca o que faltar, sem quebrar (D-Q3).
+  const traceText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml'))
+  const requirements = traceText
+    ? parseTraceabilityNav(traceText).requirements.map((r) => ({ id: r.id, title: r.title }))
+    : []
+  let validation: { atendido: number; pendentes: number } | undefined
+  if (traceText) {
+    const s = buildValidationReport(traceText, change.id).summary
+    validation = {
+      atendido: s['atendido'],
+      pendentes: s['nao-atendido'] + s['nao-testado'] + s['parcial'],
+    }
+  }
+  const evidence = await readText(vscode.Uri.joinPath(root, ...changeDir, 'evidence.md'))
+
+  const body = buildGithubBody({
+    changeId: change.id,
+    title: change.title,
+    type: change.type,
+    requirements,
+    validation,
+    evidence,
+  })
+
+  // O corpo é útil mesmo sem o `gh`: copia sempre (como as outras bordas).
+  await vscode.env.clipboard.writeText(body)
+
+  // Detecção (ADR-020, Q4): sem o `gh`, informa a pré-condição e NÃO publica (SCN-GH-004).
+  if (!(await ghAvailable())) {
+    vscode.window.showWarningMessage(
+      'SDD: `gh` (GitHub CLI) não encontrado. O corpo foi copiado — instale e autentique o gh ' +
+        '(https://cli.github.com) para criar a issue/PR daqui, ou cole o corpo no GitHub você mesmo.',
+    )
+    return
+  }
+
+  const PR = 'Criar Pull Request'
+  const pick = await vscode.window.showQuickPick(
+    [
+      { label: 'Criar issue', detail: 'Abre uma issue no repositório com este corpo.' },
+      { label: PR, detail: 'Abre um Pull Request da branch atual com este corpo.' },
+    ],
+    { title: `GitHub — ${change.id}`, placeHolder: 'O corpo foi copiado. O que criar?' },
+  )
+  if (!pick) {
+    return
+  }
+  const kind: GhKind = pick.label === PR ? 'pr' : 'issue'
+  const noun = kind === 'pr' ? 'o Pull Request' : 'a issue'
+
+  // Publicar é outward-facing e irreversível — só sob confirmação explícita (Art. 9, NFR-GH-001).
+  const confirm = await vscode.window.showWarningMessage(
+    `SDD: criar ${noun} de ${change.id} no GitHub via gh? Isto publica no repositório.`,
+    { modal: true, detail: body.slice(0, 1500) },
+    'Criar',
+  )
+  if (confirm !== 'Criar') {
+    return
+  }
+
+  const result = await ghCreate(kind, root.fsPath, change.title, body)
+  if (!result.ok) {
+    // Pré-condição faltante (auth/remoto/branch): informa e não publica (SCN-GH-004).
+    const detail = result.error ? `\n\n${result.error}` : ''
+    vscode.window.showErrorMessage(
+      `SDD: o gh não conseguiu criar ${noun}. Verifique a autenticação (gh auth login) ` +
+        `e o remoto do GitHub.${detail}`,
+    )
+    return
+  }
+
+  if (result.url) {
+    const OPEN = 'Abrir no navegador'
+    const choice = await vscode.window.showInformationMessage(
+      `SDD: ${kind === 'pr' ? 'PR' : 'issue'} criado — ${result.url}`,
+      OPEN,
+    )
+    if (choice === OPEN) {
+      await vscode.env.openExternal(vscode.Uri.parse(result.url))
+    }
+  } else {
+    vscode.window.showInformationMessage(`SDD: ${kind === 'pr' ? 'PR' : 'issue'} criado no GitHub.`)
+  }
 }
 
 /**
