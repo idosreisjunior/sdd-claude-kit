@@ -1,0 +1,69 @@
+# Matriz de rastreabilidade — 0022-mcp-creation-assistant
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0022-mcp-creation-assistant"
+
+requirements:
+
+  "REQ-MCP-001":
+    title: "Gerar o esqueleto de decisões do MCP (mcp.md)"
+    scenarios:
+      - "SCN-MCP-001"
+      - "SCN-MCP-002"
+    tasks:
+      - "TASK-MCP-001"
+      - "TASK-MCP-002"
+      - "TASK-MCP-003"
+    implementation:
+      - "src/sdd/mcpAspects.ts"
+      - "plugins/sdd-kit/templates/pt-BR/feature/mcp.md"
+      - "templates/pt-BR/feature/mcp.md"
+      - "src/extension.ts"
+    tests:
+      - "TEST-MCP-001"
+      - "TEST-MCP-002"
+
+  "REQ-MCP-002":
+    title: "Oferecer delegar a elaboração ao Claude Code"
+    scenarios:
+      - "SCN-MCP-003"
+      - "SCN-MCP-004"
+    tasks:
+      - "TASK-MCP-001"
+      - "TASK-MCP-003"
+    implementation:
+      - ".specs/features/0022-mcp-creation-assistant/decisions/ADR-021-mecanismo-do-assistente-de-mcp.md"
+      - "src/sdd/claudePrompt.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-MCP-003"
+
+  "NFR-MCP-001":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-MCP-002"
+    implementation:
+      - "src/sdd/mcpAspects.ts"
+    tests:
+      - "TEST-MCP-001"
+      - "TEST-MCP-002"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "REQ-MCP-002"
+    reason: >-
+      O scaffolding do mcp.md, o diálogo e a delegação ao Claude Code (abrir o
+      terminal, deixar o prompt pronto) são integração com o host — não têm teste
+      unitário. A composição do prompt/action é coberta (TEST-MCP-003).
+    mitigation: >-
+      Revisão manual em TASK-MCP-003: não sobrescreve mcp.md existente; o prompt é
+      copiado e deixado pronto sem enviar; sem a CLI, copia e orienta.

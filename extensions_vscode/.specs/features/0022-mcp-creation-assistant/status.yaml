@@ -1,0 +1,72 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0022-mcp-creation-assistant"
+# feature | bug | refactor | change
+type: "feature"
+title: "Assistente de criação de MCPs (RF-025)"
+
+# Toda mudança nasce em DRAFT.
+status: PLANNED
+
+created: "2026-08-02"
+updated: "2026-08-02"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-02"
+    reason: >-
+      Criada por /sdd-kit:new para materializar o RF-025 (assistente de criação
+      de servidores MCP) — requisito pós-MVP do PRD da extensão, sem cobertura no
+      index.yaml. Rascunho: um requisito real (conduzir pelos 9 aspectos) e as
+      questões de mecanismo/saída/escopo (Q1..Q6) em aberto.
+  # /sdd-kit:spec (refinamento) não altera o estado — apenas registra as decisões.
+  # Q1/Q2 confirmadas pelo usuário (padrão híbrido; saída = documento mcp.md);
+  # Q3/Q4/Q5/Q6 decorrem delas. Ver "Decisões de escopo" na spec.
+  - status: PLANNED
+    date: "2026-08-02"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (3 tarefas: 1 P,
+      2 M; TASK-MCP-001 e 002 paralelizáveis; caminho crítico TASK-MCP-002 →
+      003). Transição DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, confirmada
+      pelo usuário: as skills clarify e design chegam na Fase 2. Q1/Q2 decididas na
+      spec (padrão híbrido; saída = documento mcp.md) e Q3..Q6 decorrem; a
+      formalização do mecanismo e do novo action `mcp` fica em ADR-021 (TASK-MCP-001).
+      Cobertura completa (3 requisitos com tarefa); sem requisito descoberto, tarefa
+      órfã, ciclo ou tarefa G.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-02"
+    resolved_by: TASK-MCP-001
+    summary: >-
+      Mecanismo: padrão híbrido — nova ação `mcp` no adapter do Claude Code (0004)
+      + esqueleto por template sincronizado `feature/mcp.md`, reusando runHybridStep.
+      Núcleo puro (mcpAspects.ts) guarda os nove aspectos e relata pendências.
+      Formalizado em ADR-021.
+    adr: ADR-021
+
+# As 3 tarefas do plano estão implementadas (TASK-MCP-001/002/003). O estado
+# permanece PLANNED: approve/verify são de Fase 2.
+#
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3

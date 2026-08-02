@@ -22,7 +22,7 @@ test('TEST-CC-001 — composePrompt monta /sdd-kit:<ação> <id> (SCN-CC-001)', 
 test('TEST-CC-001 — ACTIONS é conjunto fechado; actionDef desconhecido é undefined (SCN-CC-004)', () => {
   assert.deepEqual(
     ACTIONS.map((a) => a.id),
-    ['research', 'spec', 'clarify', 'design', 'tasks', 'implement', 'verify'],
+    ['research', 'spec', 'clarify', 'design', 'tasks', 'implement', 'verify', 'mcp'],
   )
   assert.equal(actionDef('spec')?.id, 'spec')
   assert.equal(actionDef('deploy'), undefined)
@@ -31,6 +31,14 @@ test('TEST-CC-001 — ACTIONS é conjunto fechado; actionDef desconhecido é und
     assert.ok(a.label.length > 0, `ação ${a.id} sem rótulo`)
     assert.ok(a.objective.length > 0, `ação ${a.id} sem objetivo`)
   }
+})
+
+test('TEST-MCP-003 — o action `mcp` existe e compõe /sdd-kit:mcp <id> (0022, RF-025)', () => {
+  assert.equal(actionDef('mcp')?.id, 'mcp')
+  assert.equal(
+    composePrompt('mcp', '0022-mcp-creation-assistant'),
+    '/sdd-kit:mcp 0022-mcp-creation-assistant',
+  )
 })
 
 test('TEST-CC-002 — quoteCliPath cita caminho com espaço e escapa aspas (NFR-CC-002)', () => {

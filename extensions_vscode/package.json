@@ -219,6 +219,12 @@
         "title": "SDD: GitHub — criar issue/PR",
         "category": "SDD Claude Kit",
         "icon": "$(github)"
+      },
+      {
+        "command": "sddClaudeKit.mcp",
+        "title": "SDD: MCP — criar servidor",
+        "category": "SDD Claude Kit",
+        "icon": "$(server-process)"
       }
     ],
     "menus": {
@@ -341,6 +347,11 @@
           "command": "sddClaudeKit.github",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@15"
+        },
+        {
+          "command": "sddClaudeKit.mcp",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@16"
         }
       ]
     },
