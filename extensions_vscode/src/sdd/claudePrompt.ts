@@ -6,7 +6,15 @@
 // o prompt e abre a CLI; não envia a ação nem captura resultado (isso é 0008).
 
 /** Ações do fluxo SDD que a extensão sabe compor como comando do plugin sdd-kit. */
-export type SddAction = 'research' | 'spec' | 'clarify' | 'design' | 'tasks' | 'implement' | 'verify'
+export type SddAction =
+  | 'research'
+  | 'spec'
+  | 'clarify'
+  | 'design'
+  | 'tasks'
+  | 'implement'
+  | 'verify'
+  | 'mcp'
 
 export interface ActionDef {
   id: SddAction
@@ -55,6 +63,11 @@ export const ACTIONS: readonly ActionDef[] = [
     id: 'verify',
     label: 'Verificar',
     objective: 'Validar implementação e critérios de aceite (/sdd-kit:verify).',
+  },
+  {
+    id: 'mcp',
+    label: 'Criar MCP',
+    objective: 'Definir um servidor MCP pelos nove aspectos do RF-025 (/sdd-kit:mcp).',
   },
 ]
 

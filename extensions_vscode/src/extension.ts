@@ -68,6 +68,7 @@ import {
 import { buildCommitSuggestion } from './sdd/commitSuggest'
 import { buildGithubBody } from './sdd/githubBody'
 import { ghAvailable, ghCreate, type GhKind } from './sdd/githubAdapter'
+import { MCP_ASPECTS, pendingAspects } from './sdd/mcpAspects'
 import { buildValidationReport } from './sdd/validationReport'
 import { renderValidationHtml } from './sdd/validationHtml'
 import { buildEvidenceMarkdown } from './sdd/evidenceDoc'
@@ -182,6 +183,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.history', (node?: unknown) => showHistory(node)),
     vscode.commands.registerCommand('sddClaudeKit.newAdr', (node?: unknown) => newAdr(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.research', (node?: unknown) => research(context, node)),
+    vscode.commands.registerCommand('sddClaudeKit.mcp', (node?: unknown) => mcp(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.analyzeTasks', (node?: unknown) => analyzeTasksCommand(node, taskDiagnostics)),
     vscode.commands.registerCommand('sddClaudeKit.sqlGuard', () => sqlGuardCommand(sqlDiagnostics)),
     vscode.commands.registerCommand('sddClaudeKit.github', (node?: unknown) => github(node)),
@@ -653,8 +655,8 @@ interface HybridStep {
   menuLabel: string
   /** Rótulo do botão que delega ao Claude Code. */
   offerLabel: string
-  /** Mensagem de sucesso; recebe `change.path`. */
-  createdMessage: (changePath: string) => string
+  /** Mensagem de sucesso; recebe `change.path` e o esqueleto gerado. */
+  createdMessage: (changePath: string, skeleton: string) => string
   /** Pré-condição opcional; devolve a mensagem de bloqueio, ou `undefined` se ok. */
   precondition?: (ctx: HybridPreconditionCtx) => Promise<string | undefined>
 }
@@ -725,7 +727,7 @@ async function runHybridStep(
   await vscode.commands.executeCommand('vscode.open', outUri)
 
   const choice = await vscode.window.showInformationMessage(
-    step.createdMessage(change.path),
+    step.createdMessage(change.path, skeleton),
     step.offerLabel,
   )
   if (choice === step.offerLabel) {
@@ -794,6 +796,29 @@ function research(context: vscode.ExtensionContext, node: unknown): Promise<void
     offerLabel: 'Analisar com o Claude Code',
     createdMessage: (p) =>
       `SDD: research.md-esqueleto criado em .specs/${p}. Preencha as frentes — ou peça a análise ao Claude Code. Depois incorpore à spec com /sdd-kit:spec.`,
+  })
+}
+
+/**
+ * Assistente de criação de MCP (RF-025, feature 0022). Scaffolda um `mcp.md`-esqueleto
+ * com os nove aspectos do RF-025 (D-Q2) e oferece delegar a elaboração ao Claude Code
+ * (padrão híbrido, novo action `mcp` — ADR-021). Roda assim que a mudança existe; o
+ * `mcp.md` vive na pasta da mudança. Ver `runHybridStep`.
+ */
+function mcp(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  return runHybridStep(context, node, {
+    fileName: 'mcp.md',
+    action: 'mcp',
+    noRootMessage: 'SDD: abra uma pasta para criar o MCP.',
+    menuLabel: 'MCP',
+    offerLabel: 'Definir com o Claude Code',
+    createdMessage: (p, skeleton) => {
+      const pendentes = pendingAspects(skeleton).length
+      return (
+        `SDD: mcp.md-esqueleto criado em .specs/${p} — ${pendentes} de ${MCP_ASPECTS.length} aspectos pendentes. ` +
+        'Preencha as decisões — ou peça a elaboração ao Claude Code.'
+      )
+    },
   })
 }
 
