@@ -125,3 +125,16 @@ A mesma regra vale para qualquer valor que o YAML reinterpreta: `no`/`yes`/`on`/
 - Tabelas para dados comparáveis; listas para sequências.
 - Links relativos entre documentos do repositório.
 - Sem HTML embutido.
+
+## 11. Referência a mudanças
+
+Uma mudança é referenciada pelo seu **identificador** — `0001-plugin-foundation` —, nunca por caminho relativo ao diretório. O identificador resolve pelo `index.yaml`, que mapeia cada mudança ao seu `path` atual.
+
+Como referenciar, em prosa, spec ou ADR:
+
+- ✅ "ver a mudança `0007-sdd-workflow-completion`" — o leitor (ou uma ferramenta) resolve o caminho pelo `index.yaml`.
+- ❌ `[design](../../features/0007-sdd-workflow-completion/design.md)` — um link relativo que quebra assim que a mudança é arquivada e o diretório se move para `.specs/archive/`.
+
+A razão da regra: `archive` move o diretório da mudança de `.specs/<tipo>/` para `.specs/archive/`. Referências por caminho quebram no movimento; referências por identificador continuam válidas porque o `index.yaml` passa a apontar para o novo `path`. Por isso `archive` **não reescreve links Markdown** — varrer o repositório reescrevendo prosa é invasivo e erra em bloco de código e em citação. A referência estável é o identificador.
+
+Decisão registrada em `design.md` §14 da mudança `0007-sdd-workflow-completion` (Q8).

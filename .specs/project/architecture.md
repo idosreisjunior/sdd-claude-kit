@@ -84,6 +84,8 @@ Estados definidos em `PRD.md` §10 / RF-004. O estado vive em `<change>/status.y
        │            │             │        │ ARCHIVED │
        │            │             │        └──────────┘
        └────────────┴─────────────┴──────────────────────▶ CANCELLED
+
+   PLANNED ┄┄┄┄▶ IN_PROGRESS   (atalho quando require_approval=false — ADR-013)
 ```
 
 ### Transições válidas

@@ -85,10 +85,30 @@ describe('workflow.json — o grafo como fonte única (ADR-010)', () => {
     expect([...vistos].sort()).toEqual([...workflow.states].sort())
   })
 
-  it('architecture.md aponta para o arquivo em vez de repetir a tabela', () => {
+  it('architecture.md aponta para o arquivo em vez de repetir a tabela (TEST-SWC-004)', () => {
     const arch = read('.specs/project/architecture.md')
     expect(arch, 'referencia workflow.json').toContain('workflow.json')
     expect(arch, 'não repete a tabela').not.toMatch(/^\| `DRAFT` \| `CLARIFIED`/m)
+    expect(arch, 'inclui a aresta PLANNED → IN_PROGRESS').toContain('PLANNED')
+    expect(arch, 'documenta a aresta PLANNED → IN_PROGRESS').toMatch(/PLANNED[\s┄─]*▶?\s*IN_PROGRESS/)
+    expect(arch, 'semântica BLOCKED vs blocked_by').toContain('blocked_by')
+    expect(arch, 'link para ADR-013').toContain('ADR-013')
+  })
+})
+
+describe('TEST-SWC-033 — standards.md fixa a referência por identificador', () => {
+  const standards = read('.specs/project/standards.md')
+
+  it('declara a referência por identificador e nomeia index.yaml como resolvedor', () => {
+    expect(standards, 'seção de referência a mudanças').toMatch(/##\s+\d+\.\s+Referência a mudanças/)
+    expect(standards, 'identificador, não caminho').toContain('identificador')
+    expect(standards, 'index.yaml resolve').toContain('index.yaml')
+  })
+
+  it('traz exemplo positivo e negativo, e a origem da decisão', () => {
+    expect(standards, 'exemplo positivo').toContain('✅')
+    expect(standards, 'exemplo negativo').toContain('❌')
+    expect(standards, 'origem da decisão').toMatch(/design\.md`?\s*§14/)
   })
 })
 

@@ -1,13 +1,16 @@
 {
   "syncedFrom": "plugins/sdd-kit/templates",
-  "fileCount": 22,
-  "combinedHash": "aa5baf3bd53f660ed3721a9ed868036d310e29e01d56886a519d7fa9b03770df",
+  "fileCount": 25,
+  "combinedHash": "a7b7e862975beb46e98faf78dfdb06bf985081074f8be5f74107ddec5ca7b8c6",
   "files": {
     "README.md": "571ba241b2460892eabb622a951fdd0a088b1d8e0d1d0fbfa9a870bf2ccb4d17",
+    "pt-BR/_shared/acceptance.md": "e6b41647c0d1009474c8aa0304c67e57df63019a90878949f3cb9f96d34765ad",
+    "pt-BR/_shared/design.md": "bc3e32ef6f06ee555237c76d37b581b48639da8ead857b0744331bb46bf62000",
     "pt-BR/_shared/request.md": "8dd2439ff573cac5e8fcfc22b0fbe9b1084bd01311f0fd62f683b18d80dc799f",
     "pt-BR/_shared/status.yaml": "65049a294fe0c916d80f3f501996a5e7bbfb6b6433840d06334198b3469eada4",
     "pt-BR/_shared/tasks.md": "7e51a5607052571899d23c7499d7c295bb0421d28c14b13ebbf6f7d036981042",
     "pt-BR/_shared/traceability.yaml": "0c7dcfd600c7fcb8475b65fa077eb4c3ea7c2da870b14154384c53b8ee38614c",
+    "pt-BR/_shared/validation.md": "4c6513500241861f68149b7dbcd417dc02d16ea29b6c75cce46e32494b905351",
     "pt-BR/adr/ADR-template.md": "14db9e4efbfc9aae6421c27587d4339a06872e12fbc07dc4b89798671307fff4",
     "pt-BR/bug/spec.md": "2ca3126a99ff1b8767e66a9cfab5356c1c5624ccbcd1547f0a06d4396041592d",
     "pt-BR/change/spec.md": "514ef7cca931ad56ece7298993bcb32caea9f800f9a697c36779e2c795763d7c",

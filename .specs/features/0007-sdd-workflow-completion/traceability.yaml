@@ -39,7 +39,8 @@ requirements:
       - "TASK-SWC-005"
       - "TASK-SWC-008"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/templates/pt-BR/_shared/design.md"
     tests:
       - "TEST-SWC-007"
       - "TEST-SWC-013"
@@ -102,7 +103,9 @@ requirements:
       - "TASK-SWC-012"
       - "TASK-SWC-013"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/templates/pt-BR/_shared/acceptance.md"
+      - "plugins/sdd-kit/templates/pt-BR/_shared/validation.md"
     tests:
       - "TEST-SWC-008"
       - "TEST-SWC-027"
@@ -119,7 +122,8 @@ requirements:
       - "TASK-SWC-014"
       - "TASK-SWC-015"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - ".specs/project/standards.md"
     tests:
       - "TEST-SWC-031"
       - "TEST-SWC-032"
@@ -142,7 +146,11 @@ requirements:
       - "TASK-SWC-009"
       - "TASK-SWC-014"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/schemas/workflow.json"
+      - ".specs/project/architecture.md"
+      - "tests/specs-invariants.test.ts"
+      - "tests/schemas.test.ts"
     tests:
       - "TEST-SWC-001"
       - "TEST-SWC-002"
@@ -169,7 +177,8 @@ requirements:
       - "TASK-SWC-011"
       - "TASK-SWC-013"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/schemas/traceability.schema.json"
     tests:
       - "TEST-SWC-005"
       - "TEST-SWC-006"
@@ -203,7 +212,9 @@ requirements:
       - "TASK-SWC-002"
       - "TASK-SWC-004"
       - "TASK-SWC-017"
-    implementation: []
+    implementation:
+      - "plugins/sdd-kit/schemas/workflow.json"
+      - "plugins/sdd-kit/schemas/traceability.schema.json"
     tests:
       - "TEST-SWC-001"
       - "TEST-SWC-002"

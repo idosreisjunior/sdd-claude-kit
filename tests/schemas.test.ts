@@ -3,6 +3,14 @@ import { read, readYaml, schema, validate } from './helpers.js'
 
 const config = schema('config')
 const status = schema('status')
+const traceability = schema('traceability')
+
+// Os estados vêm de workflow.json, a fonte única (ADR-010). Antes esta constante
+// redeclarava os dez estados à mão — a mesma cópia divergente que o ADR-010 removeu
+// do grafo. Ver TASK-SWC-002.
+const workflow = JSON.parse(read('plugins/sdd-kit/schemas/workflow.json')) as {
+  states: string[]
+}
 
 /** Um status.yaml válido, base para os casos negativos. */
 const baseStatus = (): Record<string, any> => ({
@@ -57,8 +65,7 @@ describe('TEST-PF-003 — config.yaml deste repositório valida', () => {
 })
 
 describe('TEST-PF-004 — estado inexistente é rejeitado', () => {
-  const ESTADOS = ['DRAFT', 'CLARIFIED', 'DESIGNED', 'PLANNED', 'APPROVED',
-    'IN_PROGRESS', 'BLOCKED', 'VERIFIED', 'ARCHIVED', 'CANCELLED']
+  const ESTADOS = workflow.states
 
   it('aceita os dez estados de RF-004', () => {
     for (const s of ESTADOS) {
@@ -128,11 +135,68 @@ describe('schemas — invariantes de forma', () => {
     expect(validate(status, doc).map((f) => f.path)).toContain('tasks/done')
   })
 
-  it('ambos os schemas declaram $schema e $id versionado', () => {
-    for (const name of ['config', 'status']) {
+  it('os schemas declaram $schema e $id versionado', () => {
+    for (const name of ['config', 'status', 'traceability']) {
       const raw = JSON.parse(read(`plugins/sdd-kit/schemas/${name}.schema.json`))
       expect(raw['$schema'], name).toContain('json-schema.org')
       expect(raw['$id'], name).toContain('/schemas/v1/')
     }
+  })
+})
+
+describe('TEST-SWC-005 / TEST-SWC-006 — schema da matriz de rastreabilidade', () => {
+  /** Uma matriz mínima válida, base para os casos negativos. */
+  const baseTrace = (): Record<string, any> => ({
+    version: 1,
+    feature: '0002-customer-registration',
+    requirements: {
+      'REQ-CUST-001': {
+        title: 'Registrar um cliente',
+        scenarios: ['SCN-CUST-001'],
+        tasks: ['TASK-CUST-001'],
+        implementation: [],
+        tests: ['TEST-CUST-001'],
+      },
+    },
+  })
+
+  it('TEST-SWC-005 — a matriz mínima valida', () => {
+    expect(validate(traceability, baseTrace())).toEqual([])
+  })
+
+  it('TEST-SWC-005 — os traceability.yaml deste repositório validam', () => {
+    for (const p of ['0001-plugin-foundation', '0007-sdd-workflow-completion']) {
+      expect(
+        validate(traceability, readYaml(`.specs/features/${p}/traceability.yaml`)),
+        p,
+      ).toEqual([])
+    }
+  })
+
+  it('TEST-SWC-006 — requisito sem tarefa é rejeitado', () => {
+    const doc = baseTrace()
+    doc['requirements']['REQ-CUST-001'].tasks = []
+    expect(validate(traceability, doc).map((f) => f.path))
+      .toContain('requirements/REQ-CUST-001/tasks')
+  })
+
+  it('TEST-SWC-006 — requisito sem implementation é rejeitado (existe sempre, ainda que vazio)', () => {
+    const doc = baseTrace()
+    delete doc['requirements']['REQ-CUST-001'].implementation
+    expect(validate(traceability, doc).map((f) => f.path))
+      .toContain('requirements/REQ-CUST-001')
+  })
+
+  it('TEST-SWC-006 — identificador de requisito fora do formato de standards §2 é rejeitado', () => {
+    const doc = baseTrace()
+    doc['requirements']['req-cust-1'] = doc['requirements']['REQ-CUST-001']
+    delete doc['requirements']['REQ-CUST-001']
+    expect(validate(traceability, doc).length).toBeGreaterThan(0)
+  })
+
+  it('TEST-SWC-006 — tarefa fora do formato TASK-<ESCOPO>-NNN é rejeitada', () => {
+    const doc = baseTrace()
+    doc['requirements']['REQ-CUST-001'].tasks = ['task-1']
+    expect(validate(traceability, doc).length).toBeGreaterThan(0)
   })
 })
