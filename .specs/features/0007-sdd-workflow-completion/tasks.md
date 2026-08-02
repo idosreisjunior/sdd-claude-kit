@@ -405,7 +405,7 @@ Executada de verdade via `claude -p` num projeto-cobaia limpo, 2026-08-02:
 **Requisitos:** REQ-SWC-003, REQ-SWC-007
 **Dependências:** TASK-SWC-007, TASK-SWC-008
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -440,6 +440,26 @@ Comportamento em projeto sem `git config` configurado: pedir a identidade ao usu
 - [ ] Execução real registrada, incluindo o caso negado.
 - [ ] Em nenhuma execução a skill gravou `by` sem uma frase de aprovação explícita do usuário no diálogo.
 - [ ] `TEST-SWC-016` a `TEST-SWC-019` passam.
+
+### Resultado
+
+Mecânica executada de verdade via `claude -p` num projeto-cobaia limpo (mudança levada a `PLANNED`
+por spec → clarify → design → tasks), 2026-08-02:
+
+- **SCN-SWC-011 (negação):** aprovação recusada ("não aprovo ainda") deixou `approval: null` e o
+  status em `PLANNED`, **sem** entrada nova em `history` (4 → 4). ✅
+- **SCN-SWC-003 (aprovação):** com a frase de aprovação, gravou `approval` com `date`, `by`
+  (`Smoke Tester <…>`, do `git config`) e `revision`, e promoveu a `APPROVED`. A `revision`
+  (`a5494bc1fe27`) **reproduz** `sha256(spec.md)[:12]` exatamente; o `status.yaml` valida contra o
+  schema. ✅
+- **SCN-SWC-007 (transição inválida):** `approve` a partir de `DRAFT` **recusou**, listando o
+  caminho válido até `APPROVED`, sem tocar `status.yaml` (hash idêntico antes/depois). ✅
+
+**Ressalva de honestidade (Art. 3 / ADR-011):** nestas execuções a frase de aprovação foi fornecida
+pelo agente na chamada `claude -p`, não por um humano — o que valida a **mecânica** (grava os campos
+corretos, calcula o hash, recusa a transição inválida, não promove na negação), mas **não** o "ato
+humano" em si. A garantia de que só um humano aprova é estrutural (`disable-model-invocation: true`,
+verificada por TEST-SWC-016) e não depende desta execução. `claude plugin validate --strict` limpo.
 
 ---
 
@@ -752,15 +772,16 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 9 concluídas · 6 em progresso · 2 pendentes.
+Total: 17 tarefas · 10 concluídas · 5 em progresso · 2 pendentes.
 
-Concluídas: a leva de infraestrutura (001–006, 015) e as skills **007 (clarify)** e **008
-(design)**, fechadas por **execução real** via `claude -p` — todos os cenários verificados, com
-dois defeitos encontrados e corrigidos (ADR-014 para o `resolved_by` do clarify; uso de `Write`
-em vez de `Edit` para atualizar o `status.yaml` nas skills que promovem estado), e os resultados
-registrados nas seções "Resultado" das tarefas.
+Concluídas: a leva de infraestrutura (001–006, 015) e as skills **007 (clarify)**, **008
+(design)** e **009 (approve)**, fechadas por **execução real** via `claude -p` — todos os cenários
+verificados, com dois defeitos encontrados e corrigidos (ADR-014 para o `resolved_by` do clarify;
+uso de `Write` em vez de `Edit` para promover estado), e os resultados registrados nas seções
+"Resultado" das tarefas. A verificação do `approve` cobre a mecânica; o ato humano de aprovação em
+si permanece do usuário (ressalva registrada na tarefa).
 
-Em progresso (009–014): os quatro `SKILL.md` restantes das skills approve, implement
+Em progresso (010–014): os três `SKILL.md` restantes das skills implement
 (010+011), verify (012+013) e archive estão **escritos** e passam nas checagens estruturais
 (`skills.test.ts`) e no `claude plugin validate --strict`. O critério de conclusão de cada uma
 exige, além disso, **execução real via `claude -p`** com a saída registrada na seção "Resultado"
