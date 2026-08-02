@@ -1,11 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import {
-  hasRequirements,
-  buildClarificationsSkeleton,
-  CLARIFY_CATEGORIES,
-} from '../sdd/clarifyGenerator'
+import { hasRequirements, CLARIFY_CATEGORIES } from '../sdd/clarifyGenerator'
+import { buildSkeleton } from '../sdd/skeleton'
 
 // TEST-CLAR-001 — pré-condição: só clarifica com a spec tendo requisitos (D-Q4).
 test('TEST-CLAR-001: hasRequirements exige ao menos um REQ-*', () => {
@@ -22,7 +19,7 @@ const TEMPLATE = readFileSync('templates/pt-BR/feature/clarifications.md', 'utf8
 
 // TEST-CLAR-002 — o esqueleto contém as nove categorias do RF-008 como seções.
 test('TEST-CLAR-002: buildClarificationsSkeleton traz as nove categorias do RF-008', () => {
-  const out = buildClarificationsSkeleton(TEMPLATE, {
+  const out = buildSkeleton(TEMPLATE, {
     id: '0015-spec-clarify',
     title: 'Clarificação da especificação (RF-008)',
     scope: 'CLAR',

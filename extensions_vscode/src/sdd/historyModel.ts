@@ -6,7 +6,8 @@
 // transições de status e aprovação (status.yaml), ADRs (decisions/) e commits
 // (0007) — num timeline cronológico, marcando como indisponíveis as categorias
 // sem fonte. A borda coleta as fontes; aqui só agrega. Nunca lança.
-import { load } from 'js-yaml'
+import { parseYaml, get, isRecord, str } from './yamlUtils'
+import { padAdr } from './adrCreator'
 
 export type HistoryEventKind = 'status' | 'approval' | 'adr' | 'commit'
 
@@ -95,7 +96,7 @@ export function aggregateHistory(sources: HistorySources): HistoryModel {
     events.push({
       date: adr.date ?? '',
       kind: 'adr',
-      title: `ADR-${pad3(adr.number)} — ${adr.title}`,
+      title: `ADR-${padAdr(adr.number)} — ${adr.title}`,
     })
   }
 
@@ -110,31 +111,4 @@ export function aggregateHistory(sources: HistorySources): HistoryModel {
     currentState: { tasks: sources.tasks, validation: sources.validation },
     unavailable: [...UNAVAILABLE_CATEGORIES],
   }
-}
-
-function pad3(n: number): string {
-  return String(n).padStart(3, '0')
-}
-
-function parseYaml(text: string | undefined): unknown {
-  if (text === undefined) {
-    return undefined
-  }
-  try {
-    return load(text)
-  } catch {
-    return undefined
-  }
-}
-
-function get(obj: unknown, key: string): unknown {
-  return isRecord(obj) ? obj[key] : undefined
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-function str(value: unknown): string | undefined {
-  return typeof value === 'string' && value.length > 0 ? value : undefined
 }
