@@ -56,7 +56,7 @@ Mova o diretório da mudança para `.specs/archive/`. **Não reescreva links Mar
 
 Migre a entrada de `changes` para a chave `archive` de `.specs/index.yaml`, com o novo `path` (`archive/<id>`) e `status: ARCHIVED`. **Acrescente** uma entrada a `history` com `reason` não vazio.
 
-A ordem importa mais aqui que em qualquer outra skill: **mover o diretório, depois `status.yaml`, `index.yaml` por último.** Falhando no meio, o índice fica **atrasado** — nunca apontando para um diretório que não existe.
+A ordem importa mais aqui que em qualquer outra skill: **mover o diretório, depois `status.yaml`, `index.yaml` por último.** Falhando no meio, o índice fica **atrasado** — nunca apontando para um diretório que não existe. Como `Edit` está fora do conjunto desta skill, atualize `status.yaml` e `index.yaml` **reescrevendo o arquivo inteiro com `Write`**, preservando o conteúdo e acrescentando o necessário.
 
 ### 5. Reportar
 
