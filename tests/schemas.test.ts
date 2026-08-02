@@ -147,6 +147,17 @@ describe('schemas — invariantes de forma', () => {
       .toContain('resolved_questions/0/resolved_by')
   })
 
+  it('question aceita prefixos por documento (Q/A/D), mas não texto livre (ADR-015)', () => {
+    const doc = baseStatus()
+    for (const q of ['Q1', 'A2', 'D3']) {
+      doc['blocked_by'] = [{ question: q, description: 'x', severity: 'high' }]
+      expect(validate(status, doc), q).toEqual([])
+    }
+    doc['blocked_by'] = [{ question: 'pergunta 2', description: 'x', severity: 'high' }]
+    expect(validate(status, doc).map((f) => f.path), 'texto livre é rejeitado')
+      .toContain('blocked_by/0/question')
+  })
+
   it('os schemas declaram $schema e $id versionado', () => {
     for (const name of ['config', 'status', 'traceability']) {
       const raw = JSON.parse(read(`plugins/sdd-kit/schemas/${name}.schema.json`))

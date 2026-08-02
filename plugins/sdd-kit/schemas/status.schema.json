@@ -183,7 +183,8 @@
     },
     "questionId": {
       "type": "string",
-      "pattern": "^Q[0-9]+$"
+      "pattern": "^[A-Z]+[0-9]+$",
+      "description": "Identificador de questão: prefixo de letras maiúsculas + número. O framework usa prefixos por documento — Q na spec, A na architecture.md, D no design.md — e status.yaml referencia o identificador original ao resolver ou bloquear. Ver ADR-015."
     },
     "counter": {
       "type": "integer",
