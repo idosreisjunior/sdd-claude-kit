@@ -5,6 +5,60 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.0] — 2026-08-02
+
+Segunda iteração de recursos, materializando o backlog **pós-MVP** do PRD (Fases 2 e 3). Cada
+recurso abaixo tem uma feature rastreável (`00NN`) em `.specs/` e um ADR para a decisão
+arquitetural. Todos os acréscimos são compatíveis com a `0.1.0` — nenhuma configuração ou comando
+existente mudou de comportamento.
+
+### Adicionado
+
+**Fluxo assistido — passos híbridos (Fase 2)**
+
+Cada comando abaixo, no item da feature, gera um arquivo-esqueleto na pasta da mudança e oferece
+**delegar a elaboração ao Claude Code** (prompt copiado e pronto no terminal, sem enviar; sem a CLI,
+copia e orienta). Nada é sobrescrito sem confirmação.
+
+- Comando **"Research"** — esqueleto `research.md` com as oito frentes de pesquisa, antes da spec
+  (feature 0017, ADR-017).
+- Comando **"Clarificar"** — esqueleto `clarifications.md` com as categorias de ambiguidade; exige
+  uma spec com requisitos (feature 0015, ADR-015).
+- Comando **"Gerar design"** — esqueleto `design.md` a partir da spec **aprovada** (feature 0014,
+  ADR-014).
+
+**Análise e histórico (Fase 2)**
+
+- Comando **"Tarefas"** — analisa o `tasks.md` e publica no painel Problems as tarefas grandes (G) e
+  os campos obrigatórios ausentes; oferece gerar/refinar com o Claude Code (feature 0018, ADR-018).
+- Comando **"Histórico"** — linha do tempo da mudança em webview: transições de estado, ADRs e
+  commits relacionados (feature 0016, ADR-016).
+- Comando **"Novo ADR"** — cria um ADR numerado na pasta da mudança, a partir do template (feature 0016).
+
+**Integrações e guardas (Fase 3)**
+
+- Comando **"SQL Guard"** — no editor SQL, analisa o script por heurística e marca no painel Problems
+  riscos como `DELETE`/`UPDATE`/`TRUNCATE` sem `WHERE`, varredura completa e divisão por zero; sem
+  rede, sem executar SQL (feature 0020, ADR-019).
+- Comando **"GitHub"** — monta a descrição da feature (requisitos + validação + evidências) e cria
+  **issue ou Pull Request** via `gh`, só sob confirmação; sem `gh`, informa a pré-condição e não
+  publica; a extensão não abre rede própria (feature 0021, ADR-020).
+- Comando **"MCP"** — assistente de criação de servidor MCP: gera um `mcp.md` com os nove aspectos do
+  RF-025 (objetivo, ferramentas, recursos, schemas, autenticação, permissões, testes, documentação,
+  publicação) e oferece delegar a definição ao Claude Code (feature 0022, ADR-021).
+
+### Corrigido
+
+- Template de `tasks.md` sem o campo **"Evidências necessárias"** — o gerador de tarefas passa a
+  incluí-lo, alinhando o template aos campos exigidos pelo RF-010 (bug 0019).
+
+### Privacidade
+
+- Sem mudança na postura: nenhum I/O de rede na extensão. A criação de issue/PR (0021) roda pelo
+  `gh` local; a delegação ao Claude Code passa pela CLI local — a extensão não faz chamadas próprias.
+
+---
+
 ## [0.1.0] — 2026-08-01
 
 Primeira versão publicada — consolida o desenvolvimento das iterações `0.0.1`–`0.0.7`, todas
