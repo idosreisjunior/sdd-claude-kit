@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 19
+next_id: 20
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -191,5 +191,13 @@ changes:
     materialized: true
     epic: "pós-MVP — Fase 2"
     covers: [RF-010]
+  - id: 0019-tasks-evidence-field
+    type: bug
+    title: Template tasks.md sem o campo 'evidências necessárias' (RF-010)
+    status: PLANNED
+    path: bugs/0019-tasks-evidence-field
+    created: "2026-08-02"
+    updated: "2026-08-02"
+    materialized: true
 
 archive: []

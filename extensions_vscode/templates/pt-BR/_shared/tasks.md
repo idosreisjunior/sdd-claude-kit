@@ -59,6 +59,14 @@ Se a tarefa genuinamente não produz teste — investigação, decisão, documen
 {{repetir: condições objetivas e verificáveis. "Funciona" não é critério;
 "o endpoint retorna 401 sem token e o teste TEST-AUTH-002 passa" é.}}
 
+### Evidências necessárias
+
+- {{TASK_EVIDENCE}}
+
+{{guia: as evidências que a conclusão da tarefa precisa produzir — saída de teste,
+diff, captura de tela, log, link. É o que /sdd-kit:verify confere (RF-010). Se a
+tarefa genuinamente não produz evidência, escreva "Nenhuma" e diga por quê.}}
+
 ---
 
 {{repetir: um bloco por tarefa, separados por `---`}}

@@ -1,12 +1,12 @@
 {
   "syncedFrom": "plugins/sdd-kit/templates",
   "fileCount": 21,
-  "combinedHash": "c574b8eee3068c7e6ae61708eefd826cb0fd0435b66eee03563e1fb2794da1b4",
+  "combinedHash": "7a0332d0469198c31e7de2edb1d1e4f930d46e19da51ebf04cc60754ae0b4bc7",
   "files": {
     "README.md": "571ba241b2460892eabb622a951fdd0a088b1d8e0d1d0fbfa9a870bf2ccb4d17",
     "pt-BR/_shared/request.md": "8dd2439ff573cac5e8fcfc22b0fbe9b1084bd01311f0fd62f683b18d80dc799f",
     "pt-BR/_shared/status.yaml": "65049a294fe0c916d80f3f501996a5e7bbfb6b6433840d06334198b3469eada4",
-    "pt-BR/_shared/tasks.md": "f33bbac61966a4c4d74ebae55f464e827035a672dff6321ec1fb8b51c38985aa",
+    "pt-BR/_shared/tasks.md": "7e51a5607052571899d23c7499d7c295bb0421d28c14b13ebbf6f7d036981042",
     "pt-BR/_shared/traceability.yaml": "0c7dcfd600c7fcb8475b65fa077eb4c3ea7c2da870b14154384c53b8ee38614c",
     "pt-BR/adr/ADR-template.md": "14db9e4efbfc9aae6421c27587d4339a06872e12fbc07dc4b89798671307fff4",
     "pt-BR/bug/spec.md": "2ca3126a99ff1b8767e66a9cfab5356c1c5624ccbcd1547f0a06d4396041592d",

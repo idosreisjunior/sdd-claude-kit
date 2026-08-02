@@ -1,0 +1,38 @@
+# Matriz de rastreabilidade — 0019-tasks-evidence-field
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Bug: a "regra violada" (RF-010) é o requisito; os cenários de regressão
+# (SCN-TEVF-*) são a cobertura. `implementation` começa vazio e é preenchido
+# durante /sdd-kit:implement. Ver constitution.md, Art. 6.
+version: 1
+
+feature: "0019-tasks-evidence-field"
+
+requirements:
+
+  "RF-010":
+    title: "Cada tarefa deve possuir 'evidências necessárias' (regra violada)"
+    scenarios:
+      - "SCN-TEVF-001"
+      - "SCN-TEVF-002"
+    tasks:
+      - "TASK-TEVF-001"
+    implementation:
+      - "plugins/sdd-kit/templates/pt-BR/_shared/tasks.md"
+      - "extensions_vscode/templates/pt-BR/_shared/tasks.md"
+      - "extensions_vscode/templates/.sync-manifest.json"
+    tests:
+      - "TEST-TEVF-001"
+
+# Itens sem cobertura automatizada, registrados explicitamente. SCN-TEVF-002
+# (sincronização) é verificado pelo `check-templates`, não por um teste unitário
+# da suíte — registrado como gap para não parecer coberto pela suíte.
+gaps:
+  - id: "SCN-TEVF-002"
+    reason: >-
+      A igualdade fonte↔cópia é verificada pelo script `check-templates`
+      (npm run check-templates), não pela suíte de testes unitários.
+    mitigation: >-
+      `check-templates` roda no CI ("Consistência das specs"/build) e localmente
+      em TASK-TEVF-001.
