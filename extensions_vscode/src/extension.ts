@@ -23,6 +23,9 @@ import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
 import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
 import { buildDesignSkeleton, canGenerateDesign, extractScope } from './sdd/designGenerator'
 import { buildClarificationsSkeleton, hasRequirements } from './sdd/clarifyGenerator'
+import { aggregateHistory } from './sdd/historyModel'
+import { renderHistoryHtml } from './sdd/historyHtml'
+import { nextAdrNumber, adrSlug, padAdr, buildAdr } from './sdd/adrCreator'
 import { load } from 'js-yaml'
 import {
   LARGE_FILE_BYTES,
@@ -162,6 +165,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('sddClaudeKit.metricsFeature', (node?: unknown) => metricsFeature(node, context)),
     vscode.commands.registerCommand('sddClaudeKit.generateDesign', (node?: unknown) => generateDesign(context, node)),
     vscode.commands.registerCommand('sddClaudeKit.clarify', (node?: unknown) => clarify(context, node)),
+    vscode.commands.registerCommand('sddClaudeKit.history', (node?: unknown) => showHistory(node)),
+    vscode.commands.registerCommand('sddClaudeKit.newAdr', (node?: unknown) => newAdr(context, node)),
   )
 
   // Reage a mudanças nos YAML de .specs (config.yaml, index.yaml) sem reload:
@@ -758,6 +763,177 @@ async function clarify(context: vscode.ExtensionContext, node: unknown): Promise
   if (choice === ANALYZE) {
     await launchClaudeAction(root, change.id, 'clarify')
   }
+}
+
+/**
+ * Mostra o histórico de uma mudança (RF-020, feature 0016). Agrega o subconjunto
+ * persistido (D-Q1): transições de status/aprovação (status.yaml), ADRs
+ * (decisions/), commits (0007) e o estado atual de tarefas/validação (0008), e
+ * apresenta num WebviewPanel read-only (ADR-016). Somente leitura (NFR-HIST-001).
+ */
+async function showHistory(node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para ver o histórico.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Histórico" de uma feature no painel Features.',
+    )
+    return
+  }
+  const changeDir = ['.specs', ...change.path.split('/')]
+
+  const statusYaml = await readText(vscode.Uri.joinPath(root, ...changeDir, 'status.yaml'))
+  const adrs = await readChangeAdrs(root, changeDir)
+
+  // Commits do 0007: `git log --oneline` não traz data, então entram sem data.
+  const numeric = /^(\d+)/.exec(change.id)?.[1] ?? change.id
+  const commits = parseLog(await readCommits(root.fsPath, numeric)).map((c) => ({
+    hash: c.hash,
+    date: '',
+    subject: c.subject,
+  }))
+
+  const tasks = statusYaml ? parseTaskProgress(statusYaml) : undefined
+  const traceText = await readText(vscode.Uri.joinPath(root, ...changeDir, 'traceability.yaml'))
+  let validation: { atendido: number; pendentes: number } | undefined
+  if (traceText) {
+    const s = buildValidationReport(traceText, change.id).summary
+    validation = { atendido: s.atendido, pendentes: s['nao-atendido'] + s['nao-testado'] + s.parcial }
+  }
+
+  const model = aggregateHistory({
+    statusYaml,
+    adrs,
+    commits,
+    tasks: tasks ? { done: tasks.done, total: tasks.total } : undefined,
+    validation,
+  })
+
+  const panel = vscode.window.createWebviewPanel(
+    'sddHistory',
+    `Histórico — ${change.id}`,
+    vscode.ViewColumn.Active,
+    { enableScripts: false, localResourceRoots: [] },
+  )
+  panel.webview.html = renderHistoryHtml(change.id, model, nonce())
+}
+
+/**
+ * Cria um novo ADR na mudança (RF-020, feature 0016, REQ-HIST-002). Aloca o número
+ * reconciliando com TODOS os `decisions/` do projeto (numeração global, ADR-016),
+ * deriva o slug do título e monta o esqueleto do template. Não sobrescreve um ADR
+ * existente (SCN-HIST-004).
+ */
+async function newAdr(context: vscode.ExtensionContext, node: unknown): Promise<void> {
+  const root = vscode.workspace.workspaceFolders?.[0]?.uri
+  if (!root) {
+    vscode.window.showWarningMessage('SDD: abra uma pasta para criar um ADR.')
+    return
+  }
+  const change = featureChangeOf(node)
+  if (!change || !change.path) {
+    vscode.window.showInformationMessage(
+      'SDD: use a ação "Novo ADR" de uma feature no painel Features.',
+    )
+    return
+  }
+
+  const title = await vscode.window.showInputBox({
+    title: 'Novo ADR — título',
+    prompt: 'Título da decisão (pt-BR). Ex.: Estratégia de cache do relatório.',
+    validateInput: (v) => (v.trim().length > 0 ? undefined : 'Informe um título.'),
+  })
+  if (title === undefined) {
+    return
+  }
+
+  const slug = adrSlug(title)
+  if (slug.length === 0) {
+    vscode.window.showErrorMessage('SDD: título sem caracteres válidos para o slug do ADR.')
+    return
+  }
+  const number = nextAdrNumber(await collectAdrNumbers(root))
+
+  const templateUri = vscode.Uri.joinPath(context.extensionUri, 'templates', 'pt-BR', 'adr', 'ADR-template.md')
+  const template = await readText(templateUri)
+  if (template === undefined) {
+    vscode.window.showErrorMessage('SDD: template adr/ADR-template.md não encontrado no pacote da extensão.')
+    return
+  }
+  const content = buildAdr(template, {
+    number,
+    title: title.trim(),
+    date: today(),
+    origin: `criado pela extensão SDD para a mudança ${change.id}`,
+  })
+
+  const fileName = `ADR-${padAdr(number)}-${slug}.md`
+  const decisionsDir = vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'decisions')
+  const adrUri = vscode.Uri.joinPath(decisionsDir, fileName)
+  if (await exists(adrUri)) {
+    // Não sobrescreve (SCN-HIST-004).
+    vscode.window.showErrorMessage(`SDD: ${fileName} já existe — não sobrescrevo. Ajuste o título.`)
+    return
+  }
+  await vscode.workspace.fs.createDirectory(decisionsDir)
+  await vscode.workspace.fs.writeFile(adrUri, Buffer.from(content, 'utf8'))
+  await vscode.commands.executeCommand('vscode.open', adrUri)
+  vscode.window.showInformationMessage(
+    `SDD: ${fileName} criado em .specs/${change.path}/decisions/. Preencha as seções.`,
+  )
+}
+
+/** Lê os ADRs da pasta decisions/ de uma mudança, para o timeline (RF-020). */
+async function readChangeAdrs(
+  root: vscode.Uri,
+  changeDir: string[],
+): Promise<{ number: number; title: string; date?: string }[]> {
+  const dir = vscode.Uri.joinPath(root, ...changeDir, 'decisions')
+  let entries: [string, vscode.FileType][]
+  try {
+    entries = await vscode.workspace.fs.readDirectory(dir)
+  } catch {
+    return []
+  }
+  const adrs: { number: number; title: string; date?: string }[] = []
+  for (const [name, kind] of entries) {
+    const m = /^ADR-(\d+)/.exec(name)
+    if (kind === vscode.FileType.File && m) {
+      const content = (await readText(vscode.Uri.joinPath(dir, name))) ?? ''
+      adrs.push({
+        number: Number(m[1]),
+        title: /^#\s*ADR-\d+\s*—\s*(.+)$/m.exec(content)?.[1]?.trim() ?? name,
+        date: /\*\*Data:\*\*\s*"?([0-9][0-9-]+)"?/.exec(content)?.[1],
+      })
+    }
+  }
+  return adrs
+}
+
+/** Coleta os números de ADR de TODOS os `decisions/` do projeto (numeração global). */
+async function collectAdrNumbers(root: vscode.Uri): Promise<number[]> {
+  const dirs = (await collectChangeDirs(root)).map((d) => ['.specs', ...d.split('/'), 'decisions'])
+  dirs.push(['.specs', 'project', 'decisions'])
+  const numbers: number[] = []
+  for (const rel of dirs) {
+    let entries: [string, vscode.FileType][]
+    try {
+      entries = await vscode.workspace.fs.readDirectory(vscode.Uri.joinPath(root, ...rel))
+    } catch {
+      continue
+    }
+    for (const [name, kind] of entries) {
+      const m = /^ADR-(\d+)/.exec(name)
+      if (kind === vscode.FileType.File && m) {
+        numbers.push(Number(m[1]))
+      }
+    }
+  }
+  return numbers
 }
 
 /** Lê o campo `approval` do status.yaml (null/ausente/ilegível = não aprovado). */

@@ -183,6 +183,18 @@
         "title": "SDD: Clarificar",
         "category": "SDD Claude Kit",
         "icon": "$(question)"
+      },
+      {
+        "command": "sddClaudeKit.history",
+        "title": "SDD: Histórico",
+        "category": "SDD Claude Kit",
+        "icon": "$(history)"
+      },
+      {
+        "command": "sddClaudeKit.newAdr",
+        "title": "SDD: Novo ADR",
+        "category": "SDD Claude Kit",
+        "icon": "$(note)"
       }
     ],
     "menus": {
@@ -269,6 +281,16 @@
           "command": "sddClaudeKit.clarify",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@10"
+        },
+        {
+          "command": "sddClaudeKit.history",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@11"
+        },
+        {
+          "command": "sddClaudeKit.newAdr",
+          "when": "view == sddFeatures && viewItem == sddFeature",
+          "group": "sdd@12"
         }
       ]
     },
