@@ -19,8 +19,11 @@ const VARS_REAIS = new Set([
 ])
 
 describe('skills — contratos da plataforma', () => {
-  it('as quatro skills da Fase 1 existem', () => {
-    expect(SKILLS).toEqual(['init', 'new', 'spec', 'tasks'])
+  it('as dez skills do fluxo SDD existem (4 da Fase 1 + 6 da Fase 2)', () => {
+    expect(SKILLS).toEqual([
+      'approve', 'archive', 'clarify', 'design', 'implement',
+      'init', 'new', 'spec', 'tasks', 'verify',
+    ])
   })
 
   for (const name of SKILLS) {

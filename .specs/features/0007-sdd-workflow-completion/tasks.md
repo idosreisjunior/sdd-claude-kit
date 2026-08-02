@@ -278,7 +278,7 @@ O template de `validation.md` é o que impede a repetição do buraco em que est
 **Requisitos:** REQ-SWC-001, REQ-SWC-007
 **Dependências:** TASK-SWC-001, TASK-SWC-003
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -322,7 +322,7 @@ Refinar não é transicionar: uma segunda passagem que responde questões não c
 **Requisitos:** REQ-SWC-002, REQ-SWC-007
 **Dependências:** TASK-SWC-001, TASK-SWC-003, TASK-SWC-005
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -361,7 +361,7 @@ Comportamento exigido pelos cenários:
 **Requisitos:** REQ-SWC-003, REQ-SWC-007
 **Dependências:** TASK-SWC-007, TASK-SWC-008
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -404,7 +404,7 @@ Comportamento em projeto sem `git config` configurado: pedir a identidade ao usu
 **Requisitos:** REQ-SWC-004, REQ-SWC-003
 **Dependências:** TASK-SWC-009
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -445,7 +445,7 @@ Portões, na ordem, todos antes da primeira escrita:
 **Requisitos:** REQ-SWC-004, REQ-SWC-008
 **Dependências:** TASK-SWC-004, TASK-SWC-010
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -482,7 +482,7 @@ Completar `implement` com a metade que escreve: executar a tarefa selecionada, r
 **Requisitos:** REQ-SWC-005
 **Dependências:** TASK-SWC-006, TASK-SWC-011
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -526,7 +526,7 @@ Este projeto é o caso de teste: `npm test` roda `vitest run --passWithNoTests` 
 **Requisitos:** REQ-SWC-005, REQ-SWC-008
 **Dependências:** TASK-SWC-004, TASK-SWC-012
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -563,7 +563,7 @@ Completar `verify` com a conferência dos critérios de aceite e o portão de ra
 **Requisitos:** REQ-SWC-006, REQ-SWC-007
 **Dependências:** TASK-SWC-013
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -708,13 +708,22 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 7 concluídas · 10 pendentes.
+Total: 17 tarefas · 7 concluídas · 8 em progresso · 2 pendentes.
 
 Concluídas (leva de infraestrutura): TASK-SWC-001 (workflow.json), 002 (testes derivam o
 grafo), 003 (architecture.md aponta para o grafo), 004 (traceability.schema.json), 005
 (template design.md), 006 (templates acceptance.md/validation.md), 015 (referência por
-identificador em standards.md). Pendentes: as seis skills (007–014), a auditoria (016) e o
-percurso e2e (017) — dependem de execução real via `claude -p`.
+identificador em standards.md).
+
+Em progresso (007–014): os seis `SKILL.md` das skills clarify, design, approve, implement
+(010+011), verify (012+013) e archive estão **escritos** e passam nas checagens estruturais
+(`skills.test.ts`) e no `claude plugin validate --strict`. O critério de conclusão de cada uma
+exige, além disso, **execução real via `claude -p`** com a saída registrada na seção "Resultado"
+— e, no caso de approve, um ato humano de aprovação. Essa execução é o que falta para marcá-las
+`done`, e é uma rodada à parte.
+
+Pendentes (2): a auditoria transversal de idioma/contexto (016) e o percurso e2e
+`DRAFT → ARCHIVED` (017), que só rodam depois que as skills forem executadas de verdade.
 
 **Caminho crítico:** `TASK-SWC-001 → 003 → 007 → 009 → 010 → 011 → 012 → 013 → 014 → 016 → 017` — onze tarefas, das quais oito são M.
 
