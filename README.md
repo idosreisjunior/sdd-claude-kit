@@ -6,7 +6,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Status](https://img.shields.io/badge/status-fase%201%20%C2%B7%20plugin%20m%C3%ADnimo-yellow.svg)](./ROADMAP.md)
 
-**Status atual: Fase 1 — Plugin mínimo.** O plugin já é instalável, com as skills `init`, `new`, `spec` e `tasks`. O restante do fluxo chega na Fase 2 — acompanhe o [ROADMAP](./ROADMAP.md).
+**Status atual: Fase 2 em andamento.** O plugin é instalável, com as skills `init`, `new`, `spec` e `tasks` prontas (Fase 1) e mais seis — `clarify`, `design`, `approve`, `implement`, `verify`, `archive` — já escritas e **em validação por execução real** (Fase 2). Acompanhe o [ROADMAP](./ROADMAP.md).
 
 ---
 
@@ -103,9 +103,9 @@ claude plugin marketplace add ./sdd-claude-kit
 claude plugin install sdd-kit@sdd-claude-kit
 ```
 
-Confirme com `claude plugin details sdd-kit` — devem aparecer quatro skills.
+Confirme com `claude plugin details sdd-kit` — devem aparecer dez skills.
 
-> **Estado atual:** apenas `init`, `new`, `spec` e `tasks` estão implementadas. As demais chegam na Fase 2 — veja o [ROADMAP](./ROADMAP.md).
+> **Estado atual:** `init`, `new`, `spec` e `tasks` estão prontas; `clarify`, `design`, `approve`, `implement`, `verify` e `archive` já foram escritas e estão em validação por execução real (Fase 2). Veja o [ROADMAP](./ROADMAP.md).
 
 ### Desinstalar
 
