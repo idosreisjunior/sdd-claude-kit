@@ -751,7 +751,7 @@ Registrar o custo de contexto das dez skills e comparar com o teto sugerido no r
 **Requisitos:** REQ-SWC-001, REQ-SWC-002, REQ-SWC-003, REQ-SWC-004, REQ-SWC-005, REQ-SWC-006, REQ-SWC-007, REQ-SWC-008, NFR-SWC-003
 **Dependências:** TASK-SWC-002, TASK-SWC-003, TASK-SWC-014, TASK-SWC-015, TASK-SWC-016
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -831,7 +831,7 @@ execução já declarada em `traceability.yaml` (gap `TEST-SWC-010`).
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 16 concluídas · 1 em progresso · 0 pendentes.
+Total: 17 tarefas · **17 concluídas** · 0 em progresso · 0 pendentes.
 
 Concluídas (16): a infraestrutura (001–006, 015), a auditoria (016), e as seis skills —
 **clarify (007)**, **design (008)**, **approve (009)**, **implement (010/011)**, **verify
@@ -844,10 +844,13 @@ para os 305 testes estruturais: ADR-014 (`resolved_by`), promoção via `Write` 
 lógica escrita e validada estruturalmente, mas não foram disparados pelo percurso feliz — lacuna de
 execução declarada.
 
-Em progresso (1): **TASK-SWC-017** — o percurso e2e (a parte marquee) está feito; resta o
-auto-relatório da própria 0007 (avaliar seus 13 critérios de aceite em `acceptance.md`, rodar as
-validações do repo em `validation.md`), que equivale à **promoção final da 0007 a `VERIFIED`** e
-permanece do usuário.
+Todas as 17 tarefas concluídas. A **TASK-SWC-017** fechou com o auto-relatório da 0007: os 13
+critérios de aceite avaliados com evidência em `acceptance.md`, as validações do repo (lint, test
+com 305 testes, build) registradas em `validation.md`, e os três cenários de erro que faltavam
+(SCN-SWC-012/008/015) exercitados por fixture (a skill correta não escreve nada ao recusar). A
+mudança foi promovida a **`VERIFIED`**. Lacunas declaradas remanescentes (SCN-SWC-019/022/027/028,
+cancelamento SCN-SWC-021) seguem em `traceability.yaml` `gaps`, com mitigação — não bloqueiam a
+promoção, pois nenhum critério de aceite as exige.
 (010+011), verify (012+013) e archive estão **escritos** e passam nas checagens estruturais
 (`skills.test.ts`) e no `claude plugin validate --strict`. O critério de conclusão de cada uma
 exige, além disso, **execução real via `claude -p`** com a saída registrada na seção "Resultado"

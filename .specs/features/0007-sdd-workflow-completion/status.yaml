@@ -9,7 +9,7 @@ id: "0007-sdd-workflow-completion"
 type: "feature"
 title: "Completar o fluxo SDD — clarify, design, approve, implement, verify e archive"
 
-status: IN_PROGRESS
+status: VERIFIED
 
 created: "2026-07-29"
 updated: "2026-08-02"
@@ -101,6 +101,23 @@ history:
       passaram de pending a in_progress (não done): falta a execução real via
       claude -p com a saída registrada (design §10). Sem transição de estado — a
       mudança segue em IN_PROGRESS; o avanço está nos contadores, não no history.
+
+  - status: VERIFIED
+    date: "2026-08-02"
+    reason: >-
+      As seis skills e a infraestrutura foram verificadas por execução real via
+      claude -p, culminando no percurso e2e completo DRAFT → ARCHIVED (toy
+      integer-sum-command, os oito estados só com skills, sem editar status.yaml à
+      mão). Os três cenários de erro restantes (SCN-SWC-012 implement por aprovação
+      exigida, SCN-SWC-008 verify por item órfão, SCN-SWC-015 archive por destino
+      ocupado) foram exercitados com fixtures — a skill correta não escreve nada ao
+      recusar. Os 13 critérios de aceite estão avaliados com evidência em
+      acceptance.md; as validações do repo (lint, test com 305 testes, build) saem
+      com êxito em validation.md. Três defeitos encontrados na verificação foram
+      corrigidos (ADR-014 resolved_by, promoção via Write, ADR-015 questionId).
+      Transição IN_PROGRESS → VERIFIED válida pelo grafo; spec.md não foi tocada,
+      o hash de aprovação segue válido. Lacunas declaradas em traceability.yaml
+      (SCN-SWC-019/022/027/028, cancelamento) permanecem, com mitigação.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -228,5 +245,5 @@ resolved_questions:
 tasks:
   total: 17
   pending: 0
-  in_progress: 1
-  done: 16
+  in_progress: 0
+  done: 17
