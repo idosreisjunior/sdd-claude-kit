@@ -5,6 +5,20 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.1] — 2026-08-03
+
+Correção de documentação. Nenhuma mudança de comportamento, comando ou configuração.
+
+### Corrigido
+
+- A tabela de **Comandos** do `README` (página do Marketplace) parava na feature 0009 e não
+  listava os comandos acrescentados na `0.2.0`. Passa a incluir os dez comandos restantes —
+  "Gerar design" (0014), "Clarificar" (0015), "Histórico" e "Novo ADR" (0016), "Research" (0017),
+  "Tarefas" (0018), "SQL Guard" (0020), "GitHub" (0021) e "MCP" (0022) — cobrindo os 24 comandos
+  do `package.json` (REQ-PUB-002).
+
+---
+
 ## [0.2.0] — 2026-08-02
 
 Segunda iteração de recursos, materializando o backlog **pós-MVP** do PRD (Fases 2 e 3). Cada
