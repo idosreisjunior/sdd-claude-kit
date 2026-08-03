@@ -227,6 +227,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 17
-  pending: 2
-  in_progress: 5
-  done: 10
+  pending: 0
+  in_progress: 1
+  done: 16
