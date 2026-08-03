@@ -50,6 +50,15 @@ Disponíveis na paleta (`SDD:`) e no menu de contexto de uma feature no painel *
 | `SDD: Validar mudança` | Classifica cada requisito | 0008 |
 | `SDD: Coletar evidências` | Reúne evidências num `evidence.md` | 0008 |
 | `SDD: Métricas da feature` | Métricas locais + exportação MD/JSON | 0009 |
+| `SDD: Gerar design` | Gera o `design.md` a partir da spec clarificada | 0014 |
+| `SDD: Clarificar` | Levanta e registra as questões pendentes da spec | 0015 |
+| `SDD: Histórico` | Linha do tempo da feature e suas decisões | 0016 |
+| `SDD: Novo ADR` | Cria um novo registro de decisão arquitetural | 0016 |
+| `SDD: Research` | Coleta e registra pesquisa técnica da feature | 0017 |
+| `SDD: Tarefas` | Analisa e gera as tarefas a partir da spec | 0018 |
+| `SDD: SQL Guard — analisar SQL` | Analisa riscos de um arquivo `.sql` | 0020 |
+| `SDD: GitHub — criar issue/PR` | Cria issue/PR via `gh` a partir da feature | 0021 |
+| `SDD: MCP — criar servidor` | Assistente de criação de servidor MCP | 0022 |
 
 ## Configurações
 
