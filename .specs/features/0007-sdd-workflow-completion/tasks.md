@@ -468,7 +468,7 @@ verificada por TEST-SWC-016) e não depende desta execução. `claude plugin val
 **Requisitos:** REQ-SWC-004, REQ-SWC-003
 **Dependências:** TASK-SWC-009
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -529,7 +529,7 @@ Por isso TASK-SWC-010 e TASK-SWC-011 seguem `in_progress`.
 **Requisitos:** REQ-SWC-004, REQ-SWC-008
 **Dependências:** TASK-SWC-004, TASK-SWC-010
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -566,7 +566,7 @@ Completar `implement` com a metade que escreve: executar a tarefa selecionada, r
 **Requisitos:** REQ-SWC-005
 **Dependências:** TASK-SWC-006, TASK-SWC-011
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -610,7 +610,7 @@ Este projeto é o caso de teste: `npm test` roda `vitest run --passWithNoTests` 
 **Requisitos:** REQ-SWC-005, REQ-SWC-008
 **Dependências:** TASK-SWC-004, TASK-SWC-012
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -647,7 +647,7 @@ Completar `verify` com a conferência dos critérios de aceite e o portão de ra
 **Requisitos:** REQ-SWC-006, REQ-SWC-007
 **Dependências:** TASK-SWC-013
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -715,7 +715,7 @@ O texto deve dizer o que fazer, não apenas o que evitar: como referenciar uma m
 **Requisitos:** NFR-SWC-001, NFR-SWC-002
 **Dependências:** TASK-SWC-007, TASK-SWC-008, TASK-SWC-009, TASK-SWC-011, TASK-SWC-013, TASK-SWC-014
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -751,7 +751,7 @@ Registrar o custo de contexto das dez skills e comparar com o teto sugerido no r
 **Requisitos:** REQ-SWC-001, REQ-SWC-002, REQ-SWC-003, REQ-SWC-004, REQ-SWC-005, REQ-SWC-006, REQ-SWC-007, REQ-SWC-008, NFR-SWC-003
 **Dependências:** TASK-SWC-002, TASK-SWC-003, TASK-SWC-014, TASK-SWC-015, TASK-SWC-016
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -782,6 +782,45 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 - [ ] `traceability.yaml` desta mudança tem `implementation` preenchido e `gaps` atualizado com o que ficou de fora.
 - [ ] `TEST-SWC-035` passa.
 
+### Resultado
+
+Percurso executado de verdade via `claude -p` num projeto-cobaia limpo (toy `integer-sum-command`,
+uma função de soma exposta por CLI), 2026-08-02, **só com skills, sem editar `status.yaml` à mão em
+nenhum ponto**:
+
+**Os oito estados, na ordem, cada um por uma skill:**
+`DRAFT` →(new/spec/clarify)→ `CLARIFIED` →(design)→ `DESIGNED` →(tasks)→ `PLANNED` →(approve)→
+`APPROVED` →(implement)→ `IN_PROGRESS` →(verify)→ `VERIFIED` →(archive)→ `ARCHIVED`. O `history`
+tem uma entrada por transição, sem reescrita, `status` coincide com a última, e o `status.yaml`
+**valida contra o schema após cada passo**. A entrada migrou de `changes` para `archive` no índice,
+com `path: archive/…`.
+
+**Cenários de skill fechados por esta execução real:**
+- `implement` — **SCN-SWC-004** (tarefa concluída → contadores `7 = 6+0+1`, `IN_PROGRESS`) e
+  **SCN-SWC-017** (rastreabilidade preenchida com arquivos e testes; TASK-SWC-011).
+- `verify` — **SCN-SWC-005/014** (rodou as validações, executou o CLI e conferiu a saída byte a byte
+  como evidência, avaliou os critérios, distinguiu *aprovada* de *não configurada*, e só então
+  promoveu; TASK-SWC-012/013).
+- `archive` — **SCN-SWC-006** (moveu para `archive/`, migrou o índice, não reescreveu links; TASK-SWC-014).
+- Os fixes desta rodada de verificação funcionaram ao vivo: `resolved_by: clarify` (ADR-014),
+  `Write` em vez de `Edit` na promoção, e `question` com prefixo `A*/D*` (ADR-015).
+
+**Três defeitos reais foram encontrados e corrigidos ao longo da verificação** — ADR-014
+(`resolved_by`), a promoção via `Write` (5 skills), e ADR-015 (`questionId`) — todos invisíveis para
+os 305 testes estruturais, exatamente o que o design §10 previu.
+
+**Cenários de erro/recusa não disparados por este percurso feliz** (registrados como lacuna honesta,
+não como cobertura): SCN-SWC-012 (`require_approval:true`+`approval:null`) e SCN-SWC-022
+(`require_approval:false`) do `implement`; SCN-SWC-019 (`BLOCKED` por decisão não prevista);
+SCN-SWC-008 (recusa por órfão) e SCN-SWC-027/028 (comando que falha / três estados completos) do
+`verify`; SCN-SWC-015 (destino ocupado) do `archive`. A lógica de cada um está escrita nos `SKILL.md`
+e validada estruturalmente; falta exercê-los por um harness dedicado — o mesmo tipo de lacuna de
+execução já declarada em `traceability.yaml` (gap `TEST-SWC-010`).
+
+> **Nota de escrituração:** o relatório final da 0007 sobre si mesma (avaliar os 13 critérios da
+> própria spec em `acceptance.md`, rodar as validações do repo em `validation.md`) é a parte residual
+> desta tarefa que fica para a promoção final da mudança a `VERIFIED` — que permanece do usuário.
+
 ---
 
 ## Resumo
@@ -792,16 +831,23 @@ Registrar honestamente o que não passar. Um relatório que declara sucesso onde
 | M | 9 |
 | G | 0 |
 
-Total: 17 tarefas · 10 concluídas · 5 em progresso · 2 pendentes.
+Total: 17 tarefas · 16 concluídas · 1 em progresso · 0 pendentes.
 
-Concluídas: a leva de infraestrutura (001–006, 015) e as skills **007 (clarify)**, **008
-(design)** e **009 (approve)**, fechadas por **execução real** via `claude -p` — todos os cenários
-verificados, com dois defeitos encontrados e corrigidos (ADR-014 para o `resolved_by` do clarify;
-uso de `Write` em vez de `Edit` para promover estado), e os resultados registrados nas seções
-"Resultado" das tarefas. A verificação do `approve` cobre a mecânica; o ato humano de aprovação em
-si permanece do usuário (ressalva registrada na tarefa).
+Concluídas (16): a infraestrutura (001–006, 015), a auditoria (016), e as seis skills —
+**clarify (007)**, **design (008)**, **approve (009)**, **implement (010/011)**, **verify
+(012/013)** e **archive (014)** — todas verificadas por **execução real** via `claude -p`,
+culminando no **percurso e2e completo `DRAFT → ARCHIVED`** (os oito estados, só com skills, sem
+editar `status.yaml` à mão). A dogfooding encontrou e corrigiu **três defeitos reais** invisíveis
+para os 305 testes estruturais: ADR-014 (`resolved_by`), promoção via `Write` (5 skills) e ADR-015
+(`questionId`). Ressalvas registradas nas "Resultado" das tarefas: o ato humano de aprovação
+(approve) é do usuário; e vários cenários de erro/recusa (SCN-SWC-008/012/015/019/022/027/028) têm a
+lógica escrita e validada estruturalmente, mas não foram disparados pelo percurso feliz — lacuna de
+execução declarada.
 
-Em progresso (010–014): os três `SKILL.md` restantes das skills implement
+Em progresso (1): **TASK-SWC-017** — o percurso e2e (a parte marquee) está feito; resta o
+auto-relatório da própria 0007 (avaliar seus 13 critérios de aceite em `acceptance.md`, rodar as
+validações do repo em `validation.md`), que equivale à **promoção final da 0007 a `VERIFIED`** e
+permanece do usuário.
 (010+011), verify (012+013) e archive estão **escritos** e passam nas checagens estruturais
 (`skills.test.ts`) e no `claude plugin validate --strict`. O critério de conclusão de cada uma
 exige, além disso, **execução real via `claude -p`** com a saída registrada na seção "Resultado"
