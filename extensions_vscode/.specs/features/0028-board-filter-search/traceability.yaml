@@ -1,0 +1,83 @@
+# Matriz de rastreabilidade — 0028-board-filter-search
+version: 1
+
+feature: "0028-board-filter-search"
+
+requirements:
+
+  "REQ-FILTER-001":
+    title: "Busca textual"
+    scenarios:
+      - "SCN-FILTER-001"
+    tasks:
+      - "TASK-FILTER-001"
+      - "TASK-FILTER-002"
+      - "TASK-FILTER-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-FILTER-001"
+      - "TEST-FILTER-003"
+
+  "REQ-FILTER-002":
+    title: "Filtro por tipo"
+    scenarios:
+      - "SCN-FILTER-002"
+    tasks:
+      - "TASK-FILTER-002"
+      - "TASK-FILTER-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-FILTER-002"
+      - "TEST-FILTER-003"
+
+  "REQ-FILTER-003":
+    title: "Combinável e ao vivo, sem perder o foco"
+    scenarios:
+      - "SCN-FILTER-003"
+    tasks:
+      - "TASK-FILTER-001"
+      - "TASK-FILTER-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+  "NFR-FILTER-001":
+    title: "Lógica pura e testável"
+    scenarios: []
+    tasks:
+      - "TASK-FILTER-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-FILTER-001"
+      - "TEST-FILTER-002"
+      - "TEST-FILTER-003"
+
+  "NFR-FILTER-002":
+    title: "Client-side e seguro"
+    scenarios: []
+    tasks:
+      - "TASK-FILTER-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-FILTER-003"
+    reason: >-
+      A persistência da barra/foco e a re-renderização só da área do board são
+      comportamento de DOM no host, não coberto por teste unitário; a lógica de
+      filtro é pura e testada.
+    mitigation: >-
+      Revisão manual (TASK-FILTER-003): com um filtro ativo e a busca em foco,
+      salvar um .specs mantém o filtro, a barra e o foco.
+  - id: "NFR-FILTER-002"
+    reason: >-
+      "Client-side, CSP preservada" é propriedade do render do webview; abrir o
+      painel é coberto por E2E (0025), o render por revisão.
+    mitigation: >-
+      Revisão de código (sem innerHTML; CSP com nonce mantida).

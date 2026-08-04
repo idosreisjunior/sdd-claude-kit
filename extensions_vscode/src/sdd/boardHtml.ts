@@ -47,6 +47,12 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string): string {
   .muted { opacity: .65; }
   .tbtn { margin-top: .35rem; font: inherit; font-size: .78rem; cursor: pointer; color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)); background: var(--vscode-button-secondaryBackground, transparent); border: 1px solid var(--vscode-panel-border); border-radius: .35rem; padding: .15rem .5rem; }
   .tbtn:hover { background: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground)); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .65rem; }
+  .search { flex: 1 1 14rem; min-width: 9rem; font: inherit; padding: .3rem .5rem; border-radius: .4rem; border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); background: var(--vscode-input-background); color: var(--vscode-input-foreground); }
+  .search::placeholder { color: var(--vscode-input-placeholderForeground); }
+  .chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .fchip { font: inherit; font-size: .78rem; cursor: pointer; padding: .18rem .55rem; border-radius: .6rem; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-foreground); }
+  .fchip.on { background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-color: transparent; }
 </style>
 </head>
 <body>
@@ -54,7 +60,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string): string {
   <script nonce="${nonce}">
 const INITIAL = ${inlineJson(board)};
 const vscode = acquireVsCodeApi();
-const state = { view: 'changes', changes: INITIAL, tasks: null, change: null };
+const state = { view: 'changes', changes: INITIAL, tasks: null, change: null, filter: { query: '', types: [] } };
 
 function h(tag, cls, text) {
   const e = document.createElement(tag);
@@ -121,25 +127,93 @@ function column(label, count, cards, make, dropLabel) {
   return c;
 }
 
+// Espelha cardMatchesFilter (boardModel.ts) — busca por id/título + tipo (ADR-026).
+function cardMatches(card) {
+  const q = state.filter.query.trim().toLowerCase();
+  const okType = state.filter.types.length === 0 || state.filter.types.indexOf(card.type) !== -1;
+  const okQuery = q === '' || card.id.toLowerCase().indexOf(q) !== -1 || (card.title || '').toLowerCase().indexOf(q) !== -1;
+  return okType && okQuery;
+}
+
+function presentTypes() {
+  const seen = {};
+  state.changes.columns.forEach(function (col) {
+    col.cards.forEach(function (c) { seen[c.type] = true; });
+  });
+  return Object.keys(seen).sort();
+}
+
+function buildToolbar() {
+  const bar = h('div', 'toolbar');
+  const search = document.createElement('input');
+  search.type = 'search';
+  search.className = 'search';
+  search.placeholder = 'Buscar por id ou título...';
+  search.value = state.filter.query;
+  search.addEventListener('input', function () { state.filter.query = search.value; renderBoardArea(); });
+  bar.appendChild(search);
+  const chips = h('div', 'chips');
+  presentTypes().forEach(function (type) {
+    const chip = h('button', 'fchip', type);
+    if (state.filter.types.indexOf(type) !== -1) { chip.classList.add('on'); }
+    chip.addEventListener('click', function () {
+      const i = state.filter.types.indexOf(type);
+      if (i === -1) { state.filter.types.push(type); } else { state.filter.types.splice(i, 1); }
+      chip.classList.toggle('on');
+      renderBoardArea();
+    });
+    chips.appendChild(chip);
+  });
+  bar.appendChild(chips);
+  return bar;
+}
+
 function renderChanges() {
   const root = document.getElementById('app');
   root.textContent = '';
+  root.appendChild(buildToolbar());
+  const area = document.createElement('div');
+  area.id = 'boardarea';
+  root.appendChild(area);
+  renderBoardArea();
+}
+
+// Só a área do board (mantém a barra de ferramentas e o foco da busca nas
+// atualizações ao vivo).
+function renderBoardArea() {
+  const area = document.getElementById('boardarea');
+  if (!area) { return; }
+  area.textContent = '';
   const ov = state.changes.overview;
+  const cols = state.changes.columns
+    .map(function (col) { return { label: col.label, cards: col.cards.filter(cardMatches) }; })
+    .filter(function (col) { return col.cards.length > 0; });
+  const shown = cols.reduce(function (n, col) { return n + col.cards.length; }, 0);
+
   const head = h('div', 'overview');
   head.appendChild(h('div', 'ovbig', String(ov.total)));
   head.appendChild(h('div', 'ovlbl', 'mudanças'));
   head.appendChild(h('div', 'ovbig', ov.donePct + '%'));
   head.appendChild(h('div', 'ovlbl', 'concluídas (' + ov.done + ')'));
-  root.appendChild(head);
+  if (shown !== ov.total) {
+    head.appendChild(h('div', 'ovbig', String(shown)));
+    head.appendChild(h('div', 'ovlbl', 'exibidas'));
+  }
+  area.appendChild(head);
+
   if (ov.total === 0) {
-    root.appendChild(h('p', 'muted', 'Nenhuma mudança em .specs ainda.'));
+    area.appendChild(h('p', 'muted', 'Nenhuma mudança em .specs ainda.'));
+    return;
+  }
+  if (cols.length === 0) {
+    area.appendChild(h('p', 'muted', 'Nenhuma mudança corresponde ao filtro.'));
     return;
   }
   const board = h('div', 'board');
-  state.changes.columns.forEach(function (col) {
+  cols.forEach(function (col) {
     board.appendChild(column(col.label, col.cards.length, col.cards, changeCard, col.label));
   });
-  root.appendChild(board);
+  area.appendChild(board);
 }
 
 function taskCard(t) {
@@ -174,7 +248,9 @@ window.addEventListener('message', function (e) {
   const m = e.data || {};
   if (m.type === 'board') {
     state.changes = m.board;
-    if (state.view === 'changes') { render(); }
+    if (state.view === 'changes') {
+      if (document.getElementById('boardarea')) { renderBoardArea(); } else { render(); }
+    }
   } else if (m.type === 'tasks') {
     state.tasks = m.board;
     state.change = m.title || m.id;
