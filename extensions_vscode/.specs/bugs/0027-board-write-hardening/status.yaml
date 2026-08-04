@@ -1,0 +1,70 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0027-board-write-hardening"
+# feature | bug | refactor | change
+type: "bug"
+title: "Endurecimento da escrita do Painel SDD (integridade)"
+
+# Verificado em 2026-08-04: correções cobertas por teste + arquivo real.
+# approve segue pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criado por /sdd-kit:new a partir da revisão do CodeRabbit no PR do 0026: a escrita do painel
+      (statusWriter/boardPanel) não preserva CRLF nem comentário inline no status, pode gravar
+      transição parcial, não é all-or-nothing entre status.yaml e index.yaml, e permite drop na própria
+      coluna. Causa raiz conhecida; correções pontuais.
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (2 tarefas P): TASK-BUG27-001 (statusWriter: fim de linha,
+      comentário inline, exigir ambos os campos) e TASK-BUG27-002 (boardPanel: all-or-nothing +
+      no-op na mesma coluna). CLARIFIED/DESIGNED pulados (bug pequeno, sem design). Cobertura completa
+      (4 requisitos com tarefa); sem órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Corrigido. statusWriter.ts: detecta e reusa o fim de linha (LF/CRLF); troca só o valor de status:
+      preservando comentário inline (appendHistoryAndSetStatus e setIndexStatus); só altera se status:
+      e history: existirem. boardPanel.ts: moveChange lê os dois arquivos antes de escrever, restaura o
+      status.yaml se a escrita do index.yaml falhar, e ignora drop quando groupFor(from) == toLabel.
+      Transição PLANNED → IN_PROGRESS; approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: compile e lint limpos; suíte unitária 156 (+4): TEST-DND-007w (CRLF
+      preservado em status e index — SCN-BUG27-001), TEST-DND-008w (comentário inline preservado em
+      ambos — SCN-BUG27-002), TEST-DND-009w (sem history:/status: → inalterado — SCN-BUG27-003) e
+      TEST-DND-007 (grafo embutido completo, protege o espelho do workflow.json). O writer foi
+      revalidado sobre um status.yaml real (parseia, status == última history, comentários preservados).
+      All-or-nothing (SCN-BUG27-004) e no-op na mesma coluna (SCN-BUG27-005) são guardas na borda,
+      registrados em traceability.yaml gaps com revisão de código. Critérios de aceite atendidos.
+      approve permanece pulado (Fase 2), approval segue null.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 2
+  pending: 0
+  in_progress: 0
+  done: 2
