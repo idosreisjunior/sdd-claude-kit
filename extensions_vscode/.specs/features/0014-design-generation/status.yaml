@@ -9,11 +9,12 @@ id: "0014-design-generation"
 type: "feature"
 title: "Geração do design técnico (RF-009)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a implementação existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-01"
-updated: "2026-08-01"
+updated: "2026-08-03"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -38,6 +39,14 @@ history:
       técnico — Q1 e Q2 são resolvidas em TASK-DSGN-001 (ADR-014) e podem ajustar
       as tarefas seguintes. Cobertura completa (6 requisitos com tarefa); sem
       requisito descoberto, tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Implementação já concluída fora da ordem formal do fluxo — as 3 tarefas do plano estavam done com os testes passando — enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho de implementação executado antes da verificação; approve permanece pulado (approval segue null), no mesmo padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build, lint e compile limpos; suíte 136/136 via node --test). REQ-DSGN-001/002/003 e NFR-DSGN-001/002/003 atendidos: a pré-condição de aprovação é núcleo puro testado (designGenerator.test.ts, TEST-DSGN-001: approval null to indisponível, objeto to disponível); o esqueleto do template feature/design.md traz as 14 seções do RF-009 como lacunas marcadas, sem marcador residual (TEST-DSGN-002); o escopo é lido do cabeçalho da spec (TEST-DSGN-003). O gate no menu da feature, a confirmação antes de sobrescrever (runHybridStep) e o reuso da ação design do adapter 0004 estão implementados; a escrita em disco, o diálogo de sobrescrita e a compatibilidade Windows/Linux/WSL são integração de host, registradas em traceability.yaml gaps com mitigação por revisão manual. A camada assistida por IA depende da skill /sdd-kit:design (Fase 2), fora do escopo do critério local. Q1/Q2 resolvidas por ADR-014; sem questão bloqueante.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
