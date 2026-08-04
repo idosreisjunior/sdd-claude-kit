@@ -100,13 +100,28 @@ O empacotamento e a publicação são preparados na feature 0010. **Passos manua
 1. **Ícone do Marketplace** — já incluído em `resources/icon.png` (256×256), referenciado pelo
    campo `"icon"` do `package.json`. Para personalizá-lo, edite `resources/icon.svg` (o fonte) e
    rasterize novamente. (O SVG da Activity Bar é outro arquivo, `sdd-icon.svg`.)
-2. Ter uma conta de **publisher** (`idosreisjunior`) no Marketplace e no Open VSX.
+2. Ter uma conta de **publisher** (`idosreisjunior`) em cada registro.
 3. Gerar os tokens e cadastrá-los como **segredos do repositório**: `VSCE_PAT` (Marketplace) e
    `OVSX_PAT` (Open VSX).
-4. **Publicar um GitHub Release** — o workflow `.github/workflows/publish.yml` empacota e publica
-   nos dois registros. Sem os segredos, os passos abortam sem publicar.
+4. **Publicar um GitHub Release** — o workflow `.github/workflows/publish.yml` empacota e publica.
+   Cada registro tem seu passo, guardado pelo respectivo segredo: sem o segredo, aquele passo é
+   **pulado com aviso** (nada é publicado sem credencial).
 
 Empacotar localmente: `npx @vscode/vsce package`.
+
+### Estado dos registros
+
+- **VS Code Marketplace** — **ativo**. `VSCE_PAT` cadastrado; publicado por Release desde a v0.1.0.
+- **Open VSX** — **ainda não configurado**. O segredo `OVSX_PAT` não existe e o namespace
+  `idosreisjunior` ainda não foi criado, então o passo do Open VSX é **pulado** a cada Release. Para
+  ativá-lo (uma vez):
+  1. Em [open-vsx.org](https://open-vsx.org), faça login e assine o *Eclipse Publisher Agreement*.
+  2. Gere um token e crie o namespace: `npx --yes ovsx create-namespace idosreisjunior -p <TOKEN>`
+     (o namespace precisa bater com o `publisher` do `package.json`).
+  3. Cadastre o segredo: `gh secret set OVSX_PAT`.
+  4. A partir do próximo Release, o Open VSX passa a ser publicado junto. Para levar uma versão já
+     publicada no Marketplace ao Open VSX sem um novo Release, publique o `.vsix` manualmente:
+     `npx --yes ovsx publish sdd-claude-kit-vscode-<versão>.vsix -p <TOKEN>`.
 
 ## Licença
 
