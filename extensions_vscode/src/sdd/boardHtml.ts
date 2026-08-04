@@ -4,15 +4,15 @@
 // A CSP mantém default-src 'none' e restringe style/script ao nonce. Todo texto
 // de artefato é inserido via textContent no cliente (nunca innerHTML), então não
 // há injeção de HTML.
-import type { ChangesBoard } from './boardModel'
+import type { ChangesBoard, FeedItem } from './boardModel'
 
-/** Serializa o board para dentro do <script>, neutralizando `<` (evita fechar a tag). */
-function inlineJson(board: ChangesBoard): string {
-  return JSON.stringify(board).replace(/</g, '\\u003c')
+/** Serializa dados para dentro do <script>, neutralizando `<` (evita fechar a tag). */
+function inlineJson(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, '\\u003c')
 }
 
 /** Gera o documento HTML do painel. `nonce` deve ser alfanumérico. */
-export function renderBoardHtml(board: ChangesBoard, nonce: string): string {
+export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedItem[] = []): string {
   const csp = `default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -53,14 +53,23 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string): string {
   .chips { display: flex; flex-wrap: wrap; gap: .3rem; }
   .fchip { font: inherit; font-size: .78rem; cursor: pointer; padding: .18rem .55rem; border-radius: .6rem; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-foreground); }
   .fchip.on { background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-color: transparent; }
+  .feedbtn { margin-left: auto; }
+  .feed { display: flex; flex-direction: column; gap: .4rem; max-width: 48rem; }
+  .feeditem { border: 1px solid var(--vscode-panel-border); border-radius: .45rem; padding: .45rem .6rem; }
+  .feedhead { display: flex; align-items: center; gap: .5rem; }
+  .feedid { font-weight: 600; cursor: pointer; }
+  .feedid:hover { text-decoration: underline; }
+  .feedhead .d { opacity: .6; font-size: .8rem; margin-left: auto; }
+  .feedreason { opacity: .8; font-size: .85rem; margin-top: .25rem; }
 </style>
 </head>
 <body>
   <div id="app"></div>
   <script nonce="${nonce}">
 const INITIAL = ${inlineJson(board)};
+const INITIAL_FEED = ${inlineJson(feed)};
 const vscode = acquireVsCodeApi();
-const state = { view: 'changes', changes: INITIAL, tasks: null, change: null, filter: { query: '', types: [] } };
+const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] } };
 
 function h(tag, cls, text) {
   const e = document.createElement(tag);
@@ -184,7 +193,40 @@ function buildToolbar() {
   const chips = h('div', 'chips');
   renderChips(chips);
   bar.appendChild(chips);
+  const feedBtn = h('button', 'tbtn feedbtn', 'Atividade ▸');
+  feedBtn.addEventListener('click', function () { state.view = 'activity'; render(); });
+  bar.appendChild(feedBtn);
   return bar;
+}
+
+function renderActivity() {
+  const root = document.getElementById('app');
+  root.textContent = '';
+  const bar = h('div', 'topbar');
+  const back = h('button', 'tbtn', '◂ Quadro');
+  back.addEventListener('click', function () { state.view = 'changes'; render(); });
+  bar.appendChild(back);
+  bar.appendChild(h('span', 'crumb', 'Atividade'));
+  root.appendChild(bar);
+  if (!state.feed || state.feed.length === 0) {
+    root.appendChild(h('p', 'muted', 'Sem atividade registrada.'));
+    return;
+  }
+  const list = h('div', 'feed');
+  state.feed.forEach(function (it) {
+    const row = h('div', 'feeditem');
+    const head = h('div', 'feedhead');
+    head.appendChild(h('span', 'badge', it.status));
+    const id = h('span', 'feedid', it.id);
+    id.title = 'Abrir dashboard';
+    id.addEventListener('click', function () { vscode.postMessage({ type: 'open', id: it.id }); });
+    head.appendChild(id);
+    head.appendChild(h('span', 'd', it.date));
+    row.appendChild(head);
+    if (it.reason) { row.appendChild(h('div', 'feedreason', it.reason)); }
+    list.appendChild(row);
+  });
+  root.appendChild(list);
 }
 
 function renderChanges() {
@@ -260,13 +302,16 @@ function renderTasks() {
 }
 
 function render() {
-  if (state.view === 'tasks') { renderTasks(); } else { renderChanges(); }
+  if (state.view === 'tasks') { renderTasks(); }
+  else if (state.view === 'activity') { renderActivity(); }
+  else { renderChanges(); }
 }
 
 window.addEventListener('message', function (e) {
   const m = e.data || {};
   if (m.type === 'board') {
     state.changes = m.board;
+    if (m.feed) { state.feed = m.feed; }
     if (state.view === 'changes') {
       if (document.getElementById('boardarea')) {
         renderBoardArea();
@@ -275,6 +320,8 @@ window.addEventListener('message', function (e) {
       } else {
         render();
       }
+    } else if (state.view === 'activity') {
+      renderActivity(); // feed ao vivo
     }
   } else if (m.type === 'tasks') {
     state.tasks = m.board;

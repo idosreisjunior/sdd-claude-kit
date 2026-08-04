@@ -1,0 +1,68 @@
+# Matriz de rastreabilidade — 0029-board-activity-feed
+version: 1
+
+feature: "0029-board-activity-feed"
+
+requirements:
+
+  "REQ-FEED-001":
+    title: "Feed de atividade agregado e ao vivo"
+    scenarios:
+      - "SCN-FEED-001"
+    tasks:
+      - "TASK-FEED-001"
+      - "TASK-FEED-002"
+      - "TASK-FEED-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardPanel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-FEED-001"
+      - "TEST-FEED-002"
+
+  "REQ-FEED-002":
+    title: "Navegação a partir do feed"
+    scenarios:
+      - "SCN-FEED-002"
+    tasks:
+      - "TASK-FEED-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/boardPanel.ts"
+    tests: []
+
+  "NFR-FEED-001":
+    title: "Núcleo puro e robusto"
+    scenarios: []
+    tasks:
+      - "TASK-FEED-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-FEED-001"
+      - "TEST-FEED-002"
+
+  "NFR-FEED-002":
+    title: "Ao vivo e seguro"
+    scenarios: []
+    tasks:
+      - "TASK-FEED-003"
+    implementation:
+      - "src/sdd/boardPanel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-FEED-001"
+    reason: >-
+      O render da visão Atividade e a atualização ao vivo são DOM no host; a
+      montagem/ordenação do feed é pura e testada (TEST-FEED-001/002).
+    mitigation: >-
+      Revisão manual (TASK-FEED-003): a visão lista as transições, mais recente
+      primeiro; salvar um .specs atualiza o feed.
+  - id: "REQ-FEED-002"
+    reason: >-
+      Abrir o dashboard a partir do id é integração (reusa openDashboard).
+    mitigation: >-
+      Revisão manual: clicar no id do item abre o dashboard da mudança.

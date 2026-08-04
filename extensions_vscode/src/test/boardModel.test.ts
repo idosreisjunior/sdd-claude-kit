@@ -5,6 +5,7 @@ import {
   parseTaskBoard,
   filterChangesBoard,
   cardMatchesFilter,
+  buildActivityFeed,
 } from '../sdd/boardModel'
 import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
 
@@ -128,4 +129,27 @@ test('TEST-FILTER-003 — cardMatchesFilter combina busca e tipo', () => {
   assert.equal(cardMatchesFilter(card, { query: 'git', types: ['feature'] }), true)
   assert.equal(cardMatchesFilter(card, { query: 'git', types: ['bug'] }), false)
   assert.equal(cardMatchesFilter(card, { query: 'xyz', types: [] }), false)
+})
+
+const S1 =
+  'history:\n  - status: DRAFT\n    date: "2026-08-01"\n    reason: >-\n      Criada.\n' +
+  '  - status: VERIFIED\n    date: "2026-08-03"\n    reason: >-\n      Feita.\n'
+const S2 = 'history:\n  - status: DRAFT\n    date: "2026-08-02"\n    reason: >-\n      Outra.\n'
+
+test('TEST-FEED-001 — buildActivityFeed agrega as transições, mais recente primeiro (SCN-FEED-001)', () => {
+  const feed = buildActivityFeed([
+    { id: '0001-a', title: 'A', statusYaml: S1 },
+    { id: '0002-b', title: 'B', statusYaml: S2 },
+  ])
+  assert.deepEqual(feed.map((i) => i.date), ['2026-08-03', '2026-08-02', '2026-08-01'])
+  assert.equal(feed[0].id, '0001-a')
+  assert.equal(feed[0].status, 'VERIFIED')
+  assert.equal(feed[0].reason, 'Feita.')
+})
+
+test('TEST-FEED-002 — respeita o limite e é robusto a YAML inválido', () => {
+  assert.equal(buildActivityFeed([{ id: '0001-a', title: 'A', statusYaml: S1 }], 1).length, 1)
+  // yaml inválido / sem history → ignorado, nunca lança
+  assert.deepEqual(buildActivityFeed([{ id: 'x', title: 'X', statusYaml: ': : :' }]), [])
+  assert.deepEqual(buildActivityFeed([{ id: 'x', title: 'X', statusYaml: 'foo: bar' }]), [])
 })

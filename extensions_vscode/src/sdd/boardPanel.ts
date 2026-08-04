@@ -7,7 +7,14 @@ import {
   type ChangeEntry,
   type TaskProgress,
 } from './specsIndex'
-import { buildChangesBoard, parseTaskBoard, type ChangesBoard } from './boardModel'
+import {
+  buildChangesBoard,
+  buildActivityFeed,
+  parseTaskBoard,
+  type ChangesBoard,
+  type FeedItem,
+  type FeedSource,
+} from './boardModel'
 import { renderBoardHtml } from './boardHtml'
 import { candidateTargets, type SddState } from './stateMachine'
 import { appendHistoryAndSetStatus, setIndexStatus } from './statusWriter'
@@ -47,37 +54,53 @@ export class BoardPanel {
     this.panel.webview.onDidReceiveMessage((message) => {
       void this.onMessage(root, message)
     })
-    const board = await this.buildBoard(root)
-    this.panel.webview.html = renderBoardHtml(board, nonce())
+    const { board, feed } = await this.buildBoardAndFeed(root)
+    this.panel.webview.html = renderBoardHtml(board, nonce(), feed)
   }
 
-  /** Reenvia o board ao webview quando os `.specs` mudam (atualização ao vivo). */
+  /** Reenvia o board e o feed ao webview quando os `.specs` mudam (ao vivo). */
   async refresh(): Promise<void> {
     const root = workspaceRoot()
     if (!this.panel || !root) {
       return
     }
-    const board = await this.buildBoard(root)
-    await this.panel.webview.postMessage({ type: 'board', board })
+    const { board, feed } = await this.buildBoardAndFeed(root)
+    await this.panel.webview.postMessage({ type: 'board', board, feed })
   }
 
-  private async buildBoard(root: vscode.Uri): Promise<ChangesBoard> {
+  private async buildBoardAndFeed(
+    root: vscode.Uri,
+  ): Promise<{ board: ChangesBoard; feed: FeedItem[] }> {
     const indexText = (await readText(vscode.Uri.joinPath(root, '.specs', 'index.yaml'))) ?? ''
     const changes = parseChanges(indexText)
     this.changes = changes
-    const progress = new Map<string, TaskProgress | undefined>()
+
+    // Lê os status.yaml em paralelo, mas monta na ordem do índice (determinístico).
+    const statusById = new Map<string, string>()
     await Promise.all(
       changes.map(async (change) => {
         if (!change.path) {
           return
         }
-        const status = await readText(
+        const text = await readText(
           vscode.Uri.joinPath(root, '.specs', ...change.path.split('/'), 'status.yaml'),
         )
-        progress.set(change.id, status ? parseTaskProgress(status) : undefined)
+        if (text !== undefined) {
+          statusById.set(change.id, text)
+        }
       }),
     )
-    return buildChangesBoard(changes, progress)
+
+    const progress = new Map<string, TaskProgress | undefined>()
+    const feedSources: FeedSource[] = []
+    for (const change of changes) {
+      const text = statusById.get(change.id)
+      progress.set(change.id, text ? parseTaskProgress(text) : undefined)
+      if (text) {
+        feedSources.push({ id: change.id, title: change.title, statusYaml: text })
+      }
+    }
+    return { board: buildChangesBoard(changes, progress), feed: buildActivityFeed(feedSources) }
   }
 
   private async onMessage(root: vscode.Uri, message: unknown): Promise<void> {
