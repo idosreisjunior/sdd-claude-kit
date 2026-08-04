@@ -5,6 +5,22 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.3] — 2026-08-04
+
+Painel visual com cara de sistema.
+
+### Adicionado
+
+- **Painel SDD (Kanban + Overview ao vivo)** — o comando **"SDD: Painel (Kanban)"** (botão no topo
+  dos painéis Projeto/Features, ou pela paleta) abre um quadro das mudanças em colunas por status
+  SDD, com **overview** (total de mudanças e % concluídas) e barra de progresso das tarefas em cada
+  cartão. **Atualiza em tempo real** conforme os `.specs` mudam. Um botão **"Tarefas"** em cada
+  cartão mostra o kanban das tarefas daquela mudança (pendente/em progresso/concluída). Clicar num
+  cartão abre o dashboard. Este incremento é **somente leitura** — arrastar cartões para transicionar
+  o estado vem depois (feature 0025, ADR-024).
+
+---
+
 ## [0.2.2] — 2026-08-03
 
 Descoberta dos recursos. Nenhum comando novo nem mudança de comportamento — os comandos que já

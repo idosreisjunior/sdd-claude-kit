@@ -2,7 +2,7 @@
   "name": "sdd-claude-kit-vscode",
   "displayName": "SDD Claude Kit",
   "description": "Cockpit visual de Spec-Driven Development para Claude Code dentro do VS Code.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "idosreisjunior",
   "license": "Apache-2.0",
   "engines": {
