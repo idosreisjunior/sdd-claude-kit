@@ -41,4 +41,9 @@ suite('E2E: fluxos não-interativos', () => {
     await vscode.commands.executeCommand('sddClaudeKit.runDoctor')
     assert.ok(true, 'runDoctor concluiu sem lançar exceção')
   })
+
+  test('SCN-BOARD-003 — o Painel SDD abre sem lançar (TEST-BOARD-004)', async () => {
+    await vscode.commands.executeCommand('sddClaudeKit.openBoard')
+    assert.ok(true, 'openBoard abriu o webview sem lançar exceção')
+  })
 })

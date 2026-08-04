@@ -1,0 +1,84 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { buildChangesBoard, parseTaskBoard } from '../sdd/boardModel'
+import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
+
+function change(id: string, status: string): ChangeEntry {
+  return { id, type: 'feature', title: `Título ${id}`, status, path: `features/${id}` }
+}
+
+test('TEST-BOARD-001 — buildChangesBoard agrupa por status e resume o overview (SCN-BOARD-001)', () => {
+  const changes = [
+    change('0001-a', 'DRAFT'),
+    change('0002-b', 'IN_PROGRESS'),
+    change('0003-c', 'VERIFIED'),
+    change('0004-d', 'ARCHIVED'),
+  ]
+  const progress = new Map<string, TaskProgress | undefined>([
+    ['0002-b', { done: 1, total: 4 }],
+  ])
+  const board = buildChangesBoard(changes, progress)
+
+  // colunas na ordem dos grupos, sem grupos vazios
+  assert.deepEqual(
+    board.columns.map((c) => c.label),
+    ['Rascunho', 'Em desenvolvimento', 'Em validação', 'Concluídas'],
+  )
+  // o cartão carrega o progresso quando há
+  const emDev = board.columns.find((c) => c.label === 'Em desenvolvimento')
+  assert.equal(emDev?.cards[0].id, '0002-b')
+  assert.deepEqual(emDev?.cards[0].progress, { done: 1, total: 4 })
+
+  // overview: 4 total, 2 concluídas (VERIFIED+ARCHIVED), 50%
+  assert.equal(board.overview.total, 4)
+  assert.equal(board.overview.done, 2)
+  assert.equal(board.overview.donePct, 50)
+})
+
+test('TEST-BOARD-001b — board vazio não lança e zera o overview', () => {
+  const board = buildChangesBoard([], new Map())
+  assert.equal(board.columns.length, 0)
+  assert.equal(board.overview.total, 0)
+  assert.equal(board.overview.donePct, 0)
+})
+
+test('TEST-BOARD-002 — parseTaskBoard separa as tarefas por status (SCN-BOARD-002)', () => {
+  const md = [
+    '# Tarefas',
+    '',
+    '## TASK-X-001 — Primeira',
+    '**Requisitos:** REQ-X-001',
+    '**Status:** done',
+    '',
+    '## TASK-X-002 — Segunda',
+    '**Status:** in_progress',
+    '',
+    '## TASK-X-003 — Terceira',
+    '**Status:** pending',
+    '',
+    '## TASK-X-004 — Sem status reconhecido',
+    '**Requisitos:** REQ-X-002',
+  ].join('\n')
+
+  const board = parseTaskBoard(md)
+  const col = (state: string) => board.columns.find((c) => c.state === state)
+
+  assert.deepEqual(
+    board.columns.map((c) => c.label),
+    ['Pendente', 'Em progresso', 'Concluída'],
+  )
+  assert.equal(col('done')?.cards[0].id, 'TASK-X-001')
+  assert.equal(col('done')?.cards[0].title, 'Primeira')
+  assert.equal(col('in_progress')?.cards[0].id, 'TASK-X-002')
+  // pending recebe a explícita E a sem-status-reconhecido
+  assert.deepEqual(
+    col('pending')?.cards.map((c) => c.id),
+    ['TASK-X-003', 'TASK-X-004'],
+  )
+})
+
+test('TEST-BOARD-002b — parseTaskBoard robusto a texto vazio', () => {
+  const board = parseTaskBoard('')
+  assert.equal(board.columns.length, 3)
+  assert.ok(board.columns.every((c) => c.cards.length === 0))
+})

@@ -97,6 +97,12 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "sddClaudeKit.openBoard",
+        "title": "SDD: Painel (Kanban)",
+        "category": "SDD Claude Kit",
+        "icon": "$(project)"
+      },
+      {
         "command": "sddClaudeKit.newFeature",
         "title": "SDD: Nova feature",
         "category": "SDD Claude Kit",
@@ -253,6 +259,11 @@
         }
       ],
       "view/title": [
+        {
+          "command": "sddClaudeKit.openBoard",
+          "when": "view == sddProject || view == sddFeatures",
+          "group": "navigation@0"
+        },
         {
           "command": "sddClaudeKit.refresh",
           "when": "view == sddProject || view == sddFeatures",
