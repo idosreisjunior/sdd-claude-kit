@@ -183,4 +183,5 @@ Total: 4 tarefas · 4 concluídas · 0 pendentes.
 > Plano implementado em 2026-08-03. Verificação local: `compile`, `lint` e **136** testes unitários
 > limpos, com a suíte E2E fora de `out/test` (NFR-E2E-001). A execução da E2E no host real
 > (TEST-E2E-001..004) roda no **CI** sob `xvfb` — `xvfb` não existe no ambiente WSL de
-> desenvolvimento, então o gate autoritativo da E2E é a CI (job `extension`).
+> desenvolvimento, então o gate autoritativo da E2E é a CI (job `extension`). **CI verde**: os quatro
+> testes passaram num VS Code de teste real (linux-x64 1.131.0), run 30867590113.
