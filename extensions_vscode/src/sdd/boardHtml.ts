@@ -53,6 +53,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
   .chips { display: flex; flex-wrap: wrap; gap: .3rem; }
   .fchip { font: inherit; font-size: .78rem; cursor: pointer; padding: .18rem .55rem; border-radius: .6rem; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-foreground); }
   .fchip.on { background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-color: transparent; }
+  .sortsel { font: inherit; font-size: .8rem; padding: .2rem .4rem; border-radius: .35rem; border: 1px solid var(--vscode-panel-border); background: var(--vscode-dropdown-background, var(--vscode-input-background)); color: var(--vscode-dropdown-foreground, var(--vscode-foreground)); }
   .feedbtn { margin-left: auto; }
   .feed { display: flex; flex-direction: column; gap: .4rem; max-width: 48rem; }
   .feeditem { border: 1px solid var(--vscode-panel-border); border-radius: .45rem; padding: .45rem .6rem; }
@@ -69,7 +70,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
 const INITIAL = ${inlineJson(board)};
 const INITIAL_FEED = ${inlineJson(feed)};
 const vscode = acquireVsCodeApi();
-const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] } };
+const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] }, sort: 'id-asc', feedOrder: 'desc' };
 
 function h(tag, cls, text) {
   const e = document.createElement(tag);
@@ -144,6 +145,19 @@ function cardMatches(card) {
   return okType && okQuery;
 }
 
+// Espelha sortBoardCards (boardModel.ts) — id/título/progresso (ADR-028).
+function sortCards(cards, key) {
+  const pct = function (c) { return c.progress && c.progress.total > 0 ? c.progress.done / c.progress.total : -1; };
+  const arr = cards.slice();
+  arr.sort(function (a, b) {
+    if (key === 'id-desc') { return a.id < b.id ? 1 : a.id > b.id ? -1 : 0; }
+    if (key === 'title') { return a.title.localeCompare(b.title, 'pt-BR'); }
+    if (key === 'progress') { const d = pct(b) - pct(a); return d !== 0 ? d : (a.id < b.id ? -1 : a.id > b.id ? 1 : 0); }
+    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+  });
+  return arr;
+}
+
 function presentTypes() {
   const seen = {};
   state.changes.columns.forEach(function (col) {
@@ -193,6 +207,18 @@ function buildToolbar() {
   const chips = h('div', 'chips');
   renderChips(chips);
   bar.appendChild(chips);
+  const sortSel = document.createElement('select');
+  sortSel.className = 'sortsel';
+  sortSel.setAttribute('aria-label', 'Ordenar o quadro');
+  [['id-asc', 'Id ↑'], ['id-desc', 'Id ↓'], ['title', 'Título A–Z'], ['progress', 'Progresso']].forEach(function (o) {
+    const opt = document.createElement('option');
+    opt.value = o[0];
+    opt.textContent = o[1];
+    if (state.sort === o[0]) { opt.selected = true; }
+    sortSel.appendChild(opt);
+  });
+  sortSel.addEventListener('change', function () { state.sort = sortSel.value; renderBoardArea(); });
+  bar.appendChild(sortSel);
   const feedBtn = h('button', 'tbtn feedbtn', 'Atividade ▸');
   feedBtn.addEventListener('click', function () { state.view = 'activity'; render(); });
   bar.appendChild(feedBtn);
@@ -207,13 +233,21 @@ function renderActivity() {
   back.addEventListener('click', function () { state.view = 'changes'; render(); });
   bar.appendChild(back);
   bar.appendChild(h('span', 'crumb', 'Atividade'));
+  const orderBtn = h('button', 'tbtn', state.feedOrder === 'asc' ? 'Mais antigos ↑' : 'Mais recentes ↓');
+  orderBtn.setAttribute('aria-label', 'Alternar a ordem do feed');
+  orderBtn.addEventListener('click', function () {
+    state.feedOrder = state.feedOrder === 'asc' ? 'desc' : 'asc';
+    renderActivity();
+  });
+  bar.appendChild(orderBtn);
   root.appendChild(bar);
   if (!state.feed || state.feed.length === 0) {
     root.appendChild(h('p', 'muted', 'Sem atividade registrada.'));
     return;
   }
+  const items = state.feedOrder === 'asc' ? state.feed.slice().reverse() : state.feed;
   const list = h('div', 'feed');
-  state.feed.forEach(function (it) {
+  items.forEach(function (it) {
     const row = h('div', 'feeditem');
     const head = h('div', 'feedhead');
     head.appendChild(h('span', 'badge', it.status));
@@ -247,7 +281,7 @@ function renderBoardArea() {
   area.textContent = '';
   const ov = state.changes.overview;
   const cols = state.changes.columns
-    .map(function (col) { return { label: col.label, cards: col.cards.filter(cardMatches) }; })
+    .map(function (col) { return { label: col.label, cards: sortCards(col.cards.filter(cardMatches), state.sort) }; })
     .filter(function (col) { return col.cards.length > 0; });
   const shown = cols.reduce(function (n, col) { return n + col.cards.length; }, 0);
 
