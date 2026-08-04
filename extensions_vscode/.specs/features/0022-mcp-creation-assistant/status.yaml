@@ -9,9 +9,9 @@ id: "0022-mcp-creation-assistant"
 type: "feature"
 title: "Assistente de criação de MCPs (RF-025)"
 
-# Verificada em 2026-08-03: a implementação existente foi conferida contra os
-# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
-status: VERIFIED
+# Arquivada em 2026-08-03: concluída (verificada; evidência no history).
+# Estado terminal — grupo "Concluídas". approve segue pulado (Fase 2).
+status: ARCHIVED
 
 created: "2026-08-02"
 updated: "2026-08-03"
@@ -49,6 +49,10 @@ history:
     date: "2026-08-03"
     reason: >-
       Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). Os nove aspectos do RF-025 vivem na fonte única MCP_ASPECTS (mcpAspects.ts) e no template feature/mcp.md, na ordem do texto — TEST-MCP-001 fixa a lista e a ordem; TEST-MCP-002 confirma que aspectos sem decisão são marcados como pendentes e o documento é produzido sem lançar. O núcleo é puro, sem vscode ou IO (NFR-MCP-001). A borda launchClaudeAction (extension.ts) copia o prompt e o deixa pronto no terminal sem enviar (SCN-MCP-003) e, sem a CLI, copia e orienta (SCN-MCP-004); o action mcp é coberto por TEST-MCP-003 (composePrompt to /sdd-kit:mcp). A elaboração assistida ponta a ponta depende da skill /sdd-kit:mcp (Fase 2), registrada no ADR-021, fora do escopo desta mudança. Q1 resolvida por ADR-021; nenhuma questão em aberto.
+  - status: ARCHIVED
+    date: "2026-08-03"
+    reason: >-
+      Arquivada após verificação: a mudança está concluída e faz parte da extensão publicada (v0.2.1). Transição de VERIFIED para ARCHIVED (estado terminal), movendo-a ao grupo Concluídas do painel; os artefatos permanecem em .specs/features para rastreabilidade e os identificadores nunca são reutilizados. Sem alteração de código.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

@@ -9,9 +9,9 @@ id: "0016-history-decisions"
 type: "feature"
 title: "Histórico e decisões (RF-020)"
 
-# Verificada em 2026-08-03: a implementação existente foi conferida contra os
-# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
-status: VERIFIED
+# Arquivada em 2026-08-03: concluída (verificada; evidência no history).
+# Estado terminal — grupo "Concluídas". approve segue pulado (Fase 2).
+status: ARCHIVED
 
 created: "2026-08-01"
 updated: "2026-08-03"
@@ -46,6 +46,10 @@ history:
     date: "2026-08-03"
     reason: >-
       Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-HIST-001 (SCN-HIST-001/002) atendido por aggregateHistory (historyModel.ts) e renderHistoryHtml (historyHtml.ts), cobertos por TEST-HIST-001 (timeline cronológico, categorias indisponíveis marcadas) e TEST-HIST-002 (robusto a fontes ausentes; render escapa HTML e usa nonce). REQ-HIST-002 (SCN-HIST-003/004) atendido por nextAdrNumber/adrSlug/buildAdr (adrCreator.ts), cobertos por TEST-HIST-003 (numeração global max mais um, slug determinístico) e TEST-HIST-004 (esqueleto sem marcador residual); a não-sobrescrita (SCN-HIST-004) vive na borda newAdr e é registrada em gaps com mitigação manual. NFR-HIST-001/002/003 satisfeitos: núcleos sem import de vscode ou rede, read-only exceto a escrita do ADR. Q2/Q5 resolvidas por ADR-016; sem bloqueio.
+  - status: ARCHIVED
+    date: "2026-08-03"
+    reason: >-
+      Arquivada após verificação: a mudança está concluída e faz parte da extensão publicada (v0.2.1). Transição de VERIFIED para ARCHIVED (estado terminal), movendo-a ao grupo Concluídas do painel; os artefatos permanecem em .specs/features para rastreabilidade e os identificadores nunca são reutilizados. Sem alteração de código.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

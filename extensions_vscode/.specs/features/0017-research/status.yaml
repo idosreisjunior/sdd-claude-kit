@@ -9,9 +9,9 @@ id: "0017-research"
 type: "feature"
 title: "Research assistido (RF-007)"
 
-# Verificada em 2026-08-03: a implementação existente foi conferida contra os
-# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
-status: VERIFIED
+# Arquivada em 2026-08-03: concluída (verificada; evidência no history).
+# Estado terminal — grupo "Concluídas". approve segue pulado (Fase 2).
+status: ARCHIVED
 
 created: "2026-08-01"
 updated: "2026-08-03"
@@ -46,6 +46,10 @@ history:
     date: "2026-08-03"
     reason: >-
       Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-RES-001/002 e NFR-RES-001/002/003 atendidos: a ação research foi acrescentada ao adapter 0004 (composePrompt('research') to /sdd-kit:research), coberta por TEST-RES-002 (researchGenerator.test.ts) e pela suíte do 0004 (claudePrompt.test.ts, conjunto fechado ACTIONS); o esqueleto das oito frentes vem do template feature/research.md (fonte no plugin, sincronizado) montado por buildSkeleton (skeleton.ts), coberto por TEST-RES-001 (oito seções, sem marcador residual). A ação Research fica disponível assim que a mudança existe (D-Q4, sem pré-condição); a sobrescrita pede confirmação modal (SCN-RES-003) e o núcleo é puro. Gaps de integração de host e o conteúdo de IA das oito frentes (skill /sdd-kit:research, Fase 2) registrados em traceability.yaml com mitigação manual. Q1/Q2 resolvidas por ADR-017; sem bloqueio.
+  - status: ARCHIVED
+    date: "2026-08-03"
+    reason: >-
+      Arquivada após verificação: a mudança está concluída e faz parte da extensão publicada (v0.2.1). Transição de VERIFIED para ARCHIVED (estado terminal), movendo-a ao grupo Concluídas do painel; os artefatos permanecem em .specs/features para rastreabilidade e os identificadores nunca são reutilizados. Sem alteração de código.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
