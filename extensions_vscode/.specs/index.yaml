@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 24
+next_id: 25
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -238,5 +238,14 @@ changes:
     updated: "2026-08-03"
     materialized: true
     epic: "Qualidade — testes de integração"
+  - id: 0024-feature-action-surface
+    type: feature
+    title: Superfície de ações da feature (dashboard + submenu)
+    status: VERIFIED
+    path: features/0024-feature-action-surface
+    created: "2026-08-03"
+    updated: "2026-08-03"
+    materialized: true
+    epic: "Qualidade — descoberta de recursos"
 
 archive: []

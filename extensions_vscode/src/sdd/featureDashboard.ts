@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 import { randomBytes } from 'node:crypto'
 import { buildDashboardModel, type DashboardSources } from './dashboardModel'
-import { renderDashboardHtml } from './dashboardHtml'
+import { renderDashboardHtml, FEATURE_ACTION_COMMANDS } from './dashboardHtml'
 import type { ChangeEntry } from './specsIndex'
 
 /**
@@ -24,7 +24,14 @@ export class FeatureDashboard {
       'sddDashboard',
       change.title || change.id,
       vscode.ViewColumn.Active,
-      { enableScripts: false, localResourceRoots: [] },
+      // Sem scripts (ADR-005). enableCommandUris libera os `command:` URIs dos
+      // botões de Ações (feature 0024, ADR-023), restrito à lista de comandos da
+      // extensão — não a qualquer comando do VS Code.
+      {
+        enableScripts: false,
+        enableCommandUris: [...FEATURE_ACTION_COMMANDS],
+        localResourceRoots: [],
+      },
     )
     this.panels.set(change.id, panel)
     panel.onDidDispose(() => this.panels.delete(change.id))
@@ -34,7 +41,7 @@ export class FeatureDashboard {
   private async render(root: vscode.Uri, change: ChangeEntry): Promise<string> {
     const sources = await readSources(root, change)
     const model = buildDashboardModel(sources)
-    return renderDashboardHtml(model, nonce())
+    return renderDashboardHtml(model, nonce(), change)
   }
 }
 

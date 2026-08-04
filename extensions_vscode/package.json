@@ -227,6 +227,13 @@
         "icon": "$(server-process)"
       }
     ],
+    "submenus": [
+      {
+        "id": "sddClaudeKit.featureActions",
+        "label": "SDD: Ações",
+        "icon": "$(list-unordered)"
+      }
+    ],
     "menus": {
       "commandPalette": [
         {
@@ -274,85 +281,28 @@
           "group": "inline"
         },
         {
-          "command": "sddClaudeKit.openInClaudeCode",
+          "submenu": "sddClaudeKit.featureActions",
           "when": "view == sddFeatures && viewItem == sddFeature",
           "group": "sdd@1"
-        },
-        {
-          "command": "sddClaudeKit.measureContext",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@2"
-        },
-        {
-          "command": "sddClaudeKit.checkScope",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@3"
-        },
-        {
-          "command": "sddClaudeKit.navigateTraceability",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@4"
-        },
-        {
-          "command": "sddClaudeKit.suggestCommit",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@5"
-        },
-        {
-          "command": "sddClaudeKit.validateChange",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@6"
-        },
-        {
-          "command": "sddClaudeKit.collectEvidence",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@7"
-        },
-        {
-          "command": "sddClaudeKit.metricsFeature",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@8"
-        },
-        {
-          "command": "sddClaudeKit.generateDesign",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@9"
-        },
-        {
-          "command": "sddClaudeKit.clarify",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@10"
-        },
-        {
-          "command": "sddClaudeKit.history",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@11"
-        },
-        {
-          "command": "sddClaudeKit.newAdr",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@12"
-        },
-        {
-          "command": "sddClaudeKit.research",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@13"
-        },
-        {
-          "command": "sddClaudeKit.analyzeTasks",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@14"
-        },
-        {
-          "command": "sddClaudeKit.github",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@15"
-        },
-        {
-          "command": "sddClaudeKit.mcp",
-          "when": "view == sddFeatures && viewItem == sddFeature",
-          "group": "sdd@16"
         }
+      ],
+      "sddClaudeKit.featureActions": [
+        { "command": "sddClaudeKit.research", "group": "fluxo@1" },
+        { "command": "sddClaudeKit.clarify", "group": "fluxo@2" },
+        { "command": "sddClaudeKit.generateDesign", "group": "fluxo@3" },
+        { "command": "sddClaudeKit.analyzeTasks", "group": "fluxo@4" },
+        { "command": "sddClaudeKit.history", "group": "historia@1" },
+        { "command": "sddClaudeKit.newAdr", "group": "historia@2" },
+        { "command": "sddClaudeKit.validateChange", "group": "validacao@1" },
+        { "command": "sddClaudeKit.collectEvidence", "group": "validacao@2" },
+        { "command": "sddClaudeKit.metricsFeature", "group": "validacao@3" },
+        { "command": "sddClaudeKit.checkScope", "group": "git@1" },
+        { "command": "sddClaudeKit.navigateTraceability", "group": "git@2" },
+        { "command": "sddClaudeKit.suggestCommit", "group": "git@3" },
+        { "command": "sddClaudeKit.openInClaudeCode", "group": "claude@1" },
+        { "command": "sddClaudeKit.measureContext", "group": "claude@2" },
+        { "command": "sddClaudeKit.github", "group": "claude@3" },
+        { "command": "sddClaudeKit.mcp", "group": "claude@4" }
       ]
     },
     "configuration": {
