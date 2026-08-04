@@ -1,0 +1,83 @@
+# Matriz de rastreabilidade — 0026-board-drag-transition
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0026-board-drag-transition"
+
+requirements:
+
+  "REQ-DND-001":
+    title: "Transição de estado por arrastar"
+    scenarios:
+      - "SCN-DND-001"
+      - "SCN-DND-002"
+      - "SCN-DND-003"
+    tasks:
+      - "TASK-DND-001"
+      - "TASK-DND-002"
+      - "TASK-DND-003"
+    implementation:
+      - "src/sdd/stateMachine.ts"
+      - "src/sdd/statusWriter.ts"
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/boardPanel.ts"
+    tests:
+      - "TEST-DND-001"
+      - "TEST-DND-002"
+      - "TEST-DND-004"
+      - "TEST-DND-006"
+
+  "NFR-DND-001":
+    title: "Respeita a máquina de estados"
+    scenarios: []
+    tasks:
+      - "TASK-DND-002"
+    implementation:
+      - "src/sdd/stateMachine.ts"
+    tests:
+      - "TEST-DND-002"
+      - "TEST-DND-003"
+
+  "NFR-DND-002":
+    title: "Escrita não destrutiva; motivo obrigatório"
+    scenarios: []
+    tasks:
+      - "TASK-DND-002"
+      - "TASK-DND-003"
+    implementation:
+      - "src/sdd/statusWriter.ts"
+      - "src/sdd/boardPanel.ts"
+    tests:
+      - "TEST-DND-004"
+      - "TEST-DND-005"
+      - "TEST-DND-006"
+
+  "NFR-DND-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-DND-002"
+    implementation:
+      - "src/sdd/stateMachine.ts"
+      - "src/sdd/statusWriter.ts"
+    tests:
+      - "TEST-DND-001"
+      - "TEST-DND-004"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "REQ-DND-001"
+    reason: >-
+      O gesto de arrastar-soltar no webview, os diálogos (QuickPick/InputBox) e a
+      escrita no host são integração; a resolução do alvo (stateMachine) e a escrita
+      (statusWriter) são puras e testadas, e o escritor foi validado sobre um
+      status.yaml real.
+    mitigation: >-
+      Revisão manual (TASK-DND-003): arrastar para uma coluna válida transiciona a
+      mudança com motivo e o board reflete; coluna inválida é recusada; os arquivos
+      ficam íntegros.

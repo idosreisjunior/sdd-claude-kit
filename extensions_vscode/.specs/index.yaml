@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 26
+next_id: 27
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -252,6 +252,15 @@ changes:
     title: Painel SDD — Kanban + Overview ao vivo
     status: VERIFIED
     path: features/0025-sdd-board
+    created: "2026-08-04"
+    updated: "2026-08-04"
+    materialized: true
+    epic: "Qualidade — painel visual"
+  - id: 0026-board-drag-transition
+    type: feature
+    title: Transição por arrastar no Painel SDD (incremento 2)
+    status: VERIFIED
+    path: features/0026-board-drag-transition
     created: "2026-08-04"
     updated: "2026-08-04"
     materialized: true
