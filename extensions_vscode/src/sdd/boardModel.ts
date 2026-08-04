@@ -127,6 +127,48 @@ export function filterChangesBoard(board: ChangesBoard, filter: BoardFilter): Ch
   }
 }
 
+// --- Ordenação (quadro e feed) ----------------------------------------------
+
+/** Critério de ordenação dos cartões do quadro. */
+export type BoardSort = 'id-asc' | 'id-desc' | 'title' | 'progress'
+
+function progressPct(card: BoardCard): number {
+  return card.progress && card.progress.total > 0 ? card.progress.done / card.progress.total : -1
+}
+
+/**
+ * Ordena os cartões de uma coluna. `id-asc`/`id-desc` por id; `title` por título
+ * (pt-BR); `progress` por percentual concluído desc (sem tarefas por último, e
+ * empate por id). Não muta a entrada. É a lógica canônica que o cliente espelha.
+ */
+export function sortBoardCards(cards: readonly BoardCard[], key: BoardSort): BoardCard[] {
+  const arr = cards.slice()
+  arr.sort((a, b) => {
+    switch (key) {
+      case 'id-desc':
+        return a.id < b.id ? 1 : a.id > b.id ? -1 : 0
+      case 'title':
+        return a.title.localeCompare(b.title, 'pt-BR')
+      case 'progress': {
+        const d = progressPct(b) - progressPct(a)
+        return d !== 0 ? d : a.id < b.id ? -1 : a.id > b.id ? 1 : 0
+      }
+      case 'id-asc':
+      default:
+        return a.id < b.id ? -1 : a.id > b.id ? 1 : 0
+    }
+  })
+  return arr
+}
+
+/** Ordem do feed: `desc` = mais recente primeiro (padrão); `asc` = mais antigo. */
+export type FeedOrder = 'desc' | 'asc'
+
+/** Aplica a ordem ao feed já ordenado desc por buildActivityFeed. Não muta. */
+export function orderFeed(items: readonly FeedItem[], order: FeedOrder): FeedItem[] {
+  return order === 'asc' ? items.slice().reverse() : items.slice()
+}
+
 /** Conveniência: monta o board direto do texto do index.yaml. */
 export function buildChangesBoardFromIndex(
   indexYaml: string,

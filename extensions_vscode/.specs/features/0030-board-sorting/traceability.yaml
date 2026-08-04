@@ -1,0 +1,67 @@
+# Matriz de rastreabilidade — 0030-board-sorting
+version: 1
+
+feature: "0030-board-sorting"
+
+requirements:
+
+  "REQ-SORT-001":
+    title: "Ordenação do quadro"
+    scenarios:
+      - "SCN-SORT-001"
+    tasks:
+      - "TASK-SORT-001"
+      - "TASK-SORT-002"
+      - "TASK-SORT-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-SORT-001"
+
+  "REQ-SORT-002":
+    title: "Ordenação do feed"
+    scenarios:
+      - "SCN-SORT-002"
+    tasks:
+      - "TASK-SORT-001"
+      - "TASK-SORT-002"
+      - "TASK-SORT-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-SORT-002"
+
+  "NFR-SORT-001":
+    title: "Lógica pura e testável"
+    scenarios: []
+    tasks:
+      - "TASK-SORT-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-SORT-001"
+      - "TEST-SORT-002"
+
+  "NFR-SORT-002":
+    title: "Client-side e seguro"
+    scenarios: []
+    tasks:
+      - "TASK-SORT-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-SORT-001"
+    reason: >-
+      Os controles (select) e o render ordenado são DOM no host; a ordenação
+      (sortBoardCards) é pura e testada.
+    mitigation: >-
+      Revisão manual (TASK-SORT-003): o seletor reordena os cartões das colunas.
+  - id: "REQ-SORT-002"
+    reason: >-
+      O alternador e o render do feed são host; orderFeed é puro e testado.
+    mitigation: >-
+      Revisão manual: o alternador inverte a ordem do feed.

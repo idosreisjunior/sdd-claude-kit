@@ -6,7 +6,10 @@ import {
   filterChangesBoard,
   cardMatchesFilter,
   buildActivityFeed,
+  sortBoardCards,
+  orderFeed,
 } from '../sdd/boardModel'
+import type { BoardCard } from '../sdd/boardModel'
 import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
 
 function change(id: string, status: string, type = 'feature', title?: string): ChangeEntry {
@@ -152,4 +155,35 @@ test('TEST-FEED-002 — respeita o limite e é robusto a YAML inválido', () => 
   // yaml inválido / sem history → ignorado, nunca lança
   assert.deepEqual(buildActivityFeed([{ id: 'x', title: 'X', statusYaml: ': : :' }]), [])
   assert.deepEqual(buildActivityFeed([{ id: 'x', title: 'X', statusYaml: 'foo: bar' }]), [])
+})
+
+function card(id: string, title: string, done?: number, total?: number): BoardCard {
+  return {
+    id,
+    type: 'feature',
+    title,
+    status: 'DRAFT',
+    path: `features/${id}`,
+    progress: total === undefined ? null : { done: done ?? 0, total },
+  }
+}
+
+test('TEST-SORT-001 — sortBoardCards ordena por id, título e progresso (SCN-SORT-001)', () => {
+  const cards = [card('0003-c', 'Beta', 1, 2), card('0001-a', 'Alfa'), card('0002-b', 'Gama', 3, 3)]
+  assert.deepEqual(sortBoardCards(cards, 'id-asc').map((c) => c.id), ['0001-a', '0002-b', '0003-c'])
+  assert.deepEqual(sortBoardCards(cards, 'id-desc').map((c) => c.id), ['0003-c', '0002-b', '0001-a'])
+  assert.deepEqual(sortBoardCards(cards, 'title').map((c) => c.title), ['Alfa', 'Beta', 'Gama'])
+  // progresso desc: 100% (0002), 50% (0003), sem tarefas (0001) por último
+  assert.deepEqual(sortBoardCards(cards, 'progress').map((c) => c.id), ['0002-b', '0003-c', '0001-a'])
+  // não muta a entrada
+  assert.equal(cards[0].id, '0003-c')
+})
+
+test('TEST-SORT-002 — orderFeed inverte para asc, preserva desc (SCN-SORT-002)', () => {
+  const feed = buildActivityFeed([
+    { id: '0001-a', title: 'A', statusYaml: S1 },
+    { id: '0002-b', title: 'B', statusYaml: S2 },
+  ])
+  assert.deepEqual(orderFeed(feed, 'desc').map((i) => i.date), ['2026-08-03', '2026-08-02', '2026-08-01'])
+  assert.deepEqual(orderFeed(feed, 'asc').map((i) => i.date), ['2026-08-01', '2026-08-02', '2026-08-03'])
 })
