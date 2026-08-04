@@ -1,10 +1,15 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildChangesBoard, parseTaskBoard } from '../sdd/boardModel'
+import {
+  buildChangesBoard,
+  parseTaskBoard,
+  filterChangesBoard,
+  cardMatchesFilter,
+} from '../sdd/boardModel'
 import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
 
-function change(id: string, status: string): ChangeEntry {
-  return { id, type: 'feature', title: `Título ${id}`, status, path: `features/${id}` }
+function change(id: string, status: string, type = 'feature', title?: string): ChangeEntry {
+  return { id, type, title: title ?? `Título ${id}`, status, path: `${type}s/${id}` }
 }
 
 test('TEST-BOARD-001 — buildChangesBoard agrupa por status e resume o overview (SCN-BOARD-001)', () => {
@@ -81,4 +86,46 @@ test('TEST-BOARD-002b — parseTaskBoard robusto a texto vazio', () => {
   const board = parseTaskBoard('')
   assert.equal(board.columns.length, 3)
   assert.ok(board.columns.every((c) => c.cards.length === 0))
+})
+
+test('TEST-FILTER-001 — busca casa id ou título; colunas sem match são omitidas (SCN-FILTER-001)', () => {
+  const board = buildChangesBoard(
+    [
+      change('0007-git', 'VERIFIED', 'feature', 'Git e rastreabilidade'),
+      change('0009-metrics', 'VERIFIED', 'feature', 'Métricas locais'),
+      change('0011-bug', 'IN_PROGRESS', 'bug', 'Corrige algo'),
+    ],
+    new Map(),
+  )
+  // por id
+  const byId = filterChangesBoard(board, { query: '0009', types: [] })
+  assert.equal(byId.overview.shown, 1)
+  assert.equal(byId.columns.flatMap((c) => c.cards)[0].id, '0009-metrics')
+  // por título (case-insensitive)
+  const byTitle = filterChangesBoard(board, { query: 'git', types: [] })
+  assert.equal(byTitle.overview.shown, 1)
+  // total no overview segue do board completo
+  assert.equal(byTitle.overview.total, 3)
+  // sem match → nenhuma coluna
+  assert.deepEqual(filterChangesBoard(board, { query: 'zzz', types: [] }).columns, [])
+})
+
+test('TEST-FILTER-002 — filtro por tipo; vazio = todos (SCN-FILTER-002)', () => {
+  const board = buildChangesBoard(
+    [
+      change('0007-git', 'VERIFIED', 'feature'),
+      change('0011-bug', 'IN_PROGRESS', 'bug'),
+    ],
+    new Map(),
+  )
+  assert.equal(filterChangesBoard(board, { query: '', types: ['bug'] }).overview.shown, 1)
+  assert.equal(filterChangesBoard(board, { query: '', types: ['feature', 'bug'] }).overview.shown, 2)
+  assert.equal(filterChangesBoard(board, { query: '', types: [] }).overview.shown, 2)
+})
+
+test('TEST-FILTER-003 — cardMatchesFilter combina busca e tipo', () => {
+  const card = { id: '0007-git', type: 'feature', title: 'Git', status: 'VERIFIED', path: 'x', progress: null }
+  assert.equal(cardMatchesFilter(card, { query: 'git', types: ['feature'] }), true)
+  assert.equal(cardMatchesFilter(card, { query: 'git', types: ['bug'] }), false)
+  assert.equal(cardMatchesFilter(card, { query: 'xyz', types: [] }), false)
 })

@@ -1,0 +1,74 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0028-board-filter-search"
+# feature | bug | refactor | change
+type: "feature"
+title: "Busca e filtros no Painel SDD"
+
+# Verificada em 2026-08-04: lógica de filtro testada; render/interação no host.
+# approve segue pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criada por /sdd-kit:new: com o painel crescendo, acrescentar busca (id/título) e filtros por
+      tipo ao Painel SDD (0025). Filtro client-side espelhando função pura. Questões de design em
+      TASK-FILTER-001 (ADR-026).
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (3 tarefas: 2 P, 1 M; caminho crítico TASK-FILTER-001 → 002 →
+      003). CLARIFIED/DESIGNED pulados (Fase 2): design em ADR-026. Cobertura completa (5 requisitos
+      com tarefa); sem órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Implementado. boardModel.ts: BoardFilter, cardMatchesFilter (id/título + tipo), filterChangesBoard
+      (omite colunas vazias, calcula overview.shown); BoardOverview ganha shown?. boardHtml.ts: barra
+      #toolbar (busca + chips de tipo derivados dos cartões), state.filter, renderBoardArea aplica o
+      filtro e mostra "N exibidas"; a atualização ao vivo re-renderiza só a #boardarea (barra/foco
+      preservados). Transição PLANNED → IN_PROGRESS; approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: compile e lint limpos; suíte unitária 159 (+3): TEST-FILTER-001 (busca
+      casa id/título, colunas sem match omitidas, total preservado — SCN-FILTER-001), TEST-FILTER-002
+      (filtro por tipo, vazio = todos — SCN-FILTER-002) e TEST-FILTER-003 (cardMatchesFilter combina
+      busca e tipo). Lógica de filtro pura, sem vscode (NFR-FILTER-001). O render da barra/chips, a
+      persistência do foco na atualização ao vivo (SCN-FILTER-003) e o client-side (NFR-FILTER-002) são
+      integração de host, registrados em traceability.yaml gaps com revisão manual; abrir o painel é
+      coberto pelo E2E do 0025. Critérios de aceite atendidos. approve permanece pulado (Fase 2).
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-04"
+    resolved_by: TASK-FILTER-001
+    summary: >-
+      Filtro roda no cliente (responsivo) espelhando cardMatchesFilter/filterChangesBoard (puros,
+      testados); a barra vive fora da área re-renderizada, preservando o foco da busca ao vivo.
+    adr: ADR-026
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3

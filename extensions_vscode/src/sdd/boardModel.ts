@@ -35,6 +35,8 @@ export interface BoardOverview {
   /** Percentual concluído (0–100), inteiro. */
   donePct: number
   byColumn: Array<{ label: string; count: number }>
+  /** Cartões visíveis após filtro. Ausente/igual a `total` quando não filtrado. */
+  shown?: number
 }
 
 export interface ChangesBoard {
@@ -84,6 +86,44 @@ export function buildChangesBoard(
   const donePct = total > 0 ? Math.round((done / total) * 100) : 0
 
   return { overview: { total, done, donePct, byColumn }, columns }
+}
+
+/** Filtro do painel: busca textual (id/título) e tipos incluídos (vazio = todos). */
+export interface BoardFilter {
+  query: string
+  types: string[]
+}
+
+/** Um cartão passa no filtro? Busca casa id OU título (case-insensitive). */
+export function cardMatchesFilter(card: BoardCard, filter: BoardFilter): boolean {
+  const q = filter.query.trim().toLowerCase()
+  const okType = filter.types.length === 0 || filter.types.includes(card.type)
+  const okQuery =
+    q === '' ||
+    card.id.toLowerCase().includes(q) ||
+    card.title.toLowerCase().includes(q)
+  return okType && okQuery
+}
+
+/**
+ * Aplica busca + filtro de tipo ao board. Colunas que ficam sem cartão são
+ * omitidas. `overview.total`/`done`/`donePct` seguem do board completo (o usuário
+ * vê "N de total"); `overview.shown` é a contagem após o filtro. É a lógica
+ * canônica — o cliente do webview a espelha (ADR-026).
+ */
+export function filterChangesBoard(board: ChangesBoard, filter: BoardFilter): ChangesBoard {
+  const columns: BoardColumn[] = board.columns
+    .map((col) => ({ label: col.label, cards: col.cards.filter((c) => cardMatchesFilter(c, filter)) }))
+    .filter((col) => col.cards.length > 0)
+  const shown = columns.reduce((n, col) => n + col.cards.length, 0)
+  return {
+    overview: {
+      ...board.overview,
+      byColumn: columns.map((col) => ({ label: col.label, count: col.cards.length })),
+      shown,
+    },
+    columns,
+  }
 }
 
 /** Conveniência: monta o board direto do texto do index.yaml. */
