@@ -1,0 +1,101 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0025-sdd-board"
+# feature | bug | refactor | change
+type: "feature"
+title: "Painel SDD — Kanban + Overview ao vivo"
+
+# Verificada (incremento 1): E2E do painel verde no CI (SCN-BOARD-003). approve pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criada por /sdd-kit:new a partir do pedido do usuário: uma UI "com mais cara de sistema" e um
+      kanban em tempo real das tarefas, inspirado na extensão SDD Builder AI. Feature de UI/qualidade
+      interna. Escopo do incremento 1: kanban das mudanças + overview + drill-down de tarefas, somente
+      leitura. Questões de design Q1-Q3 em aberto (webview com script, tempo real, colunas/interação).
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (4 tarefas: 1 P, 3 M; caminho crítico
+      linear TASK-BOARD-001 → 002 → 003 → 004). CLARIFIED e DESIGNED pulados (Fase 2), no padrão das
+      anteriores: Q1-Q3 resolvidas em TASK-BOARD-001 (ADR-024). Cobertura completa (6 requisitos com
+      tarefa); sem requisito descoberto, tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Incremento 1 implementado. Núcleo puro boardModel.ts (buildChangesBoard: colunas por groupFor +
+      overview; parseTaskBoard: tarefas por status) e boardHtml.ts (webview COM script, exceção ao
+      ADR-005: CSP com nonce em style e script, render client-side por createElement/textContent sem
+      innerHTML, board embutido com < neutralizado). Borda boardPanel.ts: WebviewPanel único, lê
+      index/status.yaml, monta o board, refresh() reenvia por postMessage (ao vivo via watcher), trata
+      open (abre dashboard pelo nó sintético) e tasks (lê tasks.md). extension.ts registra
+      sddClaudeKit.openBoard e pluga refresh no watcher; package.json expõe o comando e um botão no
+      view/title. Verificação local: compile e lint limpos, 146 testes unitários (+7: TEST-BOARD-001..003
+      e robustez). Abrir o painel (E2E TEST-BOARD-004) e a atualização ao vivo são integração de host,
+      verificadas no CI. Transição PLANNED → IN_PROGRESS; approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência. Núcleo unitário verde (146 testes): TEST-BOARD-001 (colunas por status
+      + overview total/concluídas/percentual), TEST-BOARD-002 (tarefas por status; sem-status → Pendente),
+      TEST-BOARD-003 (CSP com nonce em style e script, board embutido, acquireVsCodeApi, < neutralizado
+      sem injeção). O gate de host passou no CI: o E2E TEST-BOARD-004 (SCN-BOARD-003 — o Painel SDD abre
+      sem lançar) rodou num VS Code de teste real sob xvfb, 5 passing. Critérios de aceite atendidos:
+      kanban por status + overview (REQ-BOARD-001), drill-down de tarefas (REQ-BOARD-002), clique abre o
+      dashboard e o painel não escreve em .specs (REQ-BOARD-003/NFR-BOARD-003), webview seguro com CSP+nonce
+      (NFR-BOARD-002), núcleo puro (NFR-BOARD-001). A atualização ao vivo (watcher → postMessage) e o clique
+      são integração de host, registrados em traceability.yaml gaps com revisão manual. Arrastar-para-transicionar
+      fica para o incremento 2. approve permanece pulado (Fase 2), approval segue null.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1-Q3 resolvidas por TASK-BOARD-001 (ADR-024). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-04"
+    resolved_by: TASK-BOARD-001
+    summary: >-
+      Painel = webview com script (exceção localizada ao ADR-005), com CSP+nonce e sem innerHTML;
+      os demais webviews seguem sem script.
+    adr: ADR-024
+  - question: Q2
+    date: "2026-08-04"
+    resolved_by: TASK-BOARD-001
+    summary: >-
+      Tempo real reusa o watcher .specs/*.yaml → refresh → postMessage; o cliente re-renderiza sem
+      recarregar o HTML.
+    adr: ADR-024
+  - question: Q3
+    date: "2026-08-04"
+    resolved_by: TASK-BOARD-001
+    summary: >-
+      Colunas por groupFor; incremento 1 somente leitura (clique abre o dashboard); arrastar =
+      transicionar fica para o incremento 2.
+    adr: ADR-024
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 4
+  pending: 0
+  in_progress: 0
+  done: 4

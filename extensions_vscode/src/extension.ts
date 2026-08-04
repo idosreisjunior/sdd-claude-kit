@@ -18,6 +18,7 @@ import {
   type ChangeVars,
 } from './sdd/featureCreator'
 import { FeatureDashboard } from './sdd/featureDashboard'
+import { BoardPanel } from './sdd/boardPanel'
 import { SpecEditorProvider } from './sdd/specEditor'
 import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
 import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
@@ -104,6 +105,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   })
   const featuresProvider = new FeaturesTreeProvider()
   const dashboard = new FeatureDashboard()
+  const boardPanel = new BoardPanel()
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(ProjectViewProvider.viewType, projectProvider),
@@ -143,6 +145,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     )
     await projectProvider.refresh()
     featuresProvider.refresh()
+    void boardPanel.refresh() // atualização ao vivo do Painel SDD (0025), se aberto
     updateContextIndicator(contextIndicator, detection.hasSpecs, lastUsage)
   }
 
@@ -164,6 +167,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   context.subscriptions.push(
     vscode.commands.registerCommand('sddClaudeKit.refresh', refresh),
+    vscode.commands.registerCommand('sddClaudeKit.openBoard', () => boardPanel.open()),
     vscode.commands.registerCommand('sddClaudeKit.initProject', () => initProject(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.newFeature', () => newFeature(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.openDashboard', (node?: unknown) => openDashboard(dashboard, node)),

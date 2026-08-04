@@ -1,0 +1,112 @@
+# Matriz de rastreabilidade — 0025-sdd-board
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0025-sdd-board"
+
+requirements:
+
+  "REQ-BOARD-001":
+    title: "Kanban das mudanças ao vivo, com overview"
+    scenarios:
+      - "SCN-BOARD-001"
+      - "SCN-BOARD-003"
+    tasks:
+      - "TASK-BOARD-001"
+      - "TASK-BOARD-002"
+      - "TASK-BOARD-003"
+      - "TASK-BOARD-004"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/boardPanel.ts"
+      - "src/extension.ts"
+    tests:
+      - "TEST-BOARD-001"
+      - "TEST-BOARD-003"
+      - "TEST-BOARD-004"
+
+  "REQ-BOARD-002":
+    title: "Drill-down das tarefas"
+    scenarios:
+      - "SCN-BOARD-002"
+    tasks:
+      - "TASK-BOARD-002"
+      - "TASK-BOARD-004"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardPanel.ts"
+    tests:
+      - "TEST-BOARD-002"
+
+  "REQ-BOARD-003":
+    title: "Navegação (somente leitura)"
+    scenarios: []
+    tasks:
+      - "TASK-BOARD-004"
+    implementation:
+      - "src/sdd/boardPanel.ts"
+    tests: []
+
+  "NFR-BOARD-001":
+    title: "Núcleo puro e robusto"
+    scenarios: []
+    tasks:
+      - "TASK-BOARD-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-BOARD-001"
+      - "TEST-BOARD-002"
+
+  "NFR-BOARD-002":
+    title: "Webview seguro, mesmo com script"
+    scenarios: []
+    tasks:
+      - "TASK-BOARD-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/boardPanel.ts"
+    tests:
+      - "TEST-BOARD-003"
+
+  "NFR-BOARD-003":
+    title: "Somente leitura"
+    scenarios: []
+    tasks:
+      - "TASK-BOARD-004"
+    implementation:
+      - ".specs/features/0025-sdd-board/decisions/ADR-024-painel-com-script-e-atualizacao-ao-vivo.md"
+      - "src/sdd/boardPanel.ts"
+    tests: []
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "REQ-BOARD-001"
+    reason: >-
+      O render client-side do kanban e a atualização ao vivo (postMessage do
+      watcher) são integração com o host; o modelo (colunas/overview) e o shell
+      HTML são testados (TEST-BOARD-001/003), e abrir o painel é coberto por E2E
+      (TEST-BOARD-004).
+    mitigation: >-
+      Revisão manual: ao salvar um status.yaml, o cartão muda de coluna sem
+      recarregar o painel.
+  - id: "REQ-BOARD-002"
+    reason: >-
+      O parsing do tasks.md é puro e testado (TEST-BOARD-002); a exibição do
+      drill-down no webview e o round-trip de mensagem são integração de host.
+    mitigation: >-
+      Revisão manual: "Tarefas" num cartão mostra o kanban de tarefas da mudança.
+  - id: "REQ-BOARD-003"
+    reason: >-
+      Abrir o dashboard a partir do clique é integração (reusa
+      sddClaudeKit.openDashboard); "somente leitura" é propriedade de ausência de
+      escrita.
+    mitigation: >-
+      Revisão de código (boardPanel não escreve em .specs) + revisão manual do
+      clique.
