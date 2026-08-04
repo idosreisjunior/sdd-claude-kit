@@ -5,6 +5,19 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.8] — 2026-08-04
+
+Ordenação no Painel SDD.
+
+### Adicionado
+
+- **Ordenação do quadro** — um seletor na barra ordena os cartões dentro das colunas por id
+  (crescente/decrescente), título ou progresso das tarefas (aplicada após a busca/filtro).
+- **Ordenação do feed** — um alternador na visão Atividade troca entre mais recentes (padrão) e mais
+  antigos primeiro (feature 0030, ADR-028).
+
+---
+
 ## [0.2.7] — 2026-08-04
 
 Feed de atividade no Painel SDD.
