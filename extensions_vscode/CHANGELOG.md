@@ -5,6 +5,20 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.4] — 2026-08-04
+
+Painel SDD interativo.
+
+### Adicionado
+
+- **Arrastar-para-transicionar** no Painel SDD: arraste um cartão entre as colunas do kanban para
+  **transicionar o estado** da mudança. A extensão valida contra a máquina de estados (só transições
+  válidas; quando a coluna admite mais de um estado, você escolhe), pede um **motivo** e escreve o
+  `status.yaml` (nova entrada de histórico + status) e o `index.yaml`, **preservando** comentários e
+  formatação dos arquivos. O board atualiza na hora (feature 0026, ADR-025).
+
+---
+
 ## [0.2.3] — 2026-08-04
 
 Painel visual com cara de sistema.
