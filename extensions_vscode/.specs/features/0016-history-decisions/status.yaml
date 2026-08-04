@@ -9,11 +9,12 @@ id: "0016-history-decisions"
 type: "feature"
 title: "Histórico e decisões (RF-020)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a implementação existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-01"
-updated: "2026-08-01"
+updated: "2026-08-03"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -37,6 +38,14 @@ history:
       técnico — Q2 e Q5 são resolvidas em TASK-HIST-001 (ADR-016). Cobertura
       completa (5 requisitos com tarefa); sem requisito descoberto, tarefa órfã,
       ciclo ou tarefa G. Diferente do 0014/0015, não depende da Fase 2.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Implementação já concluída fora da ordem formal do fluxo — as 4 tarefas do plano estavam done com os testes passando — enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho de implementação executado antes da verificação; approve permanece pulado (approval segue null), no mesmo padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-HIST-001 (SCN-HIST-001/002) atendido por aggregateHistory (historyModel.ts) e renderHistoryHtml (historyHtml.ts), cobertos por TEST-HIST-001 (timeline cronológico, categorias indisponíveis marcadas) e TEST-HIST-002 (robusto a fontes ausentes; render escapa HTML e usa nonce). REQ-HIST-002 (SCN-HIST-003/004) atendido por nextAdrNumber/adrSlug/buildAdr (adrCreator.ts), cobertos por TEST-HIST-003 (numeração global max mais um, slug determinístico) e TEST-HIST-004 (esqueleto sem marcador residual); a não-sobrescrita (SCN-HIST-004) vive na borda newAdr e é registrada em gaps com mitigação manual. NFR-HIST-001/002/003 satisfeitos: núcleos sem import de vscode ou rede, read-only exceto a escrita do ADR. Q2/Q5 resolvidas por ADR-016; sem bloqueio.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

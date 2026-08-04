@@ -9,11 +9,12 @@ id: "0017-research"
 type: "feature"
 title: "Research assistido (RF-007)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a implementação existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-01"
-updated: "2026-08-01"
+updated: "2026-08-03"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -37,6 +38,14 @@ history:
       0014/0015: a ação `research` não existe no 0004 e é acrescentada em
       TASK-RES-002. Cobertura completa (5 requisitos com tarefa); sem requisito
       descoberto, tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Implementação já concluída fora da ordem formal do fluxo — as 3 tarefas do plano estavam done com os testes passando — enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho de implementação executado antes da verificação; approve permanece pulado (approval segue null), no mesmo padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-RES-001/002 e NFR-RES-001/002/003 atendidos: a ação research foi acrescentada ao adapter 0004 (composePrompt('research') to /sdd-kit:research), coberta por TEST-RES-002 (researchGenerator.test.ts) e pela suíte do 0004 (claudePrompt.test.ts, conjunto fechado ACTIONS); o esqueleto das oito frentes vem do template feature/research.md (fonte no plugin, sincronizado) montado por buildSkeleton (skeleton.ts), coberto por TEST-RES-001 (oito seções, sem marcador residual). A ação Research fica disponível assim que a mudança existe (D-Q4, sem pré-condição); a sobrescrita pede confirmação modal (SCN-RES-003) e o núcleo é puro. Gaps de integração de host e o conteúdo de IA das oito frentes (skill /sdd-kit:research, Fase 2) registrados em traceability.yaml com mitigação manual. Q1/Q2 resolvidas por ADR-017; sem bloqueio.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

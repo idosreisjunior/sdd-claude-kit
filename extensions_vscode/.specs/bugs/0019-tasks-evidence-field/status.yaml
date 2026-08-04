@@ -9,11 +9,12 @@ id: "0019-tasks-evidence-field"
 type: "bug"
 title: "Template tasks.md sem o campo 'evidências necessárias' (RF-010)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a correção existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-02"
-updated: "2026-08-02"
+updated: "2026-08-03"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -35,6 +36,14 @@ history:
       usuário: as skills chegam na Fase 2 e, para um bug pequeno, o design é
       dispensável. Q1 (formato) decidida na spec. Cobertura: a regra violada
       (RF-010) via SCN-TEVF-001/002; sem tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Correção já implementada e testada fora da ordem formal do fluxo (a única tarefa do plano estava done), enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho executado antes da verificação; approve permanece pulado (approval segue null), no padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). A seção Evidências necessárias foi acrescentada ao bloco de tarefa do template _shared/tasks.md (agora com os campos do RF-010), sincronizada entre o plugin-fonte e a cópia embutida na extensão — diff confirma os dois idênticos e check-templates valida o manifesto (SCN-TEVF-002). O teste de regressão TEST-TEVF-001 (tasksTemplate.test.ts) verifica a presença da seção via regex e falharia sem a correção (SCN-TEVF-001); nenhum teste existente foi alterado (contagem 129 para 136). Q1 resolvida na spec; sem bloqueio.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -47,7 +56,7 @@ blocked_by: []
 resolved_questions:
   - question: Q1
     date: "2026-08-02"
-    resolved_by: null
+    resolved_by: spec
     summary: >-
       Formato do campo decidido pelo autor: seção de conteúdo
       `### Evidências necessárias` (como Descrição/Testes/Critério), não metadado.

@@ -9,11 +9,12 @@ id: "0015-spec-clarify"
 type: "feature"
 title: "Clarificação da especificação (RF-008)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a implementação existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-01"
-updated: "2026-08-01"
+updated: "2026-08-03"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -38,6 +39,14 @@ history:
       técnico — Q1 e Q2 são resolvidas em TASK-CLAR-001 (ADR-015) e podem ajustar
       as tarefas seguintes. Cobertura completa (5 requisitos com tarefa); sem
       requisito descoberto, tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Implementação já concluída fora da ordem formal do fluxo — as 3 tarefas do plano estavam done com os testes passando — enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho de implementação executado antes da verificação; approve permanece pulado (approval segue null), no mesmo padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-CLAR-001/002 e NFR-CLAR-001/003 atendidos: a pré-condição (spec com REQ-*) é núcleo puro testado (clarifyGenerator.test.ts, TEST-CLAR-001); o esqueleto com as nove categorias do RF-008 vem do template feature/clarifications.md montado por skeleton.ts, coberto por TEST-CLAR-002 (nove seções, sem marcador residual). A ação Clarificar vive no item da feature, não promove estado e reusa a ação clarify do adapter 0004 (ADR-015). Confirmação de sobrescrita, não-promoção e compatibilidade de caminhos são integração de host, registradas em traceability.yaml gaps com mitigação por revisão manual; a análise assistida por IA ativa-se na Fase 2 (skill /sdd-kit:clarify), fora do escopo do critério local. Q1/Q2 resolvidas por ADR-015; sem questão bloqueante.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

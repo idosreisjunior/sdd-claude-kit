@@ -9,15 +9,16 @@ id: "0021-github-integration"
 type: "feature"
 title: "Integração com GitHub (RF-019)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a implementação existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-02"
-updated: "2026-08-02"
+updated: "2026-08-03"
 
-# As 3 tarefas do plano estão implementadas (TASK-GH-001/002/003). O estado
-# permanece PLANNED: approve/verify são de Fase 2 — promover aqui afirmaria uma
-# aprovação que não houve.
+# As 3 tarefas do plano estão implementadas (TASK-GH-001/002/003). Verificada em
+# 2026-08-03 contra os critérios de aceite; approve (Fase 2) permanece pulado, então
+# approval segue null — VERIFIED afirma verificação por evidência, não aprovação humana.
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -40,6 +41,14 @@ history:
       corpo = requisitos+validação+evidências; issue OU PR sem atualizar status);
       Q4 (detecção) e Q5 (gatilho) em TASK-GH-001 (ADR-020). Cobertura completa
       (5 requisitos com tarefa); sem requisito descoberto, tarefa órfã, ciclo ou G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Implementação já concluída fora da ordem formal do fluxo — as 3 tarefas do plano estavam done com os testes passando — enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho de implementação executado antes da verificação; approve permanece pulado (approval segue null), no mesmo padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-GH-001 e NFR-GH-003 (geração da descrição com requisitos, validação e evidências, robusta a artefatos parciais) verificados por TEST-GH-001 e TEST-GH-002 sobre buildGithubBody (githubBody.ts), núcleo puro sem import de vscode ou rede. REQ-GH-002/SCN-GH-003/SCN-GH-004/NFR-GH-001/NFR-GH-002 (criar issue ou PR via gh sob confirmação modal; sem gh ou remoto informa a pré-condição e não publica; sem rede própria) são integração com o host e com o gh — implementados em github() (extension.ts) e githubAdapter.ts (ghAvailable/ghCreate), registrados em traceability.yaml gaps com mitigação por revisão manual, no mesmo padrão do adapter de Git da 0007 (também shell-out sem teste unitário, núcleo puro testado). Q4/Q5 resolvidas por ADR-020; sem bloqueio.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

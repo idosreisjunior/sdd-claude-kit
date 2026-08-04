@@ -9,11 +9,12 @@ id: "0020-sql-guard"
 type: "feature"
 title: "SQL Guard (RF-024)"
 
-# Toda mudança nasce em DRAFT.
-status: PLANNED
+# Verificada em 2026-08-03: a implementação existente foi conferida contra os
+# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-02"
-updated: "2026-08-02"
+updated: "2026-08-03"
 
 # Histórico de transições. Só acrescenta; nunca reescreve.
 # `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
@@ -36,6 +37,14 @@ history:
       dialeto-agnóstico); Q3 (superfície) e Q4 (gatilho) são de design, em
       TASK-SQL-001 (ADR-019). Cobertura completa (5 requisitos com tarefa); sem
       requisito descoberto, tarefa órfã, ciclo ou tarefa G. Não depende da Fase 2.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      Implementação já concluída fora da ordem formal do fluxo — as 3 tarefas do plano estavam done com os testes passando — enquanto approve e verify eram tratados como Fase 2. PLANNED to IN_PROGRESS registrada para refletir o trabalho de implementação executado antes da verificação; approve permanece pulado (approval segue null), no mesmo padrão da 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). O incremento 1 do SQL Guard (RF-024) entrega as quatro verificações heurísticas de D-Q1 no núcleo puro analyzeSql (sqlGuard.ts, sem import de vscode, rede ou parser, NFR-SQL-003), coberto por TEST-SQL-001 (DELETE/UPDATE sem WHERE, SELECT estrela, com posição por linha) e TEST-SQL-002 (divisão por zero literal, transação sem ROLLBACK, e SQL seguro to zero achados). A borda sqlGuardCommand (extension.ts) publica os achados como diagnósticos posicionais na DiagnosticCollection SQL Guard, com gatilho na paleta e no menu de contexto do editor SQL (when editorLangId igual a sql), conforme ADR-019. Somente leitura, sem execução nem rede (NFR-SQL-001/002); as bordas registradas em traceability.yaml gaps com mitigação manual. As categorias semânticas do RF-024 que exigem parser e esquema ficam para incrementos futuros (escopo assumido na spec). Q3/Q4 resolvidas por ADR-019; sem bloqueio.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
