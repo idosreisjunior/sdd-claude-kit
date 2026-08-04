@@ -1,0 +1,106 @@
+# Matriz de rastreabilidade — 0023-e2e-tests
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0023-e2e-tests"
+
+requirements:
+
+  "REQ-E2E-001":
+    title: "Harness de integração no host real, isolado da suíte unitária"
+    scenarios:
+      - "SCN-E2E-001"
+    tasks:
+      - "TASK-E2E-001"
+      - "TASK-E2E-002"
+    implementation:
+      - ".specs/features/0023-e2e-tests/decisions/ADR-022-runner-e-layout-dos-testes-e2e.md"
+      - ".vscode-test.mjs"
+      - "package.json"
+    tests:
+      - "TEST-E2E-001"
+
+  "REQ-E2E-002":
+    title: "Smoke de ativação e paridade de comandos"
+    scenarios:
+      - "SCN-E2E-002"
+      - "SCN-E2E-003"
+    tasks:
+      - "TASK-E2E-003"
+    implementation:
+      - "src/e2e/activation.test.ts"
+      - "src/e2e/commands.test.ts"
+    tests:
+      - "TEST-E2E-001"
+      - "TEST-E2E-002"
+
+  "REQ-E2E-003":
+    title: "Smoke de um fluxo não-interativo com saída observável"
+    scenarios:
+      - "SCN-E2E-004"
+      - "SCN-E2E-005"
+    tasks:
+      - "TASK-E2E-003"
+    implementation:
+      - "src/e2e/flows.test.ts"
+      - "test-fixtures/e2e-workspace"
+    tests:
+      - "TEST-E2E-003"
+      - "TEST-E2E-004"
+
+  "NFR-E2E-001":
+    title: "Sem interferência na suíte unitária"
+    scenarios: []
+    tasks:
+      - "TASK-E2E-002"
+    implementation:
+      - ".vscode-test.mjs"
+      - "package.json"
+    tests: []
+
+  "NFR-E2E-002":
+    title: "Determinística e headless no CI"
+    scenarios: []
+    tasks:
+      - "TASK-E2E-002"
+      - "TASK-E2E-004"
+    implementation:
+      - ".github/workflows/ci.yml"
+    tests: []
+
+  "NFR-E2E-003":
+    title: "Sem segredos nem I/O externo da extensão"
+    scenarios: []
+    tasks:
+      - "TASK-E2E-003"
+    implementation:
+      - "src/e2e/flows.test.ts"
+    tests: []
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "NFR-E2E-001"
+    reason: >-
+      "A suíte E2E não é executada por `npm test`" é uma propriedade de
+      configuração (arquivos em out/e2e, fora de out/test), verificável por
+      inspeção do .vscode-test.mjs e por rodar `npm test` sem os testes E2E.
+    mitigation: >-
+      Revisão em TASK-E2E-002 e execução de `npm test` mostrando só a suíte
+      unitária.
+  - id: "NFR-E2E-002"
+    reason: >-
+      O gate headless sob xvfb é do CI; localmente depende de display. Não há
+      teste automatizado do próprio pipeline.
+    mitigation: >-
+      Run do CI (job extension, passo E2E sob xvfb) verde — gate autoritativo.
+  - id: "NFR-E2E-003"
+    reason: >-
+      "Sem segredos nem I/O externo" é propriedade de ausência — verificada por
+      revisão dos testes (nenhum uso de gh/Claude Code/rede).
+    mitigation: >-
+      Revisão de código em TASK-E2E-003.

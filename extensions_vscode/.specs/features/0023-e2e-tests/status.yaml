@@ -1,0 +1,74 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0023-e2e-tests"
+# feature | bug | refactor | change
+type: "feature"
+title: "Testes E2E / integração no host do VS Code"
+
+# Verificada pela CI: E2E (4 testes) verde sob xvfb no host real (run 30867590113).
+status: VERIFIED
+
+created: "2026-08-03"
+updated: "2026-08-03"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-03"
+    reason: >-
+      Criada por /sdd-kit:new para o item de robustez levantado na análise da
+      extensão: a suíte só tem testes unitários (node --test) sobre o núcleo puro;
+      a borda (ativação, comandos, diagnósticos) só é verificada por revisão manual,
+      registrada como gaps em 0014-0022. Feature de qualidade interna, não materializa
+      um RF de usuário. Escopo smoke; questão de design Q3 (runner/layout/CI) em aberto.
+  - status: PLANNED
+    date: "2026-08-03"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (4 tarefas: 2 P, 2 M;
+      caminho crítico linear TASK-E2E-001 → 002 → 003 → 004). Transição
+      DRAFT → PLANNED com CLARIFIED e DESIGNED pulados, no mesmo padrão de 0014-0022
+      (skills clarify/design são de Fase 2): a pendência de design Q3 é resolvida em
+      TASK-E2E-001 (ADR-022). Cobertura completa (6 requisitos com tarefa); sem
+      requisito descoberto, tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      As 4 tarefas do plano foram implementadas: ADR-022 escrito; harness @vscode/test-cli + @vscode/test-electron com Mocha (.vscode-test.mjs), devDependencies e scripts test:e2e/pretest:e2e; testes smoke em src/e2e (activation, commands, flows); fixture test-fixtures/e2e-workspace; e passo E2E sob xvfb no job extension do CI. Verificação local: compile e lint limpos, 136 testes unitários verdes, com a E2E fora de out/test (NFR-E2E-001). A execução da E2E no host real (TEST-E2E-001..004) depende de display; xvfb não existe no WSL de desenvolvimento, então o gate autoritativo é o CI. approve permanece pulado (approval segue null), no padrão de 0010-publishing.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação concluída pela CI: o job extension rodou a suíte E2E sob xvfb num VS Code de teste real (linux-x64 1.131.0, baixado pelo runner) e os quatro testes passaram (4 passing) — SCN-E2E-002 ativação (TEST-E2E-001), SCN-E2E-003 paridade de comandos declarados vs registrados (TEST-E2E-002), SCN-E2E-004 SQL Guard publica diagnóstico para DELETE sem WHERE (TEST-E2E-003) e SCN-E2E-005 Project Doctor executa sem lançar (TEST-E2E-004); run 30867590113. A suíte unitária segue verde (136) sem executar a E2E (NFR-E2E-001, out/e2e fora de out/test); nenhum uso de gh, Claude Code ou rede da extensão (NFR-E2E-003). Todos os critérios de aceite atendidos. approve permanece pulado (approval segue null), no padrão de 0010-publishing.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1/Q2 decididas na spec (Decisões de escopo). Q3 resolvida por TASK-E2E-001
+# (ADR-022). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q3
+    date: "2026-08-03"
+    resolved_by: TASK-E2E-001
+    summary: >-
+      Runner: @vscode/test-cli + @vscode/test-electron com Mocha, config em
+      .vscode-test.mjs. Suíte isolada em src/e2e → out/e2e (fora de out/test).
+      CI: passo xvfb-run no job extension existente. Fixtures em test-fixtures/.
+    adr: ADR-022
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 4
+  pending: 0
+  in_progress: 0
+  done: 4

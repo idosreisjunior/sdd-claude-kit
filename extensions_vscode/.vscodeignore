@@ -4,6 +4,10 @@ src/**
 scripts/**
 .github/**
 out/test/**
+out/e2e/**
+test-fixtures/**
+.vscode-test.mjs
+.vscode-test/**
 templates/.sync-manifest.json
 **/*.ts
 **/*.map
