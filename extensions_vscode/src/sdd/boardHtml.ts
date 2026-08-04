@@ -143,27 +143,46 @@ function presentTypes() {
   return Object.keys(seen).sort();
 }
 
+// Tipos a exibir como chips: os presentes no board + os selecionados que já não
+// aparecem (para o usuário poder limpá-los).
+function typesForChips() {
+  const seen = {};
+  presentTypes().forEach(function (t) { seen[t] = true; });
+  state.filter.types.forEach(function (t) { seen[t] = true; });
+  return Object.keys(seen).sort();
+}
+
+function renderChips(chipsEl) {
+  chipsEl.textContent = '';
+  typesForChips().forEach(function (type) {
+    const on = state.filter.types.indexOf(type) !== -1;
+    const chip = h('button', 'fchip', type);
+    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (on) { chip.classList.add('on'); }
+    chip.addEventListener('click', function () {
+      const i = state.filter.types.indexOf(type);
+      const nowOn = i === -1;
+      if (nowOn) { state.filter.types.push(type); } else { state.filter.types.splice(i, 1); }
+      chip.classList.toggle('on', nowOn);
+      chip.setAttribute('aria-pressed', nowOn ? 'true' : 'false');
+      renderBoardArea();
+    });
+    chipsEl.appendChild(chip);
+  });
+}
+
 function buildToolbar() {
   const bar = h('div', 'toolbar');
   const search = document.createElement('input');
   search.type = 'search';
   search.className = 'search';
   search.placeholder = 'Buscar por id ou título...';
+  search.setAttribute('aria-label', 'Buscar mudanças por id ou título');
   search.value = state.filter.query;
   search.addEventListener('input', function () { state.filter.query = search.value; renderBoardArea(); });
   bar.appendChild(search);
   const chips = h('div', 'chips');
-  presentTypes().forEach(function (type) {
-    const chip = h('button', 'fchip', type);
-    if (state.filter.types.indexOf(type) !== -1) { chip.classList.add('on'); }
-    chip.addEventListener('click', function () {
-      const i = state.filter.types.indexOf(type);
-      if (i === -1) { state.filter.types.push(type); } else { state.filter.types.splice(i, 1); }
-      chip.classList.toggle('on');
-      renderBoardArea();
-    });
-    chips.appendChild(chip);
-  });
+  renderChips(chips);
   bar.appendChild(chips);
   return bar;
 }
@@ -249,7 +268,13 @@ window.addEventListener('message', function (e) {
   if (m.type === 'board') {
     state.changes = m.board;
     if (state.view === 'changes') {
-      if (document.getElementById('boardarea')) { renderBoardArea(); } else { render(); }
+      if (document.getElementById('boardarea')) {
+        renderBoardArea();
+        const chipsEl = document.querySelector('.chips');
+        if (chipsEl) { renderChips(chipsEl); } // novos tipos aparecem sem tocar na busca
+      } else {
+        render();
+      }
     }
   } else if (m.type === 'tasks') {
     state.tasks = m.board;
