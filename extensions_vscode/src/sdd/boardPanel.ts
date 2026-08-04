@@ -3,6 +3,8 @@ import { randomBytes } from 'node:crypto'
 import { parseChanges, parseTaskProgress, type ChangeEntry, type TaskProgress } from './specsIndex'
 import { buildChangesBoard, parseTaskBoard, type ChangesBoard } from './boardModel'
 import { renderBoardHtml } from './boardHtml'
+import { candidateTargets, type SddState } from './stateMachine'
+import { appendHistoryAndSetStatus, setIndexStatus } from './statusWriter'
 
 /**
  * Painel SDD (Kanban + Overview) — feature 0025, ADR-024. Um WebviewPanel único
@@ -105,7 +107,75 @@ export class BoardPanel {
       const board = parseTaskBoard(tasksMd)
       const title = typeof message['title'] === 'string' ? message['title'] : change.title
       await this.panel?.webview.postMessage({ type: 'tasks', board, title })
+      return
     }
+
+    if (message['type'] === 'move') {
+      const toLabel = typeof message['toLabel'] === 'string' ? message['toLabel'] : undefined
+      if (!toLabel || !change.path) {
+        return
+      }
+      await this.moveChange(root, change.id, change.path, change.status, toLabel)
+    }
+  }
+
+  /**
+   * Transição de estado por arrastar (incremento 2, ADR-025). Resolve os estados
+   * candidatos da coluna alvo alcançáveis do estado atual; escolhe (QuickPick se
+   * ambíguo); exige um motivo; e escreve status.yaml (history + status) e o
+   * index.yaml. O watcher reflete a mudança no board.
+   */
+  private async moveChange(
+    root: vscode.Uri,
+    id: string,
+    path: string,
+    from: string,
+    toLabel: string,
+  ): Promise<void> {
+    const candidates = candidateTargets(from, toLabel)
+    if (candidates.length === 0) {
+      vscode.window.showWarningMessage(
+        `SDD: transição inválida — de ${from} não se alcança a coluna "${toLabel}".`,
+      )
+      return
+    }
+    let target: SddState = candidates[0]
+    if (candidates.length > 1) {
+      const pick = await vscode.window.showQuickPick([...candidates], {
+        placeHolder: `Novo estado de ${id} (atual: ${from})`,
+      })
+      if (!pick) {
+        return
+      }
+      target = pick as SddState
+    }
+
+    const reason = await vscode.window.showInputBox({
+      prompt: `Motivo da transição ${from} → ${target} (${id})`,
+      placeHolder: 'Por que esta mudança de estado?',
+      validateInput: (value) => (value.trim() ? undefined : 'Informe um motivo (obrigatório).'),
+    })
+    if (!reason || !reason.trim()) {
+      return
+    }
+
+    const date = new Date().toISOString().slice(0, 10)
+    const statusUri = vscode.Uri.joinPath(root, '.specs', ...path.split('/'), 'status.yaml')
+    const statusText = await readText(statusUri)
+    if (statusText === undefined) {
+      vscode.window.showErrorMessage(`SDD: status.yaml de ${id} não encontrado.`)
+      return
+    }
+    await writeText(statusUri, appendHistoryAndSetStatus(statusText, { status: target, date, reason }))
+
+    const indexUri = vscode.Uri.joinPath(root, '.specs', 'index.yaml')
+    const indexText = await readText(indexUri)
+    if (indexText !== undefined) {
+      await writeText(indexUri, setIndexStatus(indexText, id, target))
+    }
+
+    vscode.window.showInformationMessage(`SDD: ${id} → ${target}.`)
+    await this.refresh() // além do watcher, atualiza já
   }
 }
 
@@ -120,6 +190,10 @@ async function readText(uri: vscode.Uri): Promise<string | undefined> {
   } catch {
     return undefined
   }
+}
+
+async function writeText(uri: vscode.Uri, content: string): Promise<void> {
+  await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf8'))
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

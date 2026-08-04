@@ -1,0 +1,94 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0026-board-drag-transition"
+# feature | bug | refactor | change
+type: "feature"
+title: "Transição por arrastar no Painel SDD (incremento 2)"
+
+# Verificada em 2026-08-04: núcleo testado + validado sobre status.yaml real.
+# approve segue pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criada por /sdd-kit:new como incremento 2 do Painel SDD (0025): arrastar um cartão entre colunas
+      para transicionar o estado, como na SDD Builder AI. Escreve status.yaml/index.yaml com validação
+      da máquina de estados e motivo obrigatório. Questões Q1-Q3 (resolução do alvo, escrita, motivo).
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (3 tarefas: 1 P, 2 M; caminho crítico linear TASK-DND-001 → 002
+      → 003). CLARIFIED/DESIGNED pulados (Fase 2): Q1-Q3 resolvidas em TASK-DND-001 (ADR-025). Cobertura
+      completa (4 requisitos com tarefa); sem requisito descoberto, tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Implementado. stateMachine.ts (TRANSITIONS/GROUP_STATES espelhando workflow.json/groupFor;
+      candidateTargets = interseção grupo × grafo) e statusWriter.ts (appendHistoryAndSetStatus por
+      manipulação de texto, preservando comentários/block scalars; setIndexStatus). boardHtml.ts:
+      cartões draggable e colunas do kanban de mudanças como alvo de drop → postMessage move.
+      boardPanel.ts: handler move (resolve candidatos, QuickPick se ambíguo, InputBox do motivo
+      obrigatório, escreve status.yaml + index.yaml, refresh). Transição PLANNED → IN_PROGRESS;
+      approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: compile e lint limpos; suíte unitária 152 (+6): TEST-DND-001/002/003
+      (candidateTargets resolve os estados do grupo alcançáveis; coluna sem alvo → vazio; canTransition
+      segue o grafo — NFR-DND-001/003) e TEST-DND-004/005/006 (appendHistoryAndSetStatus troca o status
+      e acrescenta a entrada preservando comentários e demais chaves, motivo achatado; setIndexStatus só
+      a entrada alvo — SCN-DND-003, NFR-DND-002). O escritor foi validado também sobre um status.yaml
+      REAL (0014): parseia, status == última entrada de history, history 5 → 6, comentários/resolved_questions/tasks
+      intactos. Critérios de aceite atendidos (REQ-DND-001, SCN-DND-001/002/003). O gesto de arrastar,
+      os diálogos e o IO no host são integração, registrados em traceability.yaml gaps com revisão manual.
+      approve permanece pulado (Fase 2), approval segue null.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1-Q3 resolvidas por TASK-DND-001 (ADR-025). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-04"
+    resolved_by: TASK-DND-001
+    summary: >-
+      Alvo = interseção dos estados da coluna (GROUP_STATES) com as transições válidas do estado atual;
+      1 → direto, >1 → QuickPick, 0 → recusa.
+    adr: ADR-025
+  - question: Q2
+    date: "2026-08-04"
+    resolved_by: TASK-DND-001
+    summary: >-
+      Escrita por manipulação de texto (preserva comentários e block scalars), não round-trip de YAML.
+    adr: ADR-025
+  - question: Q3
+    date: "2026-08-04"
+    resolved_by: TASK-DND-001
+    summary: >-
+      Motivo obrigatório por InputBox; data pelo host; transições embutidas espelhando workflow.json.
+    adr: ADR-025
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3

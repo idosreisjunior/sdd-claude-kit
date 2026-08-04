@@ -31,6 +31,8 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string): string {
   .crumb { font-weight: 600; }
   .board { display: flex; gap: .6rem; align-items: flex-start; overflow-x: auto; padding-bottom: .5rem; }
   .col { flex: 0 0 15rem; background: var(--vscode-editorWidget-background, rgba(127,127,127,.06)); border: 1px solid var(--vscode-panel-border); border-radius: .5rem; padding: .5rem; max-height: calc(100vh - 8rem); overflow-y: auto; }
+  .col.dragover { border-color: var(--vscode-focusBorder); background: var(--vscode-list-dropBackground, rgba(127,127,127,.16)); }
+  .card[draggable="true"] { cursor: grab; }
   .colh { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; position: sticky; top: 0; }
   .coltitle { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; opacity: .85; font-weight: 600; }
   .colcount { font-size: .75rem; background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-radius: .6rem; padding: .05rem .45rem; }
@@ -78,6 +80,11 @@ function progressBar(p) {
 
 function changeCard(card) {
   const el = h('div', 'card');
+  el.draggable = true;
+  el.addEventListener('dragstart', function (ev) {
+    ev.dataTransfer.setData('text/plain', card.id);
+    ev.dataTransfer.effectAllowed = 'move';
+  });
   const title = h('div', 'ctitle', card.title || card.id);
   title.title = 'Abrir dashboard';
   title.addEventListener('click', function () { vscode.postMessage({ type: 'open', id: card.id }); });
@@ -94,13 +101,23 @@ function changeCard(card) {
   return el;
 }
 
-function column(label, count, cards, make) {
+function column(label, count, cards, make, dropLabel) {
   const c = h('div', 'col');
   const head = h('div', 'colh');
   head.appendChild(h('span', 'coltitle', label));
   head.appendChild(h('span', 'colcount', String(count)));
   c.appendChild(head);
   cards.forEach(function (item) { c.appendChild(make(item)); });
+  if (dropLabel) {
+    c.addEventListener('dragover', function (ev) { ev.preventDefault(); c.classList.add('dragover'); });
+    c.addEventListener('dragleave', function () { c.classList.remove('dragover'); });
+    c.addEventListener('drop', function (ev) {
+      ev.preventDefault();
+      c.classList.remove('dragover');
+      const id = ev.dataTransfer.getData('text/plain');
+      if (id) { vscode.postMessage({ type: 'move', id: id, toLabel: dropLabel }); }
+    });
+  }
   return c;
 }
 
@@ -120,7 +137,7 @@ function renderChanges() {
   }
   const board = h('div', 'board');
   state.changes.columns.forEach(function (col) {
-    board.appendChild(column(col.label, col.cards.length, col.cards, changeCard));
+    board.appendChild(column(col.label, col.cards.length, col.cards, changeCard, col.label));
   });
   root.appendChild(board);
 }
