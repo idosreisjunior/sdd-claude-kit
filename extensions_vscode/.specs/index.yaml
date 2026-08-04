@@ -144,7 +144,7 @@ changes:
   - id: 0014-design-generation
     type: feature
     title: Geração do design técnico (RF-009)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0014-design-generation
     created: "2026-08-01"
     updated: "2026-08-03"
@@ -154,7 +154,7 @@ changes:
   - id: 0015-spec-clarify
     type: feature
     title: Clarificação da especificação (RF-008)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0015-spec-clarify
     created: "2026-08-01"
     updated: "2026-08-03"
@@ -164,7 +164,7 @@ changes:
   - id: 0016-history-decisions
     type: feature
     title: Histórico e decisões (RF-020)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0016-history-decisions
     created: "2026-08-01"
     updated: "2026-08-03"
@@ -174,7 +174,7 @@ changes:
   - id: 0017-research
     type: feature
     title: Research assistido (RF-007)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0017-research
     created: "2026-08-01"
     updated: "2026-08-03"
@@ -184,7 +184,7 @@ changes:
   - id: 0018-task-generation
     type: feature
     title: Geração de tarefas (RF-010)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0018-task-generation
     created: "2026-08-02"
     updated: "2026-08-03"
@@ -194,7 +194,7 @@ changes:
   - id: 0019-tasks-evidence-field
     type: bug
     title: Template tasks.md sem o campo 'evidências necessárias' (RF-010)
-    status: VERIFIED
+    status: ARCHIVED
     path: bugs/0019-tasks-evidence-field
     created: "2026-08-02"
     updated: "2026-08-03"
@@ -202,7 +202,7 @@ changes:
   - id: 0020-sql-guard
     type: feature
     title: SQL Guard (RF-024)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0020-sql-guard
     created: "2026-08-02"
     updated: "2026-08-03"
@@ -212,7 +212,7 @@ changes:
   - id: 0021-github-integration
     type: feature
     title: Integração com GitHub (RF-019)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0021-github-integration
     created: "2026-08-02"
     updated: "2026-08-03"
@@ -222,7 +222,7 @@ changes:
   - id: 0022-mcp-creation-assistant
     type: feature
     title: Assistente de criação de MCPs (RF-025)
-    status: VERIFIED
+    status: ARCHIVED
     path: features/0022-mcp-creation-assistant
     created: "2026-08-02"
     updated: "2026-08-03"

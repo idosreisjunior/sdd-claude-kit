@@ -9,9 +9,9 @@ id: "0021-github-integration"
 type: "feature"
 title: "Integração com GitHub (RF-019)"
 
-# Verificada em 2026-08-03: a implementação existente foi conferida contra os
-# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
-status: VERIFIED
+# Arquivada em 2026-08-03: concluída (verificada; evidência no history).
+# Estado terminal — grupo "Concluídas". approve segue pulado (Fase 2).
+status: ARCHIVED
 
 created: "2026-08-02"
 updated: "2026-08-03"
@@ -49,6 +49,10 @@ history:
     date: "2026-08-03"
     reason: >-
       Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-GH-001 e NFR-GH-003 (geração da descrição com requisitos, validação e evidências, robusta a artefatos parciais) verificados por TEST-GH-001 e TEST-GH-002 sobre buildGithubBody (githubBody.ts), núcleo puro sem import de vscode ou rede. REQ-GH-002/SCN-GH-003/SCN-GH-004/NFR-GH-001/NFR-GH-002 (criar issue ou PR via gh sob confirmação modal; sem gh ou remoto informa a pré-condição e não publica; sem rede própria) são integração com o host e com o gh — implementados em github() (extension.ts) e githubAdapter.ts (ghAvailable/ghCreate), registrados em traceability.yaml gaps com mitigação por revisão manual, no mesmo padrão do adapter de Git da 0007 (também shell-out sem teste unitário, núcleo puro testado). Q4/Q5 resolvidas por ADR-020; sem bloqueio.
+  - status: ARCHIVED
+    date: "2026-08-03"
+    reason: >-
+      Arquivada após verificação: a mudança está concluída e faz parte da extensão publicada (v0.2.1). Transição de VERIFIED para ARCHIVED (estado terminal), movendo-a ao grupo Concluídas do painel; os artefatos permanecem em .specs/features para rastreabilidade e os identificadores nunca são reutilizados. Sem alteração de código.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.

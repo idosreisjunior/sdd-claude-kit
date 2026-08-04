@@ -9,9 +9,9 @@ id: "0018-task-generation"
 type: "feature"
 title: "Geração de tarefas (RF-010)"
 
-# Verificada em 2026-08-03: a implementação existente foi conferida contra os
-# critérios de aceite (evidência no history). approve segue pulado (Fase 2).
-status: VERIFIED
+# Arquivada em 2026-08-03: concluída (verificada; evidência no history).
+# Estado terminal — grupo "Concluídas". approve segue pulado (Fase 2).
+status: ARCHIVED
 
 created: "2026-08-02"
 updated: "2026-08-03"
@@ -45,6 +45,10 @@ history:
     date: "2026-08-03"
     reason: >-
       Verificação por evidência (build e lint limpos; suíte 136/136 via node --test). REQ-TGEN-001 (SCN-TGEN-001) e SCN-TGEN-002/003 atendidos pelo núcleo puro analyzeTasks (taskAnalysis.ts), que sinaliza tarefas de complexidade G e campos obrigatórios ausentes, cobertos por TEST-TGEN-001 e TEST-TGEN-002 (asserts sobre kind, taskId e linha, e sobre nenhum achado quando completo). A borda analyzeTasksCommand (extension.ts) publica os achados no painel Problems (ADR-018), trata a ausência de tasks.md (SCN-TGEN-004) e oferece gerar via launchClaudeAction(id, 'tasks') to /sdd-kit:tasks (REQ-TGEN-002, SCN-TGEN-005). NFR-TGEN-001/002/003 satisfeitos (núcleo puro, somente leitura). Gaps de apresentação e atalho, e o gap framework-para-template do 11 campo (D-Q2b), registrados em traceability.yaml com mitigação manual. Q1/Q3 resolvidas por ADR-018; sem bloqueio.
+  - status: ARCHIVED
+    date: "2026-08-03"
+    reason: >-
+      Arquivada após verificação: a mudança está concluída e faz parte da extensão publicada (v0.2.1). Transição de VERIFIED para ARCHIVED (estado terminal), movendo-a ao grupo Concluídas do painel; os artefatos permanecem em .specs/features para rastreabilidade e os identificadores nunca são reutilizados. Sem alteração de código.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
