@@ -1,0 +1,95 @@
+# Matriz de rastreabilidade — 0024-feature-action-surface
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0024-feature-action-surface"
+
+requirements:
+
+  "REQ-DASH-001":
+    title: "Ações visíveis no dashboard"
+    scenarios:
+      - "SCN-DASH-001"
+      - "SCN-DASH-002"
+    tasks:
+      - "TASK-DASH-001"
+      - "TASK-DASH-002"
+    implementation:
+      - "src/sdd/dashboardHtml.ts"
+      - "src/sdd/featureDashboard.ts"
+    tests:
+      - "TEST-DASH-001"
+      - "TEST-DASH-003"
+
+  "REQ-DASH-002":
+    title: "Menu de contexto organizado em submenu"
+    scenarios:
+      - "SCN-DASH-003"
+    tasks:
+      - "TASK-DASH-001"
+      - "TASK-DASH-003"
+    implementation:
+      - ".specs/features/0024-feature-action-surface/decisions/ADR-023-superficie-de-acoes-dashboard-e-submenu.md"
+      - "package.json"
+    tests: []
+
+  "NFR-DASH-001":
+    title: "Segurança do webview preservada"
+    scenarios: []
+    tasks:
+      - "TASK-DASH-002"
+    implementation:
+      - "src/sdd/featureDashboard.ts"
+      - "src/sdd/dashboardHtml.ts"
+    tests:
+      - "TEST-DASH-002"
+
+  "NFR-DASH-002":
+    title: "Sem novo comando nem regressão"
+    scenarios: []
+    tasks:
+      - "TASK-DASH-003"
+    implementation:
+      - "package.json"
+    tests: []
+
+  "NFR-DASH-003":
+    title: "Núcleo puro e testável"
+    scenarios: []
+    tasks:
+      - "TASK-DASH-002"
+    implementation:
+      - "src/sdd/dashboardHtml.ts"
+    tests:
+      - "TEST-DASH-001"
+      - "TEST-DASH-003"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "REQ-DASH-001"
+    reason: >-
+      O clique de fato num `command:` URI e o disparo do comando no host são
+      integração com o VS Code; a montagem do href e da seção (com o id embutido)
+      vive no núcleo puro (TEST-DASH-001/003).
+    mitigation: >-
+      Revisão manual: no dashboard, clicar num botão aciona o comando sobre a
+      mudança. A existência dos comandos é coberta por TEST-E2E-002 (0023).
+  - id: "REQ-DASH-002"
+    reason: >-
+      A renderização do submenu no menu de contexto é integração com o host, não
+      coberta por teste unitário.
+    mitigation: >-
+      Revisão manual + inspeção do manifesto (submenu referenciado, 16 comandos,
+      nenhum órfão); paridade de comandos por TEST-E2E-002.
+  - id: "NFR-DASH-002"
+    reason: >-
+      "Nenhum comando novo" é propriedade do manifesto — verificável por inspeção
+      e pela paridade E2E, não por teste unitário próprio.
+    mitigation: >-
+      TEST-E2E-002 (0023) compara declarados vs registrados; revisão do diff do
+      package.json.

@@ -2,6 +2,7 @@
 // Code. Gera o HTML do webview a partir do DashboardModel com CSP + nonce e
 // escapando todo texto vindo dos artefatos (NFR-UI-002). Sem scripts, sem rede.
 import type { Count, DashboardModel } from './dashboardModel'
+import type { ChangeEntry } from './specsIndex'
 
 /** Escapa texto para inserção segura em HTML (NFR-UI-002). */
 export function esc(value: string): string {
@@ -13,8 +14,18 @@ export function esc(value: string): string {
     .replace(/'/g, '&#39;')
 }
 
-/** Gera o documento HTML do dashboard. `nonce` deve ser alfanumérico. */
-export function renderDashboardHtml(model: DashboardModel, nonce: string): string {
+/**
+ * Gera o documento HTML do dashboard. `nonce` deve ser alfanumérico. Quando
+ * `change` é fornecido, renderiza a seção "Ações" com botões que disparam os
+ * comandos da mudança por `command:` URIs (feature 0024, ADR-023) — assim os
+ * recursos ficam visíveis sem depender do menu de contexto. Sem `change`
+ * (ex.: testes de render), a seção é omitida.
+ */
+export function renderDashboardHtml(
+  model: DashboardModel,
+  nonce: string,
+  change?: ChangeEntry,
+): string {
   const csp = `default-src 'none'; style-src 'nonce-${nonce}'; img-src data:;`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -42,11 +53,17 @@ export function renderDashboardHtml(model: DashboardModel, nonce: string): strin
   .hist { font-size: .85rem; }
   .hist .d { opacity: .6; }
   .muted { opacity: .7; }
+  .actions { display: flex; flex-direction: column; gap: .55rem; margin: .5rem 0 .25rem; }
+  .actgroup { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+  .actlabel { width: 100%; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; opacity: .6; }
+  .actbtn { display: inline-block; padding: .25rem .6rem; border: 1px solid var(--vscode-panel-border); border-radius: .4rem; background: var(--vscode-button-secondaryBackground, transparent); color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)); text-decoration: none; font-size: .82rem; }
+  .actbtn:hover { background: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground)); }
 </style>
 </head>
 <body>
   <h1>${esc(model.title)}</h1>
   <div class="sub">${esc(model.id)} · ${esc(model.type)} · <span class="badge">${esc(model.status)}</span></div>
+  ${change ? actionsBlock(change) : ''}
   ${objectiveBlock(model)}
   ${progressBlock(model)}
   <h2>Contagens</h2>
@@ -109,4 +126,89 @@ function historyBlock(model: DashboardModel): string {
     .map((h) => `<li class="hist"><span class="badge">${esc(h.status)}</span> <span class="d">${esc(h.date)}</span><br>${esc(h.reason)}</li>`)
     .join('\n    ')
   return `<h2>Histórico</h2>\n  <ul>\n    ${items}\n  </ul>`
+}
+
+/** Uma ação da feature: rótulo visível + comando `sddClaudeKit.*` que ela dispara. */
+interface FeatureAction {
+  command: string
+  label: string
+}
+
+/**
+ * Ações da feature, agrupadas pelo fluxo SDD, renderizadas como botões no
+ * dashboard (feature 0024, ADR-023). São as mesmas do menu de contexto da
+ * mudança — aqui ficam visíveis sem clique-direito.
+ */
+export const FEATURE_ACTION_GROUPS: ReadonlyArray<{ label: string; items: FeatureAction[] }> = [
+  {
+    label: 'Fluxo',
+    items: [
+      { command: 'sddClaudeKit.research', label: 'Research' },
+      { command: 'sddClaudeKit.clarify', label: 'Clarificar' },
+      { command: 'sddClaudeKit.generateDesign', label: 'Gerar design' },
+      { command: 'sddClaudeKit.analyzeTasks', label: 'Tarefas' },
+    ],
+  },
+  {
+    label: 'Decisões e histórico',
+    items: [
+      { command: 'sddClaudeKit.history', label: 'Histórico' },
+      { command: 'sddClaudeKit.newAdr', label: 'Novo ADR' },
+    ],
+  },
+  {
+    label: 'Validação',
+    items: [
+      { command: 'sddClaudeKit.validateChange', label: 'Validar' },
+      { command: 'sddClaudeKit.collectEvidence', label: 'Coletar evidências' },
+      { command: 'sddClaudeKit.metricsFeature', label: 'Métricas' },
+    ],
+  },
+  {
+    label: 'Git e rastreabilidade',
+    items: [
+      { command: 'sddClaudeKit.checkScope', label: 'Verificar escopo' },
+      { command: 'sddClaudeKit.navigateTraceability', label: 'Rastreabilidade' },
+      { command: 'sddClaudeKit.suggestCommit', label: 'Sugerir commit' },
+    ],
+  },
+  {
+    label: 'Claude Code e integrações',
+    items: [
+      { command: 'sddClaudeKit.openInClaudeCode', label: 'Abrir no Claude Code' },
+      { command: 'sddClaudeKit.measureContext', label: 'Medir contexto' },
+      { command: 'sddClaudeKit.github', label: 'GitHub' },
+      { command: 'sddClaudeKit.mcp', label: 'MCP' },
+      { command: 'sddClaudeKit.editSpec', label: 'Editar spec' },
+    ],
+  },
+]
+
+/** Lista achatada dos comandos das ações — usada em `enableCommandUris` do webview. */
+export const FEATURE_ACTION_COMMANDS: readonly string[] = FEATURE_ACTION_GROUPS.flatMap((g) =>
+  g.items.map((a) => a.command),
+)
+
+/**
+ * Monta o `command:` URI de uma ação. O argumento é um nó sintético no mesmo
+ * formato do item da árvore (`{ kind: 'feature', change }`), que os handlers já
+ * resolvem via `featureChangeOf` — assim o botão age sobre a mudança certa sem
+ * alterar nenhum handler (ADR-023).
+ */
+export function actionHref(command: string, change: ChangeEntry): string {
+  const arg = encodeURIComponent(JSON.stringify([{ kind: 'feature', change }]))
+  return `command:${command}?${arg}`
+}
+
+function actionsBlock(change: ChangeEntry): string {
+  const groups = FEATURE_ACTION_GROUPS.map((g) => {
+    const buttons = g.items
+      .map(
+        (a) =>
+          `<a class="actbtn" href="${esc(actionHref(a.command, change))}" title="${esc(a.label)}">${esc(a.label)}</a>`,
+      )
+      .join('\n      ')
+    return `<div class="actgroup"><span class="actlabel">${esc(g.label)}</span>\n      ${buttons}\n    </div>`
+  }).join('\n    ')
+  return `<h2>Ações</h2>\n  <div class="actions">\n    ${groups}\n  </div>`
 }

@@ -1,7 +1,24 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { renderDashboardHtml, esc } from '../sdd/dashboardHtml'
+import {
+  renderDashboardHtml,
+  esc,
+  actionHref,
+  FEATURE_ACTION_COMMANDS,
+} from '../sdd/dashboardHtml'
 import type { DashboardModel } from '../sdd/dashboardModel'
+import type { ChangeEntry } from '../sdd/specsIndex'
+
+function change(overrides: Partial<ChangeEntry> = {}): ChangeEntry {
+  return {
+    id: '0014-design-generation',
+    type: 'feature',
+    title: 'Geração do design',
+    status: 'DRAFT',
+    path: 'features/0014-design-generation',
+    ...overrides,
+  }
+}
 
 function model(overrides: Partial<DashboardModel> = {}): DashboardModel {
   return {
@@ -54,4 +71,33 @@ test('TEST-UI-002 — contagem indisponível aparece com a nota', () => {
 
 test('TEST-UI-002 — esc cobre os cinco caracteres perigosos', () => {
   assert.equal(esc(`&<>"'`), '&amp;&lt;&gt;&quot;&#39;')
+})
+
+test('TEST-DASH-001 — com change, o dashboard mostra a seção Ações com command: URIs (SCN-DASH-001)', () => {
+  const html = renderDashboardHtml(model(), 'n', change())
+  assert.match(html, /<h2>Ações<\/h2>/)
+  // um botão por comando de ação, cada um com seu command: URI
+  for (const command of FEATURE_ACTION_COMMANDS) {
+    assert.ok(
+      html.includes(`href="command:${command}?`),
+      `esperava botão para ${command}`,
+    )
+  }
+  // o id da feature vai no argumento do comando (para agir sobre a mudança certa)
+  assert.ok(html.includes('0014-design-generation'), 'o id da feature vai no argumento')
+})
+
+test('TEST-DASH-002 — sem change, a seção Ações é omitida (compatibilidade)', () => {
+  const html = renderDashboardHtml(model(), 'n')
+  assert.ok(!/<h2>Ações<\/h2>/.test(html), 'sem change não há seção Ações')
+})
+
+test('TEST-DASH-003 — actionHref embute o nó sintético { kind: feature, change }', () => {
+  const href = actionHref('sddClaudeKit.research', change({ id: '0099-x' }))
+  assert.ok(href.startsWith('command:sddClaudeKit.research?'))
+  const json = decodeURIComponent(href.split('?')[1])
+  const [node] = JSON.parse(json)
+  assert.equal(node.kind, 'feature')
+  assert.equal(node.change.id, '0099-x')
+  assert.equal(node.change.path, 'features/0014-design-generation')
 })

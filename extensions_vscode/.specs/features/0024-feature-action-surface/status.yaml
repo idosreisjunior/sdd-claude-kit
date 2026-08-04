@@ -1,0 +1,89 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0024-feature-action-surface"
+# feature | bug | refactor | change
+type: "feature"
+title: "Superfície de ações da feature (dashboard + submenu)"
+
+# Verificada em 2026-08-03: implementação conferida contra os critérios de aceite
+# (evidência no history). approve segue pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-03"
+updated: "2026-08-03"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+# `reason` é obrigatório e não pode ser vazio: uma transição sem motivo
+# registrado é indistinguível de uma mudança acidental de estado.
+history:
+  - status: DRAFT
+    date: "2026-08-03"
+    reason: >-
+      Criada por /sdd-kit:new a partir do relato do usuário: a extensão "parece
+      simples" e os recursos novos "não aparecem". Diagnóstico: os comandos de
+      0014-0022 só estão no menu de contexto e na paleta; os painéis não ganharam
+      nada visível. Feature de UX/qualidade interna (reusa comandos existentes).
+      Escopo: botões no dashboard + submenu no contexto. Questão de design Q3 em aberto.
+  - status: PLANNED
+    date: "2026-08-03"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks a partir dos requisitos (3 tarefas: 2 P, 1 M;
+      caminho crítico linear TASK-DASH-001 → 002 → 003). CLARIFIED e DESIGNED pulados
+      (skills de Fase 2), no padrão das anteriores: Q3 resolvida em TASK-DASH-001
+      (ADR-023). Cobertura completa (5 requisitos com tarefa); sem requisito descoberto,
+      tarefa órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-03"
+    reason: >-
+      As 3 tarefas implementadas. Dashboard: seção "Ações" em dashboardHtml.ts
+      (FEATURE_ACTION_GROUPS/actionHref/actionsBlock, núcleo puro) renderiza botões
+      por command: URI com o nó sintético { kind: feature, change }; featureDashboard.ts
+      habilita enableCommandUris por allowlist e passa o change ao render, sem scripts.
+      Menu de contexto: submenu sddClaudeKit.featureActions no package.json com os 16
+      comandos agrupados. Nenhum handler alterado; nenhum comando novo. Transição
+      PLANNED → IN_PROGRESS; approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-03"
+    reason: >-
+      Verificação por evidência: compile e lint limpos; suíte unitária 139/139 (+3:
+      TEST-DASH-001 seção Ações com um command: URI por comando e o id embutido,
+      TEST-DASH-002 sem change a seção é omitida, TEST-DASH-003 actionHref embute o nó
+      sintético). Manifesto validado: submenu sddClaudeKit.featureActions referenciado no
+      view/item/context, 16 comandos no submenu, nenhum órfão, contributes.commands
+      inalterado (NFR-DASH-002). Núcleo de montagem puro, sem vscode/rede (NFR-DASH-003);
+      webview sem scripts e enableCommandUris por allowlist (NFR-DASH-001). O clique no
+      command: URI e a renderização do submenu são integração de host, registrados em
+      traceability.yaml gaps com mitigação por revisão manual e pela paridade E2E
+      (TEST-E2E-002). Todos os critérios de aceite atendidos. approve permanece pulado.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+# Q1/Q2 decididas na spec (Decisões de escopo). Q3 resolvida por TASK-DASH-001
+# (ADR-023). Sem bloqueio pendente.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q3
+    date: "2026-08-03"
+    resolved_by: TASK-DASH-001
+    summary: >-
+      Botões do dashboard = command: URIs com nó sintético { kind: feature, change }
+      (reusa featureChangeOf, sem tocar handlers) + enableCommandUris por allowlist.
+      Menu de contexto = submenu sddClaudeKit.featureActions via contribuição submenus.
+    adr: ADR-023
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3
