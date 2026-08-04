@@ -1,0 +1,66 @@
+# Matriz de rastreabilidade — 0027-board-write-hardening
+version: 1
+
+feature: "0027-board-write-hardening"
+
+requirements:
+
+  "REQ-BUG27-001":
+    title: "Escrita preserva o arquivo (fim de linha + comentário inline)"
+    scenarios:
+      - "SCN-BUG27-001"
+      - "SCN-BUG27-002"
+    tasks:
+      - "TASK-BUG27-001"
+    implementation:
+      - "src/sdd/statusWriter.ts"
+    tests:
+      - "TEST-DND-007w"
+      - "TEST-DND-008w"
+
+  "REQ-BUG27-002":
+    title: "Sem transição parcial"
+    scenarios:
+      - "SCN-BUG27-003"
+    tasks:
+      - "TASK-BUG27-001"
+    implementation:
+      - "src/sdd/statusWriter.ts"
+    tests:
+      - "TEST-DND-009w"
+
+  "REQ-BUG27-003":
+    title: "Escrita all-or-nothing entre os dois arquivos"
+    scenarios:
+      - "SCN-BUG27-004"
+    tasks:
+      - "TASK-BUG27-002"
+    implementation:
+      - "src/sdd/boardPanel.ts"
+    tests: []
+
+  "REQ-BUG27-004":
+    title: "Drop na própria coluna é no-op"
+    scenarios:
+      - "SCN-BUG27-005"
+    tasks:
+      - "TASK-BUG27-002"
+    implementation:
+      - "src/sdd/boardPanel.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-BUG27-003"
+    reason: >-
+      A restauração do status.yaml quando a escrita do index.yaml falha é IO no
+      host (difícil de forçar em teste unitário sem mocar workspace.fs).
+    mitigation: >-
+      Revisão de código (TASK-BUG27-002): lê os dois arquivos antes de escrever e
+      restaura o status no catch da escrita do índice.
+  - id: "REQ-BUG27-004"
+    reason: >-
+      O no-op na mesma coluna é uma guarda na borda (groupFor(from) == toLabel),
+      antes de qualquer diálogo/escrita.
+    mitigation: >-
+      Revisão de código + revisão manual: soltar na coluna do estado atual não faz
+      nada.

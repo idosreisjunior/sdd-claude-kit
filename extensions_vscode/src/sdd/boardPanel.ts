@@ -1,6 +1,12 @@
 import * as vscode from 'vscode'
 import { randomBytes } from 'node:crypto'
-import { parseChanges, parseTaskProgress, type ChangeEntry, type TaskProgress } from './specsIndex'
+import {
+  groupFor,
+  parseChanges,
+  parseTaskProgress,
+  type ChangeEntry,
+  type TaskProgress,
+} from './specsIndex'
 import { buildChangesBoard, parseTaskBoard, type ChangesBoard } from './boardModel'
 import { renderBoardHtml } from './boardHtml'
 import { candidateTargets, type SddState } from './stateMachine'
@@ -132,6 +138,9 @@ export class BoardPanel {
     from: string,
     toLabel: string,
   ): Promise<void> {
+    if (groupFor(from) === toLabel) {
+      return // solto na mesma coluna do estado atual: sem transição
+    }
     const candidates = candidateTargets(from, toLabel)
     if (candidates.length === 0) {
       vscode.window.showWarningMessage(
@@ -161,17 +170,27 @@ export class BoardPanel {
 
     const date = new Date().toISOString().slice(0, 10)
     const statusUri = vscode.Uri.joinPath(root, '.specs', ...path.split('/'), 'status.yaml')
+    const indexUri = vscode.Uri.joinPath(root, '.specs', 'index.yaml')
+
+    // All-or-nothing: exige os dois arquivos ANTES de escrever qualquer um.
     const statusText = await readText(statusUri)
-    if (statusText === undefined) {
-      vscode.window.showErrorMessage(`SDD: status.yaml de ${id} não encontrado.`)
+    const indexText = await readText(indexUri)
+    if (statusText === undefined || indexText === undefined) {
+      vscode.window.showErrorMessage(
+        `SDD: status.yaml ou index.yaml de ${id} não encontrado; nada foi alterado.`,
+      )
       return
     }
-    await writeText(statusUri, appendHistoryAndSetStatus(statusText, { status: target, date, reason }))
 
-    const indexUri = vscode.Uri.joinPath(root, '.specs', 'index.yaml')
-    const indexText = await readText(indexUri)
-    if (indexText !== undefined) {
+    await writeText(statusUri, appendHistoryAndSetStatus(statusText, { status: target, date, reason }))
+    try {
       await writeText(indexUri, setIndexStatus(indexText, id, target))
+    } catch {
+      await writeText(statusUri, statusText) // restaura o status.yaml original
+      vscode.window.showErrorMessage(
+        `SDD: falha ao atualizar index.yaml; status.yaml de ${id} restaurado.`,
+      )
+      return
     }
 
     vscode.window.showInformationMessage(`SDD: ${id} → ${target}.`)

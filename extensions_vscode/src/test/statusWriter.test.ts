@@ -100,3 +100,49 @@ test('TEST-DND-006 — setIndexStatus muda só a entrada alvo (SCN-DND-003)', ()
   assert.equal(a?.status, 'VERIFIED', 'a outra entrada não muda')
   assert.equal(b?.status, 'IN_PROGRESS', 'a entrada alvo muda')
 })
+
+test('TEST-DND-007w — preserva o fim de linha CRLF (bug 0027)', () => {
+  const crlf = SAMPLE_STATUS.replace(/\n/g, '\r\n')
+  const out = appendHistoryAndSetStatus(crlf, {
+    status: 'ARCHIVED',
+    date: '2026-08-04',
+    reason: 'Motivo.',
+  })
+  assert.ok(out.includes('\r\n'), 'mantém CRLF')
+  assert.ok(!/[^\r]\n/.test(out), 'não introduz LF solto')
+  const doc = load(out) as Record<string, unknown>
+  assert.equal(doc['status'], 'ARCHIVED')
+
+  const lf = setIndexStatus(SAMPLE_INDEX.replace(/\n/g, '\r\n'), '0002-b', 'IN_PROGRESS')
+  assert.ok(lf.includes('\r\n') && !/[^\r]\n/.test(lf), 'index preserva CRLF')
+})
+
+test('TEST-DND-008w — preserva comentário inline na linha status (bug 0027)', () => {
+  const withComment = SAMPLE_STATUS.replace('status: VERIFIED', 'status: VERIFIED  # nota')
+  const out = appendHistoryAndSetStatus(withComment, {
+    status: 'ARCHIVED',
+    date: '2026-08-04',
+    reason: 'Motivo.',
+  })
+  assert.match(out, /^status: ARCHIVED {2}# nota$/m, 'valor trocado, comentário inline mantido')
+
+  // index com comentário inline no status também é atualizado (antes era ignorado)
+  const idx = SAMPLE_INDEX.replace('status: PLANNED', 'status: PLANNED # wip')
+  const outIdx = setIndexStatus(idx, '0002-b', 'IN_PROGRESS')
+  assert.match(outIdx, /status: IN_PROGRESS # wip/, 'index: valor trocado, comentário mantido')
+})
+
+test('TEST-DND-009w — sem history: ou sem status: de topo, devolve inalterado (bug 0027)', () => {
+  const noHistory = 'version: 1\nstatus: DRAFT\ntasks:\n  total: 0\n'
+  assert.equal(
+    appendHistoryAndSetStatus(noHistory, { status: 'CLARIFIED', date: '2026-08-04', reason: 'x' }),
+    noHistory,
+    'sem history não muda nada (evita transição parcial)',
+  )
+  const noStatus = 'version: 1\nhistory:\n  - status: DRAFT\n    date: "2026-08-04"\n    reason: >-\n      c\n'
+  assert.equal(
+    appendHistoryAndSetStatus(noStatus, { status: 'CLARIFIED', date: '2026-08-04', reason: 'x' }),
+    noStatus,
+    'sem status de topo não muda nada',
+  )
+})
