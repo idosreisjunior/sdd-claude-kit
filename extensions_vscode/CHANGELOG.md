@@ -5,6 +5,20 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.5] — 2026-08-04
+
+Integridade da escrita do Painel SDD (correções da revisão do 0026).
+
+### Corrigido
+
+- A transição por arrastar agora escreve os arquivos com mais cuidado: **preserva o fim de linha**
+  (LF/CRLF) e um eventual **comentário inline** na linha `status:`; só grava quando `status:` e
+  `history:` existem (sem transição parcial); a escrita é **all-or-nothing** entre `status.yaml` e
+  `index.yaml` (se a do índice falhar, o `status.yaml` é restaurado); e soltar um cartão na **própria
+  coluna** do estado atual não dispara transição (bug 0027).
+
+---
+
 ## [0.2.4] — 2026-08-04
 
 Painel SDD interativo.
