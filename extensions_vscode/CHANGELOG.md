@@ -5,6 +5,20 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.6] — 2026-08-04
+
+Busca e filtros no Painel SDD.
+
+### Adicionado
+
+- **Barra de busca e filtros** no Painel SDD: uma **busca** filtra os cartões por id ou título
+  (case-insensitive) e **chips de tipo** (feature/bug/refactor/change) filtram por tipo — tudo ao
+  vivo. O overview mostra "N exibidas" quando há filtro, e a barra (e o foco da busca) permanecem nas
+  atualizações em tempo real. Busca acessível (`aria-label`) e chips com estado (`aria-pressed`)
+  (feature 0028, ADR-026).
+
+---
+
 ## [0.2.5] — 2026-08-04
 
 Integridade da escrita do Painel SDD (correções da revisão do 0026).
