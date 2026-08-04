@@ -5,6 +5,19 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.7] — 2026-08-04
+
+Feed de atividade no Painel SDD.
+
+### Adicionado
+
+- Visão **"Atividade"** no Painel SDD (botão na barra): um feed do projeto com as **transições de
+  estado** de todas as mudanças (agregadas do histórico de cada `status.yaml`), da mais recente para
+  a mais antiga, com estado, id, data e motivo. Clicar no id abre o dashboard; o feed **atualiza em
+  tempo real** conforme os `.specs` mudam (feature 0029, ADR-027).
+
+---
+
 ## [0.2.6] — 2026-08-04
 
 Busca e filtros no Painel SDD.
