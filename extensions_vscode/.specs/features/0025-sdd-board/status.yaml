@@ -9,8 +9,8 @@ id: "0025-sdd-board"
 type: "feature"
 title: "Painel SDD — Kanban + Overview ao vivo"
 
-# Implementação (incremento 1) concluída; abrir o painel é verificado pelo E2E no CI.
-status: IN_PROGRESS
+# Verificada (incremento 1): E2E do painel verde no CI (SCN-BOARD-003). approve pulado (Fase 2).
+status: VERIFIED
 
 created: "2026-08-04"
 updated: "2026-08-04"
@@ -46,6 +46,19 @@ history:
       view/title. Verificação local: compile e lint limpos, 146 testes unitários (+7: TEST-BOARD-001..003
       e robustez). Abrir o painel (E2E TEST-BOARD-004) e a atualização ao vivo são integração de host,
       verificadas no CI. Transição PLANNED → IN_PROGRESS; approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência. Núcleo unitário verde (146 testes): TEST-BOARD-001 (colunas por status
+      + overview total/concluídas/percentual), TEST-BOARD-002 (tarefas por status; sem-status → Pendente),
+      TEST-BOARD-003 (CSP com nonce em style e script, board embutido, acquireVsCodeApi, < neutralizado
+      sem injeção). O gate de host passou no CI: o E2E TEST-BOARD-004 (SCN-BOARD-003 — o Painel SDD abre
+      sem lançar) rodou num VS Code de teste real sob xvfb, 5 passing. Critérios de aceite atendidos:
+      kanban por status + overview (REQ-BOARD-001), drill-down de tarefas (REQ-BOARD-002), clique abre o
+      dashboard e o painel não escreve em .specs (REQ-BOARD-003/NFR-BOARD-003), webview seguro com CSP+nonce
+      (NFR-BOARD-002), núcleo puro (NFR-BOARD-001). A atualização ao vivo (watcher → postMessage) e o clique
+      são integração de host, registrados em traceability.yaml gaps com revisão manual. Arrastar-para-transicionar
+      fica para o incremento 2. approve permanece pulado (Fase 2), approval segue null.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
