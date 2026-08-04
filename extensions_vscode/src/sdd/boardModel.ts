@@ -3,6 +3,7 @@
 //
 // Reusa o parsing e o agrupamento por status do índice (specsIndex): as colunas
 // do kanban de mudanças são os mesmos grupos do painel Features (GROUP_ORDER).
+import { load } from 'js-yaml'
 import {
   GROUP_ORDER,
   groupFor,
@@ -159,6 +160,80 @@ const TASK_COLUMNS: Array<{ label: string; state: TaskState }> = [
   { label: 'Em progresso', state: 'in_progress' },
   { label: 'Concluída', state: 'done' },
 ]
+
+// --- Feed de atividade (transições de todas as mudanças) ---------------------
+
+/** Um item do feed: uma transição de estado de uma mudança. */
+export interface FeedItem {
+  id: string
+  title: string
+  status: string
+  date: string
+  reason: string
+}
+
+/** Fonte do feed: id/título da mudança + o texto do seu status.yaml. */
+export interface FeedSource {
+  id: string
+  title: string
+  statusYaml: string
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function asString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.length > 0 ? value : undefined
+}
+
+/** Extrai as transições do `history:` de um status.yaml. Robusto a inválido. */
+function parseHistory(statusYaml: string): Array<{ status: string; date: string; reason: string }> {
+  let doc: unknown
+  try {
+    doc = load(statusYaml)
+  } catch {
+    return []
+  }
+  const history = isRecord(doc) ? doc['history'] : undefined
+  if (!Array.isArray(history)) {
+    return []
+  }
+  const out: Array<{ status: string; date: string; reason: string }> = []
+  for (const raw of history) {
+    if (!isRecord(raw)) {
+      continue
+    }
+    const status = asString(raw['status'])
+    const date = asString(raw['date'])
+    if (status && date) {
+      out.push({ status, date, reason: asString(raw['reason']) ?? '' })
+    }
+  }
+  return out
+}
+
+/**
+ * Feed de atividade do projeto: todas as transições de estado (do `history:` de
+ * cada status.yaml), do mais recente para o mais antigo, limitado a `limit`.
+ * Datas "YYYY-MM-DD" ordenam lexicograficamente = cronologicamente.
+ */
+export function buildActivityFeed(sources: readonly FeedSource[], limit = 50): FeedItem[] {
+  const items: FeedItem[] = []
+  for (const source of sources) {
+    for (const entry of parseHistory(source.statusYaml)) {
+      items.push({
+        id: source.id,
+        title: source.title,
+        status: entry.status,
+        date: entry.date,
+        reason: entry.reason,
+      })
+    }
+  }
+  items.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  return items.slice(0, limit)
+}
 
 const TASK_HEADER = /^##\s+(TASK-[A-Z0-9]+-\d+)\s*(?:—|-)?\s*(.*)$/
 const TASK_STATUS = /^\*\*Status:\*\*\s*(pending|in_progress|done)\b/i
