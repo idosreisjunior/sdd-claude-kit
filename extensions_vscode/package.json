@@ -395,8 +395,16 @@
         },
         "sddClaudeKit.scope.sensitiveGlobs": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": [".env", ".env.*", "**/*.pem", "**/*.key", "**/id_rsa"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            ".env",
+            ".env.*",
+            "**/*.pem",
+            "**/*.key",
+            "**/id_rsa"
+          ],
           "description": "Globs de arquivos sensíveis: alterá-los gera alerta de escopo (RF-014, feature 0007)."
         },
         "sddClaudeKit.scope.maxLines": {
@@ -411,8 +419,15 @@
         },
         "sddClaudeKit.scope.dependencyManifests": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "package.json",
+            "package-lock.json",
+            "yarn.lock",
+            "pnpm-lock.yaml"
+          ],
           "description": "Manifestos cuja alteração indica dependência nova/alterada (RF-014)."
         }
       }
@@ -426,6 +441,8 @@
     "watch": "tsc -watch -p ./",
     "lint": "eslint src",
     "test": "node --test ./out/test",
+    "pretest:e2e": "npm run compile",
+    "test:e2e": "vscode-test",
     "sync-templates": "node scripts/sync-templates.mjs",
     "check-templates": "node scripts/check-templates.mjs",
     "vscode:prepublish": "npm run sync-templates && npm run compile",
@@ -433,11 +450,15 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.11.0",
     "@types/vscode": "~1.90.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^8.57.0",
+    "mocha": "^11.8.0",
     "typescript": "^5.4.0"
   }
 }

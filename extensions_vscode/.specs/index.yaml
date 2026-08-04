@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 23
+next_id: 24
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -229,5 +229,14 @@ changes:
     materialized: true
     epic: "pós-MVP — Fase 3"
     covers: [RF-025]
+  - id: 0023-e2e-tests
+    type: feature
+    title: Testes E2E / integração no host do VS Code
+    status: IN_PROGRESS
+    path: features/0023-e2e-tests
+    created: "2026-08-03"
+    updated: "2026-08-03"
+    materialized: true
+    epic: "Qualidade — testes de integração"
 
 archive: []

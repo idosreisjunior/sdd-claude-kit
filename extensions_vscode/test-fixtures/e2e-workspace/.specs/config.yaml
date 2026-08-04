@@ -1,0 +1,39 @@
+# Workspace de fixture para os testes E2E (feature 0023). Estrutura .specs
+# mínima para que a extensão reconheça o projeto como inicializado e o
+# Project Doctor tenha o que validar. Não é um projeto real.
+version: 1
+
+project:
+  name: "e2e-fixture"
+  language: pt-BR
+  type: "fixture"
+
+workflow:
+  mode: guided
+  require_approval: true
+  require_tests: true
+  require_traceability: true
+  allow_parallel_tasks: false
+
+paths:
+  source:
+    - "src"
+  tests:
+    - "test"
+  ignored:
+    - node_modules
+
+validation:
+  commands:
+    lint: "true"
+    test: "true"
+    build: "true"
+
+specification:
+  scenarios: gherkin
+  architecture_decisions: adr
+  task_size: small
+
+security:
+  hooks_enabled: false
+  allow_shell_commands: prompt

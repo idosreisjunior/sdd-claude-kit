@@ -117,3 +117,9 @@ jobs:
 
       - name: Compilar (tsc)
         run: npm run compile
+
+      # Testes de integração (E2E) no Extension Development Host real
+      # (feature 0023, ADR-022). O runner @vscode/test-electron baixa o VS Code
+      # de teste; em Linux headless precisa de um display virtual (xvfb).
+      - name: Testes E2E (integração, sob xvfb)
+        run: xvfb-run -a npm run test:e2e
