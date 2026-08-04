@@ -5,6 +5,33 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.2] — 2026-08-03
+
+Descoberta dos recursos. Nenhum comando novo nem mudança de comportamento — os comandos que já
+existiam ficam **visíveis** sem depender do clique-direito.
+
+### Adicionado
+
+- Seção **"Ações"** no dashboard da feature: botões para os comandos da mudança (Research,
+  Clarificar, Gerar design, Tarefas, Histórico, Novo ADR, Validar, Coletar evidências, Métricas,
+  Git, Abrir no Claude Code, Medir contexto, GitHub, MCP, Editar spec), agrupados por seção. Cada
+  botão dispara o comando via `command:` URI **sobre aquela mudança** — sem scripts no webview, com
+  a CSP preservada e os `command:` URIs restritos por allowlist (feature 0024, ADR-023).
+
+### Alterado
+
+- Menu de contexto de uma feature reorganizado no submenu **"SDD: Ações"**, agrupado por seção
+  (Fluxo, Decisões e histórico, Validação, Git, Claude Code e integrações) — antes eram 16 itens
+  soltos. Todos os comandos preservados (feature 0024).
+
+### Interno
+
+- Camada de **testes de integração (E2E)** no Extension Development Host real, sob `xvfb` no CI
+  (feature 0023, ADR-022). Complementa a suíte unitária; não afeta o pacote publicado (só
+  `devDependencies`).
+
+---
+
 ## [0.2.1] — 2026-08-03
 
 Correção de documentação. Nenhuma mudança de comportamento, comando ou configuração.

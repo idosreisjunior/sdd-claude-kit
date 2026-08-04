@@ -2,7 +2,7 @@
   "name": "sdd-claude-kit-vscode",
   "displayName": "SDD Claude Kit",
   "description": "Cockpit visual de Spec-Driven Development para Claude Code dentro do VS Code.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "publisher": "idosreisjunior",
   "license": "Apache-2.0",
   "engines": {
@@ -287,22 +287,70 @@
         }
       ],
       "sddClaudeKit.featureActions": [
-        { "command": "sddClaudeKit.research", "group": "fluxo@1" },
-        { "command": "sddClaudeKit.clarify", "group": "fluxo@2" },
-        { "command": "sddClaudeKit.generateDesign", "group": "fluxo@3" },
-        { "command": "sddClaudeKit.analyzeTasks", "group": "fluxo@4" },
-        { "command": "sddClaudeKit.history", "group": "historia@1" },
-        { "command": "sddClaudeKit.newAdr", "group": "historia@2" },
-        { "command": "sddClaudeKit.validateChange", "group": "validacao@1" },
-        { "command": "sddClaudeKit.collectEvidence", "group": "validacao@2" },
-        { "command": "sddClaudeKit.metricsFeature", "group": "validacao@3" },
-        { "command": "sddClaudeKit.checkScope", "group": "git@1" },
-        { "command": "sddClaudeKit.navigateTraceability", "group": "git@2" },
-        { "command": "sddClaudeKit.suggestCommit", "group": "git@3" },
-        { "command": "sddClaudeKit.openInClaudeCode", "group": "claude@1" },
-        { "command": "sddClaudeKit.measureContext", "group": "claude@2" },
-        { "command": "sddClaudeKit.github", "group": "claude@3" },
-        { "command": "sddClaudeKit.mcp", "group": "claude@4" }
+        {
+          "command": "sddClaudeKit.research",
+          "group": "fluxo@1"
+        },
+        {
+          "command": "sddClaudeKit.clarify",
+          "group": "fluxo@2"
+        },
+        {
+          "command": "sddClaudeKit.generateDesign",
+          "group": "fluxo@3"
+        },
+        {
+          "command": "sddClaudeKit.analyzeTasks",
+          "group": "fluxo@4"
+        },
+        {
+          "command": "sddClaudeKit.history",
+          "group": "historia@1"
+        },
+        {
+          "command": "sddClaudeKit.newAdr",
+          "group": "historia@2"
+        },
+        {
+          "command": "sddClaudeKit.validateChange",
+          "group": "validacao@1"
+        },
+        {
+          "command": "sddClaudeKit.collectEvidence",
+          "group": "validacao@2"
+        },
+        {
+          "command": "sddClaudeKit.metricsFeature",
+          "group": "validacao@3"
+        },
+        {
+          "command": "sddClaudeKit.checkScope",
+          "group": "git@1"
+        },
+        {
+          "command": "sddClaudeKit.navigateTraceability",
+          "group": "git@2"
+        },
+        {
+          "command": "sddClaudeKit.suggestCommit",
+          "group": "git@3"
+        },
+        {
+          "command": "sddClaudeKit.openInClaudeCode",
+          "group": "claude@1"
+        },
+        {
+          "command": "sddClaudeKit.measureContext",
+          "group": "claude@2"
+        },
+        {
+          "command": "sddClaudeKit.github",
+          "group": "claude@3"
+        },
+        {
+          "command": "sddClaudeKit.mcp",
+          "group": "claude@4"
+        }
       ]
     },
     "configuration": {
