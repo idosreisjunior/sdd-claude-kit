@@ -1,0 +1,39 @@
+# Matriz de rastreabilidade — 0032-e2e-board-transition
+version: 1
+
+feature: "0032-e2e-board-transition"
+
+requirements:
+
+  "REQ-TRANS-001":
+    title: "E2E da aplicação da transição"
+    scenarios:
+      - "SCN-TRANS-001"
+      - "SCN-TRANS-002"
+    tasks:
+      - "TASK-TRANS-001"
+      - "TASK-TRANS-002"
+    implementation:
+      - "src/sdd/boardPanel.ts"
+      - "src/e2e/transition.test.ts"
+    tests:
+      - "TEST-TRANS-001"
+      - "TEST-TRANS-002"
+
+  "NFR-TRANS-001":
+    title: "Limitação registrada (gesto de DOM não E2E-testável)"
+    scenarios: []
+    tasks:
+      - "TASK-TRANS-001"
+    implementation:
+      - ".specs/features/0032-e2e-board-transition/decisions/ADR-030-e2e-do-efeito-nao-do-gesto.md"
+    tests: []
+
+gaps:
+  - id: "NFR-TRANS-001"
+    reason: >-
+      O gesto de arrastar (dragstart/drop no webview) não é dirigível por
+      @vscode/test-electron; o E2E cobre o EFEITO (applyTransition), não o gesto.
+    mitigation: >-
+      Revisão manual do gesto no painel; o efeito (escrita) é coberto por
+      TEST-TRANS-001/002 no host, e a resolução do alvo por unidade (0026).

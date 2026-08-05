@@ -192,34 +192,53 @@ export class BoardPanel {
       return
     }
 
-    const date = new Date().toISOString().slice(0, 10)
-    const statusUri = vscode.Uri.joinPath(root, '.specs', ...path.split('/'), 'status.yaml')
-    const indexUri = vscode.Uri.joinPath(root, '.specs', 'index.yaml')
-
-    // All-or-nothing: exige os dois arquivos ANTES de escrever qualquer um.
-    const statusText = await readText(statusUri)
-    const indexText = await readText(indexUri)
-    if (statusText === undefined || indexText === undefined) {
+    const result = await applyTransition(root, id, path, target, reason)
+    if (result === 'missing') {
       vscode.window.showErrorMessage(
         `SDD: status.yaml ou index.yaml de ${id} não encontrado; nada foi alterado.`,
       )
       return
     }
-
-    await writeText(statusUri, appendHistoryAndSetStatus(statusText, { status: target, date, reason }))
-    try {
-      await writeText(indexUri, setIndexStatus(indexText, id, target))
-    } catch {
-      await writeText(statusUri, statusText) // restaura o status.yaml original
+    if (result === 'index-failed') {
       vscode.window.showErrorMessage(
         `SDD: falha ao atualizar index.yaml; status.yaml de ${id} restaurado.`,
       )
       return
     }
-
     vscode.window.showInformationMessage(`SDD: ${id} → ${target}.`)
     await this.refresh() // além do watcher, atualiza já
   }
+}
+
+/**
+ * Aplica uma transição de estado no disco — a "escrita" do arrastar (feature 0026),
+ * extraída e exportada para o teste E2E (feature 0032). Exige `status.yaml` e
+ * `index.yaml`; escrita all-or-nothing: se a do índice falhar, restaura o
+ * `status.yaml`. Não mostra diálogos (a resolução do alvo/motivo fica na borda).
+ */
+export async function applyTransition(
+  root: vscode.Uri,
+  id: string,
+  path: string,
+  target: string,
+  reason: string,
+): Promise<'ok' | 'missing' | 'index-failed'> {
+  const statusUri = vscode.Uri.joinPath(root, '.specs', ...path.split('/'), 'status.yaml')
+  const indexUri = vscode.Uri.joinPath(root, '.specs', 'index.yaml')
+  const statusText = await readText(statusUri)
+  const indexText = await readText(indexUri)
+  if (statusText === undefined || indexText === undefined) {
+    return 'missing'
+  }
+  const date = new Date().toISOString().slice(0, 10)
+  await writeText(statusUri, appendHistoryAndSetStatus(statusText, { status: target, date, reason }))
+  try {
+    await writeText(indexUri, setIndexStatus(indexText, id, target))
+  } catch {
+    await writeText(statusUri, statusText) // restaura
+    return 'index-failed'
+  }
+  return 'ok'
 }
 
 function workspaceRoot(): vscode.Uri | undefined {
