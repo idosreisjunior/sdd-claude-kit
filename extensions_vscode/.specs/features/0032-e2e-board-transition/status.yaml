@@ -9,8 +9,8 @@ id: "0032-e2e-board-transition"
 type: "feature"
 title: "E2E da transição do painel (efeito do arrastar)"
 
-# Implementação concluída; os testes E2E de transição são verificados no CI.
-status: IN_PROGRESS
+# Verificada: os testes E2E de transição passaram no CI (host sob xvfb).
+status: VERIFIED
 
 created: "2026-08-04"
 updated: "2026-08-04"
@@ -39,6 +39,15 @@ history:
       Verificação local: compile e lint limpos, 165 testes unitários (a E2E fica fora de out/test). A
       execução da E2E depende do host; roda no CI sob xvfb. Transição PLANNED → IN_PROGRESS; approve pulado
       (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: os testes E2E de transição passaram num VS Code de teste real, sob xvfb
+      no CI — SCN-TRANS-001 (applyTransition escreve a transição: status.yaml VERIFIED com a entrada de
+      history, motivo e comentário preservados; index.yaml VERIFIED — TEST-TRANS-001) e SCN-TRANS-002
+      (sem os arquivos, retorna missing e nada é escrito — TEST-TRANS-002); 7 passing. Compile, lint e a
+      suíte unitária (165) limpos. A limitação do gesto de DOM está registrada (NFR-TRANS-001, ADR-030) —
+      cobre-se o efeito, não o gesto. Critérios de aceite atendidos. approve permanece pulado (Fase 2).
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
