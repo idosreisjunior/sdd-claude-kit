@@ -21,7 +21,17 @@ requirements:
       - "TASK-COCK-004"
       - "TASK-COCK-005"
       - "TASK-COCK-010"
-    implementation: []
+    implementation:
+      - "src/sdd/panelHtml.ts"
+      - "src/sdd/themeTokens.ts"
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/dashboardHtml.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/sdd/historyHtml.ts"
+      - "src/sdd/metricsHtml.ts"
+      - "src/sdd/validationHtml.ts"
+      - "src/sdd/specEditorHtml.ts"
+      - "src/sdd/wizardHtml.ts"
     tests:
       - "TEST-COCK-001"
       - "TEST-COCK-002"
@@ -40,7 +50,9 @@ requirements:
       - "TASK-COCK-012"
       - "TASK-COCK-013"
       - "TASK-COCK-014"
-    implementation: []
+    implementation:
+      - "esbuild.mjs"
+      - "src/webview/ui/tokens.ts"
     tests:
       - "TEST-COCK-003"
       - "TEST-COCK-004"
@@ -124,7 +136,8 @@ requirements:
     scenarios: []
     tasks:
       - "TASK-COCK-002"
-    implementation: []
+    implementation:
+      - "src/sdd/panelHtml.ts"
     tests:
       - "TEST-COCK-002"
 

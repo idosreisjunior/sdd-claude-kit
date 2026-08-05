@@ -348,7 +348,7 @@ changes:
   - id: 0036-cockpit-ui-redesign
     type: feature
     title: Identidade visual do Cockpit nas telas existentes
-    status: PLANNED
+    status: IN_PROGRESS
     path: features/0036-cockpit-ui-redesign
     created: "2026-08-05"
     updated: "2026-08-05"

@@ -9,11 +9,11 @@ Complexidade: **P** pequena (≤ meio dia) · **M** média (≈ 1 dia) · **G** 
 
 ```
 FUNDAÇÃO (a base de que tudo depende)
-  TASK-COCK-001 (esbuild multi-entrypoint) ─► TASK-COCK-002 (renderPanelHtml + tokens)
+  TASK-COCK-001 (esbuild multi-entrypoint) [OK] ─► TASK-COCK-002 (renderPanelHtml + tokens) [OK]
                                                       │
                                                       ▼
                                               TASK-COCK-003 (biblioteca de componentes)
-  TASK-COCK-004 (teste-guarda de tokens) ─► TASK-COCK-005 (tokens em TODOS os painéis)
+  TASK-COCK-004 (teste-guarda de tokens) [OK] ─► TASK-COCK-005 (tokens em TODOS os painéis) [OK]
                                                       │
         ┌─────────────────────────────────────────────┴──────────────┐
         ▼                                                            ▼
@@ -46,7 +46,7 @@ biblioteca de componentes em painéis reais **antes** de encarar o passo de maio
 **Requisitos:** REQ-COCK-002
 **Dependências:** —
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -82,7 +82,7 @@ nesta tarefa — é só a capacidade de build (ADR-037).
 **Requisitos:** REQ-COCK-001, NFR-COCK-002
 **Dependências:** TASK-COCK-001
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -159,7 +159,7 @@ Rótulos acessíveis e operação por teclado fazem parte do componente, não de
 **Requisitos:** REQ-COCK-001
 **Dependências:** —
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -194,7 +194,7 @@ está pronta.
 **Requisitos:** REQ-COCK-001
 **Dependências:** TASK-COCK-004
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -742,13 +742,12 @@ ao longo das migrações — a regra do design §11.
 | M | 14 |
 | G | 0 |
 
-Total: 20 tarefas · 0 concluídas · 20 pendentes.
+Total: 20 tarefas · 4 concluídas · 16 pendentes.
 
 **Caminho crítico:** TASK-COCK-001 → TASK-COCK-002 → TASK-COCK-003 → TASK-COCK-009 →
 TASK-COCK-016 → TASK-COCK-017 → TASK-COCK-019 → TASK-COCK-020
 
 **Bloqueios ativos:** Nenhum.
 
-**Paralelizáveis agora:** TASK-COCK-001, TASK-COCK-004 e TASK-COCK-015 — as três não têm
-dependência. Depois de TASK-COCK-003 e TASK-COCK-005, as sete migrações de painel correm
-em paralelo entre si.
+**Paralelizáveis agora:** TASK-COCK-003 (biblioteca de componentes) e TASK-COCK-015
+(sidebarModel). Depois da 003, as sete migrações de painel correm em paralelo entre si.

@@ -26,20 +26,20 @@ export function renderValidationHtml(report: ValidationReport, nonce: string): s
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Validação — ${esc(report.changeId)}</title>
 <style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 1rem 1.25rem; line-height: 1.5; }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: 1rem 1.25rem; line-height: 1.5; }
   h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
   .sub { opacity: .75; font-size: .9rem; margin-bottom: 1rem; }
   .summary { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.2rem; }
-  .chip { padding: .15rem .6rem; border-radius: .5rem; font-size: .82rem; border: 1px solid var(--vscode-panel-border); }
+  .chip { padding: .15rem .6rem; border-radius: .5rem; font-size: .82rem; border: 1px solid var(--sdd-border); }
   table { border-collapse: collapse; width: 100%; }
-  th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--vscode-panel-border); vertical-align: top; }
+  th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid var(--sdd-border); vertical-align: top; }
   th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; opacity: .7; }
   code { font-family: var(--vscode-editor-font-family); }
   .badge { display: inline-block; padding: .05rem .45rem; border-radius: .4rem; font-size: .8rem; white-space: nowrap; }
-  .v-atendido { background: rgba(64,160,64,.22); color: var(--vscode-testing-iconPassed, #3fa63f); }
-  .v-parcial, .v-nao-testado { background: rgba(200,150,40,.22); color: var(--vscode-testing-iconQueued, #c89628); }
-  .v-nao-atendido { background: rgba(200,60,60,.22); color: var(--vscode-errorForeground, #c83c3c); }
-  .v-nao-aplicavel { background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); opacity: .85; }
+  .v-atendido { background: rgba(64,160,64,.22); color: var(--sdd-ok); }
+  .v-parcial, .v-nao-testado { background: rgba(200,150,40,.22); color: var(--sdd-queued); }
+  .v-nao-atendido { background: rgba(200,60,60,.22); color: var(--sdd-danger); }
+  .v-nao-aplicavel { background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); opacity: .85; }
   .flags { opacity: .7; font-size: .8rem; }
   .note { opacity: .7; font-size: .82rem; }
   .muted { opacity: .7; }

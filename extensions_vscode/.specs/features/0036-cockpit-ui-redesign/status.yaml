@@ -9,7 +9,7 @@ id: "0036-cockpit-ui-redesign"
 type: "feature"
 title: "Identidade visual do Cockpit nas telas existentes"
 
-status: PLANNED
+status: IN_PROGRESS
 
 created: "2026-08-05"
 updated: "2026-08-05"
@@ -61,9 +61,34 @@ history:
       de componentes em painéis reais antes de encarar o passo de maior risco. Matriz de
       rastreabilidade criada com implementation vazio e 4 lacunas registradas.
 
+  - status: APPROVED
+    date: "2026-08-05"
+    reason: >-
+      Aprovada pelo usuário com a autorização explícita "pode implementar", sobre o plano de
+      20 tarefas gerado em 75e6e98. Registrada aqui à mão porque o skill /sdd-kit:approve
+      não está disponível nesta sessão — o campo approval traz a origem da aprovação em vez
+      de simular a passagem pelo skill. O usuário está ciente do alcance: substituir a
+      TreeView da sidebar e reescrever sete painéis cobertos por teste.
+
+  - status: IN_PROGRESS
+    date: "2026-08-05"
+    reason: >-
+      Fundação implementada: TASK-COCK-001 (esbuild com um bundle por superfície, teto
+      verificado por build falhando), TASK-COCK-002 (renderPanelHtml — ponto único de
+      CSP/nonce/escape, 7 testes), TASK-COCK-004 (teste-guarda, verificado VERMELHO listando
+      73 declarações infratoras em 9 módulos) e TASK-COCK-005 (78 substituições levando o
+      guarda ao verde). A camada de tokens foi estendida com 12 tokens de conteúdo e o
+      --sdd-on-brand, porque os painéis usavam variáveis --vscode-* sem token correspondente
+      e sem eles não haveria como consumir a camada. A regra do design §11 se sustentou:
+      nenhum arquivo de teste existente foi modificado. compile ok, 234 testes ok, lint
+      limpo, bundle 32,3 kB.
+
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
-approval: null
+approval:
+  date: "2026-08-05"
+  by: "idosreisjunior (autorização explícita em conversa)"
+  revision: "75e6e98"
 
 # Bloqueios ativos. Lista vazia significa sem bloqueio.
 blocked_by: []
@@ -131,6 +156,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 20
+  pending: 16
   in_progress: 0
-  done: 0
+  done: 4

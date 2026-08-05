@@ -22,11 +22,11 @@ export function renderHistoryHtml(changeId: string, model: HistoryModel, nonce: 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Histórico — ${esc(changeId)}</title>
 <style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 1rem 1.25rem; line-height: 1.5; }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: 1rem 1.25rem; line-height: 1.5; }
   h1 { font-size: 1.3rem; margin: 0 0 .75rem; }
   h2 { font-size: 1rem; margin: 1.25rem 0 .4rem; }
   ul { list-style: none; padding: 0; margin: 0; }
-  li { border-left: 2px solid var(--vscode-panel-border); padding: .3rem 0 .3rem .75rem; margin-left: .3rem; }
+  li { border-left: 2px solid var(--sdd-border); padding: .3rem 0 .3rem .75rem; margin-left: .3rem; }
   .kind { font-size: .7rem; text-transform: uppercase; opacity: .6; margin-left: .4rem; }
   .date { opacity: .7; font-size: .8rem; }
   .detail { opacity: .8; font-size: .85rem; white-space: pre-wrap; }

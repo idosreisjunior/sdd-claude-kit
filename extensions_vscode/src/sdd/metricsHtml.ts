@@ -24,19 +24,19 @@ export function renderMetricsHtml(s: MetricsSnapshot, delta: MetricsDelta | unde
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Métricas — ${esc(s.changeId)}</title>
 <style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 1rem 1.25rem; line-height: 1.5; }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: 1rem 1.25rem; line-height: 1.5; }
   h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
   .sub { opacity: .75; font-size: .9rem; margin-bottom: 1rem; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: .6rem; }
-  .card { border: 1px solid var(--vscode-panel-border); border-radius: .4rem; padding: .55rem .65rem; }
+  .card { border: 1px solid var(--sdd-border); border-radius: .4rem; padding: .55rem .65rem; }
   .card .n { font-size: 1.35rem; font-weight: 600; }
   .card .l { opacity: .75; font-size: .8rem; }
   .delta { font-size: .8rem; margin-left: .35rem; }
-  .up { color: var(--vscode-testing-iconPassed, #3fa63f); }
-  .down { color: var(--vscode-errorForeground, #c83c3c); }
+  .up { color: var(--sdd-ok); }
+  .down { color: var(--sdd-danger); }
   .muted { opacity: .7; font-size: .85rem; margin-top: 1rem; }
-  .bar { height: .5rem; border-radius: .25rem; background: var(--vscode-panel-border); overflow: hidden; margin: .35rem 0; }
-  .bar > span { display: block; height: 100%; background: var(--vscode-progressBar-background); }
+  .bar { height: .5rem; border-radius: .25rem; background: var(--sdd-border); overflow: hidden; margin: .35rem 0; }
+  .bar > span { display: block; height: 100%; background: var(--sdd-progress); }
 </style>
 </head>
 <body>

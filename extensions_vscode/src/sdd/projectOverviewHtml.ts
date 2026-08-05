@@ -41,18 +41,18 @@ export function renderProjectOverviewHtml(model: ProjectOverview, nonce: string,
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projeto</title>
 <style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: .5rem .5rem 1rem; line-height: 1.45; font-size: var(--vscode-font-size); }
-  .card { border: 1px solid var(--vscode-panel-border); border-radius: .4rem; padding: .5rem .6rem; margin-bottom: .5rem; }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: .5rem .5rem 1rem; line-height: 1.45; font-size: var(--vscode-font-size); }
+  .card { border: 1px solid var(--sdd-border); border-radius: .4rem; padding: .5rem .6rem; margin-bottom: .5rem; }
   .card h2 { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin: 0 0 .35rem; font-weight: 600; }
   .big { font-size: 1.1rem; font-weight: 600; }
   .muted { opacity: .65; }
   .na { opacity: .6; font-style: italic; }
-  a { color: var(--vscode-textLink-foreground); text-decoration: none; }
+  a { color: var(--sdd-link); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .action { display: inline-block; margin-top: .35rem; font-size: .85rem; }
-  .bar { height: .5rem; border-radius: .25rem; background: var(--vscode-panel-border); overflow: hidden; margin: .35rem 0; }
-  .bar > span { display: block; height: 100%; background: var(--vscode-progressBar-background); }
-  .err { color: var(--vscode-errorForeground); }
+  .bar { height: .5rem; border-radius: .25rem; background: var(--sdd-border); overflow: hidden; margin: .35rem 0; }
+  .bar > span { display: block; height: 100%; background: var(--sdd-progress); }
+  .err { color: var(--sdd-danger); }
   ul { margin: .25rem 0 0; padding: 0; list-style: none; }
   li { margin: .12rem 0; display: flex; justify-content: space-between; gap: .5rem; }
   .count { opacity: .8; font-variant-numeric: tabular-nums; }
@@ -82,9 +82,9 @@ export function renderNotInitializedHtml(nonce: string, cspSource: string): stri
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projeto</title>
 <style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: .75rem; line-height: 1.5; font-size: var(--vscode-font-size); }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: .75rem; line-height: 1.5; font-size: var(--vscode-font-size); }
   p { opacity: .8; }
-  a { color: var(--vscode-textLink-foreground); }
+  a { color: var(--sdd-link); }
 </style>
 </head>
 <body>

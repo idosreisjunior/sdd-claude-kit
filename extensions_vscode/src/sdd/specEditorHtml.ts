@@ -40,19 +40,19 @@ export function renderSpecEditorHtml(markdown: string, nonce: string): string {
 <title>SDD: editor de spec</title>
 <style nonce="${nonce}">
   html, body { height: 100%; margin: 0; }
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); background: var(--vscode-editor-background); }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); background: var(--sdd-surface-raised); }
   .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 100vh; }
   #editor {
     box-sizing: border-box; width: 100%; height: 100%; resize: none; border: none;
     padding: 1rem; font-family: var(--vscode-editor-font-family, monospace);
     font-size: var(--vscode-editor-font-size, 13px);
-    color: var(--vscode-foreground); background: var(--vscode-editor-background);
-    border-right: 1px solid var(--vscode-panel-border); outline: none;
+    color: var(--sdd-text); background: var(--sdd-surface-raised);
+    border-right: 1px solid var(--sdd-border); outline: none;
   }
   #view { overflow: auto; padding: 1rem 1.25rem; line-height: 1.5; }
   #view h1 { font-size: 1.3rem; } #view h2 { font-size: 1.05rem; opacity: .9; }
   #view h3 { font-size: .95rem; opacity: .85; }
-  #view .id { color: var(--vscode-textLink-foreground); font-weight: 600; }
+  #view .id { color: var(--sdd-link); font-weight: 600; }
   #view p { margin: .5rem 0; }
 </style>
 </head>
