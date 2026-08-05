@@ -446,7 +446,8 @@
     "js-yaml": "^4.1.0"
   },
   "scripts": {
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && node esbuild.mjs",
+    "build:webview": "node esbuild.mjs",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src",
     "test": "node --test ./out/test",
@@ -466,8 +467,10 @@
     "@typescript-eslint/parser": "^7.0.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.28.1",
     "eslint": "^8.57.0",
     "mocha": "^11.8.0",
+    "preact": "^10.29.8",
     "typescript": "^5.4.0"
   }
 }
