@@ -12,6 +12,7 @@ import {
   feedItemMatches,
   orderColumns,
   moveColumn,
+  toggleLabel,
 } from '../sdd/boardModel'
 import type { BoardCard } from '../sdd/boardModel'
 import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
@@ -233,4 +234,11 @@ test('TEST-COLORD-002 — moveColumn move o rótulo e respeita as bordas (SCN-CO
   assert.deepEqual(moveColumn(labels, 'A', -1), ['A', 'B', 'C']) // já é o primeiro
   assert.deepEqual(moveColumn(labels, 'C', 1), ['A', 'B', 'C']) // já é o último
   assert.deepEqual(labels, ['A', 'B', 'C']) // não muta
+})
+
+test('TEST-COLLAPSE-001 — toggleLabel adiciona/remove sem mutar (SCN-COLLAPSE-001)', () => {
+  const a = ['Rascunho']
+  assert.deepEqual(toggleLabel(a, 'Concluídas'), ['Rascunho', 'Concluídas'])
+  assert.deepEqual(toggleLabel(a, 'Rascunho'), [])
+  assert.deepEqual(a, ['Rascunho']) // não muta
 })

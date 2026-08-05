@@ -1,0 +1,73 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0034-board-collapse-columns"
+# feature | bug | refactor | change
+type: "feature"
+title: "Colapsar colunas do quadro"
+
+# Verificada em 2026-08-04: alternância testada; render/persistência no host.
+# approve segue pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criada por /sdd-kit:new: colapsar/expandir cada coluna do kanban (botão no cabeçalho), ocultando
+      os cartões e persistindo o estado. Lógica pura como no resto do painel. Questões em
+      TASK-COLLAPSE-001 (ADR-032).
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (3 tarefas P; caminho crítico TASK-COLLAPSE-001 → 002 → 003).
+      CLARIFIED/DESIGNED pulados (Fase 2): design em ADR-032. Cobertura completa (4 requisitos com
+      tarefa); sem órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Implementado. boardModel.ts: toggleLabel (adiciona/remove sem mutar), puro. boardHtml.ts:
+      state.collapsed lido/gravado por vscode.getState/setState (junto de columnOrder); column() ganha um
+      botão ▾/▸ (aria-expanded) que alterna via toggleCollapse; coluna colapsada recebe a classe collapsed
+      e não renderiza cartões; CSS .col.collapsed encolhe. Transição PLANNED → IN_PROGRESS; approve pulado
+      (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: compile e lint limpos; suíte unitária 168 (+1): TEST-COLLAPSE-001
+      (toggleLabel adiciona/remove sem mutar — SCN-COLLAPSE-001). Alternância pura, sem vscode
+      (NFR-COLLAPSE-001). O botão, o render (ocultar cartões, encolher) e a persistência por
+      vscode.setState (SCN-COLLAPSE-002, NFR-COLLAPSE-002) são integração de host, registrados em
+      traceability.yaml gaps com revisão manual; abrir o painel é coberto pelo E2E do 0025. Critérios de
+      aceite atendidos. approve permanece pulado (Fase 2), approval segue null.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-04"
+    resolved_by: TASK-COLLAPSE-001
+    summary: >-
+      Colapsar por botão ▾/▸; toggleLabel puro espelhado pelo cliente; state.collapsed persistido por
+      vscode.setState (junto de columnOrder).
+    adr: ADR-032
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3
