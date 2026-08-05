@@ -5,6 +5,18 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.9] — 2026-08-04
+
+Filtro e paginação do feed de atividade.
+
+### Adicionado
+
+- **Filtro do feed** — uma busca (id/título) e chips de **status** filtram o feed de atividade.
+- **Paginação** — o feed mostra um número por vez, com o botão **"Carregar mais"**; mudar o filtro ou
+  a ordem reinicia a paginação (feature 0031, ADR-029).
+
+---
+
 ## [0.2.8] — 2026-08-04
 
 Ordenação no Painel SDD.
