@@ -97,7 +97,10 @@ requirements:
     tasks:
       - "TASK-COCK-015"
       - "TASK-COCK-018"
-    implementation: []
+    implementation:
+      - "src/webview/sidebar/index.tsx"
+      - "src/sdd/sidebarModel.ts"
+      - "package.json"
     tests:
       - "TEST-COCK-006"
       - "TEST-COCK-009"
@@ -113,6 +116,11 @@ requirements:
       - "TASK-COCK-017"
     implementation:
       - "src/sdd/sidebarModel.ts"
+      - "src/sdd/sidebarHtml.ts"
+      - "src/views/sidebarViewProvider.ts"
+      - "src/webview/sidebar/index.tsx"
+      - "src/extension.ts"
+      - "package.json"
     tests:
       - "TEST-COCK-005"
       - "TEST-COCK-007"

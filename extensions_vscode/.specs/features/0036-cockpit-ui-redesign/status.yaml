@@ -127,7 +127,14 @@ history:
       incluindo o que a TreeView fazia de graça e ninguém perdoaria perder: reidratar sem
       jogar o usuário de volta ao topo. 270 testes ok. ACHADO para o próximo passo: a
       sidebar tem 18 ações por item (2 inline + 16 em submenu) que o SCN-COCK-008 exige
-      preservar — número maior do que a decisão Q1 deixava aparente.
+      preservar — número maior do que a decisão Q1 deixava aparente. TASK-COCK-016/018
+      resolveram isso sem pagar o risco previsto: o menu NÃO foi reimplementado no webview.
+      O cliente só sinaliza a intenção e um QuickPick nativo apresenta as ações, montado a
+      partir do package.json — não pode divergir do manifesto, e teclado, busca e leitor de
+      tela seguem sendo da plataforma. Os 18 comandos ficaram intactos porque
+      featureChangeOf aceita qualquer nó com kind feature, então a borda monta um compatível.
+      viewsWelcome removido do manifesto e as boas-vindas viraram modo da própria sidebar
+      (Q7). 276 testes ok. Falta TASK-COCK-017: navegação por teclado na lista.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -202,6 +209,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 5
+  pending: 3
   in_progress: 0
-  done: 15
+  done: 17

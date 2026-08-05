@@ -23,9 +23,9 @@ MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBA
      └─► TASK-COCK-008 (Board: feed) [OK]                              │
   TASK-COCK-009 (dashboard) [OK] ──────────────────────────────────────┤
   TASK-COCK-010 (visão do projeto) [OK]                                ▼
-  TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView)
+  TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView) [OK]
   TASK-COCK-012 (métricas) [OK]                                  ├─► TASK-COCK-017 (teclado/ações)
-  TASK-COCK-013 (validação) [OK]                                 └─► TASK-COCK-018 (boas-vindas)
+  TASK-COCK-013 (validação) [OK]                                 └─► TASK-COCK-018 (boas-vindas) [OK]
   TASK-COCK-014 (editor de spec) [OK]                                  │
         │                                                         │
         └──────────────────► TASK-COCK-019 (contraste) ◄──────────┘
@@ -602,9 +602,15 @@ o estado da sidebar vive dentro do `TreeDataProvider` e não é testável isolad
 **Requisitos:** REQ-COCK-006
 **Dependências:** TASK-COCK-015, TASK-COCK-003, TASK-COCK-009
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Como o menu de 18 ações foi resolvido:** não é reimplementado no webview. O cliente
+> avisa "mais ações para este item" e quem apresenta é um QuickPick NATIVO, montado a
+> partir do próprio package.json — a lista não pode divergir do manifesto, e teclado,
+> busca e leitor de tela continuam sendo da plataforma. Os comandos não foram tocados:
+> a borda monta um nó compatível com featureChangeOf.
 
 Substituir a `TreeView` por uma `WebviewView` que implementa o mockup
 `01-sidebar-cockpit` (ADR-036): cartões por mudança, badge de status, progresso.
@@ -678,7 +684,7 @@ e2e próprios em vez de ser conferido junto com o resto.
 **Requisitos:** REQ-COCK-005, NFR-COCK-003
 **Dependências:** TASK-COCK-016
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 

@@ -82,7 +82,8 @@ import {
   type MetricsSnapshot,
 } from './sdd/metrics'
 import { renderMetricsHtml } from './sdd/metricsHtml'
-import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
+import { featureChangeOf } from './views/featuresTreeProvider'
+import { SidebarViewProvider } from './views/sidebarViewProvider'
 
 /**
  * Ponto de entrada da extensão (feature 0001-project-foundation).
@@ -104,14 +105,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     getContext: () => lastUsage,
     getDoctor: () => lastDoctorHealth,
   })
-  const featuresProvider = new FeaturesTreeProvider()
+  // A sidebar deixou de ser TreeView (ADR-036): a FeaturesTreeProvider some do registro,
+  // mas featureChangeOf continua sendo o contrato dos comandos por item.
+  const featuresProvider = new SidebarViewProvider(context.extensionUri)
   const dashboard = new FeatureDashboard()
   const boardPanel = new BoardPanel()
   const wizardPanel = new WizardPanel(context.extensionUri)
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(ProjectViewProvider.viewType, projectProvider),
-    vscode.window.registerTreeDataProvider('sddFeatures', featuresProvider),
+    vscode.window.registerWebviewViewProvider(SidebarViewProvider.viewType, featuresProvider),
     vscode.window.registerCustomEditorProvider(
       SpecEditorProvider.viewType,
       new SpecEditorProvider(),

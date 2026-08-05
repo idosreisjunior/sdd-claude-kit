@@ -26,6 +26,7 @@ const PANEL_MODULES = [
   'wizardHtml.ts',
   'panelHtml.ts',
   'uiCss.ts',
+  'sidebarHtml.ts',
 ]
 
 /**

@@ -17,7 +17,10 @@ const watch = process.argv.includes('--watch')
 // webview e o inflou de 21 kB para 136 kB. Se um teto estourar, procure um import de VALOR
 // novo de src/sdd/ num componente antes de simplesmente subir o número: o host deriva, o
 // cliente importa só tipos.
-const BUNDLES = [{ name: 'wizard', entry: 'src/webview/wizard/index.tsx', maxKb: 60 }]
+const BUNDLES = [
+  { name: 'wizard', entry: 'src/webview/wizard/index.tsx', maxKb: 60 },
+  { name: 'sidebar', entry: 'src/webview/sidebar/index.tsx', maxKb: 40 },
+]
 
 /** Opções comuns a todos os bundles. @type {import('esbuild').BuildOptions} */
 const common = {

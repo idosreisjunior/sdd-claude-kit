@@ -56,7 +56,8 @@
         },
         {
           "id": "sddFeatures",
-          "name": "Features"
+          "name": "Features",
+          "type": "webview"
         }
       ]
     },
@@ -70,18 +71,6 @@
           }
         ],
         "priority": "default"
-      }
-    ],
-    "viewsWelcome": [
-      {
-        "view": "sddFeatures",
-        "contents": "Este workspace ainda não tem a estrutura SDD (.specs).\n[Inicializar SDD](command:sddClaudeKit.initProject)",
-        "when": "!sddClaudeKit.initialized"
-      },
-      {
-        "view": "sddFeatures",
-        "contents": "Nenhuma mudança especificada ainda.\n[Nova feature](command:sddClaudeKit.newFeature)\nApós criar, detalhe a spec com /sdd-kit:spec no Claude Code.",
-        "when": "sddClaudeKit.initialized"
       }
     ],
     "commands": [
