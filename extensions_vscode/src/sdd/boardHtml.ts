@@ -32,6 +32,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
   .board { display: flex; gap: .6rem; align-items: flex-start; overflow-x: auto; padding-bottom: .5rem; }
   .col { flex: 0 0 15rem; background: var(--vscode-editorWidget-background, rgba(127,127,127,.06)); border: 1px solid var(--vscode-panel-border); border-radius: .5rem; padding: .5rem; max-height: calc(100vh - 8rem); overflow-y: auto; }
   .col.dragover { border-color: var(--vscode-focusBorder); background: var(--vscode-list-dropBackground, rgba(127,127,127,.16)); }
+  .col.collapsed { flex: 0 0 auto; max-height: none; }
   .card[draggable="true"] { cursor: grab; }
   .colh { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; position: sticky; top: 0; }
   .coltitle { flex: 1 1 auto; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; opacity: .85; font-weight: 600; }
@@ -74,10 +75,19 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
 const INITIAL = ${inlineJson(board)};
 const INITIAL_FEED = ${inlineJson(feed)};
 const vscode = acquireVsCodeApi();
-const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] }, sort: 'id-asc', feedOrder: 'desc', feedFilter: { query: '', statuses: [] }, feedShown: 20, columnOrder: [] };
+const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] }, sort: 'id-asc', feedOrder: 'desc', feedFilter: { query: '', statuses: [] }, feedShown: 20, columnOrder: [], collapsed: [] };
 const saved = vscode.getState && vscode.getState();
 if (saved && Array.isArray(saved.columnOrder)) { state.columnOrder = saved.columnOrder; }
-function persist() { if (vscode.setState) { vscode.setState({ columnOrder: state.columnOrder }); } }
+if (saved && Array.isArray(saved.collapsed)) { state.collapsed = saved.collapsed; }
+function persist() { if (vscode.setState) { vscode.setState({ columnOrder: state.columnOrder, collapsed: state.collapsed }); } }
+
+// Espelha toggleLabel (boardModel.ts) — colapsa/expande uma coluna (ADR-032).
+function toggleCollapse(label) {
+  const i = state.collapsed.indexOf(label);
+  if (i === -1) { state.collapsed.push(label); } else { state.collapsed.splice(i, 1); }
+  persist();
+  renderBoardArea();
+}
 
 // Espelha orderColumns (boardModel.ts) — ordena as colunas por rótulo (ADR-031).
 function orderCols(columns) {
@@ -147,9 +157,18 @@ function changeCard(card) {
   return el;
 }
 
-function column(label, count, cards, make, dropLabel, nav) {
+function column(label, count, cards, make, dropLabel, nav, collapse) {
+  const isCollapsed = collapse && collapse.collapsed;
   const c = h('div', 'col');
+  if (isCollapsed) { c.classList.add('collapsed'); }
   const head = h('div', 'colh');
+  if (collapse) {
+    const tog = h('button', 'colmove', isCollapsed ? '▸' : '▾');
+    tog.setAttribute('aria-label', isCollapsed ? 'Expandir a coluna' : 'Colapsar a coluna');
+    tog.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+    tog.addEventListener('click', collapse.onToggle);
+    head.appendChild(tog);
+  }
   if (nav) {
     const left = h('button', 'colmove', '◂');
     left.setAttribute('aria-label', 'Mover a coluna para a esquerda');
@@ -165,7 +184,9 @@ function column(label, count, cards, make, dropLabel, nav) {
     head.appendChild(right);
   }
   c.appendChild(head);
-  cards.forEach(function (item) { c.appendChild(make(item)); });
+  if (!isCollapsed) {
+    cards.forEach(function (item) { c.appendChild(make(item)); });
+  }
   if (dropLabel) {
     c.addEventListener('dragover', function (ev) { ev.preventDefault(); c.classList.add('dragover'); });
     c.addEventListener('dragleave', function () { c.classList.remove('dragover'); });
@@ -432,7 +453,11 @@ function renderBoardArea() {
       left: i > 0 ? function () { moveDisplayedCol(displayedLabels, col.label, -1); } : null,
       right: i < cols.length - 1 ? function () { moveDisplayedCol(displayedLabels, col.label, 1); } : null,
     };
-    board.appendChild(column(col.label, col.cards.length, col.cards, changeCard, col.label, nav));
+    const collapse = {
+      collapsed: state.collapsed.indexOf(col.label) !== -1,
+      onToggle: function () { toggleCollapse(col.label); },
+    };
+    board.appendChild(column(col.label, col.cards.length, col.cards, changeCard, col.label, nav, collapse));
   });
   area.appendChild(board);
 }

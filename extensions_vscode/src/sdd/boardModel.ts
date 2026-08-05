@@ -185,6 +185,11 @@ export function orderColumns(columns: readonly BoardColumn[], order: readonly st
   return out
 }
 
+/** Alterna a presença de `label` numa lista (adiciona se ausente, remove se presente). Não muta. */
+export function toggleLabel(labels: readonly string[], label: string): string[] {
+  return labels.includes(label) ? labels.filter((l) => l !== label) : [...labels, label]
+}
+
 /** Move `label` uma posição na lista (`dir` -1 esquerda, +1 direita). Não muta. */
 export function moveColumn(labels: readonly string[], label: string, dir: -1 | 1): string[] {
   const i = labels.indexOf(label)

@@ -1,0 +1,65 @@
+# Matriz de rastreabilidade — 0034-board-collapse-columns
+version: 1
+
+feature: "0034-board-collapse-columns"
+
+requirements:
+
+  "REQ-COLLAPSE-001":
+    title: "Colapsar/expandir uma coluna"
+    scenarios:
+      - "SCN-COLLAPSE-001"
+    tasks:
+      - "TASK-COLLAPSE-001"
+      - "TASK-COLLAPSE-002"
+      - "TASK-COLLAPSE-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-COLLAPSE-001"
+
+  "REQ-COLLAPSE-002":
+    title: "Persistência na sessão"
+    scenarios:
+      - "SCN-COLLAPSE-002"
+    tasks:
+      - "TASK-COLLAPSE-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+  "NFR-COLLAPSE-001":
+    title: "Lógica pura e testável"
+    scenarios: []
+    tasks:
+      - "TASK-COLLAPSE-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-COLLAPSE-001"
+
+  "NFR-COLLAPSE-002":
+    title: "Client-side e seguro"
+    scenarios: []
+    tasks:
+      - "TASK-COLLAPSE-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-COLLAPSE-001"
+    reason: >-
+      O botão e o render (ocultar cartões, encolher) são DOM no host; a
+      alternância (toggleLabel) é pura e testada.
+    mitigation: >-
+      Revisão manual (TASK-COLLAPSE-003): colapsar/expandir oculta/mostra os
+      cartões.
+  - id: "REQ-COLLAPSE-002"
+    reason: >-
+      A persistência por vscode.setState e a preservação ao vivo são webview no
+      host.
+    mitigation: >-
+      Revisão manual: o colapso sobrevive a salvar um .specs e a esconder/mostrar
+      o painel.
