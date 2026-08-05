@@ -3,6 +3,7 @@ import { randomBytes } from 'node:crypto'
 import { parseChanges, type ChangeEntry } from './specsIndex'
 import { featureChangeOf } from '../views/featuresTreeProvider'
 import { buildChangeArtifacts } from './wizardArtifacts'
+import { buildWizardDetails, type WizardDetails } from './wizardContent'
 import { deriveWizardState, type ChangeArtifacts, type WizardState } from './wizardModel'
 import { canAdvance, advanceTargetStatus, type AdvanceResult } from './wizardStepGuards'
 import { canTransition } from './stateMachine'
@@ -79,29 +80,37 @@ export class WizardPanel {
     await this.render(root)
   }
 
-  /** Projeta o estado + o portão de avanço da mudança atual a partir do disco. */
+  /** Projeta o estado + o portão de avanço + o conteúdo da mudança atual, do disco. */
   private async project(root: vscode.Uri, change: ChangeEntry): Promise<{
     state: WizardState
     advance: AdvanceResult
     artifacts: ChangeArtifacts
+    details: WizardDetails
   }> {
-    const artifacts = await this.readArtifacts(root, change)
+    const { artifacts, details } = await this.readArtifacts(root, change)
     const state = deriveWizardState(
       { id: change.id, title: change.title, type: change.type },
       artifacts,
     )
-    return { state, advance: canAdvance(state.currentStage, artifacts), artifacts }
+    return { state, advance: canAdvance(state.currentStage, artifacts), artifacts, details }
   }
 
   private async render(root: vscode.Uri): Promise<void> {
     if (!this.panel || !this.current) {
       return
     }
-    const { state, advance } = await this.project(root, this.current)
+    const { state, advance, artifacts, details } = await this.project(root, this.current)
     const scriptUri = this.panel.webview
       .asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'out', 'webview', 'wizard.js'))
       .toString()
-    this.panel.webview.html = renderWizardHtml({ state, advance, nonce: nonce(), scriptUri })
+    this.panel.webview.html = renderWizardHtml({
+      state,
+      advance,
+      details,
+      hasDesign: artifacts.hasDesign,
+      nonce: nonce(),
+      scriptUri,
+    })
     this.panel.title = `Assistente SDD — ${this.current.id}`
   }
 
@@ -168,20 +177,40 @@ export class WizardPanel {
     await launchClaudeAction(root, change.id, action)
   }
 
-  /** Lê os artefatos da mudança do disco (robusto) e monta o retrato puro. */
-  private async readArtifacts(root: vscode.Uri, change: ChangeEntry): Promise<ChangeArtifacts> {
+  /**
+   * Lê os artefatos da mudança do disco (robusto) e monta os dois retratos puros: o do
+   * ESTADO (wizardModel/guardas) e o do CONTEÚDO das views (wizardContent). Uma leitura
+   * só, dois consumidores — a leitura nunca lança (SCN-WIZ-007).
+   */
+  private async readArtifacts(
+    root: vscode.Uri,
+    change: ChangeEntry,
+  ): Promise<{ artifacts: ChangeArtifacts; details: WizardDetails }> {
     if (!change.path) {
-      return buildChangeArtifacts({ hasRequest: false, hasDesign: false, adrCount: 0 })
+      return {
+        artifacts: buildChangeArtifacts({ hasRequest: false, hasDesign: false, adrCount: 0 }),
+        details: buildWizardDetails({}),
+      }
     }
     const base = ['.specs', ...change.path.split('/')]
-    const [statusYaml, specMd, hasRequest, hasDesign, adrCount] = await Promise.all([
+    const [statusYaml, specMd, tasksMd, hasRequest, hasDesign, adrFiles] = await Promise.all([
       readText(vscode.Uri.joinPath(root, ...base, 'status.yaml')),
       readText(vscode.Uri.joinPath(root, ...base, 'spec.md')),
+      readText(vscode.Uri.joinPath(root, ...base, 'tasks.md')),
       exists(vscode.Uri.joinPath(root, ...base, 'request.md')),
       exists(vscode.Uri.joinPath(root, ...base, 'design.md')),
-      countAdrs(vscode.Uri.joinPath(root, ...base, 'decisions')),
+      listAdrs(vscode.Uri.joinPath(root, ...base, 'decisions')),
     ])
-    return buildChangeArtifacts({ statusYaml, specMd, hasRequest, hasDesign, adrCount })
+    return {
+      artifacts: buildChangeArtifacts({
+        statusYaml,
+        specMd,
+        hasRequest,
+        hasDesign,
+        adrCount: adrFiles.length,
+      }),
+      details: buildWizardDetails({ specMd, statusYaml, tasksMd, adrFiles }),
+    }
   }
 
   private async resolveChange(root: vscode.Uri, node: unknown): Promise<ChangeEntry | undefined> {
@@ -232,15 +261,15 @@ async function exists(uri: vscode.Uri): Promise<boolean> {
   }
 }
 
-/** Conta os arquivos `ADR-*.md` no diretório de decisões (0 se ausente). */
-async function countAdrs(dir: vscode.Uri): Promise<number> {
+/** Nomes dos arquivos `ADR-*.md` no diretório de decisões (vazio se ausente). */
+async function listAdrs(dir: vscode.Uri): Promise<string[]> {
   try {
     const entries = await vscode.workspace.fs.readDirectory(dir)
-    return entries.filter(
-      ([name, type]) => type === vscode.FileType.File && /^ADR-.*\.md$/i.test(name),
-    ).length
+    return entries
+      .filter(([name, type]) => type === vscode.FileType.File && /^ADR-.*\.md$/i.test(name))
+      .map(([name]) => name)
   } catch {
-    return 0
+    return []
   }
 }
 

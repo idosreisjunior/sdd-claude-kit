@@ -18,10 +18,15 @@ verificar à mão, e o que falta.
 | WIZ-007 | 🟡 in_progress | `Footer.tsx` + handler `{advance}` → `applyTransition` — falta e2e |
 | WIZ-008 | 🟡 in_progress | `changePlanner.ts` (alocação/conflito) — falta o formulário + escrita no host |
 | WIZ-010 | 🟡 in_progress | `hybridStep.ts` (extraído) + `wizardActions.ts` + `{ai}` + `AiAction.tsx` — falta e2e |
-| WIZ-009, 011..015 | ⚪ pending | hub · views · aprovar · implementar · verificar · a11y |
+| WIZ-011 | 🟡 in_progress | `wizardContent.ts` + `StageView` + 4 views (etapas 2–5) — faltam as capturas |
+| WIZ-009, 012..015 | ⚪ pending | hub · aprovar · implementar · verificar · a11y |
 
 Fonte da verdade: `.specs/features/0035-wizard-cockpit/` (`status.yaml`, `tasks.md`,
-`traceability.yaml`). Validação atual: `npm run compile` ✓ · `npm test` (208) ✓ · `npm run lint` ✓.
+`traceability.yaml`). Validação atual: `npm run compile` ✓ · `npm test` (218) ✓ · `npm run lint` ✓.
+
+> **O bundle do webview tem teto de 60 kB** (`esbuild.mjs`, ADR-034). Componentes do
+> webview importam de `src/sdd/` **só tipos**: um import de valor arrasta o `js-yaml` e
+> triplica o bundle. Derivação nova para uma view entra em `buildWizardDetails`, no host.
 
 > **Os e2e não rodam em WSL sem as libs do Electron.** `npm run test:e2e` baixa o VS Code
 > e morre em `libnspr4.so: cannot open shared object file`. Quem os executa é a **CI**
@@ -56,6 +61,13 @@ Abra a pasta no VS Code e tecle **F5** (Extension Development Host). Depois:
    `sddClaudeKit.claudeCode.path` e teste numa máquina sem `claude`), deve copiar o prompt
    e avisar como instalar/configurar (SCN-WIZ-012). Solicitar e Aprovar **não** mostram o
    botão — são formulário e portão humano.
+5. **Views das etapas 2–5 (TEST-WIZ-012).** Abra mudanças em estados diferentes e confira
+   que a área central mostra o conteúdo real do disco: **Especificar** lista os `REQ-*` com
+   título e conta os cenários; **Clarificar** lista as dúvidas de `blocked_by` com as
+   críticas em destaque no topo (é o que bloqueia o design, SCN-WIZ-003); **Desenhar**
+   mostra a presença do `design.md` e os ADRs de `decisions/`; **Tarefas** lista as tarefas
+   com status e os achados do `analyzeTasks`. Numa mudança sem o artefato, a view deve
+   mostrar o estado vazio explicativo — nunca erro (SCN-WIZ-007).
 
 Se algo destoar, o ponto de entrada é `src/sdd/wizardPanel.ts` (borda) e `src/webview/wizard/*`
 (cliente Preact). A regra pura (modelo, guardas, alvo de transição) está testada em
@@ -80,9 +92,9 @@ desejado ao usar o wizard — é o ponto mais sujeito a ajuste.
 - **WIZ-010 (fechar):** só falta executar o e2e `src/e2e/wizardAi.test.ts` num host capaz.
   A extração e a fiação estão feitas — `hybridStep.ts` é agora o caminho único do menu de
   contexto E do wizard.
-- **WIZ-011 views de conteúdo:** Especificar/Clarificar/Desenhar/Tarefas exibindo dados de
-  `dashboardModel`/`taskAnalysis`/`decisions`. O `<AiAction stage=… />` já existe e pode ser
-  embutido em cada view no lugar do placeholder atual do `Shell.tsx`.
+- **WIZ-011 (fechar):** falta anexar as capturas das 4 views como evidência. As views
+  Aprovar/Implementar/Verificar entram no `StageView.tsx` (hoje caem no placeholder), cada
+  uma no seu `Step*.tsx`, consumindo campos novos de `buildWizardDetails`.
 - **WIZ-012/013/014:** Aprovar (→APPROVED), Implementar (escopo via `scopeCheck`), Verificar
   (`validationReport`, →VERIFIED, arquivar).
 - **WIZ-015:** acessibilidade (aria/teclado) + contraste nos dois temas.

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { renderWizardHtml } from '../sdd/wizardHtml'
 import { deriveWizardState, type ChangeArtifacts } from '../sdd/wizardModel'
 import { canAdvance } from '../sdd/wizardStepGuards'
+import { buildWizardDetails } from '../sdd/wizardContent'
 
 function artifacts(over: Partial<ChangeArtifacts> = {}): ChangeArtifacts {
   return {
@@ -19,11 +20,18 @@ function artifacts(over: Partial<ChangeArtifacts> = {}): ChangeArtifacts {
   }
 }
 
-function html(title = 'Wizard Cockpit', nonce = 'abc123') {
+function html(title = 'Wizard Cockpit', nonce = 'abc123', specMd?: string) {
   const a = artifacts()
   const state = deriveWizardState({ id: '0035-wizard-cockpit', title, type: 'feature' }, a)
   const advance = canAdvance(state.currentStage, a)
-  return renderWizardHtml({ state, advance, nonce, scriptUri: 'https://webview/wizard.js' })
+  return renderWizardHtml({
+    state,
+    advance,
+    details: buildWizardDetails({ specMd }),
+    hasDesign: a.hasDesign,
+    nonce,
+    scriptUri: 'https://webview/wizard.js',
+  })
 }
 
 test('TEST-WIZ-006 · NFR-WIZ-001 — aplica CSP com nonce em style e script', () => {
@@ -50,5 +58,14 @@ test('TEST-WIZ-006 · NFR-WIZ-001 — o `<` do dado é neutralizado (não fecha 
   assert.ok(!h.includes('</script><img src=x'), 'o dado não aparece cru')
   assert.match(h, /\\u003c\/script>/)
   // apenas as duas tags </script> reais (bloco de dados + bundle)
+  assert.equal((h.match(/<\/script>/g) || []).length, 2)
+})
+
+test('TEST-WIZ-012 · NFR-WIZ-001 — o conteúdo dos artefatos entra escapado no payload', () => {
+  // O título de um requisito vem de spec.md — texto de artefato, não confiável.
+  const h = html('Wizard', 'abc123', '### REQ-X-001 — </script><img src=x onerror=alert(1)>')
+  assert.ok(h.includes('"details"'), 'o conteúdo das views entra no payload')
+  assert.ok(h.includes('REQ-X-001'), 'o requisito lido da spec chega ao cliente')
+  assert.ok(!h.includes('</script><img src=x'), 'o título do requisito não aparece cru')
   assert.equal((h.match(/<\/script>/g) || []).length, 2)
 })

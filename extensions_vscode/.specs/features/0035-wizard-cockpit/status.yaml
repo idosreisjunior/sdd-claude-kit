@@ -56,6 +56,13 @@ history:
       na borda e botão no cliente. compile ok, 208 testes de unidade ok, lint limpo. O
       e2e TEST-WIZ-011 está escrito mas NÃO foi executado: o VS Code headless não sobe
       neste ambiente (libnspr4.so ausente) — registrado como gap na traceability.
+      TASK-WIZ-011 (views de conteúdo) implementada em seguida: wizardContent.ts extrai
+      requisitos, dúvidas, ADRs e tarefas dos artefatos; StageView roteia; as views
+      Especificar/Clarificar/Desenhar/Tarefas exibem o conteúdo com a ação de IA. Achado
+      e corrigido no caminho: um import de VALOR de wizardContent num componente arrastou
+      o js-yaml para o bundle do webview (21 kB → 136 kB, contra o "bundle leve" do
+      ADR-034); a derivação passou ao host e o esbuild agora falha acima de 60 kB.
+      compile ok, 218 testes de unidade ok, lint limpo.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -108,6 +115,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 15
-  pending: 6
-  in_progress: 5
+  pending: 5
+  in_progress: 6
   done: 4

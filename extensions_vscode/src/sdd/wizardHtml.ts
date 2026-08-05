@@ -8,6 +8,7 @@
 import { themeTokensCss } from './themeTokens'
 import type { WizardState } from './wizardModel'
 import type { AdvanceResult } from './wizardStepGuards'
+import type { WizardDetails } from './wizardContent'
 
 /** Serializa dados para dentro de um <script>, neutralizando `<` (evita fechar a tag). */
 function inlineJson(value: unknown): string {
@@ -37,6 +38,25 @@ export function wizardCss(): string {
   .sdd-content { border: 1px solid var(--sdd-border); border-radius: .6rem; padding: 1rem; background: var(--sdd-surface); }
   .sdd-content h2 { margin: 0 0 .35rem; font-size: 1rem; }
   .sdd-content .muted { color: var(--sdd-text-muted); font-size: .85rem; }
+  .sdd-stat { margin: .5rem 0 .7rem; font-size: .85rem; color: var(--sdd-text); }
+  .sdd-stat strong { color: var(--sdd-accent-2); }
+  .sdd-empty { margin: .5rem 0; font-size: .85rem; color: var(--sdd-text-muted); }
+  .sdd-warn { margin: .6rem 0 .3rem; font-size: .8rem; color: var(--sdd-status-planned); }
+  .sdd-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .3rem; }
+  .sdd-list li { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; font-size: .82rem; padding: .3rem .5rem; border-radius: .35rem; background: var(--sdd-surface-raised); border: 1px solid var(--sdd-border); }
+  .sdd-list.compact li { padding: .2rem .5rem; font-size: .78rem; }
+  .sdd-list.findings li { border-color: var(--sdd-status-planned); }
+  .sdd-list li.critical { border-color: var(--sdd-status-in-progress); }
+  .sdd-list code { font-size: .76rem; color: var(--sdd-link); background: var(--sdd-badge-bg); padding: .05rem .3rem; border-radius: .25rem; }
+  .sdd-desc { color: var(--sdd-text-muted); flex: 1 1 12rem; min-width: 0; }
+  .sdd-sev { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--sdd-text-muted); }
+  .sdd-list li.critical .sdd-sev { color: var(--sdd-status-in-progress); font-weight: 700; }
+  .sdd-badge { display: inline-block; margin-left: .5rem; font-size: .7rem; padding: .1rem .45rem; border-radius: .8rem; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); }
+  .sdd-badge.critical { background: var(--sdd-status-in-progress); color: #fff; }
+  .sdd-task-status { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--sdd-text-muted); }
+  .sdd-task-status.done { color: var(--sdd-status-verified); }
+  .sdd-task-status.in_progress { color: var(--sdd-status-in-progress); }
+  .sdd-task-status.blocked { color: var(--sdd-status-planned); }
   .sdd-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; }
   .sdd-btn.ai { background: var(--sdd-ai); color: #fff; }
   .sdd-btn.ai:hover { background: var(--sdd-ai-2); }
@@ -51,17 +71,28 @@ export function wizardCss(): string {
   `
 }
 
-/** Argumentos de render: estado inicial, portão de avanço, nonce e URI do bundle. */
+/** Argumentos de render: estado inicial, portão de avanço, conteúdo, nonce e bundle. */
 export interface WizardHtmlOptions {
   state: WizardState
   advance: AdvanceResult
+  /** Conteúdo dos artefatos para a view da etapa atual (TASK-WIZ-011). */
+  details: WizardDetails
+  /** `design.md` existe? Sinal do retrato de artefatos que a view Desenhar consome. */
+  hasDesign: boolean
   nonce: string
   /** webview.asWebviewUri(out/webview/wizard.js) — a borda resolve; aqui é opaco. */
   scriptUri: string
 }
 
 /** Gera o documento HTML do wizard. `nonce` deve ser alfanumérico. */
-export function renderWizardHtml({ state, advance, nonce, scriptUri }: WizardHtmlOptions): string {
+export function renderWizardHtml({
+  state,
+  advance,
+  details,
+  hasDesign,
+  nonce,
+  scriptUri,
+}: WizardHtmlOptions): string {
   const csp = `default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -77,7 +108,7 @@ ${wizardCss()}
 </head>
 <body>
   <div id="root"></div>
-  <script type="application/json" id="sdd-state" nonce="${nonce}">${inlineJson({ state, advance })}</script>
+  <script type="application/json" id="sdd-state" nonce="${nonce}">${inlineJson({ state, advance, details, hasDesign })}</script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`

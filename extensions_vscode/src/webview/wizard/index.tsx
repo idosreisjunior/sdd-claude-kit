@@ -6,10 +6,13 @@ import { render } from 'preact'
 import { Shell } from './Shell'
 import type { WizardState } from '../../sdd/wizardModel'
 import type { AdvanceResult } from '../../sdd/wizardStepGuards'
+import type { WizardDetails } from '../../sdd/wizardContent'
 
 interface WizardView {
   state: WizardState
   advance: AdvanceResult
+  details: WizardDetails
+  hasDesign: boolean
 }
 
 /** Lê o payload inicial embutido pelo host; devolve null se ausente/ilegível. */
@@ -28,5 +31,13 @@ function readView(): WizardView | null {
 const view = readView()
 const root = document.getElementById('root')
 if (root && view) {
-  render(<Shell state={view.state} advance={view.advance} />, root)
+  render(
+    <Shell
+      state={view.state}
+      advance={view.advance}
+      details={view.details}
+      hasDesign={view.hasDesign}
+    />,
+    root,
+  )
 }

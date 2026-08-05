@@ -350,7 +350,7 @@ prompt e instrui a instalação/configuração (SCN-WIZ-012, adapter 0004).
 **Requisitos:** REQ-WIZ-001, REQ-WIZ-002
 **Dependências:** TASK-WIZ-007, TASK-WIZ-010
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -360,6 +360,9 @@ via `taskAnalysis`, ADRs de `decisions/`) e os portões de cada etapa, com as a�
 ### Arquivos prováveis
 
 - `src/webview/wizard/StepSpec.tsx`, `StepClarify.tsx`, `StepDesign.tsx`, `StepTasks.tsx`
+- `src/webview/wizard/StageView.tsx` (seleciona a view da etapa atual)
+- `src/sdd/wizardContent.ts` (extração pura do conteúdo dos artefatos, testável)
+- `esbuild.mjs` (teto de tamanho do bundle — ver a nota de import de valor vs. tipo)
 
 ### Testes esperados
 

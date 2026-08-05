@@ -25,9 +25,14 @@ requirements:
       - "src/sdd/wizardModel.ts"
       - "src/sdd/wizardHtml.ts"
       - "src/sdd/wizardArtifacts.ts"
+      - "src/sdd/wizardContent.ts"
       - "src/sdd/wizardPanel.ts"
       - "src/webview/wizard/Shell.tsx"
       - "src/webview/wizard/Stepper.tsx"
+      - "src/webview/wizard/StageView.tsx"
+      - "src/webview/wizard/StepSpec.tsx"
+      - "src/webview/wizard/StepDesign.tsx"
+      - "src/webview/wizard/StepTasks.tsx"
     tests:
       - "TEST-WIZ-002"
       - "TEST-WIZ-003"
@@ -47,7 +52,9 @@ requirements:
       - "TASK-WIZ-012"
     implementation:
       - "src/sdd/wizardStepGuards.ts"
+      - "src/sdd/wizardContent.ts"
       - "src/webview/wizard/Footer.tsx"
+      - "src/webview/wizard/StepClarify.tsx"
     tests:
       - "TEST-WIZ-004"
       - "TEST-WIZ-005"
@@ -131,6 +138,7 @@ requirements:
       - "src/sdd/wizardHtml.ts"
     tests:
       - "TEST-WIZ-006"
+      - "TEST-WIZ-012"
 
   "NFR-WIZ-002":
     title: "Aderência ao tema (claro/escuro)"
@@ -194,6 +202,16 @@ gaps:
       `sendText(prompt, false)` (sem newline) em `hybridStep.ts`, herdado do adapter 0004
       já em uso; verificação manual pelo roteiro do HANDOFF; teste unitário do mapa
       etapa → ação (wizardActions) garantindo o comando composto.
+  - id: "TEST-WIZ-012 (render das views não é inspecionável do host)"
+    reason: >-
+      O DOM de um webview não é acessível pela API da extensão: nenhum teste do host
+      consegue afirmar que a view Especificar listou os requisitos. O e2e cobriria apenas
+      o payload — que já é coberto por unidade em wizardHtml.test.ts (o conteúdo entra
+      escapado) e wizardContent.test.ts (a extração está certa).
+    mitigation: >-
+      Cobertura unitária da extração (wizardContent) e do payload (wizardHtml); capturas
+      das 4 views anexadas como evidência, conforme o critério da TASK-WIZ-011, e o
+      roteiro manual do HANDOFF.
   - id: "TEST-WIZ-006/007/008/011 (render, reidratação, avanço e IA no host)"
     reason: >-
       O render do shell/stepper/rodapé no WebviewPanel, a CSP em runtime, a reidratação

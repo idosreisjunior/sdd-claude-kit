@@ -1,13 +1,25 @@
-// Casca do wizard (feature 0035, TASK-WIZ-005/007). Cabeçalho + trilha de etapas + área
-// de conteúdo + rodapé de navegação. As views de cada etapa (Especificar, Clarificar, …)
-// chegam na TASK-WIZ-011; aqui a área mostra a etapa atual como placeholder.
+// Casca do wizard (feature 0035, TASK-WIZ-005/007/010/011). Cabeçalho + trilha de etapas
+// + área de conteúdo + rodapé de navegação. A área central delega à view da etapa atual
+// (StageView); a casca não conhece as etapas.
 import type { WizardState } from '../../sdd/wizardModel'
 import type { AdvanceResult } from '../../sdd/wizardStepGuards'
+import type { WizardDetails } from '../../sdd/wizardContent'
 import { Stepper } from './Stepper'
 import { Footer } from './Footer'
 import { AiAction } from './AiAction'
+import { StageView } from './StageView'
 
-export function Shell({ state, advance }: { state: WizardState; advance: AdvanceResult }) {
+export function Shell({
+  state,
+  advance,
+  details,
+  hasDesign,
+}: {
+  state: WizardState
+  advance: AdvanceResult
+  details: WizardDetails
+  hasDesign: boolean
+}) {
   const current = state.stages.find((s) => s.status === 'current')
   return (
     <div class="sdd-wizard">
@@ -21,8 +33,12 @@ export function Shell({ state, advance }: { state: WizardState; advance: Advance
       <section class="sdd-content" aria-live="polite">
         <h2>{current ? current.label : 'Concluído'}</h2>
         <p class="muted">{current ? current.summary : 'Todas as etapas concluídas.'}</p>
-        <p class="muted">A view desta etapa chega na TASK-WIZ-011.</p>
-        {current && <AiAction stage={current.stage} />}
+        {current && (
+          <>
+            <StageView stage={current.stage} details={details} hasDesign={hasDesign} />
+            <AiAction stage={current.stage} />
+          </>
+        )}
       </section>
       <Footer state={state} advance={advance} />
     </div>
