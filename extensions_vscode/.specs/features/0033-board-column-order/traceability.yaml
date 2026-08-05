@@ -1,0 +1,68 @@
+# Matriz de rastreabilidade — 0033-board-column-order
+version: 1
+
+feature: "0033-board-column-order"
+
+requirements:
+
+  "REQ-COLORD-001":
+    title: "Reordenar as colunas"
+    scenarios:
+      - "SCN-COLORD-001"
+      - "SCN-COLORD-002"
+    tasks:
+      - "TASK-COLORD-001"
+      - "TASK-COLORD-002"
+      - "TASK-COLORD-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-COLORD-001"
+      - "TEST-COLORD-002"
+
+  "REQ-COLORD-002":
+    title: "Persistência na sessão"
+    scenarios:
+      - "SCN-COLORD-003"
+    tasks:
+      - "TASK-COLORD-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+  "NFR-COLORD-001":
+    title: "Lógica pura e testável"
+    scenarios: []
+    tasks:
+      - "TASK-COLORD-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-COLORD-001"
+      - "TEST-COLORD-002"
+
+  "NFR-COLORD-002":
+    title: "Client-side e seguro"
+    scenarios: []
+    tasks:
+      - "TASK-COLORD-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-COLORD-001"
+    reason: >-
+      As setas e o render ordenado são DOM no host; a ordem (orderColumns/
+      moveColumn) é pura e testada.
+    mitigation: >-
+      Revisão manual (TASK-COLORD-003): mover as colunas com as setas; reset
+      restaura o padrão.
+  - id: "REQ-COLORD-002"
+    reason: >-
+      A persistência por vscode.setState e a preservação nas atualizações ao vivo
+      são comportamento de webview no host.
+    mitigation: >-
+      Revisão manual: a ordem sobrevive a salvar um .specs e a esconder/mostrar o
+      painel.

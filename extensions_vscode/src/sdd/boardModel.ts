@@ -161,6 +161,43 @@ export function sortBoardCards(cards: readonly BoardCard[], key: BoardSort): Boa
   return arr
 }
 
+/**
+ * Reordena as colunas por uma lista de rótulos (`order`). As colunas cujos
+ * rótulos aparecem em `order` vêm primeiro, nessa ordem; as demais seguem na
+ * ordem original ao final. Rótulos de `order` ausentes são ignorados. Não muta.
+ * É a lógica canônica que o cliente espelha.
+ */
+export function orderColumns(columns: readonly BoardColumn[], order: readonly string[]): BoardColumn[] {
+  const byLabel = new Map(columns.map((c) => [c.label, c]))
+  const out: BoardColumn[] = []
+  for (const label of order) {
+    const col = byLabel.get(label)
+    if (col) {
+      out.push(col)
+      byLabel.delete(label)
+    }
+  }
+  for (const col of columns) {
+    if (byLabel.has(col.label)) {
+      out.push(col)
+    }
+  }
+  return out
+}
+
+/** Move `label` uma posição na lista (`dir` -1 esquerda, +1 direita). Não muta. */
+export function moveColumn(labels: readonly string[], label: string, dir: -1 | 1): string[] {
+  const i = labels.indexOf(label)
+  const j = i + dir
+  if (i < 0 || j < 0 || j >= labels.length) {
+    return labels.slice()
+  }
+  const arr = labels.slice()
+  arr[i] = labels[j]
+  arr[j] = label
+  return arr
+}
+
 /** Ordem do feed: `desc` = mais recente primeiro (padrão); `asc` = mais antigo. */
 export type FeedOrder = 'desc' | 'asc'
 

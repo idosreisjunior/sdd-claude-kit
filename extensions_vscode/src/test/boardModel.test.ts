@@ -10,6 +10,8 @@ import {
   orderFeed,
   filterFeed,
   feedItemMatches,
+  orderColumns,
+  moveColumn,
 } from '../sdd/boardModel'
 import type { BoardCard } from '../sdd/boardModel'
 import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
@@ -209,4 +211,26 @@ test('TEST-FEEDFILTER-002 — feedItemMatches combina busca e status', () => {
   assert.equal(feedItemMatches(item, { query: 'git', statuses: ['VERIFIED'] }), true)
   assert.equal(feedItemMatches(item, { query: 'git', statuses: ['DRAFT'] }), false)
   assert.equal(feedItemMatches(item, { query: 'zzz', statuses: [] }), false)
+})
+
+test('TEST-COLORD-001 — orderColumns respeita a ordem e anexa o resto (SCN-COLORD-001)', () => {
+  const board = buildChangesBoard(
+    [change('0001-a', 'DRAFT'), change('0002-b', 'IN_PROGRESS'), change('0003-c', 'VERIFIED')],
+    new Map(),
+  )
+  // labels padrão: Rascunho, Em desenvolvimento, Em validação
+  const ordered = orderColumns(board.columns, ['Em validação', 'Rascunho'])
+  assert.deepEqual(ordered.map((c) => c.label), ['Em validação', 'Rascunho', 'Em desenvolvimento'])
+  // rótulo inexistente é ignorado; ordem vazia = ordem original
+  assert.deepEqual(orderColumns(board.columns, ['Inexistente']).map((c) => c.label), board.columns.map((c) => c.label))
+  assert.deepEqual(orderColumns(board.columns, []).map((c) => c.label), board.columns.map((c) => c.label))
+})
+
+test('TEST-COLORD-002 — moveColumn move o rótulo e respeita as bordas (SCN-COLORD-002)', () => {
+  const labels = ['A', 'B', 'C']
+  assert.deepEqual(moveColumn(labels, 'B', -1), ['B', 'A', 'C'])
+  assert.deepEqual(moveColumn(labels, 'B', 1), ['A', 'C', 'B'])
+  assert.deepEqual(moveColumn(labels, 'A', -1), ['A', 'B', 'C']) // já é o primeiro
+  assert.deepEqual(moveColumn(labels, 'C', 1), ['A', 'B', 'C']) // já é o último
+  assert.deepEqual(labels, ['A', 'B', 'C']) // não muta
 })
