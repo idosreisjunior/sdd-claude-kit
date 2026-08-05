@@ -225,7 +225,7 @@ edições externas do `status.yaml`.
 **Requisitos:** REQ-WIZ-002, REQ-WIZ-004
 **Dependências:** TASK-WIZ-006, TASK-WIZ-004
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 

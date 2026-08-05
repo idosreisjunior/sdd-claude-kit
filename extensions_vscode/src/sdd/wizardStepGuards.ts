@@ -1,11 +1,13 @@
 // Portões de etapa do wizard SDD (feature 0035, REQ-WIZ-002) — lógica pura, sem a API do
-// VS Code. Decide se uma etapa pode avançar para a próxima e, quando não pode, por quê.
+// VS Code. Decide se uma etapa pode avançar para a próxima e, quando não pode, por quê;
+// e mapeia a etapa atual para o status do ciclo de vida que o "avançar" grava.
 //
 // As guardas espelham o fluxo do stateMachine.ts e a tabela de pré-requisitos do design
-// (design.md §5 / seção "Guardas por etapa"). A UI apenas desabilita o avanço e mostra os
-// motivos — a regra vive aqui, testável, sem duplicação na borda.
+// (design.md §5). A UI apenas desabilita o avanço e mostra os motivos — a regra vive aqui,
+// testável, sem duplicação na borda.
 
 import { WIZARD_STAGES, type WizardStage, type ChangeArtifacts } from './wizardModel'
+import type { SddState } from './stateMachine'
 
 export interface AdvanceResult {
   /** Pode avançar a partir de `from`? */
@@ -23,6 +25,27 @@ export function nextStage(from: WizardStage): WizardStage | null {
     return null
   }
   return WIZARD_STAGES[i + 1]
+}
+
+/**
+ * Status do ciclo de vida que "avançar a partir de `stage`" grava. As etapas Solicitar e
+ * Especificar não disparam transição de status (o trabalho delas mantém a mudança em
+ * DRAFT; ao ganhar requisitos, a etapa atual derivada já anda para Clarificar). Da
+ * Clarificar em diante, cada avanço promove o status. A borda ainda valida com
+ * `canTransition` antes de gravar (design refinado com feedback do host).
+ */
+const ADVANCE_TARGET: Partial<Record<WizardStage, SddState>> = {
+  clarify: 'CLARIFIED',
+  design: 'DESIGNED',
+  tasks: 'PLANNED',
+  approve: 'APPROVED',
+  implement: 'IN_PROGRESS',
+  verify: 'VERIFIED',
+}
+
+/** O status-alvo do avanço a partir de `stage`, ou null quando não há transição direta. */
+export function advanceTargetStatus(stage: WizardStage): SddState | null {
+  return ADVANCE_TARGET[stage] ?? null
 }
 
 /**

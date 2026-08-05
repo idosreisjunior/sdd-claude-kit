@@ -3,7 +3,10 @@ import { randomBytes } from 'node:crypto'
 import { parseChanges, type ChangeEntry } from './specsIndex'
 import { featureChangeOf } from '../views/featuresTreeProvider'
 import { buildChangeArtifacts } from './wizardArtifacts'
-import { deriveWizardState, type ChangeArtifacts } from './wizardModel'
+import { deriveWizardState, type ChangeArtifacts, type WizardState } from './wizardModel'
+import { canAdvance, advanceTargetStatus, type AdvanceResult } from './wizardStepGuards'
+import { canTransition } from './stateMachine'
+import { applyTransition } from './boardPanel'
 import { renderWizardHtml } from './wizardHtml'
 
 /**
@@ -12,9 +15,9 @@ import { renderWizardHtml } from './wizardHtml'
  * partir do disco (status.yaml é a fonte da verdade) e carrega o cliente Preact
  * empacotado (out/webview/wizard.js). Reidrata ao vivo quando os `.specs` mudam.
  *
- * Incremento atual (TASK-WIZ-006): abre, projeta e reidrata a casca + stepper. As
- * transições (advance) e as ações de IA — com o protocolo de mensagens — chegam nas
- * TASK-WIZ-007/010.
+ * Incremento atual (TASK-WIZ-006/007): abre, projeta, reidrata e executa a transição de
+ * etapa (avançar) validada pelas guardas + stateMachine, gravando via applyTransition. As
+ * ações de IA e as views de conteúdo chegam nas TASK-WIZ-010/011.
  */
 export class WizardPanel {
   private panel?: vscode.WebviewPanel
@@ -52,6 +55,9 @@ export class WizardPanel {
         this.panel = undefined
         this.current = undefined
       })
+      this.panel.webview.onDidReceiveMessage((message) => {
+        void this.onMessage(root, message)
+      })
     }
     await this.render(root)
   }
@@ -70,20 +76,71 @@ export class WizardPanel {
     await this.render(root)
   }
 
+  /** Projeta o estado + o portão de avanço da mudança atual a partir do disco. */
+  private async project(root: vscode.Uri, change: ChangeEntry): Promise<{
+    state: WizardState
+    advance: AdvanceResult
+    artifacts: ChangeArtifacts
+  }> {
+    const artifacts = await this.readArtifacts(root, change)
+    const state = deriveWizardState(
+      { id: change.id, title: change.title, type: change.type },
+      artifacts,
+    )
+    return { state, advance: canAdvance(state.currentStage, artifacts), artifacts }
+  }
+
   private async render(root: vscode.Uri): Promise<void> {
     if (!this.panel || !this.current) {
       return
     }
-    const artifacts = await this.readArtifacts(root, this.current)
-    const state = deriveWizardState(
-      { id: this.current.id, title: this.current.title, type: this.current.type },
-      artifacts,
-    )
+    const { state, advance } = await this.project(root, this.current)
     const scriptUri = this.panel.webview
       .asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'out', 'webview', 'wizard.js'))
       .toString()
-    this.panel.webview.html = renderWizardHtml({ state, nonce: nonce(), scriptUri })
+    this.panel.webview.html = renderWizardHtml({ state, advance, nonce: nonce(), scriptUri })
     this.panel.title = `Assistente SDD — ${this.current.id}`
+  }
+
+  /** Trata as mensagens do webview. Por ora: `advance` (transição de etapa). */
+  private async onMessage(root: vscode.Uri, message: unknown): Promise<void> {
+    if (!isRecord(message) || message['type'] !== 'advance') {
+      return
+    }
+    if (!this.current || !this.current.path) {
+      return
+    }
+    const change = this.current
+    const { state, advance, artifacts } = await this.project(root, change)
+
+    if (!advance.ok) {
+      vscode.window.showWarningMessage(`SDD: ${advance.reasons.join(' ')}`)
+      return
+    }
+    const target = advanceTargetStatus(state.currentStage)
+    if (!target || !canTransition(artifacts.sddStatus, target)) {
+      vscode.window.showInformationMessage(
+        'SDD: conclua o trabalho desta etapa antes de avançar.',
+      )
+      return
+    }
+    const reason = await vscode.window.showInputBox({
+      prompt: `Motivo da transição ${artifacts.sddStatus} → ${target} (${change.id})`,
+      placeHolder: 'Por que esta mudança de estado?',
+      validateInput: (value) => (value.trim() ? undefined : 'Informe um motivo (obrigatório).'),
+    })
+    if (!reason || !reason.trim()) {
+      return
+    }
+    const result = await applyTransition(root, change.id, change.path, target, reason)
+    if (result !== 'ok') {
+      vscode.window.showErrorMessage(
+        `SDD: falha ao gravar a transição de ${change.id}; nada foi alterado.`,
+      )
+      return
+    }
+    vscode.window.showInformationMessage(`SDD: ${change.id} → ${target}.`)
+    await this.refresh()
   }
 
   /** Lê os artefatos da mudança do disco (robusto) e monta o retrato puro. */
@@ -160,6 +217,10 @@ async function countAdrs(dir: vscode.Uri): Promise<number> {
   } catch {
     return 0
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
 }
 
 function nonce(): string {

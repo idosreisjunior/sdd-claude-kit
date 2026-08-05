@@ -47,6 +47,7 @@ requirements:
       - "TASK-WIZ-012"
     implementation:
       - "src/sdd/wizardStepGuards.ts"
+      - "src/webview/wizard/Footer.tsx"
     tests:
       - "TEST-WIZ-004"
       - "TEST-WIZ-005"
@@ -78,6 +79,9 @@ requirements:
       - "TASK-WIZ-014"
     implementation:
       - "src/sdd/wizardPanel.ts"
+      - "src/sdd/wizardStepGuards.ts"
+      - "src/webview/wizard/Footer.tsx"
+      - "src/webview/wizard/vscodeApi.ts"
     tests:
       - "TEST-WIZ-007"
       - "TEST-WIZ-008"
@@ -175,12 +179,13 @@ gaps:
     mitigation: >-
       Capturas nos temas claro e escuro anexadas como evidência da TASK-WIZ-015, além
       do smoke TEST-WIZ-016, comparadas aos mockups de docs/ui-redesign/.
-  - id: "TEST-WIZ-006 / TEST-WIZ-007 (render e reidratação no host)"
+  - id: "TEST-WIZ-006/007/008 (render, reidratação e avanço no host)"
     reason: >-
-      O render efetivo do shell/stepper no WebviewPanel, a checagem de CSP em runtime e a
-      reidratação por edição externa exigem o host do VS Code (vscode-test). A parte pura
-      (documento HTML+CSP, modelo, guardas, montagem de artefatos) já é coberta por testes
-      de unidade.
+      O render do shell/stepper/rodapé no WebviewPanel, a CSP em runtime, a reidratação
+      por edição externa e o ciclo cliente→host do avanço (botão → applyTransition →
+      status.yaml) exigem o host do VS Code (vscode-test). As partes puras (documento
+      HTML+CSP, modelo, guardas, alvo de transição, montagem de artefatos) já têm testes.
     mitigation: >-
-      Executar os e2e TEST-WIZ-006/007 no host; até lá, cobertura unitária de
-      renderWizardHtml, wizardModel, wizardStepGuards e wizardArtifacts.
+      Executar os e2e TEST-WIZ-006/007/008 no host; até lá, cobertura unitária de
+      renderWizardHtml, wizardModel, wizardStepGuards (incl. advanceTargetStatus) e
+      wizardArtifacts, e a reutilização de applyTransition (já coberto pelo E2E 0032).

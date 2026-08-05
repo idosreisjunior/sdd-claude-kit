@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { canAdvance, nextStage } from '../sdd/wizardStepGuards'
+import { canAdvance, nextStage, advanceTargetStatus } from '../sdd/wizardStepGuards'
+import { canTransition } from '../sdd/stateMachine'
 import type { ChangeArtifacts } from '../sdd/wizardModel'
 
 /** Retrato base "tudo satisfeito"; cada teste sabota o que precisa. */
@@ -68,4 +69,25 @@ test('TEST-WIZ-004 — nextStage percorre o fluxo e termina em null', () => {
   assert.equal(nextStage('request'), 'spec')
   assert.equal(nextStage('tasks'), 'approve')
   assert.equal(nextStage('verify'), null)
+})
+
+test('TEST-WIZ-008 — advanceTargetStatus mapeia as etapas para o status do ciclo', () => {
+  assert.equal(advanceTargetStatus('request'), null)
+  assert.equal(advanceTargetStatus('spec'), null)
+  assert.equal(advanceTargetStatus('clarify'), 'CLARIFIED')
+  assert.equal(advanceTargetStatus('design'), 'DESIGNED')
+  assert.equal(advanceTargetStatus('tasks'), 'PLANNED')
+  assert.equal(advanceTargetStatus('approve'), 'APPROVED')
+  assert.equal(advanceTargetStatus('implement'), 'IN_PROGRESS')
+  assert.equal(advanceTargetStatus('verify'), 'VERIFIED')
+})
+
+test('TEST-WIZ-008 — cada alvo de avanço é uma transição válida do estado anterior', () => {
+  // Clarificar (DRAFT) -> CLARIFIED, Desenhar (CLARIFIED) -> DESIGNED, etc.
+  assert.equal(canTransition('DRAFT', advanceTargetStatus('clarify')!), true)
+  assert.equal(canTransition('CLARIFIED', advanceTargetStatus('design')!), true)
+  assert.equal(canTransition('DESIGNED', advanceTargetStatus('tasks')!), true)
+  assert.equal(canTransition('PLANNED', advanceTargetStatus('approve')!), true)
+  assert.equal(canTransition('APPROVED', advanceTargetStatus('implement')!), true)
+  assert.equal(canTransition('IN_PROGRESS', advanceTargetStatus('verify')!), true)
 })

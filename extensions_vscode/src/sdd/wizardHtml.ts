@@ -1,11 +1,13 @@
-// Documento HTML do webview do wizard (feature 0035, TASK-WIZ-005, ADR-033) — lógica
+// Documento HTML do webview do wizard (feature 0035, TASK-WIZ-005/007, ADR-033) — lógica
 // pura, sem a API do VS Code. O cliente executável é o bundle Preact (out/webview/
-// wizard.js), carregado por <script nonce src=…>. O estado inicial entra como um bloco
-// de DADOS (<script type="application/json">), lido pelo cliente via textContent +
-// JSON.parse — nunca executado e nunca inserido como HTML. Todo texto de artefato tem o
-// `<` neutralizado no JSON para não fechar a tag (NFR-WIZ-001, espelha o boardHtml).
+// wizard.js), carregado por <script nonce src=…>. O estado inicial (WizardState + o
+// resultado do portão de avanço) entra como um bloco de DADOS (<script
+// type="application/json">), lido pelo cliente via textContent + JSON.parse — nunca
+// executado e nunca inserido como HTML. Todo texto de artefato tem o `<` neutralizado no
+// JSON para não fechar a tag (NFR-WIZ-001, espelha o boardHtml).
 import { themeTokensCss } from './themeTokens'
 import type { WizardState } from './wizardModel'
+import type { AdvanceResult } from './wizardStepGuards'
 
 /** Serializa dados para dentro de um <script>, neutralizando `<` (evita fechar a tag). */
 function inlineJson(value: unknown): string {
@@ -35,19 +37,26 @@ export function wizardCss(): string {
   .sdd-content { border: 1px solid var(--sdd-border); border-radius: .6rem; padding: 1rem; background: var(--sdd-surface); }
   .sdd-content h2 { margin: 0 0 .35rem; font-size: 1rem; }
   .sdd-content .muted { color: var(--sdd-text-muted); font-size: .85rem; }
+  .sdd-footer { display: flex; flex-direction: column; align-items: flex-end; gap: .4rem; margin-top: 1rem; }
+  .sdd-btn { font: inherit; font-size: .9rem; font-weight: 600; padding: .45rem 1rem; border-radius: .5rem; border: 1px solid transparent; cursor: pointer; }
+  .sdd-btn.primary { background: var(--sdd-accent); color: #fff; }
+  .sdd-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .sdd-reasons { margin: 0; padding-left: 1.1rem; color: var(--sdd-status-planned); font-size: .8rem; text-align: right; list-style: none; }
+  .sdd-reasons li::before { content: "⚠ "; }
   `
 }
 
-/** Argumentos de render: o estado inicial, o nonce da CSP e o URI do bundle no webview. */
+/** Argumentos de render: estado inicial, portão de avanço, nonce e URI do bundle. */
 export interface WizardHtmlOptions {
   state: WizardState
+  advance: AdvanceResult
   nonce: string
   /** webview.asWebviewUri(out/webview/wizard.js) — a borda resolve; aqui é opaco. */
   scriptUri: string
 }
 
 /** Gera o documento HTML do wizard. `nonce` deve ser alfanumérico. */
-export function renderWizardHtml({ state, nonce, scriptUri }: WizardHtmlOptions): string {
+export function renderWizardHtml({ state, advance, nonce, scriptUri }: WizardHtmlOptions): string {
   const csp = `default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -57,14 +66,13 @@ export function renderWizardHtml({ state, nonce, scriptUri }: WizardHtmlOptions)
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Assistente SDD</title>
 <style nonce="${nonce}">
-:root {}
 ${themeTokensCss()}
 ${wizardCss()}
 </style>
 </head>
 <body>
   <div id="root"></div>
-  <script type="application/json" id="sdd-state" nonce="${nonce}">${inlineJson(state)}</script>
+  <script type="application/json" id="sdd-state" nonce="${nonce}">${inlineJson({ state, advance })}</script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`

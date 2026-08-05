@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { renderWizardHtml } from '../sdd/wizardHtml'
 import { deriveWizardState, type ChangeArtifacts } from '../sdd/wizardModel'
+import { canAdvance } from '../sdd/wizardStepGuards'
 
 function artifacts(over: Partial<ChangeArtifacts> = {}): ChangeArtifacts {
   return {
@@ -19,8 +20,10 @@ function artifacts(over: Partial<ChangeArtifacts> = {}): ChangeArtifacts {
 }
 
 function html(title = 'Wizard Cockpit', nonce = 'abc123') {
-  const state = deriveWizardState({ id: '0035-wizard-cockpit', title, type: 'feature' }, artifacts())
-  return renderWizardHtml({ state, nonce, scriptUri: 'https://webview/wizard.js' })
+  const a = artifacts()
+  const state = deriveWizardState({ id: '0035-wizard-cockpit', title, type: 'feature' }, a)
+  const advance = canAdvance(state.currentStage, a)
+  return renderWizardHtml({ state, advance, nonce, scriptUri: 'https://webview/wizard.js' })
 }
 
 test('TEST-WIZ-006 · NFR-WIZ-001 — aplica CSP com nonce em style e script', () => {
@@ -33,12 +36,12 @@ test('TEST-WIZ-006 · NFR-WIZ-001 — aplica CSP com nonce em style e script', (
   assert.match(h, /<script nonce="abc123" src="https:\/\/webview\/wizard\.js">/)
 })
 
-test('TEST-WIZ-006 — embute o estado como bloco de dados e a raiz do Preact', () => {
+test('TEST-WIZ-006 — embute o payload (estado + avanço) e a raiz do Preact', () => {
   const h = html()
   assert.match(h, /<div id="root"><\/div>/)
   assert.match(h, /<script type="application\/json" id="sdd-state"/)
   assert.ok(h.includes('0035-wizard-cockpit'), 'o estado embutido traz o id')
-  // tokens de tema presentes (themeTokensCss)
+  assert.ok(h.includes('"advance"'), 'o portão de avanço entra no payload')
   assert.ok(h.includes('--sdd-accent'), 'os tokens --sdd-* entram no <style>')
 })
 

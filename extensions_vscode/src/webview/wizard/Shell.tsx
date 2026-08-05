@@ -1,10 +1,12 @@
-// Casca do wizard (feature 0035, TASK-WIZ-005). Cabeçalho + trilha de etapas + área de
-// conteúdo. As views de cada etapa (Especificar, Clarificar, …) chegam na TASK-WIZ-011;
-// aqui a área mostra a etapa atual como placeholder.
+// Casca do wizard (feature 0035, TASK-WIZ-005/007). Cabeçalho + trilha de etapas + área
+// de conteúdo + rodapé de navegação. As views de cada etapa (Especificar, Clarificar, …)
+// chegam na TASK-WIZ-011; aqui a área mostra a etapa atual como placeholder.
 import type { WizardState } from '../../sdd/wizardModel'
+import type { AdvanceResult } from '../../sdd/wizardStepGuards'
 import { Stepper } from './Stepper'
+import { Footer } from './Footer'
 
-export function Shell({ state }: { state: WizardState }) {
+export function Shell({ state, advance }: { state: WizardState; advance: AdvanceResult }) {
   const current = state.stages.find((s) => s.status === 'current')
   return (
     <div class="sdd-wizard">
@@ -20,6 +22,7 @@ export function Shell({ state }: { state: WizardState }) {
         <p class="muted">{current ? current.summary : 'Todas as etapas concluídas.'}</p>
         <p class="muted">A view desta etapa chega na TASK-WIZ-011.</p>
       </section>
+      <Footer state={state} advance={advance} />
     </div>
   )
 }
