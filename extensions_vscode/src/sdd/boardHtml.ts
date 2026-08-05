@@ -4,7 +4,15 @@
 // A CSP mantém default-src 'none' e restringe style/script ao nonce. Todo texto
 // de artefato é inserido via textContent no cliente (nunca innerHTML), então não
 // há injeção de HTML.
+//
+// Redesenhado pela feature 0036 (TASK-COCK-006). Por ADR-039 este painel MANTÉM o cliente
+// inline que já tem — os testes de `boardHtml.test.ts` afirmam o mecanismo de entrega, e
+// migrá-lo para Preact exigiria reescrevê-los, o que a regra do design §11 chama de
+// regressão. A identidade visual entra pelas classes compartilhadas (`componentsCss`), as
+// mesmas dos demais painéis: cartão, badge de status e estado vazio ficam idênticos sem
+// que uma linha de comportamento seja tocada.
 import type { ChangesBoard, FeedItem } from './boardModel'
+import { componentsCss } from './uiCss'
 
 /** Serializa dados para dentro do <script>, neutralizando `<` (evita fechar a tag). */
 function inlineJson(value: unknown): string {
@@ -22,6 +30,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel SDD</title>
 <style nonce="${nonce}">
+${componentsCss()}
   * { box-sizing: border-box; }
   body { font-family: var(--vscode-font-family); color: var(--sdd-text); margin: 0; padding: .75rem 1rem; }
   .overview { display: flex; align-items: baseline; gap: .4rem 1.2rem; flex-wrap: wrap; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--sdd-border); }
@@ -40,11 +49,13 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
   .colmove:hover:not(:disabled) { opacity: 1; }
   .colmove:disabled { opacity: .25; cursor: default; }
   .colcount { font-size: .75rem; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); border-radius: .6rem; padding: .05rem .45rem; }
-  .card { background: var(--sdd-surface-raised); border: 1px solid var(--sdd-border); border-radius: .45rem; padding: .5rem .55rem; margin-bottom: .5rem; }
+  /* .card: aparência vem de .ui-card (uiCss). Aqui só o que é do Board. */
+  .ui-card { margin-bottom: .5rem; padding: .5rem .55rem; }
   .ctitle { font-weight: 600; font-size: .9rem; cursor: pointer; }
   .ctitle:hover { text-decoration: underline; }
   .meta { display: flex; flex-wrap: wrap; gap: .3rem; margin: .35rem 0; }
   .chip { font-size: .72rem; opacity: .85; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); border-radius: .5rem; padding: .05rem .4rem; }
+  .meta .ui-badge { font-size: .66rem; }
   .bar { height: .4rem; border-radius: .25rem; background: var(--sdd-border); overflow: hidden; margin: .3rem 0 .15rem; }
   .bar > span { display: block; height: 100%; background: var(--sdd-progress); }
   .barlbl { font-size: .72rem; opacity: .75; }
@@ -80,6 +91,16 @@ const saved = vscode.getState && vscode.getState();
 if (saved && Array.isArray(saved.columnOrder)) { state.columnOrder = saved.columnOrder; }
 if (saved && Array.isArray(saved.collapsed)) { state.collapsed = saved.collapsed; }
 function persist() { if (vscode.setState) { vscode.setState({ columnOrder: state.columnOrder, collapsed: state.collapsed }); } }
+
+// Badge do status do ciclo de vida, com a MESMA cor dos demais painéis (SCN-COCK-003).
+// A classe é derivada aqui em vez de vir pronta do host porque este cliente é inline e não
+// importa módulo; o mapeamento espelha statusToken() em themeTokens.ts. Status desconhecido
+// não casa com nenhuma .s-* e cai no fundo padrão de .ui-badge — o mesmo fallback, em CSS.
+function statusBadge(status) {
+  const el = h('span', 'ui-badge', status || '');
+  if (status) { el.classList.add('s-' + String(status).trim().toLowerCase().replace(/_/g, '-')); }
+  return el;
+}
 
 // Espelha toggleLabel (boardModel.ts) — colapsa/expande uma coluna (ADR-032).
 function toggleCollapse(label) {
@@ -135,7 +156,7 @@ function progressBar(p) {
 }
 
 function changeCard(card) {
-  const el = h('div', 'card');
+  const el = h('div', 'ui-card card');
   el.draggable = true;
   el.addEventListener('dragstart', function (ev) {
     ev.dataTransfer.setData('text/plain', card.id);
@@ -148,7 +169,7 @@ function changeCard(card) {
   const meta = h('div', 'meta');
   meta.appendChild(h('span', 'chip', card.id));
   meta.appendChild(h('span', 'chip', card.type));
-  meta.appendChild(h('span', 'chip', card.status));
+  meta.appendChild(statusBadge(card.status));
   el.appendChild(meta);
   el.appendChild(progressBar(card.progress));
   const tbtn = h('button', 'tbtn', 'Tarefas ▸');
@@ -463,7 +484,7 @@ function renderBoardArea() {
 }
 
 function taskCard(t) {
-  const el = h('div', 'card');
+  const el = h('div', 'ui-card card');
   el.appendChild(h('div', 'ctitle', t.title || t.id));
   el.appendChild(h('span', 'chip', t.id));
   return el;

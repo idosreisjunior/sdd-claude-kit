@@ -40,7 +40,10 @@ ${statusBadgeClasses()}
   .ui-card .ui-card-actions { display: flex; gap: .3rem; flex-shrink: 0; }
   .ui-card:hover { background: var(--sdd-hover); }
 
-  .ui-badge { display: inline-block; font-size: .66rem; font-weight: 700; letter-spacing: .04em; padding: .1rem .45rem; border-radius: .8rem; color: var(--sdd-on-brand); white-space: nowrap; }
+  /* O fundo padrão é o de rascunho: um status desconhecido, que não casa com nenhuma
+     classe .s-*, cai nele em vez de ficar sem fundo — texto branco sobre transparente
+     seria um badge invisível. Espelha em CSS o fallback de statusToken(). */
+  .ui-badge { display: inline-block; font-size: .66rem; font-weight: 700; letter-spacing: .04em; padding: .1rem .45rem; border-radius: .8rem; background: var(--sdd-status-draft); color: var(--sdd-on-brand); white-space: nowrap; }
 
   .ui-empty { border: 1px dashed var(--sdd-border); border-radius: .5rem; padding: 1.25rem; text-align: center; color: var(--sdd-text-muted); }
   .ui-empty h2 { margin: 0 0 .35rem; font-size: .95rem; color: var(--sdd-text); font-weight: 600; }

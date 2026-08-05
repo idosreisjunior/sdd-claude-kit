@@ -68,7 +68,9 @@ requirements:
       - "TASK-COCK-006"
       - "TASK-COCK-007"
       - "TASK-COCK-008"
-    implementation: []
+    implementation:
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/uiCss.ts"
     tests:
       - "TEST-COCK-010"
 

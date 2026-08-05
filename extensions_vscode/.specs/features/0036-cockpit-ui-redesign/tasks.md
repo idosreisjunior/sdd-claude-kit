@@ -228,14 +228,20 @@ de layout e não de cor, e a mistura visual não piora mais do que o necessário
 
 ---
 
-## TASK-COCK-006 — Board: casca e colunas em Preact
+## TASK-COCK-006 — Board: identidade compartilhada (sem migrar o cliente)
 
 **Requisitos:** REQ-COCK-003, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Revisada pelo ADR-039.** O Board NÃO migra para Preact: os cinco asserts de
+> `boardHtml.test.ts` descrevem o mecanismo de entrega, e reescrevê-los seria a regressão
+> que o design §11 proíbe. Ele mantém o cliente inline e recebe a identidade pelas classes
+> compartilhadas — cartão, badge de status e o CSS de `componentsCss()`. Nenhuma linha de
+> comportamento é tocada.
 
 Migrar a estrutura do Painel SDD para um cliente Preact seguindo o mockup
 `03-board-kanban`: cabeçalho, colunas e cartões de mudança, compostos com `PanelHeader`,
@@ -266,14 +272,18 @@ mais densa (design §11).
 
 ---
 
-## TASK-COCK-007 — Board: interações preservadas
+## TASK-COCK-007 — Board: verificar que as interações seguem intactas
 
 **Requisitos:** REQ-COCK-003, NFR-COCK-003
 **Dependências:** TASK-COCK-006
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Revisada pelo ADR-039.** Como o cliente não migra, não há o que reconectar: esta
+> tarefa deixa de ser reimplementação e vira VERIFICAÇÃO de que as seis funcionalidades
+> continuam presentes e intactas após o restilo.
 
 Reconectar no cliente Preact as interações já entregues: arrastar para transicionar
 (0026), filtro e busca (0028), ordenação (0030), ordem das colunas (0033) e recolhimento

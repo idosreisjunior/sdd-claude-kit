@@ -103,7 +103,14 @@ history:
       barra de métricas também; (2) o guarda de tokens só olhava hex e deixava passar
       rgba() literal, que o validationHtml usava em três lugares: foi estendido para
       rgb/rgba/hsl/hsla e passou a ignorar comentários, depois de acusar a si mesmo. Ambos
-      verificados por injeção de infração real. 247 testes ok.
+      verificados por injeção de infração real. TASK-COCK-006/007 (Board) em seguida, e com
+      elas o ADR-039: os cinco asserts de boardHtml.test.ts descrevem o MECANISMO de entrega
+      (script inline, #app, const INITIAL), e migrar para Preact exigiria reescrevê-los — a
+      regressão que o design §11 proíbe. Levado ao usuário, que escolheu não migrar: o Board
+      mantém o cliente inline e recebe a identidade pelas classes compartilhadas. Risco de
+      regressão nas seis funcionalidades cai a zero e os cinco asserts seguem intactos. A
+      007 deixou de ser reimplementação e virou verificação. 257 testes ok, nenhum arquivo
+      de teste existente alterado, lint limpo.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -178,6 +185,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 12
+  pending: 10
   in_progress: 0
-  done: 8
+  done: 10
