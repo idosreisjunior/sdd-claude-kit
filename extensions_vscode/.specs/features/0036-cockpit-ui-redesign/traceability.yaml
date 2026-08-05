@@ -53,6 +53,9 @@ requirements:
     implementation:
       - "esbuild.mjs"
       - "src/webview/ui/tokens.ts"
+      - "src/webview/ui/index.tsx"
+      - "src/sdd/uiModel.ts"
+      - "src/sdd/uiCss.ts"
     tests:
       - "TEST-COCK-003"
       - "TEST-COCK-004"
@@ -128,7 +131,9 @@ requirements:
     tasks:
       - "TASK-COCK-003"
       - "TASK-COCK-019"
-    implementation: []
+    implementation:
+      - "src/sdd/uiCss.ts"
+      - "src/sdd/themeTokens.ts"
     tests: []
 
   "NFR-COCK-002":
@@ -164,7 +169,8 @@ requirements:
       - "TASK-COCK-003"
       - "TASK-COCK-017"
       - "TASK-COCK-019"
-    implementation: []
+    implementation:
+      - "src/webview/ui/index.tsx"
     tests:
       - "TEST-COCK-007"
       - "TEST-COCK-008"

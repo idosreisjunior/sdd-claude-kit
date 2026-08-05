@@ -11,6 +11,7 @@
 // texto vindo de `.specs/` é conteúdo não confiável e tem o `<` neutralizado para não
 // fechar a tag (NFR-COCK-002, ADR-024).
 import { themeTokensCss } from './themeTokens'
+import { componentsCss } from './uiCss'
 
 /** Serializa dados para dentro de um `<script>`, neutralizando `<`. */
 function inlineJson(value: unknown): string {
@@ -75,6 +76,7 @@ export function renderPanelHtml({
 <style nonce="${nonce}">
 ${themeTokensCss()}
 ${baseCss()}
+${componentsCss()}
 ${css}
 </style>
 </head>

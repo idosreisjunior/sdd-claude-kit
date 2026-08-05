@@ -25,6 +25,7 @@ const PANEL_MODULES = [
   'specEditorHtml.ts',
   'wizardHtml.ts',
   'panelHtml.ts',
+  'uiCss.ts',
 ]
 
 /**

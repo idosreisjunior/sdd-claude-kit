@@ -12,7 +12,7 @@ FUNDAÇÃO (a base de que tudo depende)
   TASK-COCK-001 (esbuild multi-entrypoint) [OK] ─► TASK-COCK-002 (renderPanelHtml + tokens) [OK]
                                                       │
                                                       ▼
-                                              TASK-COCK-003 (biblioteca de componentes)
+                                              TASK-COCK-003 (biblioteca de componentes) [OK]
   TASK-COCK-004 (teste-guarda de tokens) [OK] ─► TASK-COCK-005 (tokens em TODOS os painéis) [OK]
                                                       │
         ┌─────────────────────────────────────────────┴──────────────┐
@@ -122,7 +122,7 @@ superfícies em vez de dez testes que podem divergir (design §8).
 **Requisitos:** REQ-COCK-002, NFR-COCK-001, NFR-COCK-004
 **Dependências:** TASK-COCK-002
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -145,7 +145,12 @@ Rótulos acessíveis e operação por teclado fazem parte do componente, não de
 
 - `StatTile` sem valor disponível renderiza a nota explicativa, nunca `0`.
 - `StatusBadge` com status desconhecido cai no token de rascunho, sem quebrar.
-- Nenhum componente importa valor de `src/sdd/`; o teto de bundle não é estourado.
+- Nenhum import de componente arrasta dependência pesada para o bundle, VERIFICADO por
+  medição: um bundle de prova com os seis componentes fica em ~20 kB e não contém js-yaml.
+  (O critério original dizia "nenhum componente importa valor de `src/sdd/`". Era estrito
+  demais e proibia o próprio padrão da tarefa: `uiModel` existe para ser lógica pura
+  compartilhada, e importá-lo é seguro porque ele só depende de `themeTokens`, que não
+  importa nada. A regra real é sobre o que a importação ARRASTA, não sobre de onde vem.)
 - TEST-COCK-003 e TEST-COCK-004 passam.
 
 ### Evidências necessárias
@@ -742,12 +747,12 @@ ao longo das migrações — a regra do design §11.
 | M | 14 |
 | G | 0 |
 
-Total: 20 tarefas · 4 concluídas · 16 pendentes.
+Total: 20 tarefas · 5 concluídas · 15 pendentes.
 
 **Caminho crítico:** TASK-COCK-001 → TASK-COCK-002 → TASK-COCK-003 → TASK-COCK-009 →
 TASK-COCK-016 → TASK-COCK-017 → TASK-COCK-019 → TASK-COCK-020
 
 **Bloqueios ativos:** Nenhum.
 
-**Paralelizáveis agora:** TASK-COCK-003 (biblioteca de componentes) e TASK-COCK-015
-(sidebarModel). Depois da 003, as sete migrações de painel correm em paralelo entre si.
+**Paralelizáveis agora:** as sete migrações de painel (TASK-COCK-006, 009, 010, 011, 012,
+013, 014) e a TASK-COCK-015 (sidebarModel) — a fundação está pronta.

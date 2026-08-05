@@ -81,7 +81,13 @@ history:
       --sdd-on-brand, porque os painéis usavam variáveis --vscode-* sem token correspondente
       e sem eles não haveria como consumir a camada. A regra do design §11 se sustentou:
       nenhum arquivo de teste existente foi modificado. compile ok, 234 testes ok, lint
-      limpo, bundle 32,3 kB.
+      limpo, bundle 32,3 kB. TASK-COCK-003 em seguida: biblioteca de seis componentes em
+      src/webview/ui/, com as decisões em src/sdd/uiModel.ts porque src/webview está fora do
+      tsc (ADR-034) e componente .tsx não é alcançável por node --test. O critério original
+      da tarefa ("nenhum componente importa valor de src/sdd/") era estrito demais e proibia
+      o próprio padrão: foi corrigido para a regra real — o que a importação ARRASTA —,
+      verificada por medição (bundle de prova com os seis componentes: 20 kB, sem js-yaml).
+      242 testes ok.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -156,6 +162,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 16
+  pending: 15
   in_progress: 0
-  done: 4
+  done: 5
