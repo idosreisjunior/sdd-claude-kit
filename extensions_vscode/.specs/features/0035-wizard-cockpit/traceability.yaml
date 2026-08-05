@@ -1,0 +1,178 @@
+# Matriz de rastreabilidade — 0035-wizard-cockpit
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante a implementação.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0035-wizard-cockpit"
+
+requirements:
+
+  "REQ-WIZ-001":
+    title: "Stepper das 8 etapas com estado atual"
+    scenarios:
+      - "SCN-WIZ-001"
+      - "SCN-WIZ-007"
+    tasks:
+      - "TASK-WIZ-003"
+      - "TASK-WIZ-005"
+      - "TASK-WIZ-011"
+    implementation:
+      - "src/sdd/wizardModel.ts"
+      - "src/sdd/wizardHtml.ts"
+      - "src/webview/wizard/Shell.tsx"
+      - "src/webview/wizard/Stepper.tsx"
+    tests:
+      - "TEST-WIZ-002"
+      - "TEST-WIZ-003"
+      - "TEST-WIZ-006"
+      - "TEST-WIZ-012"
+
+  "REQ-WIZ-002":
+    title: "Portões de qualidade por etapa"
+    scenarios:
+      - "SCN-WIZ-002"
+      - "SCN-WIZ-003"
+    tasks:
+      - "TASK-WIZ-004"
+      - "TASK-WIZ-007"
+      - "TASK-WIZ-011"
+      - "TASK-WIZ-012"
+    implementation:
+      - "src/sdd/wizardStepGuards.ts"
+    tests:
+      - "TEST-WIZ-004"
+      - "TEST-WIZ-005"
+      - "TEST-WIZ-008"
+      - "TEST-WIZ-012"
+
+  "REQ-WIZ-003":
+    title: "Ações de IA abrem o Claude Code sem enviar"
+    scenarios:
+      - "SCN-WIZ-004"
+      - "SCN-WIZ-012"
+    tasks:
+      - "TASK-WIZ-010"
+      - "TASK-WIZ-013"
+    implementation: []
+    tests:
+      - "TEST-WIZ-011"
+      - "TEST-WIZ-014"
+
+  "REQ-WIZ-004":
+    title: "Transições persistem em status.yaml"
+    scenarios:
+      - "SCN-WIZ-005"
+      - "SCN-WIZ-008"
+    tasks:
+      - "TASK-WIZ-006"
+      - "TASK-WIZ-007"
+      - "TASK-WIZ-012"
+      - "TASK-WIZ-014"
+    implementation: []
+    tests:
+      - "TEST-WIZ-007"
+      - "TEST-WIZ-008"
+      - "TEST-WIZ-013"
+      - "TEST-WIZ-015"
+
+  "REQ-WIZ-005":
+    title: "Criar a mudança pela etapa Solicitar"
+    scenarios:
+      - "SCN-WIZ-006"
+      - "SCN-WIZ-009"
+    tasks:
+      - "TASK-WIZ-008"
+    implementation: []
+    tests:
+      - "TEST-WIZ-009"
+
+  "REQ-WIZ-006":
+    title: "Gerenciar e retomar mudanças existentes"
+    scenarios:
+      - "SCN-WIZ-010"
+      - "SCN-WIZ-011"
+    tasks:
+      - "TASK-WIZ-009"
+      - "TASK-WIZ-013"
+      - "TASK-WIZ-014"
+    implementation: []
+    tests:
+      - "TEST-WIZ-010"
+      - "TEST-WIZ-014"
+      - "TEST-WIZ-015"
+
+  "NFR-WIZ-001":
+    title: "Segurança do webview (CSP + nonce + escape)"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-002"
+      - "TASK-WIZ-005"
+    implementation:
+      - "esbuild.mjs"
+      - "src/webview/wizard/index.tsx"
+      - "src/sdd/wizardHtml.ts"
+    tests:
+      - "TEST-WIZ-006"
+
+  "NFR-WIZ-002":
+    title: "Aderência ao tema (claro/escuro)"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-001"
+      - "TASK-WIZ-015"
+    implementation:
+      - "src/sdd/themeTokens.ts"
+    tests:
+      - "TEST-WIZ-001"
+      - "TEST-WIZ-016"
+
+  "NFR-WIZ-003":
+    title: "Núcleo puro testável"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-003"
+      - "TASK-WIZ-004"
+    implementation:
+      - "src/sdd/wizardModel.ts"
+      - "src/sdd/wizardStepGuards.ts"
+    tests:
+      - "TEST-WIZ-002"
+      - "TEST-WIZ-003"
+      - "TEST-WIZ-004"
+      - "TEST-WIZ-005"
+
+  "NFR-WIZ-004":
+    title: "Acessibilidade"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-005"
+      - "TASK-WIZ-015"
+    implementation:
+      - "src/webview/wizard/Stepper.tsx"
+    tests:
+      - "TEST-WIZ-006"
+      - "TEST-WIZ-016"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "NFR-WIZ-002 (estética da camada de marca)"
+    reason: >-
+      A fidelidade visual e o acabamento estético da camada de marca em cada tema só
+      são plenamente verificáveis por revisão humana; TEST-WIZ-016 cobre apenas um
+      smoke de contraste/operação.
+    mitigation: >-
+      Capturas nos temas claro e escuro anexadas como evidência da TASK-WIZ-015, além
+      do smoke TEST-WIZ-016, comparadas aos mockups de docs/ui-redesign/.
+  - id: "TEST-WIZ-006 (render no host)"
+    reason: >-
+      O render efetivo do shell/stepper no WebviewPanel e a checagem de CSP em runtime
+      exigem o host do VS Code (vscode-test); a parte pura (documento HTML + CSP + nonce
+      + anti-injeção) já é coberta por teste unitário.
+    mitigation: >-
+      Executar o e2e TEST-WIZ-006 no host quando a TASK-WIZ-006 (host do painel) estiver
+      pronta; até lá, cobertura unitária de renderWizardHtml em wizardHtml.test.ts.

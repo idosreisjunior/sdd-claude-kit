@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 940" font-family="'Inter','Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <linearGradient id="gViolet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C6BF0"/><stop offset="1" stop-color="#9C8CFF"/>
+    </linearGradient>
+    <linearGradient id="gCoral" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E08256"/><stop offset="1" stop-color="#F0A07A"/>
+    </linearGradient>
+    <linearGradient id="gCanvas" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0F131A"/><stop offset="1" stop-color="#0C0F14"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="14" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="softsm" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000000" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="940" fill="url(#gCanvas)"/>
+
+  <!-- Header -->
+  <g transform="translate(48,44)">
+    <rect x="0" y="0" width="34" height="34" rx="9" fill="url(#gViolet)"/>
+    <path d="M9,9 h11 a3,3 0 0 1 3,3 v10 a3,3 0 0 1 -3,3 h-11 Z" fill="none" stroke="#fff" stroke-width="1.6"/>
+    <path d="M20,7 l1.6,3.4 L25,12 l-3.4,1.6 L20,17 l-1.6,-3.4 L15,12 l3.4,-1.6 Z" fill="#fff"/>
+    <text x="48" y="16" font-size="22" font-weight="700" fill="#E6EDF3">SDD Cockpit</text>
+    <text x="48" y="36" font-size="13" fill="#9AA7B4">Design system dos mockups · dark-first · tokens mapeáveis para o tema do VS Code</text>
+  </g>
+
+  <!-- COLORS -->
+  <text x="48" y="118" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">CORES BASE</text>
+  <g transform="translate(48,132)">
+    <!-- each swatch 132 wide -->
+    <g><rect width="120" height="64" rx="10" fill="#0E1116" stroke="#263041"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Canvas</text><text x="10" y="97" font-size="10" fill="#6B7684">#0E1116</text></g>
+    <g transform="translate(132,0)"><rect width="120" height="64" rx="10" fill="#161B22" stroke="#263041"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Surface</text><text x="10" y="97" font-size="10" fill="#6B7684">#161B22</text></g>
+    <g transform="translate(264,0)"><rect width="120" height="64" rx="10" fill="#1B2230" stroke="#263041"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Raised</text><text x="10" y="97" font-size="10" fill="#6B7684">#1B2230</text></g>
+    <g transform="translate(396,0)"><rect width="120" height="64" rx="10" fill="url(#gViolet)"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Accent</text><text x="10" y="97" font-size="10" fill="#6B7684">#7C6BF0</text></g>
+    <g transform="translate(528,0)"><rect width="120" height="64" rx="10" fill="url(#gCoral)"/><text x="10" y="82" font-size="11" fill="#E6EDF3">IA / Claude</text><text x="10" y="97" font-size="10" fill="#6B7684">#E08256</text></g>
+    <g transform="translate(660,0)"><rect width="120" height="64" rx="10" fill="#3FB86B"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Success</text><text x="10" y="97" font-size="10" fill="#6B7684">#3FB86B</text></g>
+    <g transform="translate(792,0)"><rect width="120" height="64" rx="10" fill="#E0A33A"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Warning</text><text x="10" y="97" font-size="10" fill="#6B7684">#E0A33A</text></g>
+    <g transform="translate(924,0)"><rect width="120" height="64" rx="10" fill="#F0655A"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Danger</text><text x="10" y="97" font-size="10" fill="#6B7684">#F0655A</text></g>
+    <g transform="translate(1056,0)"><rect width="120" height="64" rx="10" fill="#4C9BF0"/><text x="10" y="82" font-size="11" fill="#E6EDF3">Info</text><text x="10" y="97" font-size="10" fill="#6B7684">#4C9BF0</text></g>
+  </g>
+
+  <!-- LIFECYCLE -->
+  <text x="48" y="288" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">CICLO DE VIDA (STATUS)</text>
+  <g transform="translate(48,302)" font-size="10" font-weight="600">
+    <g><rect width="140" height="26" rx="13" fill="#6B7684" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#6B7684"/><text x="30" y="17" fill="#6B7684">DRAFT</text></g>
+    <g transform="translate(152,0)"><rect width="140" height="26" rx="13" fill="#4C9BF0" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#4C9BF0"/><text x="30" y="17" fill="#4C9BF0">CLARIFIED</text></g>
+    <g transform="translate(304,0)"><rect width="140" height="26" rx="13" fill="#7C6BF0" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#7C6BF0"/><text x="30" y="17" fill="#7C6BF0">DESIGNED</text></g>
+    <g transform="translate(456,0)"><rect width="140" height="26" rx="13" fill="#E0A33A" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#E0A33A"/><text x="30" y="17" fill="#E0A33A">PLANNED</text></g>
+    <g transform="translate(608,0)"><rect width="140" height="26" rx="13" fill="#38BDC9" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#38BDC9"/><text x="30" y="17" fill="#38BDC9">APPROVED</text></g>
+    <g transform="translate(760,0)"><rect width="150" height="26" rx="13" fill="#E0823A" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#E0823A"/><text x="30" y="17" fill="#E0823A">IN_PROGRESS</text></g>
+    <g transform="translate(922,0)"><rect width="140" height="26" rx="13" fill="#3FB86B" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#3FB86B"/><text x="30" y="17" fill="#3FB86B">VERIFIED</text></g>
+    <g transform="translate(1074,0)"><rect width="140" height="26" rx="13" fill="#49525E" fill-opacity="0.16"/><circle cx="16" cy="13" r="3.5" fill="#49525E"/><text x="30" y="17" fill="#8B949E">ARCHIVED</text></g>
+  </g>
+
+  <!-- TYPOGRAPHY -->
+  <text x="48" y="392" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">TIPOGRAFIA</text>
+  <g transform="translate(48,404)">
+    <text x="0" y="30" font-size="26" font-weight="700" fill="#E6EDF3">Display 26/700</text>
+    <text x="0" y="62" font-size="18" font-weight="700" fill="#E6EDF3">H1 18/700 — título de tela</text>
+    <text x="0" y="88" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">SECTION CAPS 11/600</text>
+    <text x="0" y="112" font-size="13" fill="#E6EDF3">Body 13/400 — texto de conteúdo e descrições dos artefatos.</text>
+    <text x="0" y="134" font-size="11" fill="#9AA7B4">Caption 11 — metadados, notas e dicas.</text>
+  </g>
+
+  <!-- COMPONENTS -->
+  <text x="620" y="392" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">COMPONENTES</text>
+  <g transform="translate(620,404)">
+    <!-- buttons -->
+    <rect x="0" y="8" width="150" height="36" rx="8" fill="url(#gViolet)"/>
+    <text x="75" y="31" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Primário</text>
+
+    <rect x="164" y="8" width="130" height="36" rx="8" fill="none" stroke="#313C4E"/>
+    <text x="229" y="31" font-size="13" font-weight="500" fill="#E6EDF3" text-anchor="middle">Secundário</text>
+
+    <rect x="308" y="8" width="240" height="36" rx="8" fill="url(#gCoral)"/>
+    <path d="M330,26 l1.6,3.4 L335,31 l-3.4,1.6 L330,37 l-1.6,-3.4 L325,31 l3.4,-1.6 Z" fill="#fff"/>
+    <text x="348" y="31" font-size="13" font-weight="600" fill="#fff">Preencher com o Claude Code</text>
+
+    <!-- progress bar + ring -->
+    <text x="0" y="86" font-size="11" fill="#9AA7B4">Barra de progresso</text>
+    <rect x="0" y="94" width="220" height="6" rx="3" fill="#263041"/>
+    <rect x="0" y="94" width="145" height="6" rx="3" fill="url(#gViolet)"/>
+
+    <g transform="translate(300,68)">
+      <text x="40" y="-2" font-size="11" fill="#9AA7B4" text-anchor="middle">Anel</text>
+      <circle cx="40" cy="40" r="22" fill="none" stroke="#263041" stroke-width="5"/>
+      <circle cx="40" cy="40" r="22" fill="none" stroke="url(#gViolet)" stroke-width="5" stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="45" transform="rotate(-90 40 40)"/>
+      <text x="40" y="45" font-size="14" font-weight="700" fill="#E6EDF3" text-anchor="middle">67%</text>
+    </g>
+
+    <!-- card -->
+    <g transform="translate(430,60)" filter="url(#softsm)">
+      <rect width="230" height="92" rx="12" fill="#161B22" stroke="#7C6BF0"/>
+      <text x="16" y="28" font-size="13" font-weight="600" fill="#E6EDF3">0035 — Wizard de specs</text>
+      <rect x="16" y="40" width="96" height="20" rx="10" fill="#7C6BF0" fill-opacity="0.16"/>
+      <circle cx="28" cy="50" r="3" fill="#7C6BF0"/>
+      <text x="38" y="54" font-size="10" font-weight="600" fill="#7C6BF0">DESIGNED</text>
+      <rect x="16" y="72" width="198" height="6" rx="3" fill="#263041"/>
+      <rect x="16" y="72" width="120" height="6" rx="3" fill="url(#gViolet)"/>
+    </g>
+  </g>
+
+  <!-- STEPPER -->
+  <text x="48" y="620" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">TRILHA DE ETAPAS (STEPPER)</text>
+  <g transform="translate(70,672)">
+    <!-- connectors -->
+    <line x1="0" y1="0" x2="152" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="152" y1="0" x2="304" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="304" y1="0" x2="456" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="456" y1="0" x2="608" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="608" y1="0" x2="760" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="760" y1="0" x2="912" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="912" y1="0" x2="1064" y2="0" stroke="#263041" stroke-width="2"/>
+    <!-- done 1 -->
+    <g><circle cx="0" cy="0" r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="0" y="34" font-size="11" fill="#9AA7B4" text-anchor="middle">Solicitar</text></g>
+    <g transform="translate(152,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="34" font-size="11" fill="#9AA7B4" text-anchor="middle">Especificar</text></g>
+    <!-- current 3 -->
+    <g transform="translate(304,0)"><circle r="13" fill="#161B22" stroke="#7C6BF0" stroke-width="2"/><circle r="4" fill="#7C6BF0"/><text y="34" font-size="11" font-weight="600" fill="#E6EDF3" text-anchor="middle">Clarificar</text></g>
+    <!-- future -->
+    <g transform="translate(456,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" font-size="11" fill="#6B7684" text-anchor="middle">4</text><text y="34" font-size="11" fill="#6B7684" text-anchor="middle">Desenhar</text></g>
+    <g transform="translate(608,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" font-size="11" fill="#6B7684" text-anchor="middle">5</text><text y="34" font-size="11" fill="#6B7684" text-anchor="middle">Tarefas</text></g>
+    <g transform="translate(760,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" font-size="11" fill="#6B7684" text-anchor="middle">6</text><text y="34" font-size="11" fill="#6B7684" text-anchor="middle">Aprovar</text></g>
+    <g transform="translate(912,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" font-size="11" fill="#6B7684" text-anchor="middle">7</text><text y="34" font-size="11" fill="#6B7684" text-anchor="middle">Implementar</text></g>
+    <g transform="translate(1064,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" font-size="11" fill="#6B7684" text-anchor="middle">8</text><text y="34" font-size="11" fill="#6B7684" text-anchor="middle">Verificar</text></g>
+  </g>
+
+  <!-- ICONS -->
+  <text x="48" y="772" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">ÍCONES (STROKE 1.6)</text>
+  <g transform="translate(52,796)" fill="none" stroke="#9AA7B4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- doc -->
+    <g transform="translate(0,0)"><path d="M4,2 h10 l6,6 v14 a1,1 0 0 1 -1,1 H4 a1,1 0 0 1 -1,-1 V3 a1,1 0 0 1 1,-1 Z"/><path d="M14,2 v6 h6"/><text x="4" y="42" font-size="10" stroke="none" fill="#6B7684">doc</text></g>
+    <!-- search -->
+    <g transform="translate(72,0)"><circle cx="10" cy="10" r="7"/><path d="M15,15 l6,6"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">search</text></g>
+    <!-- filter -->
+    <g transform="translate(144,0)"><path d="M3,4 h18 l-7,8 v8 l-4,-2 v-6 Z"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">filtro</text></g>
+    <!-- kanban -->
+    <g transform="translate(216,0)"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">board</text></g>
+    <!-- gauge -->
+    <g transform="translate(288,0)"><path d="M3,18 a10,10 0 0 1 20,0"/><path d="M13,18 l6,-6"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">gauge</text></g>
+    <!-- play -->
+    <g transform="translate(360,0)"><path d="M6,4 l14,8 l-14,8 Z"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">play</text></g>
+    <!-- flask -->
+    <g transform="translate(432,0)"><path d="M9,3 v6 l-5,9 a1,1 0 0 0 1,2 h14 a1,1 0 0 0 1,-2 l-5,-9 v-6"/><path d="M7,3 h10"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">verify</text></g>
+    <!-- git -->
+    <g transform="translate(504,0)"><circle cx="6" cy="5" r="2.5"/><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6,7.5 v9 M6,12 a12,12 0 0 0 12,-4"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">git</text></g>
+    <!-- check-circle -->
+    <g transform="translate(576,0)"><circle cx="12" cy="12" r="9"/><path d="M8,12 l3,3 l5,-6"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">check</text></g>
+    <!-- clock -->
+    <g transform="translate(648,0)"><circle cx="12" cy="12" r="9"/><path d="M12,7 v5 l3,2"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">histórico</text></g>
+    <!-- gear -->
+    <g transform="translate(720,0)"><circle cx="12" cy="12" r="3.5"/><path d="M12,2 v3 M12,19 v3 M2,12 h3 M19,12 h3 M5,5 l2,2 M17,17 l2,2 M19,5 l-2,2 M7,17 l-2,2"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">config</text></g>
+    <!-- sparkle -->
+    <g transform="translate(792,0)"><path d="M12,2 l2.4,6 L20,10 l-5.6,2.4 L12,18 l-2.4,-5.6 L4,10 l5.6,-2 Z" stroke="#E08256"/><text x="0" y="42" font-size="10" stroke="none" fill="#6B7684">IA</text></g>
+  </g>
+
+  <text x="640" y="912" font-size="11" fill="#6B7684" text-anchor="middle">SDD Cockpit — folha de referência · todos os mockups reutilizam estes tokens, o mesmo &lt;defs&gt; e os mesmos componentes</text>
+</svg>

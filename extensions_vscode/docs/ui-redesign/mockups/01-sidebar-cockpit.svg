@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 760" font-family="'Inter','Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <linearGradient id="gViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C6BF0"/><stop offset="1" stop-color="#9C8CFF"/></linearGradient>
+    <linearGradient id="gCoral" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E08256"/><stop offset="1" stop-color="#F0A07A"/></linearGradient>
+    <linearGradient id="gCanvas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0F131A"/><stop offset="1" stop-color="#0C0F14"/></linearGradient>
+    <filter id="softsm" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000000" flood-opacity="0.30"/></filter>
+  </defs>
+
+  <rect width="360" height="760" fill="url(#gCanvas)"/>
+
+  <!-- Activity bar rail (48px) -->
+  <rect x="0" y="0" width="48" height="760" fill="#0A0D12"/>
+  <rect x="0" y="150" width="3" height="34" rx="1.5" fill="#7C6BF0"/>
+  <g stroke="#E6EDF3" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(14,156)"><path d="M2,1 h9 l6,6 v13 a1,1 0 0 1 -1,1 H2 a1,1 0 0 1 -1,-1 V2 a1,1 0 0 1 1,-1 Z"/><path d="M11,1 v6 h6"/><path d="M16,3 l1,2.2 l2.2,1 l-2.2,1 L16,10 l-1,-2.2 L12.8,6.8 l2.2,-0.8 Z" fill="#7C6BF0" stroke="none"/></g>
+  </g>
+  <g stroke="#5A626E" stroke-width="1.6" fill="none" stroke-linecap="round">
+    <g transform="translate(16,60)"><path d="M2,8 h14 M2,3 h14 M2,13 h10"/></g>
+    <g transform="translate(16,104)"><circle cx="8" cy="8" r="6"/><path d="M12,12 l4,4"/></g>
+    <g transform="translate(16,700)"><circle cx="8" cy="8" r="3"/><path d="M8,1 v2 M8,13 v2 M1,8 h2 M13,8 h2"/></g>
+  </g>
+
+  <!-- Panel header -->
+  <g transform="translate(66,26)">
+    <rect x="0" y="0" width="30" height="30" rx="8" fill="url(#gViolet)"/>
+    <path d="M8,8 h9 a2,2 0 0 1 2,2 v9 a2,2 0 0 1 -2,2 h-9 Z" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <path d="M17,6 l1.3,2.8 L21,10 l-2.7,1.3 L17,14 l-1.3,-2.7 L13,10 l2.7,-1 Z" fill="#fff"/>
+    <text x="40" y="14" font-size="14" font-weight="700" fill="#E6EDF3">SDD Cockpit</text>
+    <text x="40" y="30" font-size="10.5" fill="#6B7684">extensions_vscode</text>
+  </g>
+
+  <!-- Active change card -->
+  <text x="66" y="86" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">MUDANÇA ATIVA</text>
+  <g transform="translate(66,96)" filter="url(#softsm)">
+    <rect width="278" height="132" rx="12" fill="#161B22" stroke="#7C6BF0"/>
+    <text x="16" y="28" font-size="13.5" font-weight="700" fill="#E6EDF3">0035 — Wizard de specs</text>
+    <rect x="16" y="38" width="86" height="20" rx="10" fill="#7C6BF0" fill-opacity="0.16"/>
+    <circle cx="28" cy="48" r="3" fill="#7C6BF0"/>
+    <text x="38" y="52" font-size="10" font-weight="600" fill="#7C6BF0">DESIGNED</text>
+    <text x="112" y="52" font-size="10.5" fill="#6B7684">feature · etapa 4 de 8</text>
+
+    <!-- mini stepper -->
+    <g transform="translate(20,80)">
+      <line x1="0" y1="0" x2="234" y2="0" stroke="#263041" stroke-width="2"/>
+      <line x1="0" y1="0" x2="100" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+      <circle cx="0" cy="0" r="6" fill="url(#gViolet)"/>
+      <circle cx="33" cy="0" r="6" fill="url(#gViolet)"/>
+      <circle cx="66" cy="0" r="6" fill="url(#gViolet)"/>
+      <circle cx="100" cy="0" r="7" fill="#161B22" stroke="#7C6BF0" stroke-width="2"/><circle cx="100" cy="0" r="2.5" fill="#7C6BF0"/>
+      <circle cx="134" cy="0" r="6" fill="#161B22" stroke="#313C4E" stroke-width="2"/>
+      <circle cx="167" cy="0" r="6" fill="#161B22" stroke="#313C4E" stroke-width="2"/>
+      <circle cx="200" cy="0" r="6" fill="#161B22" stroke="#313C4E" stroke-width="2"/>
+      <circle cx="234" cy="0" r="6" fill="#161B22" stroke="#313C4E" stroke-width="2"/>
+    </g>
+    <rect x="16" y="100" width="150" height="30" rx="8" fill="url(#gViolet)"/>
+    <text x="91" y="120" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">Abrir wizard ▸</text>
+    <rect x="176" y="100" width="86" height="30" rx="8" fill="none" stroke="#313C4E"/>
+    <text x="219" y="120" font-size="12" fill="#E6EDF3" text-anchor="middle">Dashboard</text>
+  </g>
+
+  <!-- Health + Context row -->
+  <g transform="translate(66,244)">
+    <rect width="133" height="96" rx="12" fill="#161B22" stroke="#263041"/>
+    <text x="14" y="24" font-size="10" font-weight="600" letter-spacing="1" fill="#6B7684">SAÚDE</text>
+    <circle cx="26" cy="52" r="7" fill="#3FB86B"/><path d="M23,52 l2,2 l4,-4" stroke="#0E1116" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="42" y="50" font-size="13" font-weight="700" fill="#E6EDF3">Ok</text>
+    <text x="42" y="65" font-size="10" fill="#6B7684">0 erros</text>
+    <text x="14" y="86" font-size="10" fill="#4C9BF0">Rodar Doctor ▸</text>
+  </g>
+  <g transform="translate(211,244)">
+    <rect width="133" height="96" rx="12" fill="#161B22" stroke="#263041"/>
+    <text x="14" y="24" font-size="10" font-weight="600" letter-spacing="1" fill="#6B7684">CONTEXTO</text>
+    <g transform="translate(38,58)">
+      <circle r="20" fill="none" stroke="#263041" stroke-width="5"/>
+      <circle r="20" fill="none" stroke="#E0A33A" stroke-width="5" stroke-linecap="round" stroke-dasharray="125.6" stroke-dashoffset="47" transform="rotate(-90 0 0)"/>
+      <text y="4" font-size="12" font-weight="700" fill="#E6EDF3" text-anchor="middle">62%</text>
+    </g>
+    <text x="70" y="52" font-size="12" font-weight="600" fill="#E0A33A">Atenção</text>
+    <text x="70" y="68" font-size="10" fill="#6B7684">124k / 200k</text>
+  </g>
+
+  <!-- Quick actions -->
+  <text x="66" y="374" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">AÇÕES RÁPIDAS</text>
+  <g transform="translate(66,384)">
+    <rect width="278" height="38" rx="8" fill="url(#gViolet)"/>
+    <path d="M22,19 h14 M29,12 v14" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <text x="46" y="24" font-size="13" font-weight="600" fill="#fff">Nova mudança…</text>
+    <text x="200" y="24" font-size="11" fill="#E6EDF3" fill-opacity="0.8">wizard</text>
+
+    <g transform="translate(0,48)">
+      <rect width="135" height="36" rx="8" fill="none" stroke="#313C4E"/>
+      <rect x="14" y="10" width="16" height="16" rx="2" fill="none" stroke="#9AA7B4" stroke-width="1.4"/>
+      <text x="38" y="23" font-size="12" fill="#E6EDF3">Painel (Board)</text>
+    </g>
+    <g transform="translate(143,48)">
+      <rect width="135" height="36" rx="8" fill="none" stroke="#313C4E"/>
+      <path d="M16,24 a8,8 0 0 1 16,0" fill="none" stroke="#9AA7B4" stroke-width="1.4"/><path d="M24,24 l5,-5" stroke="#9AA7B4" stroke-width="1.4" stroke-linecap="round"/>
+      <text x="38" y="23" font-size="12" fill="#E6EDF3">Diagnóstico</text>
+    </g>
+  </g>
+
+  <!-- Recent activity -->
+  <text x="66" y="502" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">ATIVIDADE RECENTE</text>
+  <g transform="translate(66,514)" font-size="11">
+    <g transform="translate(0,0)">
+      <circle cx="5" cy="9" r="4" fill="#7C6BF0"/>
+      <text x="20" y="8" font-size="12" font-weight="600" fill="#E6EDF3">0035 → DESIGNED</text>
+      <text x="20" y="23" fill="#6B7684">design.md gerado · ADR-041 registrado</text>
+      <text x="278" y="8" fill="#6B7684" text-anchor="end">hoje</text>
+    </g>
+    <line x1="5" y1="30" x2="5" y2="46" stroke="#263041"/>
+    <g transform="translate(0,42)">
+      <circle cx="5" cy="9" r="4" fill="#4C9BF0"/>
+      <text x="20" y="8" font-size="12" font-weight="600" fill="#E6EDF3">0034 → VERIFIED</text>
+      <text x="20" y="23" fill="#6B7684">critérios de aceite aprovados (6/6)</text>
+      <text x="278" y="8" fill="#6B7684" text-anchor="end">ontem</text>
+    </g>
+    <line x1="5" y1="72" x2="5" y2="88" stroke="#263041"/>
+    <g transform="translate(0,84)">
+      <circle cx="5" cy="9" r="4" fill="#E0823A"/>
+      <text x="20" y="8" font-size="12" font-weight="600" fill="#E6EDF3">0036 → IN_PROGRESS</text>
+      <text x="20" y="23" fill="#6B7684">3/9 tarefas concluídas</text>
+      <text x="278" y="8" fill="#6B7684" text-anchor="end">2d</text>
+    </g>
+  </g>
+
+  <!-- Counts footer -->
+  <g transform="translate(66,650)">
+    <rect width="278" height="72" rx="12" fill="#12161D" stroke="#263041"/>
+    <g text-anchor="middle">
+      <text x="46" y="34" font-size="18" font-weight="700" fill="#E6EDF3">14</text><text x="46" y="52" font-size="10" fill="#6B7684">mudanças</text>
+      <text x="139" y="34" font-size="18" font-weight="700" fill="#3FB86B">8</text><text x="139" y="52" font-size="10" fill="#6B7684">verificadas</text>
+      <text x="232" y="34" font-size="18" font-weight="700" fill="#E0823A">3</text><text x="232" y="52" font-size="10" fill="#6B7684">em curso</text>
+    </g>
+    <line x1="93" y1="18" x2="93" y2="54" stroke="#263041"/>
+    <line x1="186" y1="18" x2="186" y2="54" stroke="#263041"/>
+  </g>
+</svg>

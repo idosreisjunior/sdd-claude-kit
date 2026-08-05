@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 35
+next_id: 36
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -336,5 +336,14 @@ changes:
     created: "2026-08-04"
     updated: "2026-08-04"
     materialized: true
+  - id: 0035-wizard-cockpit
+    type: feature
+    title: Wizard Cockpit — GUI guiada de specs
+    status: IN_PROGRESS
+    path: features/0035-wizard-cockpit
+    created: "2026-08-05"
+    updated: "2026-08-05"
+    materialized: true
+    epic: "Qualidade — GUI profissional (wizard)"
 
 archive: []

@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 832" font-family="'Inter','Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <linearGradient id="gViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C6BF0"/><stop offset="1" stop-color="#9C8CFF"/></linearGradient>
+    <linearGradient id="gCoral" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E08256"/><stop offset="1" stop-color="#F0A07A"/></linearGradient>
+    <linearGradient id="gCanvas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0F131A"/><stop offset="1" stop-color="#0C0F14"/></linearGradient>
+    <filter id="softsm" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000000" flood-opacity="0.30"/></filter>
+  </defs>
+
+  <rect width="1280" height="832" fill="url(#gCanvas)"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#12161D"/>
+  <line x1="0" y1="56" x2="1280" y2="56" stroke="#263041"/>
+  <g transform="translate(24,13)">
+    <rect x="0" y="0" width="30" height="30" rx="8" fill="url(#gViolet)"/>
+    <rect x="7" y="8" width="9" height="14" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="12" y="10" width="6" height="10" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="42" y="14" font-size="14" font-weight="700" fill="#E6EDF3">Assistente de mudança</text>
+    <text x="42" y="30" font-size="11" fill="#6B7684">0035 — Wizard de specs</text>
+  </g>
+  <g transform="translate(1000,18)">
+    <rect width="120" height="22" rx="11" fill="#7C6BF0" fill-opacity="0.16"/><circle cx="16" cy="11" r="3.5" fill="#7C6BF0"/><text x="30" y="15" font-size="10" font-weight="600" fill="#9C8CFF">DESIGNED</text>
+  </g>
+  <text x="1140" y="33" font-size="12" fill="#6B7684">salvo automaticamente</text>
+  <path d="M1244,20 l14,14 M1258,20 l-14,14" stroke="#6B7684" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Stepper band -->
+  <rect x="0" y="56" width="1280" height="66" fill="#0E1219"/>
+  <line x1="0" y1="122" x2="1280" y2="122" stroke="#263041"/>
+  <g transform="translate(0,86)" font-size="11" text-anchor="middle">
+    <!-- connectors -->
+    <line x1="90" y1="0" x2="247" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="247" y1="0" x2="404" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="404" y1="0" x2="561" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="561" y1="0" x2="718" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="718" y1="0" x2="875" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="875" y1="0" x2="1032" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="1032" y1="0" x2="1189" y2="0" stroke="#263041" stroke-width="2"/>
+    <!-- 1..5 done -->
+    <g transform="translate(90,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Solicitar</text></g>
+    <g transform="translate(247,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Especificar</text></g>
+    <g transform="translate(404,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Clarificar</text></g>
+    <g transform="translate(561,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Desenhar</text></g>
+    <g transform="translate(718,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Tarefas</text></g>
+    <!-- 6 current -->
+    <g transform="translate(875,0)"><circle r="14" fill="#161B22" stroke="#7C6BF0" stroke-width="2"/><circle r="4.5" fill="#7C6BF0"/><text y="30" font-weight="700" fill="#E6EDF3">Aprovar</text></g>
+    <!-- 7..8 future -->
+    <g transform="translate(1032,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">7</text><text y="30" fill="#6B7684">Implementar</text></g>
+    <g transform="translate(1189,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">8</text><text y="30" fill="#6B7684">Verificar</text></g>
+  </g>
+
+  <!-- LEFT PANE: approve checklist -->
+  <g transform="translate(24,138)">
+    <rect width="792" height="618" rx="12" fill="#161B22" stroke="#263041"/>
+    <text x="20" y="34" font-size="18" font-weight="700" fill="#E6EDF3">Aprovar o plano</text>
+    <text x="20" y="54" font-size="12" fill="#9AA7B4">Portão de qualidade antes de implementar. Aprovar promove a mudança para APPROVED e libera a implementação.</text>
+
+    <text x="20" y="84" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">CHECKLIST DO GATE</text>
+
+    <g transform="translate(20,96)" font-size="12.5">
+      <!-- 1 Spec completa -->
+      <g transform="translate(0,0)">
+        <rect width="752" height="56" rx="10" fill="#12161D" stroke="#263041"/>
+        <circle cx="26" cy="28" r="11" fill="#3FB86B" fill-opacity="0.16"/>
+        <path d="M21,28 l4,4 l8,-9" fill="none" stroke="#3FB86B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="52" y="24" font-size="13" font-weight="700" fill="#E6EDF3">Spec completa</text>
+        <text x="52" y="42" font-size="12" fill="#9AA7B4">12 requisitos, 7 cenários, 9 critérios de aceite</text>
+      </g>
+      <!-- 2 Dúvidas resolvidas -->
+      <g transform="translate(0,68)">
+        <rect width="752" height="56" rx="10" fill="#12161D" stroke="#263041"/>
+        <circle cx="26" cy="28" r="11" fill="#3FB86B" fill-opacity="0.16"/>
+        <path d="M21,28 l4,4 l8,-9" fill="none" stroke="#3FB86B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="52" y="24" font-size="13" font-weight="700" fill="#E6EDF3">Dúvidas resolvidas</text>
+        <text x="52" y="42" font-size="12" fill="#9AA7B4">0 dúvidas críticas em aberto</text>
+      </g>
+      <!-- 3 Design registrado (amber) -->
+      <g transform="translate(0,136)">
+        <rect width="752" height="56" rx="10" fill="#12161D" stroke="#263041"/>
+        <circle cx="26" cy="28" r="11" fill="#E0A33A" fill-opacity="0.16"/>
+        <path d="M21,28 l4,4 l8,-9" fill="none" stroke="#E0A33A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="52" y="24" font-size="13" font-weight="700" fill="#E6EDF3">Design registrado</text>
+        <text x="52" y="42" font-size="12" fill="#9AA7B4">3 ADRs (2 aceitos, 1 proposto)</text>
+      </g>
+      <!-- 4 Tarefas cobrindo requisitos -->
+      <g transform="translate(0,204)">
+        <rect width="752" height="56" rx="10" fill="#12161D" stroke="#263041"/>
+        <circle cx="26" cy="28" r="11" fill="#3FB86B" fill-opacity="0.16"/>
+        <path d="M21,28 l4,4 l8,-9" fill="none" stroke="#3FB86B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="52" y="24" font-size="13" font-weight="700" fill="#E6EDF3">Tarefas cobrindo requisitos</text>
+        <text x="52" y="42" font-size="12" fill="#9AA7B4">12/12 requisitos cobertos, 0 dependências inválidas</text>
+      </g>
+      <!-- 5 Testes planejados -->
+      <g transform="translate(0,272)">
+        <rect width="752" height="56" rx="10" fill="#12161D" stroke="#263041"/>
+        <circle cx="26" cy="28" r="11" fill="#3FB86B" fill-opacity="0.16"/>
+        <path d="M21,28 l4,4 l8,-9" fill="none" stroke="#3FB86B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="52" y="24" font-size="13" font-weight="700" fill="#E6EDF3">Testes planejados</text>
+        <text x="52" y="42" font-size="12" fill="#9AA7B4">TEST-WIZ-* previstos para cada regra</text>
+      </g>
+    </g>
+
+    <!-- Summary strip -->
+    <g transform="translate(20,452)">
+      <rect width="752" height="96" rx="10" fill="#12161D" stroke="#263041"/>
+      <line x1="188" y1="18" x2="188" y2="78" stroke="#263041"/>
+      <line x1="376" y1="18" x2="376" y2="78" stroke="#263041"/>
+      <line x1="564" y1="18" x2="564" y2="78" stroke="#263041"/>
+      <g text-anchor="middle">
+        <text x="94" y="52" font-size="26" font-weight="700" fill="#E6EDF3">12</text>
+        <text x="94" y="74" font-size="11" fill="#9AA7B4">requisitos</text>
+        <text x="282" y="52" font-size="26" font-weight="700" fill="#E6EDF3">7</text>
+        <text x="282" y="74" font-size="11" fill="#9AA7B4">cenários</text>
+        <text x="470" y="52" font-size="26" font-weight="700" fill="#E6EDF3">9</text>
+        <text x="470" y="74" font-size="11" fill="#9AA7B4">tarefas</text>
+        <text x="658" y="52" font-size="26" font-weight="700" fill="#E6EDF3">3</text>
+        <text x="658" y="74" font-size="11" fill="#9AA7B4">ADRs</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- RIGHT PANE -->
+  <g transform="translate(832,138)">
+    <!-- Ao aprovar -->
+    <g transform="translate(0,0)">
+      <rect width="424" height="180" rx="12" fill="#161B22" stroke="#263041"/>
+      <text x="20" y="30" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">AO APROVAR</text>
+      <g transform="translate(28,58)">
+        <circle r="9" fill="#3FB86B" fill-opacity="0.16"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#3FB86B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="20" y="4" font-size="12.5" fill="#E6EDF3">status.yaml → APPROVED</text>
+      </g>
+      <g transform="translate(28,96)">
+        <circle r="9" fill="#3FB86B" fill-opacity="0.16"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#3FB86B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="20" y="4" font-size="12.5" fill="#E6EDF3">Etapa Implementar é liberada</text>
+      </g>
+      <g transform="translate(28,134)">
+        <circle r="9" fill="#3FB86B" fill-opacity="0.16"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#3FB86B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="20" y="4" font-size="12.5" fill="#E6EDF3">O histórico registra a aprovação</text>
+      </g>
+    </g>
+
+    <!-- Revisor sign-off -->
+    <g transform="translate(0,196)">
+      <rect width="424" height="140" rx="12" fill="#161B22" stroke="#263041"/>
+      <text x="20" y="30" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">REVISOR</text>
+      <text x="20" y="54" font-size="11" fill="#9AA7B4">Aprovado por</text>
+      <rect x="20" y="62" width="250" height="34" rx="8" fill="#12161D" stroke="#313C4E"/>
+      <text x="32" y="84" font-size="13" fill="#E6EDF3">idosreisjunior</text>
+      <text x="284" y="54" font-size="11" fill="#9AA7B4">Data</text>
+      <rect x="284" y="62" width="120" height="34" rx="8" fill="#12161D" stroke="#313C4E"/>
+      <text x="296" y="84" font-size="13" fill="#E6EDF3">05/08/2026</text>
+      <text x="20" y="120" font-size="11" fill="#6B7684">Registrado automaticamente ao aprovar</text>
+    </g>
+
+    <!-- Amber note -->
+    <g transform="translate(0,352)">
+      <rect width="424" height="72" rx="12" fill="#211C12" stroke="#E0A33A" stroke-opacity="0.5"/>
+      <circle cx="30" cy="36" r="11" fill="#E0A33A" fill-opacity="0.16"/>
+      <path d="M30,30 v9 M30,42 v0.5" stroke="#E0A33A" stroke-width="2" stroke-linecap="round"/>
+      <text x="52" y="30" font-size="12.5" fill="#E6EDF3">1 ADR ainda em PROPOSTO — aprove ciente</text>
+      <text x="52" y="50" font-size="12.5" fill="#E6EDF3">ou volte ao Desenhar.</text>
+    </g>
+  </g>
+
+  <!-- Footer nav -->
+  <rect x="0" y="772" width="1280" height="60" fill="#12161D"/>
+  <line x1="0" y1="772" x2="1280" y2="772" stroke="#263041"/>
+  <g transform="translate(24,786)">
+    <rect width="120" height="34" rx="8" fill="none" stroke="#313C4E"/>
+    <path d="M20,17 l6,-6 M20,17 l6,6" stroke="#9AA7B4" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="72" y="22" font-size="13" fill="#E6EDF3" text-anchor="middle">Voltar</text>
+  </g>
+  <g transform="translate(956,786)">
+    <rect width="300" height="34" rx="8" fill="url(#gViolet)"/>
+    <path d="M14,17 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="34" y="22" font-size="12.5" font-weight="600" fill="#fff">Aprovar e iniciar implementação</text>
+    <path d="M272,17 l6,-6 M272,17 l6,6 M266,11 l6,6 l-6,6" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

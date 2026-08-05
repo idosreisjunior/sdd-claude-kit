@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 832" font-family="'Inter','Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <linearGradient id="gViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C6BF0"/><stop offset="1" stop-color="#9C8CFF"/></linearGradient>
+    <linearGradient id="gCoral" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E08256"/><stop offset="1" stop-color="#F0A07A"/></linearGradient>
+    <linearGradient id="gCanvas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0F131A"/><stop offset="1" stop-color="#0C0F14"/></linearGradient>
+    <filter id="softsm" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000000" flood-opacity="0.30"/></filter>
+  </defs>
+
+  <rect width="1280" height="832" fill="url(#gCanvas)"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#12161D"/>
+  <line x1="0" y1="56" x2="1280" y2="56" stroke="#263041"/>
+  <g transform="translate(24,13)">
+    <rect x="0" y="0" width="30" height="30" rx="8" fill="url(#gViolet)"/>
+    <rect x="7" y="8" width="9" height="14" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="12" y="10" width="6" height="10" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="42" y="14" font-size="14" font-weight="700" fill="#E6EDF3">Assistente de mudança</text>
+    <text x="42" y="30" font-size="11" fill="#6B7684">Nova mudança</text>
+  </g>
+  <path d="M1244,20 l14,14 M1258,20 l-14,14" stroke="#6B7684" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Stepper band -->
+  <rect x="0" y="56" width="1280" height="66" fill="#0E1219"/>
+  <line x1="0" y1="122" x2="1280" y2="122" stroke="#263041"/>
+  <g transform="translate(0,86)" font-size="11" text-anchor="middle">
+    <!-- connectors: nothing done yet -->
+    <line x1="90" y1="0" x2="247" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="247" y1="0" x2="404" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="404" y1="0" x2="561" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="561" y1="0" x2="718" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="718" y1="0" x2="875" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="875" y1="0" x2="1032" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="1032" y1="0" x2="1189" y2="0" stroke="#263041" stroke-width="2"/>
+    <!-- 1 current -->
+    <g transform="translate(90,0)"><circle r="14" fill="#161B22" stroke="#7C6BF0" stroke-width="2"/><circle r="4.5" fill="#7C6BF0"/><text y="30" font-weight="700" fill="#E6EDF3">Solicitar</text></g>
+    <!-- 2..8 future -->
+    <g transform="translate(247,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">2</text><text y="30" fill="#6B7684">Especificar</text></g>
+    <g transform="translate(404,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">3</text><text y="30" fill="#6B7684">Clarificar</text></g>
+    <g transform="translate(561,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">4</text><text y="30" fill="#6B7684">Desenhar</text></g>
+    <g transform="translate(718,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">5</text><text y="30" fill="#6B7684">Tarefas</text></g>
+    <g transform="translate(875,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">6</text><text y="30" fill="#6B7684">Aprovar</text></g>
+    <g transform="translate(1032,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">7</text><text y="30" fill="#6B7684">Implementar</text></g>
+    <g transform="translate(1189,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">8</text><text y="30" fill="#6B7684">Verificar</text></g>
+  </g>
+
+  <!-- LEFT PANE -->
+  <g transform="translate(24,138)">
+    <rect width="792" height="618" rx="12" fill="#161B22" stroke="#263041"/>
+    <text x="20" y="34" font-size="18" font-weight="700" fill="#E6EDF3">Sobre o que é a mudança?</text>
+    <text x="20" y="54" font-size="12" fill="#9AA7B4">Descreva o que motiva a mudança. Nada é inventado — lacunas viram hipótese ou dúvida mais adiante.</text>
+
+    <text x="20" y="80" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">TIPO DE MUDANÇA</text>
+
+    <!-- type cards -->
+    <g transform="translate(20,90)" font-size="13">
+      <!-- Feature (selected) -->
+      <g transform="translate(0,0)" filter="url(#softsm)">
+        <rect width="182" height="92" rx="12" fill="#161B22" stroke="#7C6BF0" stroke-width="1.5"/>
+        <rect x="16" y="16" width="28" height="28" rx="8" fill="url(#gViolet)"/>
+        <path d="M25,24 h6 l4,4 v9 a1,1 0 0 1 -1,1 h-9 a1,1 0 0 1 -1,-1 v-12 a1,1 0 0 1 1,-1 Z" fill="none" stroke="#fff" stroke-width="1.4"/>
+        <path d="M31,24 v4 h4" fill="none" stroke="#fff" stroke-width="1.4"/>
+        <path d="M42,14 l1.2,3 L46,18.2 l-2.8,1.2 L42,22.4 l-1.2,-3 L38,18.2 l2.8,-1.2 Z" fill="#fff"/>
+        <circle cx="158" cy="16" r="8" fill="url(#gViolet)"/>
+        <path d="M154.5,16 l2.5,2.5 l5,-5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="56" y="34" font-weight="700" fill="#E6EDF3">Feature</text>
+        <text x="16" y="62" font-size="10.5" fill="#9AA7B4">Uma capacidade nova</text>
+        <text x="16" y="78" font-size="10.5" fill="#9AA7B4">para o usuário.</text>
+      </g>
+      <!-- Bug -->
+      <g transform="translate(190,0)">
+        <rect width="182" height="92" rx="12" fill="#161B22" stroke="#263041"/>
+        <rect x="16" y="16" width="28" height="28" rx="8" fill="#F0655A" fill-opacity="0.14"/>
+        <g transform="translate(20,19)" fill="none" stroke="#F0655A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="7" r="2"/>
+          <rect x="7" y="10" width="10" height="12" rx="5"/>
+          <path d="M7,13 H3 M7,17 H3 M7,21 H3 M17,13 H21 M17,17 H21 M17,21 H21 M9,10 V6 M15,10 V6"/>
+        </g>
+        <circle cx="158" cy="16" r="8" fill="none" stroke="#313C4E" stroke-width="1.5"/>
+        <text x="56" y="34" font-weight="700" fill="#E6EDF3">Bug</text>
+        <text x="16" y="62" font-size="10.5" fill="#9AA7B4">Um comportamento</text>
+        <text x="16" y="78" font-size="10.5" fill="#9AA7B4">incorreto a corrigir.</text>
+      </g>
+      <!-- Refactor -->
+      <g transform="translate(380,0)">
+        <rect width="182" height="92" rx="12" fill="#161B22" stroke="#263041"/>
+        <rect x="16" y="16" width="28" height="28" rx="8" fill="#4C9BF0" fill-opacity="0.14"/>
+        <g transform="translate(20,19)" fill="none" stroke="#4C9BF0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="4" cy="3" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="18" cy="7" r="2"/>
+          <path d="M4,5 v12 M4,11 a12,12 0 0 0 12,-4"/>
+        </g>
+        <circle cx="158" cy="16" r="8" fill="none" stroke="#313C4E" stroke-width="1.5"/>
+        <text x="56" y="34" font-weight="700" fill="#E6EDF3">Refactor</text>
+        <text x="16" y="62" font-size="10.5" fill="#9AA7B4">Ajustar a estrutura</text>
+        <text x="16" y="78" font-size="10.5" fill="#9AA7B4">sem mudar o comportamento.</text>
+      </g>
+      <!-- Change (arquitetura) -->
+      <g transform="translate(570,0)">
+        <rect width="182" height="92" rx="12" fill="#161B22" stroke="#263041"/>
+        <rect x="16" y="16" width="28" height="28" rx="8" fill="#E0A33A" fill-opacity="0.14"/>
+        <g transform="translate(19,19)" fill="none" stroke="#E0A33A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11,2 l9,5 l-9,5 l-9,-5 Z"/>
+          <path d="M2,12 l9,5 l9,-5"/>
+          <path d="M2,17 l9,5 l9,-5"/>
+        </g>
+        <circle cx="158" cy="16" r="8" fill="none" stroke="#313C4E" stroke-width="1.5"/>
+        <text x="56" y="34" font-weight="700" fill="#E6EDF3">Change</text>
+        <text x="16" y="62" font-size="10.5" fill="#9AA7B4">Decisão estrutural</text>
+        <text x="16" y="78" font-size="10.5" fill="#9AA7B4">do projeto (arquitetura).</text>
+      </g>
+    </g>
+
+    <!-- Título -->
+    <text x="20" y="210" font-size="11" fill="#9AA7B4">Título</text>
+    <rect x="20" y="216" width="752" height="36" rx="8" fill="#0E1116" stroke="#263041"/>
+    <text x="32" y="239" font-size="13" fill="#E6EDF3">Wizard de specs</text>
+
+    <!-- Escopo -->
+    <text x="20" y="270" font-size="11" fill="#9AA7B4">Escopo (slug)</text>
+    <rect x="20" y="276" width="160" height="36" rx="8" fill="#0E1116" stroke="#263041"/>
+    <text x="32" y="299" font-size="13" fill="#E6EDF3">WIZ</text>
+    <rect x="196" y="285" width="80" height="22" rx="11" fill="#7C6BF0" fill-opacity="0.16"/>
+    <circle cx="210" cy="296" r="3" fill="#7C6BF0"/>
+    <text x="222" y="300" font-size="10.5" font-weight="600" fill="#9C8CFF">0035</text>
+    <text x="286" y="300" font-size="11" fill="#6B7684">id alocado automaticamente</text>
+
+    <!-- Solicitação -->
+    <text x="20" y="344" font-size="11" fill="#9AA7B4">Solicitação (linguagem natural)</text>
+    <rect x="20" y="350" width="752" height="190" rx="10" fill="#0E1116" stroke="#263041"/>
+    <text x="32" y="378" font-size="13" fill="#C7D0DA">Quero deixar a interface da extensão mais profissional, com um</text>
+    <text x="32" y="400" font-size="13" fill="#C7D0DA">wizard para criar e gerenciar as especificações até a</text>
+    <text x="32" y="422" font-size="13" fill="#C7D0DA">implementação do projeto.</text>
+  </g>
+
+  <!-- RIGHT PANE -->
+  <g transform="translate(832,138)">
+    <!-- AI assist card -->
+    <g filter="url(#softsm)">
+      <rect width="424" height="150" rx="12" fill="#1B1A22" stroke="#E08256" stroke-opacity="0.5"/>
+      <path d="M28,34 l2.4,6 L36,42 l-5.6,2.4 L28,50 l-2.4,-5.6 L20,42 l5.6,-2 Z" fill="url(#gCoral)"/>
+      <text x="48" y="34" font-size="14" font-weight="700" fill="#E6EDF3">Refinar a solicitação com o Claude Code</text>
+      <text x="20" y="66" font-size="12" fill="#9AA7B4">Reescreve a solicitação de forma mais clara e</text>
+      <text x="20" y="84" font-size="12" fill="#9AA7B4">completa usando o skill <tspan fill="#F0A07A" font-family="monospace">/sdd-kit:new</tspan> — o prompt</text>
+      <text x="20" y="102" font-size="12" fill="#9AA7B4">é aberto no terminal, nunca enviado automaticamente.</text>
+      <rect x="20" y="112" width="180" height="30" rx="8" fill="url(#gCoral)"/>
+      <path d="M36,127 l1.6,3.4 L41,132 l-3.4,1.6 L36,138 l-1.6,-3.4 L31,132 l3.4,-1.6 Z" fill="#fff"/>
+      <text x="52" y="131" font-size="12.5" font-weight="600" fill="#fff">Refinar com IA</text>
+      <rect x="210" y="112" width="134" height="30" rx="8" fill="none" stroke="#3A2E2A"/><text x="277" y="131" font-size="12" fill="#E6EDF3" text-anchor="middle">Copiar prompt</text>
+    </g>
+
+    <!-- O que acontece ao criar -->
+    <g transform="translate(0,166)">
+      <rect width="424" height="150" rx="12" fill="#161B22" stroke="#263041"/>
+      <text x="20" y="30" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">O QUE ACONTECE AO CRIAR</text>
+      <circle cx="26" cy="54" r="7" fill="#3FB86B" fill-opacity="0.16"/><path d="M23,54 l2,2 l4,-4" stroke="#3FB86B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="44" y="58" font-size="12.5" fill="#C7D0DA">Cria request.md, spec.md (DRAFT) e status.yaml</text>
+      <circle cx="26" cy="84" r="7" fill="#3FB86B" fill-opacity="0.16"/><path d="M23,84 l2,2 l4,-4" stroke="#3FB86B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="44" y="88" font-size="12.5" fill="#C7D0DA">Aloca o id 0035 no índice</text>
+      <circle cx="26" cy="114" r="7" fill="#3FB86B" fill-opacity="0.16"/><path d="M23,114 l2,2 l4,-4" stroke="#3FB86B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="44" y="118" font-size="12.5" fill="#C7D0DA">Não altera arquivos de código</text>
+    </g>
+
+    <!-- Tip -->
+    <g transform="translate(0,332)">
+      <rect width="424" height="64" rx="12" fill="#161B22" stroke="#263041"/>
+      <rect x="0" y="0" width="4" height="64" fill="#4C9BF0"/>
+      <circle cx="28" cy="32" r="9" fill="#4C9BF0" fill-opacity="0.16"/>
+      <text x="28" y="36" font-size="11" font-weight="700" fill="#4C9BF0" text-anchor="middle">i</text>
+      <text x="48" y="28" font-size="12" fill="#C7D0DA">Descreva o problema e o resultado esperado —</text>
+      <text x="48" y="46" font-size="12" fill="#C7D0DA">não a solução.</text>
+    </g>
+  </g>
+
+  <!-- Footer nav -->
+  <rect x="0" y="772" width="1280" height="60" fill="#12161D"/>
+  <line x1="0" y1="772" x2="1280" y2="772" stroke="#263041"/>
+  <g transform="translate(24,786)">
+    <rect width="120" height="34" rx="8" fill="none" stroke="#313C4E"/>
+    <text x="60" y="22" font-size="13" fill="#E6EDF3" text-anchor="middle">Cancelar</text>
+  </g>
+  <g transform="translate(996,786)">
+    <rect width="260" height="34" rx="8" fill="url(#gViolet)"/>
+    <text x="118" y="22" font-size="12.5" font-weight="600" fill="#fff" text-anchor="middle">Criar e avançar para Especificar</text>
+    <path d="M234,17 l6,-6 M234,17 l6,6 M228,11 l6,6 l-6,6" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

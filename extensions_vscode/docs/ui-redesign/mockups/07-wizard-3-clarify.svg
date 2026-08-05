@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 832" font-family="'Inter','Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <linearGradient id="gViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C6BF0"/><stop offset="1" stop-color="#9C8CFF"/></linearGradient>
+    <linearGradient id="gCoral" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E08256"/><stop offset="1" stop-color="#F0A07A"/></linearGradient>
+    <linearGradient id="gCanvas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0F131A"/><stop offset="1" stop-color="#0C0F14"/></linearGradient>
+    <filter id="softsm" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000000" flood-opacity="0.30"/></filter>
+  </defs>
+
+  <rect width="1280" height="832" fill="url(#gCanvas)"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#12161D"/>
+  <line x1="0" y1="56" x2="1280" y2="56" stroke="#263041"/>
+  <g transform="translate(24,13)">
+    <rect x="0" y="0" width="30" height="30" rx="8" fill="url(#gViolet)"/>
+    <rect x="7" y="8" width="9" height="14" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="12" y="10" width="6" height="10" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="42" y="14" font-size="14" font-weight="700" fill="#E6EDF3">Assistente de mudança</text>
+    <text x="42" y="30" font-size="11" fill="#6B7684">0035 — Wizard de specs</text>
+  </g>
+  <g transform="translate(1000,18)">
+    <rect width="90" height="22" rx="11" fill="#6B7684" fill-opacity="0.16"/><circle cx="16" cy="11" r="3.5" fill="#6B7684"/><text x="30" y="15" font-size="10" font-weight="600" fill="#9AA7B4">DRAFT</text>
+  </g>
+  <text x="1140" y="33" font-size="12" fill="#6B7684">salvo automaticamente</text>
+  <path d="M1244,20 l14,14 M1258,20 l-14,14" stroke="#6B7684" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Stepper band -->
+  <rect x="0" y="56" width="1280" height="66" fill="#0E1219"/>
+  <line x1="0" y1="122" x2="1280" y2="122" stroke="#263041"/>
+  <g transform="translate(0,86)" font-size="11" text-anchor="middle">
+    <!-- connectors: 1→2 and 2→3 done -->
+    <line x1="90" y1="0" x2="247" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="247" y1="0" x2="404" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="404" y1="0" x2="561" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="561" y1="0" x2="718" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="718" y1="0" x2="875" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="875" y1="0" x2="1032" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="1032" y1="0" x2="1189" y2="0" stroke="#263041" stroke-width="2"/>
+    <!-- 1 done -->
+    <g transform="translate(90,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Solicitar</text></g>
+    <!-- 2 done -->
+    <g transform="translate(247,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Especificar</text></g>
+    <!-- 3 current -->
+    <g transform="translate(404,0)"><circle r="14" fill="#161B22" stroke="#7C6BF0" stroke-width="2"/><circle r="4.5" fill="#7C6BF0"/><text y="30" font-weight="700" fill="#E6EDF3">Clarificar</text></g>
+    <!-- 4..8 future -->
+    <g transform="translate(561,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">4</text><text y="30" fill="#6B7684">Desenhar</text></g>
+    <g transform="translate(718,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">5</text><text y="30" fill="#6B7684">Tarefas</text></g>
+    <g transform="translate(875,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">6</text><text y="30" fill="#6B7684">Aprovar</text></g>
+    <g transform="translate(1032,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">7</text><text y="30" fill="#6B7684">Implementar</text></g>
+    <g transform="translate(1189,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">8</text><text y="30" fill="#6B7684">Verificar</text></g>
+  </g>
+
+  <!-- LEFT PANE -->
+  <g transform="translate(24,138)">
+    <rect width="792" height="618" rx="12" fill="#161B22" stroke="#263041"/>
+    <text x="20" y="34" font-size="18" font-weight="700" fill="#E6EDF3">Resolver as dúvidas</text>
+    <text x="20" y="58" font-size="12" fill="#9AA7B4">Dúvidas em aberto viram respostas resolvidas. Nada é inventado — uma dúvida sem</text>
+    <text x="20" y="76" font-size="12" fill="#9AA7B4">resposta humana continua em aberto.</text>
+
+    <!-- Q1 open critica (answered) -->
+    <g transform="translate(20,100)">
+      <rect width="752" height="112" rx="10" fill="#12161D" stroke="#263041"/>
+      <rect x="12" y="14" width="66" height="20" rx="6" fill="#F0655A" fill-opacity="0.16"/><text x="45" y="28" font-size="10" font-weight="600" fill="#F0655A" text-anchor="middle">CRÍTICA</text>
+      <text x="90" y="28" font-size="12.5" fill="#E6EDF3">O wizard deve permitir editar a spec diretamente ou apenas orquestrar o Claude Code?</text>
+      <rect x="12" y="48" width="588" height="34" rx="8" fill="#0E1116" stroke="#263041"/>
+      <text x="22" y="70" font-size="11.5" fill="#E6EDF3">Editar campos estruturados (REQ/NFR/cenários) e também acionar a IA.</text>
+      <rect x="612" y="48" width="128" height="34" rx="8" fill="none" stroke="#313C4E"/>
+      <text x="676" y="69" font-size="10.5" fill="#E6EDF3" text-anchor="middle">Marcar como resolvida</text>
+    </g>
+
+    <!-- Q2 open critica (unanswered) -->
+    <g transform="translate(20,224)">
+      <rect width="752" height="112" rx="10" fill="#12161D" stroke="#263041"/>
+      <rect x="12" y="14" width="66" height="20" rx="6" fill="#F0655A" fill-opacity="0.16"/><text x="45" y="28" font-size="10" font-weight="600" fill="#F0655A" text-anchor="middle">CRÍTICA</text>
+      <text x="90" y="28" font-size="12.5" fill="#E6EDF3">As transições de etapa gravam em status.yaml imediatamente ou só ao aprovar?</text>
+      <rect x="12" y="48" width="588" height="34" rx="8" fill="#0E1116" stroke="#263041"/>
+      <text x="22" y="70" font-size="11.5" fill="#6B7684">Escreva a resposta…</text>
+      <rect x="612" y="48" width="128" height="34" rx="8" fill="none" stroke="#263041"/>
+      <text x="676" y="69" font-size="10.5" fill="#6B7684" text-anchor="middle">Marcar como resolvida</text>
+    </g>
+
+    <!-- Resolved -->
+    <g transform="translate(20,352)">
+      <rect width="752" height="64" rx="10" fill="#12161D" stroke="#263041"/>
+      <circle cx="30" cy="32" r="9" fill="none" stroke="#3FB86B" stroke-width="1.6"/>
+      <path d="M25,32 l4,4 l7,-8" stroke="#3FB86B" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="52" y="37" font-size="12.5" fill="#6B7684" text-decoration="line-through">Qual idioma dos rótulos? → pt-BR, decidido.</text>
+      <rect x="678" y="22" width="62" height="20" rx="6" fill="#3FB86B" fill-opacity="0.16"/><text x="709" y="36" font-size="10" font-weight="600" fill="#3FB86B" text-anchor="middle">RESOLVIDA</text>
+    </g>
+
+    <!-- Hipótese -->
+    <g transform="translate(20,436)">
+      <rect width="752" height="56" rx="8" fill="#1B2230" stroke="#263041"/>
+      <rect x="0" y="0" width="4" height="56" fill="#E0A33A"/>
+      <text x="20" y="32" font-size="12.5"><tspan fill="#E0A33A" font-weight="700">&gt; HIPÓTESE:</tspan><tspan fill="#C7D0DA"> o wizard reaproveita os mesmos comandos sddClaudeKit.* já existentes.</tspan></text>
+    </g>
+  </g>
+
+  <!-- RIGHT PANE -->
+  <g transform="translate(832,138)">
+    <!-- AI assist card -->
+    <g filter="url(#softsm)">
+      <rect width="424" height="150" rx="12" fill="#1B1A22" stroke="#E08256" stroke-opacity="0.5"/>
+      <path d="M28,34 l2.4,6 L36,42 l-5.6,2.4 L28,50 l-2.4,-5.6 L20,42 l5.6,-2 Z" fill="url(#gCoral)"/>
+      <text x="48" y="34" font-size="14" font-weight="700" fill="#E6EDF3">Sugerir respostas com o Claude Code</text>
+      <text x="20" y="66" font-size="12" fill="#9AA7B4">Sugere respostas para as dúvidas em aberto usando</text>
+      <text x="20" y="84" font-size="12" fill="#9AA7B4">o skill <tspan fill="#F0A07A" font-family="monospace">/sdd-kit:clarify</tspan> — o prompt é aberto no</text>
+      <text x="20" y="102" font-size="12" fill="#9AA7B4">terminal, nunca enviado automaticamente.</text>
+      <rect x="20" y="112" width="180" height="30" rx="8" fill="url(#gCoral)"/>
+      <path d="M36,127 l1.6,3.4 L41,132 l-3.4,1.6 L36,138 l-1.6,-3.4 L31,132 l3.4,-1.6 Z" fill="#fff"/>
+      <text x="52" y="131" font-size="12.5" font-weight="600" fill="#fff">Clarificar com IA</text>
+      <rect x="210" y="112" width="134" height="30" rx="8" fill="none" stroke="#3A2E2A"/><text x="277" y="131" font-size="12" fill="#E6EDF3" text-anchor="middle">Copiar prompt</text>
+    </g>
+
+    <!-- Critical status -->
+    <g transform="translate(0,166)">
+      <rect width="424" height="144" rx="12" fill="#161B22" stroke="#E0A33A" stroke-opacity="0.5"/>
+      <text x="20" y="30" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">DÚVIDAS CRÍTICAS</text>
+      <circle cx="52" cy="80" r="34" fill="#E0A33A" fill-opacity="0.14"/>
+      <text x="52" y="92" font-size="34" font-weight="700" fill="#E0A33A" text-anchor="middle">2</text>
+      <text x="102" y="72" font-size="13" font-weight="600" fill="#E6EDF3">dúvidas críticas</text>
+      <text x="102" y="90" font-size="13" font-weight="600" fill="#E6EDF3">em aberto</text>
+      <text x="20" y="128" font-size="11" fill="#E0A33A">Bloqueiam o avanço para Desenhar.</text>
+    </g>
+
+    <!-- Summary -->
+    <g transform="translate(0,326)">
+      <rect width="424" height="84" rx="12" fill="#161B22" stroke="#263041"/>
+      <text x="20" y="30" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">PROGRESSO</text>
+      <text x="20" y="52" font-size="13"><tspan fill="#9AA7B4">Resolvidas: </tspan><tspan fill="#3FB86B" font-weight="700">1</tspan><tspan fill="#9AA7B4"> · Em aberto: </tspan><tspan fill="#F0655A" font-weight="700">2</tspan></text>
+      <rect x="20" y="64" width="384" height="6" rx="3" fill="#263041"/>
+      <rect x="20" y="64" width="128" height="6" rx="3" fill="#3FB86B"/>
+    </g>
+  </g>
+
+  <!-- Footer nav -->
+  <rect x="0" y="772" width="1280" height="60" fill="#12161D"/>
+  <line x1="0" y1="772" x2="1280" y2="772" stroke="#263041"/>
+  <g transform="translate(24,786)">
+    <rect width="120" height="34" rx="8" fill="none" stroke="#313C4E"/>
+    <path d="M20,17 l6,-6 M20,17 l6,6" stroke="#9AA7B4" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="72" y="22" font-size="13" fill="#E6EDF3" text-anchor="middle">Voltar</text>
+  </g>
+  <text x="1002" y="807" font-size="11" fill="#E0A33A" text-anchor="end">Resolva as 2 dúvidas críticas para avançar.</text>
+  <g transform="translate(1026,786)">
+    <rect width="230" height="34" rx="8" fill="#1B2230"/>
+    <text x="115" y="22" font-size="13" font-weight="600" fill="#6B7684" text-anchor="middle">Avançar para Desenhar</text>
+  </g>
+</svg>
