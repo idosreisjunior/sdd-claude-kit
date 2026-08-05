@@ -103,6 +103,12 @@
         "icon": "$(project)"
       },
       {
+        "command": "sddClaudeKit.openWizard",
+        "title": "SDD: Assistente (wizard)",
+        "category": "SDD Claude Kit",
+        "icon": "$(rocket)"
+      },
+      {
         "command": "sddClaudeKit.newFeature",
         "title": "SDD: Nova feature",
         "category": "SDD Claude Kit",

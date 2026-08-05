@@ -193,7 +193,7 @@ artefato por `textContent`/escape; stepper com `aria-*` e navegável por teclado
 **Requisitos:** REQ-WIZ-004, SCN-WIZ-008
 **Dependências:** TASK-WIZ-005
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -208,6 +208,7 @@ edições externas do `status.yaml`.
 ### Testes esperados
 
 - TEST-WIZ-007
+- TEST-WIZ-017 (unidade: montagem de artefatos)
 
 ### Critério de conclusão
 

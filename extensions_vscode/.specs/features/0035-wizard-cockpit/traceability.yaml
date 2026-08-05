@@ -19,10 +19,13 @@ requirements:
     tasks:
       - "TASK-WIZ-003"
       - "TASK-WIZ-005"
+      - "TASK-WIZ-006"
       - "TASK-WIZ-011"
     implementation:
       - "src/sdd/wizardModel.ts"
       - "src/sdd/wizardHtml.ts"
+      - "src/sdd/wizardArtifacts.ts"
+      - "src/sdd/wizardPanel.ts"
       - "src/webview/wizard/Shell.tsx"
       - "src/webview/wizard/Stepper.tsx"
     tests:
@@ -30,6 +33,7 @@ requirements:
       - "TEST-WIZ-003"
       - "TEST-WIZ-006"
       - "TEST-WIZ-012"
+      - "TEST-WIZ-017"
 
   "REQ-WIZ-002":
     title: "Portões de qualidade por etapa"
@@ -72,7 +76,8 @@ requirements:
       - "TASK-WIZ-007"
       - "TASK-WIZ-012"
       - "TASK-WIZ-014"
-    implementation: []
+    implementation:
+      - "src/sdd/wizardPanel.ts"
     tests:
       - "TEST-WIZ-007"
       - "TEST-WIZ-008"
@@ -139,11 +144,13 @@ requirements:
     implementation:
       - "src/sdd/wizardModel.ts"
       - "src/sdd/wizardStepGuards.ts"
+      - "src/sdd/wizardArtifacts.ts"
     tests:
       - "TEST-WIZ-002"
       - "TEST-WIZ-003"
       - "TEST-WIZ-004"
       - "TEST-WIZ-005"
+      - "TEST-WIZ-017"
 
   "NFR-WIZ-004":
     title: "Acessibilidade"
@@ -168,11 +175,12 @@ gaps:
     mitigation: >-
       Capturas nos temas claro e escuro anexadas como evidência da TASK-WIZ-015, além
       do smoke TEST-WIZ-016, comparadas aos mockups de docs/ui-redesign/.
-  - id: "TEST-WIZ-006 (render no host)"
+  - id: "TEST-WIZ-006 / TEST-WIZ-007 (render e reidratação no host)"
     reason: >-
-      O render efetivo do shell/stepper no WebviewPanel e a checagem de CSP em runtime
-      exigem o host do VS Code (vscode-test); a parte pura (documento HTML + CSP + nonce
-      + anti-injeção) já é coberta por teste unitário.
+      O render efetivo do shell/stepper no WebviewPanel, a checagem de CSP em runtime e a
+      reidratação por edição externa exigem o host do VS Code (vscode-test). A parte pura
+      (documento HTML+CSP, modelo, guardas, montagem de artefatos) já é coberta por testes
+      de unidade.
     mitigation: >-
-      Executar o e2e TEST-WIZ-006 no host quando a TASK-WIZ-006 (host do painel) estiver
-      pronta; até lá, cobertura unitária de renderWizardHtml em wizardHtml.test.ts.
+      Executar os e2e TEST-WIZ-006/007 no host; até lá, cobertura unitária de
+      renderWizardHtml, wizardModel, wizardStepGuards e wizardArtifacts.
