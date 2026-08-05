@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 37
+next_id: 38
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -354,5 +354,14 @@ changes:
     updated: "2026-08-05"
     materialized: true
     epic: "Qualidade — GUI profissional (wizard)"
+
+  - id: 0037-board-status-parsing
+    type: bug
+    title: Kanban de tarefas conta **done** como pendente
+    status: IN_PROGRESS
+    path: bugs/0037-board-status-parsing
+    created: "2026-08-05"
+    updated: "2026-08-05"
+    materialized: true
 
 archive: []
