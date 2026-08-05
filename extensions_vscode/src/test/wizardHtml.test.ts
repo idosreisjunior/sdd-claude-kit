@@ -4,6 +4,7 @@ import { renderWizardHtml } from '../sdd/wizardHtml'
 import { deriveWizardState, type ChangeArtifacts } from '../sdd/wizardModel'
 import { canAdvance } from '../sdd/wizardStepGuards'
 import { buildWizardDetails } from '../sdd/wizardContent'
+import { buildHubState } from '../sdd/wizardHub'
 
 function artifacts(over: Partial<ChangeArtifacts> = {}): ChangeArtifacts {
   return {
@@ -25,10 +26,27 @@ function html(title = 'Wizard Cockpit', nonce = 'abc123', specMd?: string) {
   const state = deriveWizardState({ id: '0035-wizard-cockpit', title, type: 'feature' }, a)
   const advance = canAdvance(state.currentStage, a)
   return renderWizardHtml({
-    state,
-    advance,
-    details: buildWizardDetails({ specMd }),
-    hasDesign: a.hasDesign,
+    payload: {
+      view: 'change',
+      state,
+      advance,
+      details: buildWizardDetails({ specMd }),
+      hasDesign: a.hasDesign,
+    },
+    nonce,
+    scriptUri: 'https://webview/wizard.js',
+  })
+}
+
+/** Documento do modo hub, para as asserções que valem nos dois modos. */
+function hubHtml(title = 'Wizard Cockpit', nonce = 'abc123') {
+  return renderWizardHtml({
+    payload: {
+      view: 'hub',
+      hub: buildHubState([
+        { id: '0035-x', type: 'feature', title, status: 'DRAFT', path: 'features/0035-x' },
+      ]),
+    },
     nonce,
     scriptUri: 'https://webview/wizard.js',
   })
@@ -58,6 +76,20 @@ test('TEST-WIZ-006 · NFR-WIZ-001 — o `<` do dado é neutralizado (não fecha 
   assert.ok(!h.includes('</script><img src=x'), 'o dado não aparece cru')
   assert.match(h, /\\u003c\/script>/)
   // apenas as duas tags </script> reais (bloco de dados + bundle)
+  assert.equal((h.match(/<\/script>/g) || []).length, 2)
+})
+
+test('TEST-WIZ-010 — o payload do hub declara o modo e traz as mudanças', () => {
+  const h = hubHtml()
+  assert.ok(h.includes('"view":"hub"'), 'o modo hub é declarado pelo host')
+  assert.ok(h.includes('0035-x'), 'a mudança listada chega ao cliente')
+  assert.match(h, /<div id="root"><\/div>/)
+})
+
+test('TEST-WIZ-010 · NFR-WIZ-001 — o título vindo do índice entra escapado no hub', () => {
+  // O título vem de index.yaml — texto de artefato, tão pouco confiável quanto a spec.
+  const h = hubHtml('</script><img src=x onerror=alert(1)>')
+  assert.ok(!h.includes('</script><img src=x'), 'o título não aparece cru')
   assert.equal((h.match(/<\/script>/g) || []).length, 2)
 })
 

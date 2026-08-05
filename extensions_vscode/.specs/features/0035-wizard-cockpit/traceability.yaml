@@ -120,7 +120,12 @@ requirements:
       - "TASK-WIZ-009"
       - "TASK-WIZ-013"
       - "TASK-WIZ-014"
-    implementation: []
+    implementation:
+      - "src/sdd/wizardHub.ts"
+      - "src/sdd/wizardPanel.ts"
+      - "src/sdd/wizardHtml.ts"
+      - "src/webview/wizard/Hub.tsx"
+      - "src/webview/wizard/index.tsx"
     tests:
       - "TEST-WIZ-010"
       - "TEST-WIZ-014"
@@ -202,6 +207,15 @@ gaps:
       `sendText(prompt, false)` (sem newline) em `hybridStep.ts`, herdado do adapter 0004
       já em uso; verificação manual pelo roteiro do HANDOFF; teste unitário do mapa
       etapa → ação (wizardActions) garantindo o comando composto.
+  - id: "TEST-WIZ-010 (a lista e o clique de retomar não são inspecionáveis)"
+    reason: >-
+      O e2e alcança que o hub ABRE sem QuickPick num projeto vazio (SCN-WIZ-011), pela
+      aba do painel; não alcança o conteúdo da lista nem o clique em "Retomar", que vivem
+      no DOM do webview. O agrupamento, o descarte de mudança sem id e a forma de cada
+      item têm cobertura unitária (wizardHub.test.ts).
+    mitigation: >-
+      Unidade sobre buildHubState e sobre o payload (wizardHtml.test.ts, incl. o título do
+      índice escapado); o roteiro manual do HANDOFF cobre listar, retomar e voltar.
   - id: "TEST-WIZ-012 (render das views não é inspecionável do host)"
     reason: >-
       O DOM de um webview não é acessível pela API da extensão: nenhum teste do host

@@ -8,9 +8,10 @@ import { deriveWizardState, type ChangeArtifacts, type WizardState } from './wiz
 import { canAdvance, advanceTargetStatus, type AdvanceResult } from './wizardStepGuards'
 import { canTransition } from './stateMachine'
 import { applyTransition } from './boardPanel'
-import { renderWizardHtml } from './wizardHtml'
+import { renderWizardHtml, type WizardPayload } from './wizardHtml'
 import { isStageAction } from './wizardActions'
 import { launchClaudeAction } from './hybridStep'
+import { buildHubState } from './wizardHub'
 
 /**
  * Assistente SDD (Wizard Cockpit) — feature 0035, ADR-033. Um WebviewPanel interativo
@@ -18,10 +19,10 @@ import { launchClaudeAction } from './hybridStep'
  * partir do disco (status.yaml é a fonte da verdade) e carrega o cliente Preact
  * empacotado (out/webview/wizard.js). Reidrata ao vivo quando os `.specs` mudam.
  *
- * Incremento atual (TASK-WIZ-006/007/010): abre, projeta, reidrata, executa a transição de
- * etapa (avançar) validada pelas guardas + stateMachine gravando via applyTransition, e
- * delega a ação de IA da etapa ao Claude Code pelo `hybridStep`. As views de conteúdo de
- * cada etapa chegam na TASK-WIZ-011.
+ * Dois modos (TASK-WIZ-009): o HUB lista as mudanças e retoma cada uma na etapa atual;
+ * a view de MUDANÇA conduz o fluxo — avançar com portão (TASK-WIZ-007), ação de IA
+ * (TASK-WIZ-010) e as views de conteúdo das etapas 2–5 (TASK-WIZ-011). `current`
+ * indefinido significa hub: é o modo, não um estado inválido.
  */
 export class WizardPanel {
   private panel?: vscode.WebviewPanel
@@ -29,18 +30,17 @@ export class WizardPanel {
 
   constructor(private readonly extensionUri: vscode.Uri) {}
 
-  /** Abre o assistente para a mudança do nó (dashboard/árvore) ou escolhida no QuickPick. */
+  /**
+   * Abre o assistente. Com um nó (dashboard/árvore), vai direto para aquela mudança;
+   * sem nó, abre o hub — a lista é a porta de entrada, não um QuickPick (REQ-WIZ-006).
+   */
   async open(node?: unknown): Promise<void> {
     const root = workspaceRoot()
     if (!root) {
       vscode.window.showWarningMessage('SDD: abra uma pasta para usar o assistente.')
       return
     }
-    const change = await this.resolveChange(root, node)
-    if (!change) {
-      return
-    }
-    this.current = change
+    this.current = featureChangeOf(node)
 
     if (this.panel) {
       this.panel.reveal()
@@ -66,16 +66,22 @@ export class WizardPanel {
     await this.render(root)
   }
 
-  /** Reprojeta a mudança atual a partir do disco (SCN-WIZ-008), chamado pelo refresh. */
+  /**
+   * Reprojeta a partir do disco (SCN-WIZ-008), chamado pelo refresh. Vale nos dois modos:
+   * no hub, a lista reflete a mudança criada por fora; numa mudança, o stepper reflete o
+   * novo status. A entrada do índice é relida para o título/status não envelhecerem.
+   */
   async refresh(): Promise<void> {
     const root = workspaceRoot()
-    if (!this.panel || !root || !this.current) {
+    if (!this.panel || !root) {
       return
     }
-    const indexText = (await readText(vscode.Uri.joinPath(root, '.specs', 'index.yaml'))) ?? ''
-    const fresh = parseChanges(indexText).find((c) => c.id === this.current?.id)
-    if (fresh) {
-      this.current = fresh
+    if (this.current) {
+      const indexText = (await readText(vscode.Uri.joinPath(root, '.specs', 'index.yaml'))) ?? ''
+      const fresh = parseChanges(indexText).find((c) => c.id === this.current?.id)
+      if (fresh) {
+        this.current = fresh
+      }
     }
     await this.render(root)
   }
@@ -96,27 +102,50 @@ export class WizardPanel {
   }
 
   private async render(root: vscode.Uri): Promise<void> {
-    if (!this.panel || !this.current) {
+    if (!this.panel) {
       return
     }
-    const { state, advance, artifacts, details } = await this.project(root, this.current)
+    const payload = await this.buildPayload(root)
     const scriptUri = this.panel.webview
       .asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'out', 'webview', 'wizard.js'))
       .toString()
-    this.panel.webview.html = renderWizardHtml({
-      state,
-      advance,
-      details,
-      hasDesign: artifacts.hasDesign,
-      nonce: nonce(),
-      scriptUri,
-    })
-    this.panel.title = `Assistente SDD — ${this.current.id}`
+    this.panel.webview.html = renderWizardHtml({ payload, nonce: nonce(), scriptUri })
+    this.panel.title = this.current ? `Assistente SDD — ${this.current.id}` : 'Assistente SDD'
   }
 
-  /** Trata as mensagens do webview: `advance` (transição de etapa) e `ai` (Claude Code). */
+  /** Monta o payload do modo atual: hub quando não há mudança escolhida. */
+  private async buildPayload(root: vscode.Uri): Promise<WizardPayload> {
+    if (!this.current) {
+      return { view: 'hub', hub: buildHubState(await this.readChanges(root)) }
+    }
+    const { state, advance, artifacts, details } = await this.project(root, this.current)
+    return { view: 'change', state, advance, details, hasDesign: artifacts.hasDesign }
+  }
+
+  /**
+   * Trata as mensagens do webview. Do hub: `open` (retomar) e `create` (nova mudança).
+   * De uma mudança: `hub` (voltar), `ai` (Claude Code) e `advance` (transição de etapa).
+   */
   private async onMessage(root: vscode.Uri, message: unknown): Promise<void> {
-    if (!isRecord(message) || !this.current || !this.current.path) {
+    if (!isRecord(message)) {
+      return
+    }
+    switch (message['type']) {
+      case 'open':
+        await this.onOpenChange(root, message['id'])
+        return
+      case 'hub':
+        this.current = undefined
+        await this.render(root)
+        return
+      case 'create':
+        // A etapa Solicitar do wizard chega na TASK-WIZ-008; até lá, o fluxo por
+        // QuickPick mantido em paralelo é o caminho de criação (Q4).
+        await vscode.commands.executeCommand('sddClaudeKit.newFeature')
+        return
+    }
+
+    if (!this.current || !this.current.path) {
       return
     }
     if (message['type'] === 'ai') {
@@ -213,29 +242,29 @@ export class WizardPanel {
     }
   }
 
-  private async resolveChange(root: vscode.Uri, node: unknown): Promise<ChangeEntry | undefined> {
-    const fromNode = featureChangeOf(node)
-    if (fromNode) {
-      return fromNode
+  /**
+   * Retoma a mudança escolhida no hub (SCN-WIZ-010). O id vem do webview, então é
+   * resolvido contra o índice em disco — não se confia nele para montar caminho. Um id
+   * desconhecido (índice mudou desde o render) devolve ao hub já atualizado.
+   */
+  private async onOpenChange(root: vscode.Uri, id: unknown): Promise<void> {
+    if (typeof id !== 'string') {
+      return
     }
+    const found = (await this.readChanges(root)).find((c) => c.id === id)
+    if (!found) {
+      vscode.window.showInformationMessage(`SDD: ${id} não está mais no índice.`)
+      this.current = undefined
+    } else {
+      this.current = found
+    }
+    await this.render(root)
+  }
+
+  /** Mudanças registradas no índice. Índice ausente/ilegível vira lista vazia. */
+  private async readChanges(root: vscode.Uri): Promise<ChangeEntry[]> {
     const indexText = (await readText(vscode.Uri.joinPath(root, '.specs', 'index.yaml'))) ?? ''
-    const changes = parseChanges(indexText)
-    if (changes.length === 0) {
-      vscode.window.showInformationMessage(
-        'SDD: nenhuma mudança ainda. Crie uma com "SDD: Nova feature".',
-      )
-      return undefined
-    }
-    const pick = await vscode.window.showQuickPick(
-      changes.map((c) => ({
-        label: c.id,
-        description: `${c.type} · ${c.status}`,
-        detail: c.title,
-        change: c,
-      })),
-      { placeHolder: 'Abrir qual mudança no assistente?' },
-    )
-    return pick?.change
+    return parseChanges(indexText)
   }
 }
 

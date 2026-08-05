@@ -8,6 +8,7 @@ import { Stepper } from './Stepper'
 import { Footer } from './Footer'
 import { AiAction } from './AiAction'
 import { StageView } from './StageView'
+import { vscodeApi } from './vscodeApi'
 
 export function Shell({
   state,
@@ -23,6 +24,9 @@ export function Shell({
   const current = state.stages.find((s) => s.status === 'current')
   return (
     <div class="sdd-wizard">
+      <button class="sdd-backlink" onClick={() => vscodeApi.postMessage({ type: 'hub' })}>
+        ◂ Todas as mudanças
+      </button>
       <header class="sdd-topbar">
         <h1>{state.title}</h1>
         <span class="sub">

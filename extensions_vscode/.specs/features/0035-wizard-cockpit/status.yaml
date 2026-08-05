@@ -62,7 +62,12 @@ history:
       e corrigido no caminho: um import de VALOR de wizardContent num componente arrastou
       o js-yaml para o bundle do webview (21 kB → 136 kB, contra o "bundle leve" do
       ADR-034); a derivação passou ao host e o esbuild agora falha acima de 60 kB.
-      compile ok, 218 testes de unidade ok, lint limpo.
+      compile ok, 218 testes de unidade ok, lint limpo. TASK-WIZ-009 (hub) implementada
+      em seguida: wizardHub.ts agrupa as mudanças reusando groupByStatus, o payload passa
+      a declarar o modo (hub | change), e openWizard sem nó abre o hub em vez do
+      QuickPick. compile ok, 225 testes de unidade ok, lint limpo, bundle 32,3 kB. O e2e
+      TEST-WIZ-010 cobre o SCN-WIZ-011 (hub abre sem QuickPick em projeto vazio) mas
+      segue sem execução local pelo mesmo bloqueio de ambiente.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -115,6 +120,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 15
-  pending: 5
-  in_progress: 6
+  pending: 4
+  in_progress: 7
   done: 4

@@ -287,7 +287,7 @@ sem sobrescrever (SCN-WIZ-009).
 **Requisitos:** REQ-WIZ-006
 **Dependências:** TASK-WIZ-006
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -296,7 +296,9 @@ boas-vindas quando não há nenhuma mudança (SCN-WIZ-010/011).
 
 ### Arquivos prováveis
 
-- `src/webview/wizard/Hub.tsx`, `src/sdd/wizardModel.ts`
+- `src/webview/wizard/Hub.tsx`, `src/sdd/wizardHub.ts` (estado puro do hub)
+- `src/sdd/wizardHtml.ts` (payload passa a declarar o modo: `hub` | `change`)
+- `src/sdd/wizardPanel.ts` (abre no hub sem nó; mensagens `open`/`hub`/`create`)
 
 ### Testes esperados
 

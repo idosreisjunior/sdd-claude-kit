@@ -19,10 +19,11 @@ verificar à mão, e o que falta.
 | WIZ-008 | 🟡 in_progress | `changePlanner.ts` (alocação/conflito) — falta o formulário + escrita no host |
 | WIZ-010 | 🟡 in_progress | `hybridStep.ts` (extraído) + `wizardActions.ts` + `{ai}` + `AiAction.tsx` — falta e2e |
 | WIZ-011 | 🟡 in_progress | `wizardContent.ts` + `StageView` + 4 views (etapas 2–5) — faltam as capturas |
-| WIZ-009, 012..015 | ⚪ pending | hub · aprovar · implementar · verificar · a11y |
+| WIZ-009 | 🟡 in_progress | `wizardHub.ts` + `Hub.tsx` + payload `hub`\|`change` — falta e2e |
+| WIZ-012..015 | ⚪ pending | aprovar · implementar · verificar · a11y |
 
 Fonte da verdade: `.specs/features/0035-wizard-cockpit/` (`status.yaml`, `tasks.md`,
-`traceability.yaml`). Validação atual: `npm run compile` ✓ · `npm test` (218) ✓ · `npm run lint` ✓.
+`traceability.yaml`). Validação atual: `npm run compile` ✓ · `npm test` (225) ✓ · `npm run lint` ✓.
 
 > **O bundle do webview tem teto de 60 kB** (`esbuild.mjs`, ADR-034). Componentes do
 > webview importam de `src/sdd/` **só tipos**: um import de valor arrasta o `js-yaml` e
@@ -42,7 +43,8 @@ npm install
 npm run compile          # tsc (borda) + esbuild (webview → out/webview/wizard.js)
 ```
 Abra a pasta no VS Code e tecle **F5** (Extension Development Host). Depois:
-- Command Palette → **“SDD: Assistente (wizard)”** → escolha uma mudança.
+- Command Palette → **“SDD: Assistente (wizard)”** → abre o **hub** com as mudanças.
+- Ou a ação do assistente num nó do painel Features → abre direto naquela mudança.
 
 ## O que verificar à mão (mapeia aos e2e pendentes)
 
@@ -68,6 +70,11 @@ Abra a pasta no VS Code e tecle **F5** (Extension Development Host). Depois:
    mostra a presença do `design.md` e os ADRs de `decisions/`; **Tarefas** lista as tarefas
    com status e os achados do `analyzeTasks`. Numa mudança sem o artefato, a view deve
    mostrar o estado vazio explicativo — nunca erro (SCN-WIZ-007).
+6. **Hub (TEST-WIZ-010).** Sem nó, o assistente abre a lista agrupada pelo ciclo de vida
+   (a mesma ordem do painel Features). **Retomar** abre a mudança na etapa atual dela
+   (SCN-WIZ-010); **◂ Todas as mudanças** volta. Em projeto sem nenhuma mudança, aparecem
+   as boas-vindas com **Criar a primeira mudança** (SCN-WIZ-011), que hoje aciona o
+   `newFeature` por QuickPick — o formulário próprio é a WIZ-008 (Q4).
 
 Se algo destoar, o ponto de entrada é `src/sdd/wizardPanel.ts` (borda) e `src/webview/wizard/*`
 (cliente Preact). A regra pura (modelo, guardas, alvo de transição) está testada em
@@ -87,8 +94,9 @@ desejado ao usar o wizard — é o ponto mais sujeito a ajuste.
   handler `{create}` no `wizardPanel` que usa `planAllocation` (`changePlanner.ts`, já testado)
   + escreve os arquivos por template (reusar `substituteChange`/`insertChangeEntry` do
   `featureCreator`, ou extrair a escrita do `newFeature` num serviço compartilhado).
-- **WIZ-009 hub:** modo “lista + retomar” + estado vazio (boas-vindas). Provável mode-switch
-  no payload do webview (`view: 'hub' | 'change' | 'create'`).
+- **WIZ-009 (fechar):** falta o e2e verde. O `create` do hub delega ao `newFeature` por
+  QuickPick; quando a WIZ-008 entregar o formulário, troque o handler por `view: 'create'`
+  no mesmo mode-switch do payload.
 - **WIZ-010 (fechar):** só falta executar o e2e `src/e2e/wizardAi.test.ts` num host capaz.
   A extração e a fiação estão feitas — `hybridStep.ts` é agora o caminho único do menu de
   contexto E do wizard.

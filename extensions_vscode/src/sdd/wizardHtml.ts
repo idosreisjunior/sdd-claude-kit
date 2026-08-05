@@ -9,6 +9,7 @@ import { themeTokensCss } from './themeTokens'
 import type { WizardState } from './wizardModel'
 import type { AdvanceResult } from './wizardStepGuards'
 import type { WizardDetails } from './wizardContent'
+import type { HubState } from './wizardHub'
 
 /** Serializa dados para dentro de um <script>, neutralizando `<` (evita fechar a tag). */
 function inlineJson(value: unknown): string {
@@ -57,6 +58,22 @@ export function wizardCss(): string {
   .sdd-task-status.done { color: var(--sdd-status-verified); }
   .sdd-task-status.in_progress { color: var(--sdd-status-in-progress); }
   .sdd-task-status.blocked { color: var(--sdd-status-planned); }
+  .sdd-hub-intro { color: var(--sdd-text-muted); font-size: .85rem; margin: 0 0 1rem; max-width: 46rem; }
+  .sdd-group { margin-bottom: 1.1rem; }
+  .sdd-group h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--sdd-text-muted); margin: 0 0 .45rem; font-weight: 700; }
+  .sdd-hub-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .4rem; }
+  .sdd-hub-item { display: flex; align-items: center; gap: .7rem; padding: .55rem .7rem; border: 1px solid var(--sdd-border); border-radius: .5rem; background: var(--sdd-surface); }
+  .sdd-hub-item .id { font-family: var(--vscode-editor-font-family, monospace); font-size: .76rem; color: var(--sdd-link); }
+  .sdd-hub-item .title { flex: 1 1 auto; font-size: .86rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sdd-hub-item .type { font-size: .7rem; color: var(--sdd-text-muted); }
+  .sdd-status { font-size: .68rem; font-weight: 700; letter-spacing: .04em; padding: .1rem .45rem; border-radius: .8rem; color: #fff; }
+  .sdd-btn.ghost { background: transparent; color: var(--sdd-accent-2); border-color: var(--sdd-border); padding: .3rem .7rem; font-size: .8rem; }
+  .sdd-btn.ghost:hover { border-color: var(--sdd-accent); }
+  .sdd-welcome { border: 1px solid var(--sdd-border); border-radius: .6rem; padding: 1.5rem; background: var(--sdd-surface); text-align: center; }
+  .sdd-welcome h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
+  .sdd-welcome p { color: var(--sdd-text-muted); font-size: .87rem; margin: 0 auto 1rem; max-width: 34rem; }
+  .sdd-backlink { background: none; border: none; color: var(--sdd-text-muted); font: inherit; font-size: .78rem; cursor: pointer; padding: 0; margin-bottom: .6rem; }
+  .sdd-backlink:hover { color: var(--sdd-text); text-decoration: underline; }
   .sdd-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; }
   .sdd-btn.ai { background: var(--sdd-ai); color: #fff; }
   .sdd-btn.ai:hover { background: var(--sdd-ai-2); }
@@ -71,28 +88,32 @@ export function wizardCss(): string {
   `
 }
 
-/** Argumentos de render: estado inicial, portão de avanço, conteúdo, nonce e bundle. */
+/**
+ * O que o cliente renderiza: o HUB (lista de mudanças) ou UMA mudança em curso. O modo
+ * é dado pelo host, não inferido no cliente — a borda sabe o que foi pedido.
+ */
+export type WizardPayload =
+  | { view: 'hub'; hub: HubState }
+  | {
+      view: 'change'
+      state: WizardState
+      advance: AdvanceResult
+      /** Conteúdo dos artefatos para a view da etapa atual (TASK-WIZ-011). */
+      details: WizardDetails
+      /** `design.md` existe? Sinal que a view Desenhar consome. */
+      hasDesign: boolean
+    }
+
+/** Argumentos de render: o payload a projetar, o nonce e o URI do bundle. */
 export interface WizardHtmlOptions {
-  state: WizardState
-  advance: AdvanceResult
-  /** Conteúdo dos artefatos para a view da etapa atual (TASK-WIZ-011). */
-  details: WizardDetails
-  /** `design.md` existe? Sinal do retrato de artefatos que a view Desenhar consome. */
-  hasDesign: boolean
+  payload: WizardPayload
   nonce: string
   /** webview.asWebviewUri(out/webview/wizard.js) — a borda resolve; aqui é opaco. */
   scriptUri: string
 }
 
 /** Gera o documento HTML do wizard. `nonce` deve ser alfanumérico. */
-export function renderWizardHtml({
-  state,
-  advance,
-  details,
-  hasDesign,
-  nonce,
-  scriptUri,
-}: WizardHtmlOptions): string {
+export function renderWizardHtml({ payload, nonce, scriptUri }: WizardHtmlOptions): string {
   const csp = `default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';`
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -108,7 +129,7 @@ ${wizardCss()}
 </head>
 <body>
   <div id="root"></div>
-  <script type="application/json" id="sdd-state" nonce="${nonce}">${inlineJson({ state, advance, details, hasDesign })}</script>
+  <script type="application/json" id="sdd-state" nonce="${nonce}">${inlineJson(payload)}</script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`
