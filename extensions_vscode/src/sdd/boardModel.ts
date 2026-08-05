@@ -169,6 +169,28 @@ export function orderFeed(items: readonly FeedItem[], order: FeedOrder): FeedIte
   return order === 'asc' ? items.slice().reverse() : items.slice()
 }
 
+/** Filtro do feed: busca textual (id/título) e estados incluídos (vazio = todos). */
+export interface FeedFilter {
+  query: string
+  statuses: string[]
+}
+
+/** Um item do feed passa no filtro? Busca casa id OU título (case-insensitive). */
+export function feedItemMatches(item: FeedItem, filter: FeedFilter): boolean {
+  const q = filter.query.trim().toLowerCase()
+  const okStatus = filter.statuses.length === 0 || filter.statuses.includes(item.status)
+  const okQuery =
+    q === '' ||
+    item.id.toLowerCase().includes(q) ||
+    item.title.toLowerCase().includes(q)
+  return okStatus && okQuery
+}
+
+/** Aplica busca + estados ao feed. É a lógica canônica que o cliente espelha. */
+export function filterFeed(items: readonly FeedItem[], filter: FeedFilter): FeedItem[] {
+  return items.filter((i) => feedItemMatches(i, filter))
+}
+
 /** Conveniência: monta o board direto do texto do index.yaml. */
 export function buildChangesBoardFromIndex(
   indexYaml: string,

@@ -1,0 +1,74 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0031-feed-filter-pagination"
+# feature | bug | refactor | change
+type: "feature"
+title: "Filtro e paginação do feed"
+
+# Verificada em 2026-08-04: filtro testado; render/paginação no host.
+# approve segue pulado (Fase 2).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criada por /sdd-kit:new: acrescentar filtro (busca id/título + chips de status) e paginação
+      ("Carregar mais") ao feed de atividade (0029). Lógica pura como no filtro do quadro (0028).
+      Questões de design em TASK-FEEDF-001 (ADR-029).
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (3 tarefas: 2 P, 1 M; caminho crítico TASK-FEEDF-001 → 002 → 003).
+      CLARIFIED/DESIGNED pulados (Fase 2): design em ADR-029. Cobertura completa (4 requisitos com
+      tarefa); sem órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Implementado. boardModel.ts: FeedFilter, feedItemMatches (id/título + status), filterFeed.
+      boardPanel.ts: buildActivityFeed com teto 500 (paginação no cliente). boardHtml.ts: barra do feed
+      (busca + chips de status derivados dos presentes) e #feedarea re-renderizada com filtro/ordem/
+      paginação; "Carregar mais" incrementa feedShown; mudar filtro/ordem reinicia; barra/foco
+      preservados ao vivo. Transição PLANNED → IN_PROGRESS; approve pulado (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: compile e lint limpos; suíte unitária 165 (+2): TEST-FEEDFILTER-001
+      (filterFeed por busca e status; vazio = todos — SCN-FEEDF-001) e TEST-FEEDFILTER-002
+      (feedItemMatches combina busca e status). Filtro puro, sem vscode (NFR-FEEDF-001). A barra do
+      feed, a paginação "Carregar mais" (SCN-FEEDF-002), a preservação do foco ao vivo e o client-side
+      (NFR-FEEDF-002) são integração de host, registrados em traceability.yaml gaps com revisão manual;
+      abrir o painel é coberto pelo E2E do 0025. Critérios de aceite atendidos. approve permanece pulado
+      (Fase 2), approval segue null.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-04"
+    resolved_by: TASK-FEEDF-001
+    summary: >-
+      Filtro do feed client-side espelhando filterFeed/feedItemMatches (puros, testados); paginação por
+      "Carregar mais" (feedShown, reinicia ao mudar filtro/ordem); barra do feed persistente; teto 500.
+    adr: ADR-029
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 3
+  pending: 0
+  in_progress: 0
+  done: 3
