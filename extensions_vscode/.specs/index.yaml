@@ -6,7 +6,7 @@ version: 1
 
 # Próximo identificador a ser alocado. Incrementado a cada mudança criada.
 # Identificadores nunca são reutilizados nem renumerados.
-next_id: 32
+next_id: 33
 
 # Backlog do MVP derivado 1:1 dos Épicos do PRD (§24). 0001, 0002 e 0003 foram
 # materializados em disco; 0004–0010 estão registradas aqui como planejadas
@@ -301,6 +301,15 @@ changes:
     updated: "2026-08-04"
     materialized: true
     epic: "Qualidade — painel visual"
+  - id: 0032-e2e-board-transition
+    type: feature
+    title: E2E da transição do painel (efeito do arrastar)
+    status: VERIFIED
+    path: features/0032-e2e-board-transition
+    created: "2026-08-04"
+    updated: "2026-08-04"
+    materialized: true
+    epic: "Qualidade — testes de integração"
   - id: 0027-board-write-hardening
     type: bug
     title: Endurecimento da escrita do Painel SDD (integridade)

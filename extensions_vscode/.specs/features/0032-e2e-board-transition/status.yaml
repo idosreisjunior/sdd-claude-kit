@@ -1,0 +1,74 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0032-e2e-board-transition"
+# feature | bug | refactor | change
+type: "feature"
+title: "E2E da transição do painel (efeito do arrastar)"
+
+# Verificada: os testes E2E de transição passaram no CI (host sob xvfb).
+status: VERIFIED
+
+created: "2026-08-04"
+updated: "2026-08-04"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-04"
+    reason: >-
+      Criada por /sdd-kit:new para os testes E2E do arrastar (0026). Limitação honesta: o gesto de DOM
+      não é dirigível pelo @vscode/test-electron; cobre-se o efeito (a escrita da transição) no host.
+      Questões em TASK-TRANS-001 (ADR-030).
+  - status: PLANNED
+    date: "2026-08-04"
+    reason: >-
+      Plano gerado por /sdd-kit:tasks (2 tarefas P; caminho crítico TASK-TRANS-001 → 002).
+      CLARIFIED/DESIGNED pulados (Fase 2): design em ADR-030. Cobertura completa (2 requisitos com
+      tarefa); sem órfã, ciclo ou tarefa G.
+  - status: IN_PROGRESS
+    date: "2026-08-04"
+    reason: >-
+      Implementado. boardPanel.ts: applyTransition extraída de moveChange e exportada (all-or-nothing,
+      preservando o arquivo); moveChange a reusa e reporta conforme o resultado. src/e2e/transition.test.ts:
+      cria um workspace temporário, aplica uma transição e verifica status.yaml (status + history,
+      comentário preservado) e index.yaml (TEST-TRANS-001), e o caminho arquivos-ausentes (TEST-TRANS-002).
+      Verificação local: compile e lint limpos, 165 testes unitários (a E2E fica fora de out/test). A
+      execução da E2E depende do host; roda no CI sob xvfb. Transição PLANNED → IN_PROGRESS; approve pulado
+      (Fase 2), approval segue null.
+  - status: VERIFIED
+    date: "2026-08-04"
+    reason: >-
+      Verificação por evidência: os testes E2E de transição passaram num VS Code de teste real, sob xvfb
+      no CI — SCN-TRANS-001 (applyTransition escreve a transição: status.yaml VERIFIED com a entrada de
+      history, motivo e comentário preservados; index.yaml VERIFIED — TEST-TRANS-001) e SCN-TRANS-002
+      (sem os arquivos, retorna missing e nada é escrito — TEST-TRANS-002); 7 passing. Compile, lint e a
+      suíte unitária (165) limpos. A limitação do gesto de DOM está registrada (NFR-TRANS-001, ADR-030) —
+      cobre-se o efeito, não o gesto. Critérios de aceite atendidos. approve permanece pulado (Fase 2).
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-04"
+    resolved_by: TASK-TRANS-001
+    summary: >-
+      E2E cobre o efeito (applyTransition num workspace temporário), não o gesto de DOM (não dirigível
+      pelo tooling). applyTransition extraída e exportada.
+    adr: ADR-030
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 2
+  pending: 0
+  in_progress: 0
+  done: 2
