@@ -67,29 +67,88 @@ function yamlScalar(text, key) {
   return m ? m[1].trim() : undefined
 }
 
-/** Tarefas de um tasks.md: id, título, status e complexidade. */
+/**
+ * Contadores declarados no bloco `tasks:` do status.yaml.
+ *
+ * Existem para ser comparados com a contagem real: uma auditoria independente encontrou
+ * quatro mudanças marcadas VERIFIED com `done: total`, cujas tarefas de verificação
+ * manual seguem `pending` no tasks.md. O painel mostra a realidade e DENUNCIA a
+ * divergência, em vez de escolher em silêncio em qual dos dois acreditar.
+ */
+function declaredCounts(text) {
+  const lines = (text ?? '').split('\n')
+  const start = lines.findIndex((l) => /^tasks:\s*$/.test(l))
+  if (start === -1) return undefined
+  // Consome as linhas INDENTADAS seguintes. A primeira versão usava um grupo repetido com
+  // `\s*`, que engolia a quebra de linha e parava na primeira chave — lia `total` e
+  // devolvia 0 para o resto, acusando divergência em toda mudança do repositório.
+  const counts = { total: 0, pending: 0, in_progress: 0, done: 0 }
+  for (const line of lines.slice(start + 1)) {
+    const m = /^\s+(\w+):\s*(\d+)\s*$/.exec(line)
+    if (!m) break
+    if (m[1] in counts) counts[m[1]] = Number(m[2])
+  }
+  return counts
+}
+
+// Cabeçalho de tarefa. Escopo com hífen ou minúscula não casa — e um header descartado
+// some do painel, então a varredura reporta quantos `## TASK` existiam contra quantos
+// casaram (ver `parseTasks`).
+const TASK_HEAD = /^##\s+(TASK-[A-Z0-9]+-\d+)\s*—?\s*(.*)$/
+const ANY_TASK_HEAD = /^##\s+TASK-/
+
+// Linha de status, tolerante à forma. O repositório usa pelo menos três variações
+// (`done`, `**done** — data`, `pending (nota)`) e nada impede uma quarta. Aceita
+// marcador de lista, indentação, negrito e badge antes da palavra.
+const STATUS_LINE = /^\s*(?:[-*]\s*)?\*{0,2}Status\*{0,2}\s*:\s*(.*)$/
+const KNOWN_STATUS = /\b(done|in_progress|pending|blocked)\b/i
+const COMPLEXITY_LINE = /^\s*(?:[-*]\s*)?\*{0,2}Complexidade\*{0,2}\s*:\s*\*{0,2}\s*(\S+)/
+
+/** Remove badge decorativo do fim do título (`` `✅ done` ``), que duplica a coluna. */
+function cleanTitle(title) {
+  return title.replace(/\s*`[^`]*`\s*$/, '').trim()
+}
+
+/**
+ * Tarefas de um tasks.md: id, título, status e complexidade.
+ *
+ * `unknown` é deliberado como padrão, em vez de `pending`. Uma auditoria independente
+ * apontou que assumir `pending` transforma qualquer forma não prevista numa falha
+ * SILENCIOSA — o total continua fechando, e a tarefa só aparece na coluna errada. Sem
+ * linha de status reconhecível, ela aparece como não reconhecida e o painel avisa.
+ */
 function parseTasks(md) {
   const tasks = []
   let current
+  let headers = 0
   for (const raw of (md ?? '').split('\n')) {
     const line = raw.replace(/\r$/, '')
-    const head = /^##\s+(TASK-[A-Z0-9]+-\d+)\s*—?\s*(.*)$/.exec(line)
+    const head = TASK_HEAD.exec(line)
+    if (ANY_TASK_HEAD.test(line)) {
+      headers += 1
+      // Cabeçalho não reconhecido ENCERRA a tarefa anterior. Sem isto, o corpo do bloco
+      // descartado vaza para cima: um probe mostrou uma tarefa com status inventado sendo
+      // reportada como `done`, porque herdou a linha de status do bloco seguinte.
+      if (!head) {
+        current = undefined
+        continue
+      }
+    }
     if (head) {
-      current = { id: head[1], title: head[2].trim(), status: 'pending', complexity: '' }
+      current = { id: head[1], title: cleanTitle(head[2]), status: 'unknown', complexity: '' }
       tasks.push(current)
       continue
     }
     if (!current) continue
-    // O status no repositório aparece em três formas: `done`, `**done** — 2026-07-29`
-    // (negrito e data) e `pending (nota entre parênteses)`. A primeira versão deste parser
-    // pegava o token cru e classificava `**done**` como desconhecido — 17 tarefas somiam
-    // silenciosamente do painel, e os totais não fechavam. Normaliza: só a palavra.
-    const st = /^\*\*Status:\*\*\s*[*_`\s]*([a-zA-Z_]+)/.exec(line)
-    if (st) current.status = st[1].toLowerCase()
-    const cx = /^\*\*Complexidade:\*\*\s*(\S+)/.exec(line)
+    const st = STATUS_LINE.exec(line)
+    if (st) {
+      const known = KNOWN_STATUS.exec(st[1])
+      current.status = known ? known[1].toLowerCase() : 'unknown'
+    }
+    const cx = COMPLEXITY_LINE.exec(line)
     if (cx) current.complexity = cx[1]
   }
-  return tasks
+  return { tasks, dropped: headers - tasks.length }
 }
 
 /** Percorre um diretório de projeto e devolve as mudanças com suas tarefas. */
@@ -104,14 +163,16 @@ function scanProject(project) {
       const changeDir = join(dir, entry)
       if (!statSync(changeDir).isDirectory()) continue
       const statusYaml = read(join(changeDir, 'status.yaml'))
-      const tasks = parseTasks(read(join(changeDir, 'tasks.md')))
+      const { tasks, dropped } = parseTasks(read(join(changeDir, 'tasks.md')))
       changes.push({
         id: entry,
         kind,
         title: yamlScalar(statusYaml, 'title') ?? entry,
         status: yamlScalar(statusYaml, 'status') ?? 'DRAFT',
         approved: /^approval:\s*$/m.test(statusYaml ?? ''),
+        declared: declaredCounts(statusYaml),
         tasks,
+        dropped,
         path: relative(ROOT, changeDir),
       })
     }
@@ -148,6 +209,30 @@ function bar(counts, total) {
   return `<div class="bar">${seg('done')}${seg('in_progress')}${seg('blocked')}${seg('pending')}</div>`
 }
 
+/** Denuncia contador desatualizado no status.yaml e cabeçalho de tarefa descartado. */
+function mismatchNote(ch, counts, total) {
+  const notes = []
+  const d = ch.declared
+  if (
+    d &&
+    (d.total !== total ||
+      d.done !== counts.done ||
+      d.pending !== counts.pending ||
+      d.in_progress !== counts.in_progress)
+  ) {
+    notes.push(
+      `status.yaml declara ${d.done}/${d.total} done, ${d.pending} pendente(s), ${d.in_progress} em andamento — ` +
+        `o tasks.md diz ${counts.done}/${total}, ${counts.pending} pendente(s), ${counts.in_progress} em andamento`,
+    )
+  }
+  if (ch.dropped > 0) {
+    notes.push(
+      `${ch.dropped} cabeçalho(s) "## TASK-" não reconhecido(s) pelo parser — tarefas ausentes desta lista`,
+    )
+  }
+  return notes.map((n) => `<p class="warn">⚠ ${esc(n)}</p>`).join('\n      ')
+}
+
 function renderChange(ch) {
   const counts = countBy(ch.tasks)
   const total = ch.tasks.length
@@ -170,6 +255,7 @@ function renderChange(ch) {
         <span class="c-title">${esc(ch.title)}</span>
         <span class="counts">${counts.done}/${total}${total ? ` · ${pct}%` : ''}</span>
       </summary>
+      ${mismatchNote(ch, counts, total)}
       ${bar(counts, total)}
       ${total ? `<ul class="tasks">\n${tasks}\n      </ul>` : '<p class="none">Nenhuma tarefa planejada — a mudança ainda não passou por <code>/sdd-kit:tasks</code>.</p>'}
       <p class="path">${esc(ch.path)}</p>
