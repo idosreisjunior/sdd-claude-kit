@@ -62,6 +62,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
   .feedid:hover { text-decoration: underline; }
   .feedhead .d { opacity: .6; font-size: .8rem; margin-left: auto; }
   .feedreason { opacity: .8; font-size: .85rem; margin-top: .25rem; }
+  .morebtn { margin-top: .5rem; }
 </style>
 </head>
 <body>
@@ -70,7 +71,7 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
 const INITIAL = ${inlineJson(board)};
 const INITIAL_FEED = ${inlineJson(feed)};
 const vscode = acquireVsCodeApi();
-const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] }, sort: 'id-asc', feedOrder: 'desc' };
+const state = { view: 'changes', changes: INITIAL, feed: INITIAL_FEED, tasks: null, change: null, filter: { query: '', types: [] }, sort: 'id-asc', feedOrder: 'desc', feedFilter: { query: '', statuses: [] }, feedShown: 20 };
 
 function h(tag, cls, text) {
   const e = document.createElement(tag);
@@ -225,6 +226,55 @@ function buildToolbar() {
   return bar;
 }
 
+// Espelha feedItemMatches (boardModel.ts) — busca id/título + status (ADR-029).
+function feedMatches(item) {
+  const q = state.feedFilter.query.trim().toLowerCase();
+  const okStatus = state.feedFilter.statuses.length === 0 || state.feedFilter.statuses.indexOf(item.status) !== -1;
+  const okQuery = q === '' || item.id.toLowerCase().indexOf(q) !== -1 || (item.title || '').toLowerCase().indexOf(q) !== -1;
+  return okStatus && okQuery;
+}
+
+function feedStatuses() {
+  const seen = {};
+  state.feed.forEach(function (i) { seen[i.status] = true; });
+  state.feedFilter.statuses.forEach(function (s) { seen[s] = true; });
+  return Object.keys(seen).sort();
+}
+
+function renderFeedChips(chipsEl) {
+  chipsEl.textContent = '';
+  feedStatuses().forEach(function (status) {
+    const on = state.feedFilter.statuses.indexOf(status) !== -1;
+    const chip = h('button', 'fchip', status);
+    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (on) { chip.classList.add('on'); }
+    chip.addEventListener('click', function () {
+      const i = state.feedFilter.statuses.indexOf(status);
+      const nowOn = i === -1;
+      if (nowOn) { state.feedFilter.statuses.push(status); } else { state.feedFilter.statuses.splice(i, 1); }
+      chip.classList.toggle('on', nowOn);
+      chip.setAttribute('aria-pressed', nowOn ? 'true' : 'false');
+      state.feedShown = 20;
+      renderFeedArea();
+    });
+    chipsEl.appendChild(chip);
+  });
+}
+
+function feeditemRow(it) {
+  const row = h('div', 'feeditem');
+  const head = h('div', 'feedhead');
+  head.appendChild(h('span', 'badge', it.status));
+  const id = h('span', 'feedid', it.id);
+  id.title = 'Abrir dashboard';
+  id.addEventListener('click', function () { vscode.postMessage({ type: 'open', id: it.id }); });
+  head.appendChild(id);
+  head.appendChild(h('span', 'd', it.date));
+  row.appendChild(head);
+  if (it.reason) { row.appendChild(h('div', 'feedreason', it.reason)); }
+  return row;
+}
+
 function renderActivity() {
   const root = document.getElementById('app');
   root.textContent = '';
@@ -237,30 +287,56 @@ function renderActivity() {
   orderBtn.setAttribute('aria-label', 'Alternar a ordem do feed');
   orderBtn.addEventListener('click', function () {
     state.feedOrder = state.feedOrder === 'asc' ? 'desc' : 'asc';
-    renderActivity();
+    orderBtn.textContent = state.feedOrder === 'asc' ? 'Mais antigos ↑' : 'Mais recentes ↓';
+    state.feedShown = 20;
+    renderFeedArea();
   });
   bar.appendChild(orderBtn);
   root.appendChild(bar);
+
+  const fbar = h('div', 'toolbar');
+  const search = document.createElement('input');
+  search.type = 'search';
+  search.className = 'search';
+  search.placeholder = 'Filtrar o feed por id ou título...';
+  search.setAttribute('aria-label', 'Filtrar o feed por id ou título');
+  search.value = state.feedFilter.query;
+  search.addEventListener('input', function () { state.feedFilter.query = search.value; state.feedShown = 20; renderFeedArea(); });
+  fbar.appendChild(search);
+  const chips = h('div', 'chips');
+  renderFeedChips(chips);
+  fbar.appendChild(chips);
+  root.appendChild(fbar);
+
+  const area = document.createElement('div');
+  area.id = 'feedarea';
+  root.appendChild(area);
+  renderFeedArea();
+}
+
+// Só a área do feed (mantém a barra e o foco da busca nas atualizações ao vivo).
+function renderFeedArea() {
+  const area = document.getElementById('feedarea');
+  if (!area) { return; }
+  area.textContent = '';
   if (!state.feed || state.feed.length === 0) {
-    root.appendChild(h('p', 'muted', 'Sem atividade registrada.'));
+    area.appendChild(h('p', 'muted', 'Sem atividade registrada.'));
     return;
   }
-  const items = state.feedOrder === 'asc' ? state.feed.slice().reverse() : state.feed;
+  let items = state.feedOrder === 'asc' ? state.feed.slice().reverse() : state.feed;
+  items = items.filter(feedMatches);
+  if (items.length === 0) {
+    area.appendChild(h('p', 'muted', 'Nenhuma atividade corresponde ao filtro.'));
+    return;
+  }
   const list = h('div', 'feed');
-  items.forEach(function (it) {
-    const row = h('div', 'feeditem');
-    const head = h('div', 'feedhead');
-    head.appendChild(h('span', 'badge', it.status));
-    const id = h('span', 'feedid', it.id);
-    id.title = 'Abrir dashboard';
-    id.addEventListener('click', function () { vscode.postMessage({ type: 'open', id: it.id }); });
-    head.appendChild(id);
-    head.appendChild(h('span', 'd', it.date));
-    row.appendChild(head);
-    if (it.reason) { row.appendChild(h('div', 'feedreason', it.reason)); }
-    list.appendChild(row);
-  });
-  root.appendChild(list);
+  items.slice(0, state.feedShown).forEach(function (it) { list.appendChild(feeditemRow(it)); });
+  area.appendChild(list);
+  if (items.length > state.feedShown) {
+    const more = h('button', 'tbtn morebtn', 'Carregar mais (' + (items.length - state.feedShown) + ')');
+    more.addEventListener('click', function () { state.feedShown += 20; renderFeedArea(); });
+    area.appendChild(more);
+  }
 }
 
 function renderChanges() {
@@ -355,7 +431,13 @@ window.addEventListener('message', function (e) {
         render();
       }
     } else if (state.view === 'activity') {
-      renderActivity(); // feed ao vivo
+      if (document.getElementById('feedarea')) {
+        renderFeedArea();
+        const fc = document.querySelector('.chips');
+        if (fc) { renderFeedChips(fc); } // novos status aparecem sem tocar na busca
+      } else {
+        renderActivity();
+      }
     }
   } else if (m.type === 'tasks') {
     state.tasks = m.board;

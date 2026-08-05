@@ -8,6 +8,8 @@ import {
   buildActivityFeed,
   sortBoardCards,
   orderFeed,
+  filterFeed,
+  feedItemMatches,
 } from '../sdd/boardModel'
 import type { BoardCard } from '../sdd/boardModel'
 import type { ChangeEntry, TaskProgress } from '../sdd/specsIndex'
@@ -186,4 +188,25 @@ test('TEST-SORT-002 — orderFeed inverte para asc, preserva desc (SCN-SORT-002)
   ])
   assert.deepEqual(orderFeed(feed, 'desc').map((i) => i.date), ['2026-08-03', '2026-08-02', '2026-08-01'])
   assert.deepEqual(orderFeed(feed, 'asc').map((i) => i.date), ['2026-08-01', '2026-08-02', '2026-08-03'])
+})
+
+test('TEST-FEEDFILTER-001 — filterFeed por busca e status (SCN-FEEDF-001)', () => {
+  const feed = buildActivityFeed([
+    { id: '0001-git', title: 'Git', statusYaml: S1 },
+    { id: '0002-metrics', title: 'Métricas', statusYaml: S2 },
+  ])
+  // busca por id (só itens de 0001-git)
+  assert.ok(filterFeed(feed, { query: 'git', statuses: [] }).every((i) => i.id === '0001-git'))
+  // filtro por status
+  const onlyVerified = filterFeed(feed, { query: '', statuses: ['VERIFIED'] })
+  assert.ok(onlyVerified.length >= 1 && onlyVerified.every((i) => i.status === 'VERIFIED'))
+  // status vazio = todos
+  assert.equal(filterFeed(feed, { query: '', statuses: [] }).length, feed.length)
+})
+
+test('TEST-FEEDFILTER-002 — feedItemMatches combina busca e status', () => {
+  const item = { id: '0001-git', title: 'Git', status: 'VERIFIED', date: '2026-08-03', reason: 'x' }
+  assert.equal(feedItemMatches(item, { query: 'git', statuses: ['VERIFIED'] }), true)
+  assert.equal(feedItemMatches(item, { query: 'git', statuses: ['DRAFT'] }), false)
+  assert.equal(feedItemMatches(item, { query: 'zzz', statuses: [] }), false)
 })

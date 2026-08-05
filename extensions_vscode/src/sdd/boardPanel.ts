@@ -100,7 +100,8 @@ export class BoardPanel {
         feedSources.push({ id: change.id, title: change.title, statusYaml: text })
       }
     }
-    return { board: buildChangesBoard(changes, progress), feed: buildActivityFeed(feedSources) }
+    // Teto alto: o feed é paginado no cliente (feature 0031).
+    return { board: buildChangesBoard(changes, progress), feed: buildActivityFeed(feedSources, 500) }
   }
 
   private async onMessage(root: vscode.Uri, message: unknown): Promise<void> {

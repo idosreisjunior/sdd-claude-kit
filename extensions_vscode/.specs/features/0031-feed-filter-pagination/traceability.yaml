@@ -1,0 +1,68 @@
+# Matriz de rastreabilidade — 0031-feed-filter-pagination
+version: 1
+
+feature: "0031-feed-filter-pagination"
+
+requirements:
+
+  "REQ-FEEDF-001":
+    title: "Filtro do feed"
+    scenarios:
+      - "SCN-FEEDF-001"
+    tasks:
+      - "TASK-FEEDF-001"
+      - "TASK-FEEDF-002"
+      - "TASK-FEEDF-003"
+    implementation:
+      - "src/sdd/boardModel.ts"
+      - "src/sdd/boardHtml.ts"
+    tests:
+      - "TEST-FEEDFILTER-001"
+      - "TEST-FEEDFILTER-002"
+
+  "REQ-FEEDF-002":
+    title: "Paginação do feed"
+    scenarios:
+      - "SCN-FEEDF-002"
+    tasks:
+      - "TASK-FEEDF-001"
+      - "TASK-FEEDF-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+      - "src/sdd/boardPanel.ts"
+    tests: []
+
+  "NFR-FEEDF-001":
+    title: "Lógica pura e testável"
+    scenarios: []
+    tasks:
+      - "TASK-FEEDF-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-FEEDFILTER-001"
+      - "TEST-FEEDFILTER-002"
+
+  "NFR-FEEDF-002":
+    title: "Client-side e seguro"
+    scenarios: []
+    tasks:
+      - "TASK-FEEDF-003"
+    implementation:
+      - "src/sdd/boardHtml.ts"
+    tests: []
+
+gaps:
+  - id: "REQ-FEEDF-002"
+    reason: >-
+      A paginação ("Carregar mais") e a preservação da barra/foco são DOM no host;
+      a filtragem é pura e testada.
+    mitigation: >-
+      Revisão manual (TASK-FEEDF-003): "Carregar mais" mostra mais itens; mudar
+      filtro/ordem reinicia; salvar um .specs preserva o foco da busca.
+  - id: "NFR-FEEDF-002"
+    reason: >-
+      "Client-side, CSP preservada" é propriedade do render do webview; abrir o
+      painel é coberto por E2E (0025).
+    mitigation: >-
+      Revisão de código (sem innerHTML; CSP com nonce mantida).
