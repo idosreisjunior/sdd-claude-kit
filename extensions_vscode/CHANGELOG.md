@@ -5,6 +5,17 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.12] — 2026-08-04
+
+Colapsar colunas do quadro.
+
+### Adicionado
+
+- **Colapsar colunas** — cada coluna do kanban ganha um botão ▾/▸ que a colapsa (oculta os cartões e
+  encolhe) ou expande. O estado colapsado persiste na sessão do painel (feature 0034, ADR-032).
+
+---
+
 ## [0.2.11] — 2026-08-04
 
 Reordenar as colunas do quadro.
