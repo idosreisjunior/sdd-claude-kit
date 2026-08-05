@@ -116,6 +116,7 @@ requirements:
       - "TASK-COCK-017"
     implementation:
       - "src/sdd/sidebarModel.ts"
+      - "src/sdd/sidebarNav.ts"
       - "src/sdd/sidebarHtml.ts"
       - "src/views/sidebarViewProvider.ts"
       - "src/webview/sidebar/index.tsx"
@@ -192,6 +193,8 @@ requirements:
       - "TASK-COCK-019"
     implementation:
       - "src/webview/ui/index.tsx"
+      - "src/sdd/sidebarNav.ts"
+      - "src/webview/sidebar/index.tsx"
     tests:
       - "TEST-COCK-007"
       - "TEST-COCK-008"

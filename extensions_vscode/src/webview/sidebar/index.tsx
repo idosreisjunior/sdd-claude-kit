@@ -8,9 +8,15 @@
 // As ações NÃO são reimplementadas: o cliente só avisa qual item e qual intenção; a borda
 // executa os mesmos comandos de sempre (ver `sidebarViewProvider`).
 import { render } from 'preact'
+import { intentForKey, moveFocus, focusEdge, select as selectItem, focusedItem } from '../../sdd/sidebarNav'
 import type { SidebarItem, SidebarState } from '../../sdd/sidebarModel'
 import { StatusBadge } from '../ui/index'
 import { vscodeApi } from '../wizard/vscodeApi'
+
+// Estado de foco vive AQUI, não no host: uma seta não pode custar uma ida e volta por
+// postMessage. O host continua dono da lista e da seleção persistida; o cliente devolve a
+// intenção quando ela vira ação.
+let current: SidebarState
 
 function post(message: unknown) {
   vscodeApi.postMessage(message)
@@ -60,7 +66,11 @@ function ChangeRow({ item, state }: { item: SidebarItem; state: SidebarState }) 
         role="option"
         aria-selected={state.selectedKey === item.key}
         tabIndex={-1}
-        onClick={() => post({ type: 'select', key: item.key })}
+        onClick={() => {
+          current = selectItem(current, item.key)
+          draw()
+          post({ type: 'select', key: item.key })
+        }}
         onDblClick={() => post({ type: 'invoke', id: change.id, command: 'sddClaudeKit.openDashboard' })}
         title={`${change.id} · ${change.type} · ${change.status}`}
       >
@@ -150,7 +160,73 @@ function readState(): SidebarState | null {
 }
 
 const root = document.getElementById('root')
+
+/** Redesenha a partir do estado local e traz o item em foco à vista. */
+function draw() {
+  if (!root) {
+    return
+  }
+  render(current.mode === 'welcome' ? <Welcome /> : <List state={current} />, root)
+  // Substitui o `reveal()` que a TreeView dava pronto (ADR-036): sem isto, navegar por
+  // teclado numa lista longa move um foco que o usuário não vê.
+  if (current.focusedKey) {
+    const el = document.querySelector(`[data-key="${cssEscape(current.focusedKey)}"]`)
+    el?.scrollIntoView({ block: 'nearest' })
+  }
+}
+
+/** Escapa uma chave para uso em seletor. Ids têm hífen e dígitos; grupos têm `:` e acento. */
+function cssEscape(value: string): string {
+  const api = (window as { CSS?: { escape?: (v: string) => string } }).CSS
+  return api?.escape ? api.escape(value) : value.replace(/["\\]/g, '\\$&')
+}
+
+/**
+ * Teclado da lista. O mapeamento tecla → intenção vive em `sidebarNav.intentForKey`, puro
+ * e testado; aqui fica só o que precisa do DOM.
+ *
+ * `preventDefault` apenas quando a tecla É nossa: do contrário a sidebar sequestraria
+ * atalhos do VS Code que o usuário espera que funcionem.
+ */
+function onKeyDown(ev: KeyboardEvent) {
+  if (current.mode !== 'list') {
+    return
+  }
+  // Shift+F10 é o outro caminho consagrado para "menu de contexto" no teclado.
+  const intent = ev.shiftKey && ev.key === 'F10' ? { kind: 'actions' as const } : intentForKey(ev.key)
+  if (!intent) {
+    return
+  }
+  ev.preventDefault()
+
+  if (intent.kind === 'move') {
+    current = moveFocus(current, intent.delta)
+    draw()
+    return
+  }
+  if (intent.kind === 'edge') {
+    current = focusEdge(current, intent.edge)
+    draw()
+    return
+  }
+
+  const item = focusedItem(current)
+  if (!item || item.kind !== 'change' || !item.change) {
+    return
+  }
+  if (intent.kind === 'activate') {
+    current = selectItem(current, item.key)
+    draw()
+    post({ type: 'select', key: item.key })
+    post({ type: 'invoke', id: item.change.id, command: 'sddClaudeKit.openDashboard' })
+    return
+  }
+  post({ type: 'menu', id: item.change.id })
+}
+
 const initial = readState()
 if (root && initial) {
-  render(initial.mode === 'welcome' ? <Welcome /> : <List state={initial} />, root)
+  current = initial
+  draw()
+  document.addEventListener('keydown', onKeyDown)
 }

@@ -134,7 +134,12 @@ history:
       tela seguem sendo da plataforma. Os 18 comandos ficaram intactos porque
       featureChangeOf aceita qualquer nó com kind feature, então a borda monta um compatível.
       viewsWelcome removido do manifesto e as boas-vindas viraram modo da própria sidebar
-      (Q7). 276 testes ok. Falta TASK-COCK-017: navegação por teclado na lista.
+      (Q7). TASK-COCK-017 fechou o teclado: setas, PageUp/PageDown, Home/End, Enter/espaço
+      e ContextMenu/Shift+F10, mais o scrollIntoView que substitui o reveal() da TreeView.
+      O mapeamento tecla → intenção virou módulo puro (sidebarNav) porque o cliente precisa
+      dele e importar sidebarModel arrastaria js-yaml para o bundle — separação verificada:
+      sidebar.js tem 25,4 kB e zero js-yaml. preventDefault só quando a tecla é nossa, para
+      a sidebar não sequestrar atalho do VS Code. 284 testes ok.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -209,6 +214,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 3
+  pending: 2
   in_progress: 0
-  done: 17
+  done: 18

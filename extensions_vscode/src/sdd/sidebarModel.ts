@@ -10,6 +10,11 @@
 // apenas em que estado a sidebar está.
 import { groupByStatus, type ChangeEntry } from './specsIndex'
 
+// Navegação vem de sidebarNav, que não importa nada: o cliente do webview precisa dessas
+// funções e importar este módulo lá arrastaria js-yaml para o bundle.
+export { moveFocus, focusEdge, select, focusedItem, intentForKey } from './sidebarNav'
+export type { NavIntent } from './sidebarNav'
+
 /** Um item navegável da sidebar. Grupos são cabeçalhos; mudanças são alvos de ação. */
 export interface SidebarItem {
   kind: 'group' | 'change'
@@ -68,46 +73,6 @@ export function buildSidebarState(
 /** Primeiro item que aceita foco. Grupos entram na navegação: são recolhíveis e clicáveis. */
 function firstFocusable(items: readonly SidebarItem[]): string | undefined {
   return items.length > 0 ? items[0].key : undefined
-}
-
-/**
- * Move o foco `delta` posições. Não circula de propósito: numa lista longa, saltar do fim
- * para o começo desorienta mais do que ajuda, e é o comportamento da `TreeView` que estamos
- * substituindo. Lista vazia ou foco perdido devolve o estado intacto.
- */
-export function moveFocus(state: SidebarState, delta: number): SidebarState {
-  if (state.items.length === 0) {
-    return state
-  }
-  const current = state.items.findIndex((i) => i.key === state.focusedKey)
-  const from = current === -1 ? 0 : current
-  const next = Math.max(0, Math.min(state.items.length - 1, from + delta))
-  return next === current ? state : { ...state, focusedKey: state.items[next].key }
-}
-
-/** Leva o foco ao primeiro ou ao último item (Home/End). */
-export function focusEdge(state: SidebarState, edge: 'first' | 'last'): SidebarState {
-  if (state.items.length === 0) {
-    return state
-  }
-  const item = edge === 'first' ? state.items[0] : state.items[state.items.length - 1]
-  return { ...state, focusedKey: item.key }
-}
-
-/**
- * Seleciona um item por chave. Chave desconhecida não altera a seleção: o webview manda a
- * chave, e confiar nela cegamente deixaria a sidebar num estado que a lista não contém.
- */
-export function select(state: SidebarState, key: string): SidebarState {
-  if (!state.items.some((i) => i.key === key)) {
-    return state
-  }
-  return { ...state, selectedKey: key, focusedKey: key }
-}
-
-/** O item em foco, se houver. É sobre ele que a ação padrão do teclado age. */
-export function focusedItem(state: SidebarState): SidebarItem | undefined {
-  return state.items.find((i) => i.key === state.focusedKey)
 }
 
 /**

@@ -24,7 +24,7 @@ MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBA
   TASK-COCK-009 (dashboard) [OK] ──────────────────────────────────────┤
   TASK-COCK-010 (visão do projeto) [OK]                                ▼
   TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView) [OK]
-  TASK-COCK-012 (métricas) [OK]                                  ├─► TASK-COCK-017 (teclado/ações)
+  TASK-COCK-012 (métricas) [OK]                                  ├─► TASK-COCK-017 (teclado/ações) [OK]
   TASK-COCK-013 (validação) [OK]                                 └─► TASK-COCK-018 (boas-vindas) [OK]
   TASK-COCK-014 (editor de spec) [OK]                                  │
         │                                                         │
@@ -646,7 +646,7 @@ reais antes do passo de maior risco (design §2).
 **Requisitos:** REQ-COCK-006, NFR-COCK-004
 **Dependências:** TASK-COCK-016
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
