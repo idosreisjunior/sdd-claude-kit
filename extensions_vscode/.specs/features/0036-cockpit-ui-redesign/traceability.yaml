@@ -111,7 +111,8 @@ requirements:
       - "TASK-COCK-015"
       - "TASK-COCK-016"
       - "TASK-COCK-017"
-    implementation: []
+    implementation:
+      - "src/sdd/sidebarModel.ts"
     tests:
       - "TEST-COCK-005"
       - "TEST-COCK-007"
@@ -130,6 +131,7 @@ requirements:
       - "src/sdd/historyHtml.ts"
       - "src/sdd/metricsHtml.ts"
       - "src/sdd/validationHtml.ts"
+      - "src/sdd/specEditorHtml.ts"
     tests:
       - "TEST-COCK-010"
 

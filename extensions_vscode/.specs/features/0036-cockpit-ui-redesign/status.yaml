@@ -120,7 +120,14 @@ history:
       ui-card e ui-tile. Dois defeitos latentes corrigidos no caminho: o status do feed usava
       uma classe .badge que não existia no CSS do Board (sem estilo desde a 0029), e o
       contador do dashboard precisou continuar em div e não span porque TEST-UI-002 afirma
-      ">N</div>" — adaptei o código ao contrato, não o teste ao código. 257 testes ok.
+      ">N</div>" — adaptei o código ao contrato, não o teste ao código. TASK-COCK-014
+      (editor de spec) restilado pelo mesmo critério: já tem cliente inline e testes de
+      mecanismo, então não migra. TASK-COCK-015 entregou sidebarModel.ts — o estado que a
+      TreeView resolvia sozinha (foco, seleção, navegação) vira núcleo puro com 13 testes,
+      incluindo o que a TreeView fazia de graça e ninguém perdoaria perder: reidratar sem
+      jogar o usuário de volta ao topo. 270 testes ok. ACHADO para o próximo passo: a
+      sidebar tem 18 ações por item (2 inline + 16 em submenu) que o SCN-COCK-008 exige
+      preservar — número maior do que a decisão Q1 deixava aparente.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -195,6 +202,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 7
+  pending: 5
   in_progress: 0
-  done: 13
+  done: 15

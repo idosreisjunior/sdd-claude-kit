@@ -2,6 +2,13 @@
 // API do VS Code. Documento com CSP + nonce (style e script), um textarea com o
 // Markdown (escapado) e o painel renderizado (specView). O script mínimo faz só a
 // mensageria de sincronização com o provider (ADR-006).
+//
+// Redesenhado pela 0036 (TASK-COCK-014). ORIGEM DO LAYOUT (REQ-COCK-007): a hierarquia do
+// painel de visualização deriva da etapa Especificar do mockup 06-wizard-2-spec, que já
+// lista requisitos e cenários. Por ADR-039/040 o cliente inline PERMANECE — os testes de
+// specEditorHtml.test.ts afirmam o mecanismo (script inline, #editor, #view) e o editor já
+// reage ao usuário sem precisar de outro runtime.
+import { componentsCss } from './uiCss'
 import { renderSpecView } from './specView'
 import { esc } from './dashboardHtml'
 
@@ -39,6 +46,7 @@ export function renderSpecEditorHtml(markdown: string, nonce: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDD: editor de spec</title>
 <style nonce="${nonce}">
+${componentsCss()}
   html, body { height: 100%; margin: 0; }
   body { font-family: var(--vscode-font-family); color: var(--sdd-text); background: var(--sdd-surface-raised); }
   .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 100vh; }
@@ -50,9 +58,10 @@ export function renderSpecEditorHtml(markdown: string, nonce: string): string {
     border-right: 1px solid var(--sdd-border); outline: none;
   }
   #view { overflow: auto; padding: 1rem 1.25rem; line-height: 1.5; }
-  #view h1 { font-size: 1.3rem; } #view h2 { font-size: 1.05rem; opacity: .9; }
-  #view h3 { font-size: .95rem; opacity: .85; }
-  #view .id { color: var(--sdd-link); font-weight: 600; }
+  #view h1 { font-size: 1.15rem; margin: 0 0 .6rem; font-weight: 700; }
+  #view h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--sdd-text-muted); font-weight: 700; margin: 1.2rem 0 .4rem; }
+  #view h3 { font-size: .92rem; font-weight: 600; margin: .8rem 0 .25rem; }
+  #view .id { color: var(--sdd-link); font-weight: 600; font-family: var(--vscode-editor-font-family, monospace); font-size: .85em; }
   #view p { margin: .5rem 0; }
 </style>
 </head>

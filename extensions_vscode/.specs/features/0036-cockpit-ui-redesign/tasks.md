@@ -18,7 +18,7 @@ FUNDAÇÃO (a base de que tudo depende)
         ┌─────────────────────────────────────────────┴──────────────┐
         ▼                                                            ▼
 MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBAR
-  TASK-COCK-006 (Board: casca e colunas)                    TASK-COCK-015 (sidebarModel)
+  TASK-COCK-006 (Board: casca e colunas)                    TASK-COCK-015 (sidebarModel) [OK]
      ├─► TASK-COCK-007 (Board: interações)                        │
      └─► TASK-COCK-008 (Board: feed) [OK]                              │
   TASK-COCK-009 (dashboard) [OK] ──────────────────────────────────────┤
@@ -26,7 +26,7 @@ MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBA
   TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView)
   TASK-COCK-012 (métricas) [OK]                                  ├─► TASK-COCK-017 (teclado/ações)
   TASK-COCK-013 (validação) [OK]                                 └─► TASK-COCK-018 (boas-vindas)
-  TASK-COCK-014 (editor de spec)                                  │
+  TASK-COCK-014 (editor de spec) [OK]                                  │
         │                                                         │
         └──────────────────► TASK-COCK-019 (contraste) ◄──────────┘
                                      │
@@ -532,9 +532,13 @@ continuam distinguíveis.
 **Requisitos:** REQ-COCK-007, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Revisada pelo ADR-039/040.** O editor já tem cliente inline e os testes dele afirmam
+> o mecanismo (#editor, #view, script inline). Não migra: recebe a identidade pelo CSS
+> compartilhado e pela hierarquia derivada do mockup 06.
 
 Migrar o editor de spec a partir de `06-wizard-2-spec`, que já lista requisitos e cenários
 com a hierarquia necessária (design §3). É um `CustomTextEditor`, e não um painel comum —
@@ -565,7 +569,7 @@ o ciclo de edição e sincronização com o documento precisa continuar intacto.
 **Requisitos:** REQ-COCK-006, REQ-COCK-005
 **Dependências:** —
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
