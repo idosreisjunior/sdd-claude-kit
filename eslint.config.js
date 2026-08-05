@@ -44,6 +44,39 @@ export default [
     languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
     rules: regrasComuns,
   },
+  {
+    // Ferramenta de desenvolvimento, não componente do produto: `scripts/` não é
+    // empacotado no plugin nem na extensão, e roda só na máquina de quem desenvolve.
+    //
+    // Dois ajustes, ambos estreitos:
+    //
+    // 1. Globals de Node. Estes arquivos são `.mjs` executados por `node`, então
+    //    `process`, `console` e `URL` existem — a config base não os declara e acusava
+    //    `no-undef` em todos.
+    //
+    // 2. `node:http` liberado APENAS aqui. O Artigo 9.4 diz "nenhum código sai para
+    //    serviço externo sem ação explícita"; o painel de progresso serve `localhost` e
+    //    não manda nada para fora, então não viola a regra — viola o proxy barato dela,
+    //    como o próprio comentário acima reconhece ser. A verificação estrutural que vale
+    //    para o produto é TEST-PF-022, e ela não olha para `scripts/`.
+    files: ['scripts/**/*.mjs', 'scripts/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
+        Buffer: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+      },
+    },
+    rules: {
+      ...regrasComuns,
+      'no-restricted-imports': 'off',
+    },
+  },
   ...tseslint.configs.recommended.map((c) => ({ ...c, files: ['**/*.ts'] })),
   {
     files: ['**/*.ts'],
