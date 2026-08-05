@@ -5,6 +5,18 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.11] — 2026-08-04
+
+Reordenar as colunas do quadro.
+
+### Adicionado
+
+- **Reordenação de colunas** — cada cabeçalho de coluna do kanban ganha setas ◂/▸ para movê-la à
+  esquerda/direita, e um botão "↺ Colunas" restaura a ordem padrão. A ordem escolhida persiste na
+  sessão do painel (feature 0033, ADR-031).
+
+---
+
 ## [0.2.10] — 2026-08-04
 
 Sem mudança visível ao usuário — cobertura de teste.
