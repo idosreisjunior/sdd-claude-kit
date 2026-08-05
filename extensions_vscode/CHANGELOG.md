@@ -5,6 +5,19 @@ Todas as mudanças relevantes desta extensão são registradas aqui.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o projeto adota
 [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.10] — 2026-08-04
+
+Sem mudança visível ao usuário — cobertura de teste.
+
+### Interno
+
+- **Teste E2E do efeito da transição** — a escrita do arrastar-para-transicionar (`applyTransition`)
+  foi extraída e passa a ser exercitada por um teste de integração no host real (aplica uma transição
+  num workspace temporário e verifica `status.yaml`/`index.yaml`). O gesto de arrastar em si não é
+  automatizável com o tooling e segue por revisão manual (feature 0032, ADR-030).
+
+---
+
 ## [0.2.9] — 2026-08-04
 
 Filtro e paginação do feed de atividade.
