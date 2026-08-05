@@ -20,9 +20,9 @@ FUNDAÇÃO (a base de que tudo depende)
 MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBAR
   TASK-COCK-006 (Board: casca e colunas)                    TASK-COCK-015 (sidebarModel)
      ├─► TASK-COCK-007 (Board: interações)                        │
-     └─► TASK-COCK-008 (Board: feed)                              │
-  TASK-COCK-009 (dashboard) ──────────────────────────────────────┤
-  TASK-COCK-010 (visão do projeto)                                ▼
+     └─► TASK-COCK-008 (Board: feed) [OK]                              │
+  TASK-COCK-009 (dashboard) [OK] ──────────────────────────────────────┤
+  TASK-COCK-010 (visão do projeto) [OK]                                ▼
   TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView)
   TASK-COCK-012 (métricas) [OK]                                  ├─► TASK-COCK-017 (teclado/ações)
   TASK-COCK-013 (validação) [OK]                                 └─► TASK-COCK-018 (boas-vindas)
@@ -315,7 +315,7 @@ Reconectar no cliente Preact as interações já entregues: arrastar para transi
 **Requisitos:** REQ-COCK-003, NFR-COCK-003
 **Dependências:** TASK-COCK-006
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -347,9 +347,13 @@ Preact, usando `Card` e `EmptyState`.
 **Requisitos:** REQ-COCK-004, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Revisada pelo ADR-040.** Esta superfície roda com `enableScripts: false` — é
+> somente-leitura e não carrega cliente. A identidade vem do CSS e das classes
+> compartilhadas, como nos demais painéis de leitura.
 
 Migrar o dashboard para Preact seguindo `13-feature-dashboard`: objetivo, progresso,
 contagens em `StatTile`, bloqueios e linha do tempo do histórico. Campo indisponível
@@ -381,9 +385,13 @@ mostra a nota explicativa, não um zero enganoso.
 **Requisitos:** REQ-COCK-001, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** M
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Revisada pelo ADR-040.** Esta superfície roda com `enableScripts: false` — é
+> somente-leitura e não carrega cliente. A identidade vem do CSS e das classes
+> compartilhadas, como nos demais painéis de leitura.
 
 Migrar o painel Projeto (saúde, contexto, contadores) para Preact com os componentes
 compartilhados, alinhando-o ao bloco correspondente do mockup `01-sidebar-cockpit`.

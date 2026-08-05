@@ -56,6 +56,8 @@ requirements:
       - "src/webview/ui/index.tsx"
       - "src/sdd/uiModel.ts"
       - "src/sdd/uiCss.ts"
+      - "src/sdd/projectOverviewHtml.ts"
+      - "src/sdd/dashboardHtml.ts"
     tests:
       - "TEST-COCK-003"
       - "TEST-COCK-004"
@@ -80,7 +82,8 @@ requirements:
       - "SCN-COCK-005"
     tasks:
       - "TASK-COCK-009"
-    implementation: []
+    implementation:
+      - "src/sdd/dashboardHtml.ts"
     tests:
       - "TEST-COCK-003"
       - "TEST-COCK-010"

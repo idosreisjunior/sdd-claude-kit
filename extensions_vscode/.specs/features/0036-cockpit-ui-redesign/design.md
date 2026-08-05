@@ -17,6 +17,11 @@ sobrevive à próxima feature.
 
 ## 2. Solução proposta
 
+> **Revisado na implementação.** Os movimentos abaixo descrevem o plano como foi
+> aprovado. O ADR-040 substituiu o ADR-037: a identidade vem do CSS compartilhado, que
+> serve a todas as superfícies, e cliente Preact existe só onde há interação — o que na
+> prática restou à sidebar e ao editor de spec.
+
 Três movimentos, nesta ordem de dependência:
 
 1. **Fundação** — estender `esbuild.mjs` para empacotar mais de um cliente de webview e
@@ -244,6 +249,8 @@ branch, não em `main`.
 | Q5 | Nenhuma mudança de comportamento; a regra do passo 4 (§11) é o mecanismo que garante | §11 |
 | Q6 | Cada superfície sem mockup tem a origem nomeada | §3, tabela de derivação |
 | — | Painel somente-leitura não carrega runtime; ADR-037 fica restrito às superfícies interativas | **ADR-038** |
+| — | O Board mantém o cliente inline: migrar exigiria reescrever testes, o que §11 proíbe | **ADR-039** |
+| — | A identidade vem do CSS; cliente só por necessidade de interação. **Substitui o ADR-037** | **ADR-040** |
 
 ## 15. Questões ainda em aberto
 

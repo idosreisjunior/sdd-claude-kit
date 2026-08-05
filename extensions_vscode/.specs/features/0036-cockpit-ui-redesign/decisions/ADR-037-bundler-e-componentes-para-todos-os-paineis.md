@@ -1,6 +1,6 @@
 # ADR-037 — Bundler e biblioteca de componentes para todos os painéis
 
-- **Status:** Aceito
+- **Status:** **Substituído pelo ADR-040** (2026-08-05)
 - **Data:** 2026-08-05
 - **Origem:** design da feature 0036-cockpit-ui-redesign. Formaliza as decisões Q2 e Q3.
 - **Relação com o ADR-034:** **estende** e **revisa uma recusa explícita** dele. Fecha a
@@ -8,6 +8,12 @@
 - **Decidido em:** clarify (escolha do usuário) · formalizado no design.
 
 ---
+
+> **Substituído pelo ADR-040.** A premissa deste ADR — "as superfícies vão ser reescritas
+> de qualquer forma" — caiu na implementação: cinco das oito são somente-leitura e não
+> serão. A decisão restou aplicável a duas superfícies, e o ADR-040 registra a regra que a
+> realidade impôs. Este documento permanece por descrever o raciocínio no momento em que
+> foi tomado.
 
 ## Contexto
 

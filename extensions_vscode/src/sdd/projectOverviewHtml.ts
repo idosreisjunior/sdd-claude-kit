@@ -2,6 +2,7 @@
 // API do VS Code. Gera o HTML do webview a partir do ProjectOverview com CSP + nonce
 // e escapando todo texto (NFR-PROJ-004). Sem scripts: as ações usam command: URIs,
 // como o dashboard (ADR-005/ADR-010). O provider habilita enableCommandUris.
+import { componentsCss } from './uiCss'
 import { bandLabel } from './contextGuardian'
 import type { ContextCard, CountsCard, HealthCard, DocLink, ProjectOverview } from './projectOverview'
 
@@ -41,8 +42,10 @@ export function renderProjectOverviewHtml(model: ProjectOverview, nonce: string,
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projeto</title>
 <style nonce="${nonce}">
+${componentsCss()}
   body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: .5rem .5rem 1rem; line-height: 1.45; font-size: var(--vscode-font-size); }
-  .card { border: 1px solid var(--sdd-border); border-radius: .4rem; padding: .5rem .6rem; margin-bottom: .5rem; }
+  /* aparência do cartão vem de .ui-card (uiCss); aqui só o específico do painel */
+  .card { padding: .5rem .6rem; margin-bottom: .5rem; }
   .card h2 { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; opacity: .75; margin: 0 0 .35rem; font-weight: 600; }
   .big { font-size: 1.1rem; font-weight: 600; }
   .muted { opacity: .65; }
@@ -82,6 +85,7 @@ export function renderNotInitializedHtml(nonce: string, cspSource: string): stri
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projeto</title>
 <style nonce="${nonce}">
+${componentsCss()}
   body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: .75rem; line-height: 1.5; font-size: var(--vscode-font-size); }
   p { opacity: .8; }
   a { color: var(--sdd-link); }
@@ -112,17 +116,17 @@ function healthCard(health: HealthCard): string {
     }
     body = `<div class="big">${parts.join(' · ')}</div>`
   }
-  return `<div class="card"><h2>Saúde estrutural</h2>${body}${runAction}</div>`
+  return `<div class="ui-card card"><h2>Saúde estrutural</h2>${body}${runAction}</div>`
 }
 
 function contextCard(context: ContextCard): string {
   if (context.kind === 'not-measured') {
-    return `<div class="card"><h2>Contexto (estimativa)</h2>
+    return `<div class="ui-card card"><h2>Contexto (estimativa)</h2>
     <div class="big">— / ${esc(formatTokens(context.max))}</div>
     <div class="na">Ainda não medido — meça numa feature no painel Features.</div></div>`
   }
   const pct = Math.min(100, Math.round(context.fraction * 100))
-  return `<div class="card"><h2>Contexto (estimativa)</h2>
+  return `<div class="ui-card card"><h2>Contexto (estimativa)</h2>
   <div class="big">~${esc(formatTokens(context.used))} / ${esc(formatTokens(context.max))}</div>
   <div class="bar"><span style="width:${pct}%"></span></div>
   <div class="muted">Faixa: ${esc(bandLabel(context.band))} · ${pct}% do teto (~4 caracteres/token)</div></div>`
@@ -130,15 +134,15 @@ function contextCard(context: ContextCard): string {
 
 function countsCard(counts: CountsCard): string {
   if (counts.kind === 'no-index') {
-    return `<div class="card"><h2>Mudanças</h2><div class="na">Índice ausente ou ilegível.</div></div>`
+    return `<div class="ui-card card"><h2>Mudanças</h2><div class="na">Índice ausente ou ilegível.</div></div>`
   }
   if (counts.total === 0) {
-    return `<div class="card"><h2>Mudanças</h2><div class="na">Nenhuma mudança registrada.</div></div>`
+    return `<div class="ui-card card"><h2>Mudanças</h2><div class="na">Nenhuma mudança registrada.</div></div>`
   }
   const rows = counts.byStatus
     .map((s) => `<li><span>${esc(s.status)}</span><span class="count">${s.count}</span></li>`)
     .join('\n    ')
-  return `<div class="card"><h2>Mudanças (${counts.total})</h2><ul>\n    ${rows}\n  </ul></div>`
+  return `<div class="ui-card card"><h2>Mudanças (${counts.total})</h2><ul>\n    ${rows}\n  </ul></div>`
 }
 
 function docsCard(docs: DocLink[]): string {

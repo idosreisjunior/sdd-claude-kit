@@ -71,7 +71,7 @@ ${componentsCss()}
   .sortsel { font: inherit; font-size: .8rem; padding: .2rem .4rem; border-radius: .35rem; border: 1px solid var(--sdd-border); background: var(--sdd-dropdown-bg); color: var(--sdd-dropdown-fg); }
   .feedbtn { margin-left: auto; }
   .feed { display: flex; flex-direction: column; gap: .4rem; max-width: 48rem; }
-  .feeditem { border: 1px solid var(--sdd-border); border-radius: .45rem; padding: .45rem .6rem; }
+  .feeditem { padding: .45rem .6rem; }
   .feedhead { display: flex; align-items: center; gap: .5rem; }
   .feedid { font-weight: 600; cursor: pointer; }
   .feedid:hover { text-decoration: underline; }
@@ -349,9 +349,9 @@ function renderFeedChips(chipsEl) {
 }
 
 function feeditemRow(it) {
-  const row = h('div', 'feeditem');
+  const row = h('div', 'ui-card feeditem');
   const head = h('div', 'feedhead');
-  head.appendChild(h('span', 'badge', it.status));
+  head.appendChild(statusBadge(it.status));
   const id = h('span', 'feedid', it.id);
   id.title = 'Abrir dashboard';
   id.addEventListener('click', function () { vscode.postMessage({ type: 'open', id: it.id }); });

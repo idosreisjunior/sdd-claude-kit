@@ -110,7 +110,17 @@ history:
       mantém o cliente inline e recebe a identidade pelas classes compartilhadas. Risco de
       regressão nas seis funcionalidades cai a zero e os cinco asserts seguem intactos. A
       007 deixou de ser reimplementação e virou verificação. 257 testes ok, nenhum arquivo
-      de teste existente alterado, lint limpo.
+      de teste existente alterado, lint limpo. Ao seguir, o levantamento completo das
+      superfícies mostrou que visão do projeto e dashboard de feature TAMBÉM rodam com
+      enableScripts: false — a terceira exceção que o próprio ADR-039 elegeu como gatilho
+      para reconsiderar o ADR-037 por inteiro. Feito: ADR-040 SUBSTITUI o ADR-037 e registra
+      a regra que a realidade impôs — a identidade vem do CSS compartilhado, que serve a
+      todas as superfícies, e cliente existe só onde há interação. TASK-COCK-008/009/010
+      concluídas como restilo: feed do Board, dashboard e visão do projeto passam a usar
+      ui-card e ui-tile. Dois defeitos latentes corrigidos no caminho: o status do feed usava
+      uma classe .badge que não existia no CSS do Board (sem estilo desde a 0029), e o
+      contador do dashboard precisou continuar em div e não span porque TEST-UI-002 afirma
+      ">N</div>" — adaptei o código ao contrato, não o teste ao código. 257 testes ok.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -185,6 +195,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 10
+  pending: 7
   in_progress: 0
-  done: 10
+  done: 13
