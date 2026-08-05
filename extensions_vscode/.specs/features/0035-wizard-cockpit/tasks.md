@@ -256,7 +256,7 @@ motivo quando bloqueado.
 **Requisitos:** REQ-WIZ-005
 **Dependências:** TASK-WIZ-006
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 

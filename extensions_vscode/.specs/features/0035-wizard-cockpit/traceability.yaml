@@ -95,7 +95,8 @@ requirements:
       - "SCN-WIZ-009"
     tasks:
       - "TASK-WIZ-008"
-    implementation: []
+    implementation:
+      - "src/sdd/changePlanner.ts"
     tests:
       - "TEST-WIZ-009"
 
