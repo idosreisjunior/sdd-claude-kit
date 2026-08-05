@@ -37,6 +37,11 @@ export function wizardCss(): string {
   .sdd-content { border: 1px solid var(--sdd-border); border-radius: .6rem; padding: 1rem; background: var(--sdd-surface); }
   .sdd-content h2 { margin: 0 0 .35rem; font-size: 1rem; }
   .sdd-content .muted { color: var(--sdd-text-muted); font-size: .85rem; }
+  .sdd-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; }
+  .sdd-btn.ai { background: var(--sdd-ai); color: #fff; }
+  .sdd-btn.ai:hover { background: var(--sdd-ai-2); }
+  .sdd-btn:focus-visible { outline: 2px solid var(--sdd-focus); outline-offset: 2px; }
+  .sdd-hint { color: var(--sdd-text-muted); font-size: .75rem; }
   .sdd-footer { display: flex; flex-direction: column; align-items: flex-end; gap: .4rem; margin-top: 1rem; }
   .sdd-btn { font: inherit; font-size: .9rem; font-weight: 600; padding: .45rem 1rem; border-radius: .5rem; border: 1px solid transparent; cursor: pointer; }
   .sdd-btn.primary { background: var(--sdd-accent); color: #fff; }

@@ -8,6 +8,8 @@ import { canAdvance, advanceTargetStatus, type AdvanceResult } from './wizardSte
 import { canTransition } from './stateMachine'
 import { applyTransition } from './boardPanel'
 import { renderWizardHtml } from './wizardHtml'
+import { isStageAction } from './wizardActions'
+import { launchClaudeAction } from './hybridStep'
 
 /**
  * Assistente SDD (Wizard Cockpit) — feature 0035, ADR-033. Um WebviewPanel interativo
@@ -15,9 +17,10 @@ import { renderWizardHtml } from './wizardHtml'
  * partir do disco (status.yaml é a fonte da verdade) e carrega o cliente Preact
  * empacotado (out/webview/wizard.js). Reidrata ao vivo quando os `.specs` mudam.
  *
- * Incremento atual (TASK-WIZ-006/007): abre, projeta, reidrata e executa a transição de
- * etapa (avançar) validada pelas guardas + stateMachine, gravando via applyTransition. As
- * ações de IA e as views de conteúdo chegam nas TASK-WIZ-010/011.
+ * Incremento atual (TASK-WIZ-006/007/010): abre, projeta, reidrata, executa a transição de
+ * etapa (avançar) validada pelas guardas + stateMachine gravando via applyTransition, e
+ * delega a ação de IA da etapa ao Claude Code pelo `hybridStep`. As views de conteúdo de
+ * cada etapa chegam na TASK-WIZ-011.
  */
 export class WizardPanel {
   private panel?: vscode.WebviewPanel
@@ -102,12 +105,16 @@ export class WizardPanel {
     this.panel.title = `Assistente SDD — ${this.current.id}`
   }
 
-  /** Trata as mensagens do webview. Por ora: `advance` (transição de etapa). */
+  /** Trata as mensagens do webview: `advance` (transição de etapa) e `ai` (Claude Code). */
   private async onMessage(root: vscode.Uri, message: unknown): Promise<void> {
-    if (!isRecord(message) || message['type'] !== 'advance') {
+    if (!isRecord(message) || !this.current || !this.current.path) {
       return
     }
-    if (!this.current || !this.current.path) {
+    if (message['type'] === 'ai') {
+      await this.onAiAction(root, this.current, message['action'])
+      return
+    }
+    if (message['type'] !== 'advance') {
       return
     }
     const change = this.current
@@ -141,6 +148,24 @@ export class WizardPanel {
     }
     vscode.window.showInformationMessage(`SDD: ${change.id} → ${target}.`)
     await this.refresh()
+  }
+
+  /**
+   * Ação de IA da etapa (REQ-WIZ-003): abre o Claude Code com `/sdd-kit:<ação> <id>`
+   * PRONTO — sem enviar (SCN-WIZ-004); sem a CLI, o prompt é copiado com a orientação
+   * de instalação (SCN-WIZ-012). A ação vinda do webview é validada contra a etapa
+   * ATUAL projetada do disco: o cliente não escolhe qual comando a borda executa.
+   */
+  private async onAiAction(
+    root: vscode.Uri,
+    change: ChangeEntry,
+    action: unknown,
+  ): Promise<void> {
+    const { state } = await this.project(root, change)
+    if (!isStageAction(state.currentStage, action)) {
+      return
+    }
+    await launchClaudeAction(root, change.id, action)
   }
 
   /** Lê os artefatos da mudança do disco (robusto) e monta o retrato puro. */

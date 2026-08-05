@@ -5,6 +5,7 @@ import type { WizardState } from '../../sdd/wizardModel'
 import type { AdvanceResult } from '../../sdd/wizardStepGuards'
 import { Stepper } from './Stepper'
 import { Footer } from './Footer'
+import { AiAction } from './AiAction'
 
 export function Shell({ state, advance }: { state: WizardState; advance: AdvanceResult }) {
   const current = state.stages.find((s) => s.status === 'current')
@@ -21,6 +22,7 @@ export function Shell({ state, advance }: { state: WizardState; advance: Advance
         <h2>{current ? current.label : 'Concluído'}</h2>
         <p class="muted">{current ? current.summary : 'Todas as etapas concluídas.'}</p>
         <p class="muted">A view desta etapa chega na TASK-WIZ-011.</p>
+        {current && <AiAction stage={current.stage} />}
       </section>
       <Footer state={state} advance={advance} />
     </div>

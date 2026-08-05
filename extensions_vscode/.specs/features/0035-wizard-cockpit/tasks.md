@@ -15,7 +15,7 @@ Fundação (paralelo):
   TASK-WIZ-003 ─► TASK-WIZ-004 (guards) [OK]                                     │
                                                                             ├─► TASK-WIZ-008 (Solicitar)
                                                                             ├─► TASK-WIZ-009 (hub)
-                                                                            ├─► TASK-WIZ-010 (hybridStep/IA)
+                                                                            ├─► TASK-WIZ-010 (hybridStep/IA) [e2e pendente]
   TASK-WIZ-006 + TASK-WIZ-004 ─► TASK-WIZ-007 (transições)
   TASK-WIZ-007 + TASK-WIZ-010 ─► TASK-WIZ-011 (views de conteúdo)
                                      ├─► TASK-WIZ-012 (Aprovar)
@@ -317,7 +317,7 @@ boas-vindas quando não há nenhuma mudança (SCN-WIZ-010/011).
 **Requisitos:** REQ-WIZ-003
 **Dependências:** TASK-WIZ-006
 **Complexidade:** M
-**Status:** pending
+**Status:** in_progress
 
 ### Descrição
 
@@ -328,6 +328,8 @@ prompt e instrui a instalação/configuração (SCN-WIZ-012, adapter 0004).
 ### Arquivos prováveis
 
 - `src/sdd/hybridStep.ts`, `src/extension.ts`, `src/sdd/wizardPanel.ts`
+- `src/sdd/wizardActions.ts` (mapa puro etapa → ação, para ser testável fora do host)
+- `src/webview/wizard/AiAction.tsx` (botão que aciona a mensagem `{ai}`)
 
 ### Testes esperados
 

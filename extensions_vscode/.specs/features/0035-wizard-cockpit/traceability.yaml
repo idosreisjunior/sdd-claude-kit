@@ -62,7 +62,11 @@ requirements:
     tasks:
       - "TASK-WIZ-010"
       - "TASK-WIZ-013"
-    implementation: []
+    implementation:
+      - "src/sdd/hybridStep.ts"
+      - "src/sdd/wizardActions.ts"
+      - "src/sdd/wizardPanel.ts"
+      - "src/webview/wizard/AiAction.tsx"
     tests:
       - "TEST-WIZ-011"
       - "TEST-WIZ-014"
@@ -180,13 +184,30 @@ gaps:
     mitigation: >-
       Capturas nos temas claro e escuro anexadas como evidência da TASK-WIZ-015, além
       do smoke TEST-WIZ-016, comparadas aos mockups de docs/ui-redesign/.
-  - id: "TEST-WIZ-006/007/008 (render, reidratação e avanço no host)"
+  - id: "TEST-WIZ-011 (envio ao terminal não é inspecionável)"
+    reason: >-
+      A API do VS Code não expõe o conteúdo enviado a um `Terminal`: não há como afirmar
+      por teste que o prompt ficou PRONTO sem ser enviado (SCN-WIZ-004). O e2e cobre o
+      efeito observável — o prompt correto é composto e copiado, nos dois caminhos do
+      SCN-WIZ-012 (com e sem a CLI detectada).
+    mitigation: >-
+      `sendText(prompt, false)` (sem newline) em `hybridStep.ts`, herdado do adapter 0004
+      já em uso; verificação manual pelo roteiro do HANDOFF; teste unitário do mapa
+      etapa → ação (wizardActions) garantindo o comando composto.
+  - id: "TEST-WIZ-006/007/008/011 (render, reidratação, avanço e IA no host)"
     reason: >-
       O render do shell/stepper/rodapé no WebviewPanel, a CSP em runtime, a reidratação
-      por edição externa e o ciclo cliente→host do avanço (botão → applyTransition →
-      status.yaml) exigem o host do VS Code (vscode-test). As partes puras (documento
-      HTML+CSP, modelo, guardas, alvo de transição, montagem de artefatos) já têm testes.
+      por edição externa, o ciclo cliente→host do avanço (botão → applyTransition →
+      status.yaml) e a ação de IA exigem o host do VS Code (vscode-test). As partes puras
+      (documento HTML+CSP, modelo, guardas, alvo de transição, montagem de artefatos, mapa
+      etapa → ação) já têm testes. O e2e TEST-WIZ-011 está ESCRITO
+      (`src/e2e/wizardAi.test.ts`) mas não pôde ser executado no ambiente de
+      desenvolvimento atual: o VS Code headless falha ao carregar `libnspr4.so`
+      (dependências de sistema do Electron ausentes no WSL) — nenhum e2e roda ali.
     mitigation: >-
-      Executar os e2e TEST-WIZ-006/007/008 no host; até lá, cobertura unitária de
-      renderWizardHtml, wizardModel, wizardStepGuards (incl. advanceTargetStatus) e
-      wizardArtifacts, e a reutilização de applyTransition (já coberto pelo E2E 0032).
+      A CI já executa `npm run test:e2e` sob xvfb (.github/workflows/ci.yml) — é ela que
+      valida TEST-WIZ-006/007/008/011, como fez com o E2E da 0032. Localmente, o roteiro
+      manual do HANDOFF pelo F5 (Extension Development Host). Até lá, cobertura unitária
+      de renderWizardHtml, wizardModel, wizardStepGuards (incl. advanceTargetStatus),
+      wizardArtifacts e wizardActions, e a reutilização de applyTransition e do adapter
+      0004 (já cobertos por E2E e unidade).
