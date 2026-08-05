@@ -226,20 +226,25 @@ gaps:
       Cobertura unitária da extração (wizardContent) e do payload (wizardHtml); capturas
       das 4 views anexadas como evidência, conforme o critério da TASK-WIZ-011, e o
       roteiro manual do HANDOFF.
-  - id: "TEST-WIZ-006/007/008/011 (render, reidratação, avanço e IA no host)"
+  - id: "TEST-WIZ-006/007/008 (render, reidratação e avanço no host) — NÃO ESCRITOS"
     reason: >-
-      O render do shell/stepper/rodapé no WebviewPanel, a CSP em runtime, a reidratação
-      por edição externa, o ciclo cliente→host do avanço (botão → applyTransition →
-      status.yaml) e a ação de IA exigem o host do VS Code (vscode-test). As partes puras
-      (documento HTML+CSP, modelo, guardas, alvo de transição, montagem de artefatos, mapa
-      etapa → ação) já têm testes. O e2e TEST-WIZ-011 está ESCRITO
-      (`src/e2e/wizardAi.test.ts`) mas não pôde ser executado no ambiente de
-      desenvolvimento atual: o VS Code headless falha ao carregar `libnspr4.so`
-      (dependências de sistema do Electron ausentes no WSL) — nenhum e2e roda ali.
+      O render do shell/stepper/rodapé no WebviewPanel, a reidratação por edição externa e o
+      ciclo cliente→host do avanço exigem o host do VS Code. Estes três e2e ainda NÃO FORAM
+      ESCRITOS — distinto de escritos-e-não-executados. A CI roda os e2e sob xvfb e está
+      verde, mas cobertura verde não supre teste inexistente: por isso TASK-WIZ-005/006/007
+      permanecem in_progress.
     mitigation: >-
-      A CI já executa `npm run test:e2e` sob xvfb (.github/workflows/ci.yml) — é ela que
-      valida TEST-WIZ-006/007/008/011, como fez com o E2E da 0032. Localmente, o roteiro
-      manual do HANDOFF pelo F5 (Extension Development Host). Até lá, cobertura unitária
-      de renderWizardHtml, wizardModel, wizardStepGuards (incl. advanceTargetStatus),
-      wizardArtifacts e wizardActions, e a reutilização de applyTransition e do adapter
-      0004 (já cobertos por E2E e unidade).
+      Escrever os três e2e; até lá, cobertura unitária de renderWizardHtml, wizardModel,
+      wizardStepGuards (incl. advanceTargetStatus), wizardArtifacts, wizardContent,
+      wizardActions e wizardHub, mais a reutilização de applyTransition (coberto pelo E2E
+      0032). Roteiro manual pelo F5 no HANDOFF.
+
+  - id: "TEST-WIZ-010/011 — EXECUTADOS e verdes na CI"
+    reason: >-
+      Registrado aqui porque a versão anterior desta matriz declarava os dois como escritos
+      e não executados, por falta de libnspr4 no ambiente local. Deixou de ser lacuna: a
+      execução aconteceu (run 31041744209, 2026-08-05, xvfb), 10 e2e passando.
+    mitigation: >-
+      Nenhuma necessária. Permanece fora do alcance de teste apenas a parte não observável
+      pela API — que o prompt não foi ENVIADO ao terminal —, coberta pelo gap específico.
+

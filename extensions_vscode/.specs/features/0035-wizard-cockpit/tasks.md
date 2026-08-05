@@ -14,8 +14,8 @@ Fundação (paralelo):
   TASK-WIZ-003 (wizardModel) [OK] ─────┼─► TASK-WIZ-005 (shell+stepper) ─► TASK-WIZ-006 (panel host)
   TASK-WIZ-003 ─► TASK-WIZ-004 (guards) [OK]                                     │
                                                                             ├─► TASK-WIZ-008 (Solicitar)
-                                                                            ├─► TASK-WIZ-009 (hub)
-                                                                            ├─► TASK-WIZ-010 (hybridStep/IA) [e2e pendente]
+                                                                            ├─► TASK-WIZ-009 (hub) [OK]
+                                                                            ├─► TASK-WIZ-010 (hybridStep/IA) [OK]
   TASK-WIZ-006 + TASK-WIZ-004 ─► TASK-WIZ-007 (transições)
   TASK-WIZ-007 + TASK-WIZ-010 ─► TASK-WIZ-011 (views de conteúdo)
                                      ├─► TASK-WIZ-012 (Aprovar)
@@ -287,7 +287,7 @@ sem sobrescrever (SCN-WIZ-009).
 **Requisitos:** REQ-WIZ-006
 **Dependências:** TASK-WIZ-006
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 
@@ -319,7 +319,7 @@ boas-vindas quando não há nenhuma mudança (SCN-WIZ-010/011).
 **Requisitos:** REQ-WIZ-003
 **Dependências:** TASK-WIZ-006
 **Complexidade:** M
-**Status:** in_progress
+**Status:** done
 
 ### Descrição
 

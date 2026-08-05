@@ -13,17 +13,18 @@ verificar à mão, e o que falta.
 | WIZ-002 | ✅ done | `esbuild.mjs` + Preact — bundle `out/webview/wizard.js` |
 | WIZ-003 | ✅ done | `wizardModel.ts` — `deriveWizardState` (8 etapas) |
 | WIZ-004 | ✅ done | `wizardStepGuards.ts` — `canAdvance` + `advanceTargetStatus` |
+| WIZ-009 | ✅ done | `wizardHub.ts` + `Hub.tsx` + payload `hub`\|`change` — TEST-WIZ-010 verde na CI |
+| WIZ-010 | ✅ done | `hybridStep.ts` (extraído) + `wizardActions.ts` + `{ai}` + `AiAction.tsx` — TEST-WIZ-011 verde na CI |
 | WIZ-005 | 🟡 in_progress | `wizardHtml.ts` (CSP/nonce) + `Shell`/`Stepper` Preact — falta e2e de render |
 | WIZ-006 | 🟡 in_progress | `wizardPanel.ts` (host) + `wizardArtifacts.ts` + comando `openWizard` — falta e2e |
 | WIZ-007 | 🟡 in_progress | `Footer.tsx` + handler `{advance}` → `applyTransition` — falta e2e |
 | WIZ-008 | 🟡 in_progress | `changePlanner.ts` (alocação/conflito) — falta o formulário + escrita no host |
-| WIZ-010 | 🟡 in_progress | `hybridStep.ts` (extraído) + `wizardActions.ts` + `{ai}` + `AiAction.tsx` — falta e2e |
 | WIZ-011 | 🟡 in_progress | `wizardContent.ts` + `StageView` + 4 views (etapas 2–5) — faltam as capturas |
-| WIZ-009 | 🟡 in_progress | `wizardHub.ts` + `Hub.tsx` + payload `hub`\|`change` — falta e2e |
 | WIZ-012..015 | ⚪ pending | aprovar · implementar · verificar · a11y |
 
 Fonte da verdade: `.specs/features/0035-wizard-cockpit/` (`status.yaml`, `tasks.md`,
-`traceability.yaml`). Validação atual: `npm run compile` ✓ · `npm test` (225) ✓ · `npm run lint` ✓.
+`traceability.yaml`). Validação atual: `npm run compile` ✓ · `npm test` (225) ✓ · `npm run lint` ✓ ·
+**e2e 10/10 verdes na CI** (run 31041744209).
 
 > **O bundle do webview tem teto de 60 kB** (`esbuild.mjs`, ADR-034). Componentes do
 > webview importam de `src/sdd/` **só tipos**: um import de valor arrasta o `js-yaml` e
@@ -31,9 +32,8 @@ Fonte da verdade: `.specs/features/0035-wizard-cockpit/` (`status.yaml`, `tasks.
 
 > **Os e2e não rodam em WSL sem as libs do Electron.** `npm run test:e2e` baixa o VS Code
 > e morre em `libnspr4.so: cannot open shared object file`. Quem os executa é a **CI**
-> (`xvfb-run -a npm run test:e2e`, `.github/workflows/ci.yml`) — abra o PR e leia o
-> resultado de lá. Localmente, valide pelo F5 (Extension Development Host) com o roteiro
-> abaixo.
+> (`xvfb-run -a npm run test:e2e`) — e ela está verde: 10/10, incluindo TEST-WIZ-010 e
+> TEST-WIZ-011. Localmente, valide pelo F5 com o roteiro abaixo.
 
 ## Como rodar no host
 
@@ -88,24 +88,23 @@ Solicitar/Especificar não disparam transição (o trabalho delas mantém DRAFT;
 requisitos, a etapa derivada anda sozinha). Confirme que essa coreografia bate com o fluxo
 desejado ao usar o wizard — é o ponto mais sujeito a ajuste.
 
-## O que falta (WIZ-009..015) e onde encostar
+## O que falta e onde encostar
 
-- **WIZ-008 (completar):** formulário `StepRequest.tsx` (tipo/título/slug/solicitação) + um
-  handler `{create}` no `wizardPanel` que usa `planAllocation` (`changePlanner.ts`, já testado)
-  + escreve os arquivos por template (reusar `substituteChange`/`insertChangeEntry` do
-  `featureCreator`, ou extrair a escrita do `newFeature` num serviço compartilhado).
-- **WIZ-009 (fechar):** falta o e2e verde. O `create` do hub delega ao `newFeature` por
-  QuickPick; quando a WIZ-008 entregar o formulário, troque o handler por `view: 'create'`
-  no mesmo mode-switch do payload.
-- **WIZ-010 (fechar):** só falta executar o e2e `src/e2e/wizardAi.test.ts` num host capaz.
-  A extração e a fiação estão feitas — `hybridStep.ts` é agora o caminho único do menu de
-  contexto E do wizard.
-- **WIZ-011 (fechar):** falta anexar as capturas das 4 views como evidência. As views
-  Aprovar/Implementar/Verificar entram no `StageView.tsx` (hoje caem no placeholder), cada
-  uma no seu `Step*.tsx`, consumindo campos novos de `buildWizardDetails`.
-- **WIZ-012/013/014:** Aprovar (→APPROVED), Implementar (escopo via `scopeCheck`), Verificar
-  (`validationReport`, →VERIFIED, arquivar).
-- **WIZ-015:** acessibilidade (aria/teclado) + contraste nos dois temas.
+- **WIZ-005/006/007 — escrever os e2e.** `TEST-WIZ-006` (render do stepper), `TEST-WIZ-007`
+  (reidratação por edição externa) e `TEST-WIZ-008` (avançar grava a transição) ainda **não
+  existem**. É o único motivo de as três seguirem `in_progress` — o código está pronto e
+  coberto por unidade. Molde: `src/e2e/wizardHub.test.ts` e `wizardAi.test.ts`.
+- **WIZ-008 — completar a etapa Solicitar.** Formulário `StepRequest.tsx`
+  (tipo/título/slug/solicitação) + handler `{create}` no `wizardPanel` usando
+  `planAllocation` (`changePlanner.ts`, já testado) + escrita por template (reusar
+  `substituteChange`/`insertChangeEntry` do `featureCreator`). Ao entregar, troque o
+  handler `create` do hub — hoje ele delega ao `newFeature` por QuickPick (Q4).
+- **WIZ-011 — fechar.** Falta anexar as capturas das 4 views como evidência.
+- **WIZ-012/013/014 — as etapas que faltam.** Aprovar (→APPROVED), Implementar (escopo via
+  `scopeCheck`) e Verificar (`validationReport`, →VERIFIED, arquivar). Entram no
+  `StageView.tsx`, que hoje as manda para o placeholder, cada uma no seu `Step*.tsx`
+  consumindo campos novos de `buildWizardDetails`.
+- **WIZ-015 — acessibilidade** (aria/teclado) + contraste nos dois temas.
 
 ## Mockups de referência
 
