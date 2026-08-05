@@ -54,8 +54,54 @@ export function baseCss(): string {
   `
 }
 
+export interface StaticPanelHtmlOptions {
+  title: string
+  /** Marcação já pronta e ESCAPADA pelo chamador. Vai direto para o `<body>`. */
+  body: string
+  nonce: string
+  /** CSS específico da superfície, além dos tokens e dos componentes. */
+  css?: string
+}
+
 /**
- * Gera o documento de uma superfície de webview. A CSP proíbe tudo por padrão e libera
+ * Documento de um painel SOMENTE-LEITURA (ADR-038): sem `script-src` na CSP e sem tag de
+ * script alguma. Painel que não reage ao usuário não carrega runtime — é postura mais
+ * forte que CSP com nonce, porque não há script para escapar (ADR-016, NFR-COCK-002).
+ *
+ * A identidade visual vem do MESMO `componentsCss()` das superfícies interativas: o
+ * contrato entre os dois modos é a folha de estilo e as classes, não a marcação.
+ *
+ * `body` é inserido cru: escapar é responsabilidade de quem monta, com `escapeHtml`.
+ */
+export function renderStaticPanelHtml({
+  title,
+  body,
+  nonce,
+  css = '',
+}: StaticPanelHtmlOptions): string {
+  const csp = `default-src 'none'; style-src 'nonce-${nonce}';`
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="${csp}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escapeHtml(title)}</title>
+<style nonce="${nonce}">
+${themeTokensCss()}
+${baseCss()}
+${componentsCss()}
+${css}
+</style>
+</head>
+<body>
+${body}
+</body>
+</html>`
+}
+
+/**
+ * Gera o documento de uma superfície INTERATIVA. A CSP proíbe tudo por padrão e libera
  * apenas o `<style>` e o `<script>` que carregam este nonce — sem rede, sem inline solto.
  */
 export function renderPanelHtml({

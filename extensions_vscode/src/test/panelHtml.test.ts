@@ -5,7 +5,8 @@
 // renderPanelHtml. É o ganho de ter um ponto único: um teste em vez de N que divergem.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { renderPanelHtml, escapeHtml, baseCss } from '../sdd/panelHtml'
+import { renderPanelHtml, renderStaticPanelHtml, escapeHtml, baseCss } from '../sdd/panelHtml'
+import { renderHistoryHtml } from '../sdd/historyHtml'
 
 function html(over: Partial<Parameters<typeof renderPanelHtml>[0]> = {}) {
   return renderPanelHtml({
@@ -55,6 +56,67 @@ test('TEST-COCK-002 — o CSS da superfície entra depois do base, para poder so
 
 test('escapeHtml neutraliza os cinco caracteres que importam', () => {
   assert.equal(escapeHtml('<a href="x">&</a>'), '&lt;a href=&quot;x&quot;&gt;&amp;&lt;/a&gt;')
+})
+
+// --- Painel somente-leitura (ADR-038) ---
+
+test('TEST-COCK-002 · NFR-COCK-002 — painel de leitura não autoriza NEM CARREGA script', () => {
+  const h = renderStaticPanelHtml({ title: 'Histórico', body: '<p>x</p>', nonce: 'abc123' })
+  assert.ok(!h.includes('script-src'), 'a CSP não deve autorizar script algum')
+  assert.equal(h.match(/<script/g), null, 'não deve haver tag de script no documento')
+  assert.match(h, /default-src 'none'/)
+  assert.match(h, /style-src 'nonce-abc123'/)
+})
+
+test('TEST-COCK-002 — o painel de leitura recebe os mesmos tokens e componentes', () => {
+  const h = renderStaticPanelHtml({ title: 'x', body: '', nonce: 'n1' })
+  assert.ok(h.includes('--sdd-accent'), 'tokens de marca')
+  assert.ok(h.includes('.ui-card'), 'CSS dos componentes compartilhados')
+  assert.ok(h.includes('.ui-badge'), 'o badge é o mesmo dos painéis interativos')
+})
+
+test('ADR-038 — o histórico é um painel de leitura: sem script, com a identidade', () => {
+  const h = renderHistoryHtml(
+    '0036-cockpit-ui-redesign',
+    {
+      events: [
+        { date: '2026-08-05', kind: 'status', title: 'DESIGNED', detail: 'design gerado' },
+        { date: '2026-08-05', kind: 'adr', title: 'ADR-038 — painéis de leitura' },
+      ],
+      currentState: { tasks: { done: 5, total: 20 } },
+      unavailable: ['Execuções do Claude Code'],
+    },
+    'n2',
+  )
+  assert.equal(h.match(/<script/g), null, 'o histórico não carrega script')
+  assert.ok(!h.includes('script-src'))
+  // Usa as classes compartilhadas, não marcação própria.
+  assert.ok(h.includes('ui-panel-header'), 'cabeçalho compartilhado')
+  assert.ok(h.includes('ui-badge'), 'badge de status compartilhado')
+  assert.ok(h.includes('ui-tile'), 'tiles de estado atual compartilhados')
+  // O status vira badge com a cor do ciclo de vida (SCN-COCK-003).
+  assert.ok(h.includes('--sdd-status-designed'), 'DESIGNED usa o token do ciclo')
+})
+
+test('ADR-038 — o histórico escapa o texto vindo dos artefatos', () => {
+  const h = renderHistoryHtml(
+    '<img src=x onerror=alert(1)>',
+    {
+      events: [{ date: '', kind: 'commit', title: '<script>alert(1)</script>' }],
+      currentState: {},
+      unavailable: [],
+    },
+    'n3',
+  )
+  assert.ok(!h.includes('<img src=x'), 'o id não vira marcação')
+  assert.equal(h.match(/<script/g), null, 'o título do commit não injeta script')
+  assert.ok(h.includes('&lt;script&gt;'), 'aparece escapado como texto')
+})
+
+test('ADR-038 — sem eventos, o histórico mostra o estado vazio compartilhado', () => {
+  const h = renderHistoryHtml('0001-x', { events: [], currentState: {}, unavailable: [] }, 'n4')
+  assert.ok(h.includes('ui-empty'), 'usa o EmptyState compartilhado')
+  assert.ok(h.includes('Sem eventos registrados'))
 })
 
 test('REQ-COCK-001 — o CSS base não declara cor de conteúdo fixa', () => {

@@ -87,7 +87,15 @@ history:
       da tarefa ("nenhum componente importa valor de src/sdd/") era estrito demais e proibia
       o próprio padrão: foi corrigido para a regra real — o que a importação ARRASTA —,
       verificada por medição (bundle de prova com os seis componentes: 20 kB, sem js-yaml).
-      242 testes ok.
+      242 testes ok. TASK-COCK-011 (histórico) em seguida, e com ela um ADR novo: ao
+      começar a migração descobriu-se que histórico, métricas e validação rodam com
+      enableScripts: false por decisão do ADR-016 — postura MAIS forte que CSP+nonce.
+      Migrá-los para Preact como o ADR-037 mandava exigiria ligar scripts e violaria
+      NFR-COCK-002. Interrompido e levado ao usuário, que escolheu preservar a postura:
+      ADR-038 restringe o ADR-037 às superfícies interativas e dá aos painéis de leitura a
+      identidade pelo CSS compartilhado, via renderStaticPanelHtml (CSP sem script-src).
+      Histórico redesenhado a partir do bloco de linha do tempo do mockup 13, com a origem
+      declarada no módulo (REQ-COCK-007). 247 testes ok.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -162,6 +170,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 15
+  pending: 14
   in_progress: 0
-  done: 5
+  done: 6

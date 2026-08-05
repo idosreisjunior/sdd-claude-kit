@@ -23,7 +23,7 @@ MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBA
      └─► TASK-COCK-008 (Board: feed)                              │
   TASK-COCK-009 (dashboard) ──────────────────────────────────────┤
   TASK-COCK-010 (visão do projeto)                                ▼
-  TASK-COCK-011 (histórico)                          TASK-COCK-016 (WebviewView)
+  TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView)
   TASK-COCK-012 (métricas)                                  ├─► TASK-COCK-017 (teclado/ações)
   TASK-COCK-013 (validação)                                 └─► TASK-COCK-018 (boas-vindas)
   TASK-COCK-014 (editor de spec)                                  │
@@ -402,9 +402,14 @@ compartilhados, alinhando-o ao bloco correspondente do mockup `01-sidebar-cockpi
 **Requisitos:** REQ-COCK-007, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
+
+> **Revisado pelo ADR-038.** Este painel é somente-leitura (`enableScripts: false`) e
+> **não** migra para Preact: recebe a identidade pelo CSS compartilhado e pelas mesmas
+> classes dos componentes, via `renderStaticPanelHtml`. Migrá-lo exigiria ligar scripts,
+> o que violaria NFR-COCK-002.
 
 Migrar o painel de histórico usando o bloco de linha do tempo do `13-feature-dashboard`
 em tela cheia — a derivação declarada no design §3. Registrar a origem no próprio módulo.
@@ -437,6 +442,11 @@ em tela cheia — a derivação declarada no design §3. Registrar a origem no p
 
 ### Descrição
 
+> **Revisado pelo ADR-038.** Este painel é somente-leitura (`enableScripts: false`) e
+> **não** migra para Preact: recebe a identidade pelo CSS compartilhado e pelas mesmas
+> classes dos componentes, via `renderStaticPanelHtml`. Migrá-lo exigiria ligar scripts,
+> o que violaria NFR-COCK-002.
+
 Migrar o painel de métricas reusando os `StatTile` e a barra de progresso do
 `13-feature-dashboard` — a única tela aprovada com números agregados (design §3).
 
@@ -468,6 +478,11 @@ Migrar o painel de métricas reusando os `StatTile` e a barra de progresso do
 **Status:** pending
 
 ### Descrição
+
+> **Revisado pelo ADR-038.** Este painel é somente-leitura (`enableScripts: false`) e
+> **não** migra para Preact: recebe a identidade pelo CSS compartilhado e pelas mesmas
+> classes dos componentes, via `renderStaticPanelHtml`. Migrá-lo exigiria ligar scripts,
+> o que violaria NFR-COCK-002.
 
 Migrar o relatório de validação a partir de `12-wizard-8-verify`, que já apresenta
 critérios de aceite e comandos de validação nos três estados — é o mesmo conteúdo em outra
@@ -747,7 +762,7 @@ ao longo das migrações — a regra do design §11.
 | M | 14 |
 | G | 0 |
 
-Total: 20 tarefas · 5 concluídas · 15 pendentes.
+Total: 20 tarefas · 6 concluídas · 14 pendentes.
 
 **Caminho crítico:** TASK-COCK-001 → TASK-COCK-002 → TASK-COCK-003 → TASK-COCK-009 →
 TASK-COCK-016 → TASK-COCK-017 → TASK-COCK-019 → TASK-COCK-020

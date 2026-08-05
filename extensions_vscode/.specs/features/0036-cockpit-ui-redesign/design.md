@@ -22,9 +22,11 @@ Três movimentos, nesta ordem de dependência:
 1. **Fundação** — estender `esbuild.mjs` para empacotar mais de um cliente de webview e
    criar `src/webview/ui/`, a biblioteca de componentes que todos os painéis importam
    (ADR-037). Nada de usuário muda nesta etapa.
-2. **Migração painel a painel** — cada superfície troca sua template-string por um cliente
-   Preact que compõe os componentes da biblioteca. Uma por vez, com os testes existentes
-   como rede (§11).
+2. **Migração painel a painel** — cada superfície INTERATIVA troca sua template-string por
+   um cliente Preact que compõe os componentes da biblioteca. Uma por vez, com os testes
+   existentes como rede (§11). Os painéis SOMENTE-LEITURA (histórico, métricas, validação)
+   não migram: preservam `enableScripts: false` e recebem a identidade pelo CSS
+   compartilhado, via `renderStaticPanelHtml` (**ADR-038**, descoberto na implementação).
 3. **Sidebar** — a `TreeView` dá lugar a uma `WebviewView` que reimplementa as operações
    que a plataforma dava de graça (ADR-036). É o passo de maior risco e vai por último,
    quando a biblioteca de componentes já estiver exercitada por vários painéis.
@@ -241,6 +243,7 @@ branch, não em `main`.
 | Q4, Q7 | Boas-vindas como estado da sidebar; `viewsWelcome` removido do `package.json` | §3, ADR-036 |
 | Q5 | Nenhuma mudança de comportamento; a regra do passo 4 (§11) é o mecanismo que garante | §11 |
 | Q6 | Cada superfície sem mockup tem a origem nomeada | §3, tabela de derivação |
+| — | Painel somente-leitura não carrega runtime; ADR-037 fica restrito às superfícies interativas | **ADR-038** |
 
 ## 15. Questões ainda em aberto
 
