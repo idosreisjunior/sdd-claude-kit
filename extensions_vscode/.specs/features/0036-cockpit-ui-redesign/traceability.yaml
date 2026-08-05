@@ -1,0 +1,199 @@
+# Matriz de rastreabilidade — 0036-cockpit-ui-redesign
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante /sdd-kit:implement.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0036-cockpit-ui-redesign"
+
+requirements:
+
+  "REQ-COCK-001":
+    title: "Toda superfície de webview consome a camada de tokens"
+    scenarios:
+      - "SCN-COCK-001"
+      - "SCN-COCK-002"
+    tasks:
+      - "TASK-COCK-002"
+      - "TASK-COCK-004"
+      - "TASK-COCK-005"
+      - "TASK-COCK-010"
+    implementation: []
+    tests:
+      - "TEST-COCK-001"
+      - "TEST-COCK-002"
+
+  "REQ-COCK-002":
+    title: "Componentes visuais consistentes entre painéis"
+    scenarios:
+      - "SCN-COCK-003"
+    tasks:
+      - "TASK-COCK-001"
+      - "TASK-COCK-003"
+      - "TASK-COCK-006"
+      - "TASK-COCK-009"
+      - "TASK-COCK-010"
+      - "TASK-COCK-011"
+      - "TASK-COCK-012"
+      - "TASK-COCK-013"
+      - "TASK-COCK-014"
+    implementation: []
+    tests:
+      - "TEST-COCK-003"
+      - "TEST-COCK-004"
+
+  "REQ-COCK-003":
+    title: "Painel SDD conforme o mockup do Kanban"
+    scenarios:
+      - "SCN-COCK-004"
+    tasks:
+      - "TASK-COCK-006"
+      - "TASK-COCK-007"
+      - "TASK-COCK-008"
+    implementation: []
+    tests:
+      - "TEST-COCK-010"
+
+  "REQ-COCK-004":
+    title: "Dashboard de feature conforme o mockup"
+    scenarios:
+      - "SCN-COCK-005"
+    tasks:
+      - "TASK-COCK-009"
+    implementation: []
+    tests:
+      - "TEST-COCK-003"
+      - "TEST-COCK-010"
+
+  "REQ-COCK-005":
+    title: "Boas-vindas como estado da sidebar, conforme o mockup"
+    scenarios:
+      - "SCN-COCK-006"
+      - "SCN-COCK-010"
+      - "SCN-COCK-011"
+    tasks:
+      - "TASK-COCK-015"
+      - "TASK-COCK-018"
+    implementation: []
+    tests:
+      - "TEST-COCK-006"
+      - "TEST-COCK-009"
+
+  "REQ-COCK-006":
+    title: "Sidebar como superfície de webview, sem perder o que a árvore fazia"
+    scenarios:
+      - "SCN-COCK-007"
+      - "SCN-COCK-008"
+    tasks:
+      - "TASK-COCK-015"
+      - "TASK-COCK-016"
+      - "TASK-COCK-017"
+    implementation: []
+    tests:
+      - "TEST-COCK-005"
+      - "TEST-COCK-007"
+      - "TEST-COCK-008"
+
+  "REQ-COCK-007":
+    title: "Superfície sem mockup deriva de um mockup nomeado"
+    scenarios:
+      - "SCN-COCK-009"
+    tasks:
+      - "TASK-COCK-011"
+      - "TASK-COCK-012"
+      - "TASK-COCK-013"
+      - "TASK-COCK-014"
+    implementation: []
+    tests:
+      - "TEST-COCK-010"
+
+  "NFR-COCK-001":
+    title: "Tema claro e escuro"
+    scenarios: []
+    tasks:
+      - "TASK-COCK-003"
+      - "TASK-COCK-019"
+    implementation: []
+    tests: []
+
+  "NFR-COCK-002":
+    title: "Segurança do webview preservada"
+    scenarios: []
+    tasks:
+      - "TASK-COCK-002"
+    implementation: []
+    tests:
+      - "TEST-COCK-002"
+
+  "NFR-COCK-003":
+    title: "Sem regressão de comportamento"
+    scenarios:
+      - "SCN-COCK-011"
+    tasks:
+      - "TASK-COCK-007"
+      - "TASK-COCK-008"
+      - "TASK-COCK-018"
+      - "TASK-COCK-020"
+    implementation: []
+    tests:
+      - "TEST-COCK-009"
+      - "TEST-COCK-010"
+
+  "NFR-COCK-004":
+    title: "Acessibilidade"
+    scenarios:
+      - "SCN-COCK-007"
+      - "SCN-COCK-008"
+    tasks:
+      - "TASK-COCK-003"
+      - "TASK-COCK-017"
+      - "TASK-COCK-019"
+    implementation: []
+    tests:
+      - "TEST-COCK-007"
+      - "TEST-COCK-008"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos. Um requisito que só dá para verificar por revisão humana continua
+# sendo um requisito — o que não pode é a lacuna ficar invisível.
+gaps:
+  - id: "NFR-COCK-001 (contraste e fidelidade visual)"
+    reason: >-
+      Contraste percebido e correspondência ao mockup não são verificáveis por teste
+      automatizado: exigem olho humano sobre a tela renderizada, nos dois temas. Um teste
+      que medisse razão de contraste sobre os tokens não capturaria composição, densidade
+      nem hierarquia — daria cobertura aparente.
+    mitigation: >-
+      TASK-COCK-019 exige captura de cada superfície nos temas claro e escuro, comparadas
+      aos mockups de docs/ui-redesign/, como evidência de conclusão.
+
+  - id: "REQ-COCK-003/004/007 (fidelidade ao mockup)"
+    reason: >-
+      "Corresponde ao mockup" é juízo visual. Os testes cobrem o que é objetivo —
+      comportamento preservado, tokens aplicados, origem do layout declarada — mas não a
+      semelhança com o desenho aprovado.
+    mitigation: >-
+      Captura por superfície comparada ao mockup correspondente, exigida no critério de
+      conclusão de cada tarefa de migração; a derivação declarada (REQ-COCK-007) torna a
+      escolha de layout conferível por outra pessoa.
+
+  - id: "Render dentro do webview (todas as superfícies)"
+    reason: >-
+      O DOM de um webview não é alcançável pelo host da extensão. Nenhum teste
+      automatizado pode afirmar "a view listou os requisitos" ou "o cartão mostrou o
+      badge" — limite de plataforma já registrado na feature 0035 e que continua valendo.
+    mitigation: >-
+      Cobertura do que é alcançável: o payload emitido (TEST-COCK-002), o núcleo puro
+      (TEST-COCK-005/006), os componentes com lógica (TEST-COCK-003/004) e o efeito
+      observável no host (TEST-COCK-007/008/009). O resto é revisão humana com captura.
+
+  - id: "TEST-COCK-007/008/009 (e2e no host)"
+    reason: >-
+      Os e2e exigem o Extension Development Host e não sobem no ambiente de
+      desenvolvimento em WSL (libnspr4.so ausente) — mesma limitação registrada na 0035.
+    mitigation: >-
+      A CI executa `xvfb-run -a npm run test:e2e` (.github/workflows/ci.yml). Localmente,
+      verificação manual pelo F5 seguindo os critérios de conclusão das tarefas.

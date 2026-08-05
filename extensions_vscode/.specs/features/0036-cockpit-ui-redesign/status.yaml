@@ -1,0 +1,136 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0036-cockpit-ui-redesign"
+# feature | bug | refactor | change
+type: "feature"
+title: "Identidade visual do Cockpit nas telas existentes"
+
+status: PLANNED
+
+created: "2026-08-05"
+updated: "2026-08-05"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-05"
+    reason: >-
+      Criada a partir do relato do usuário de que a interface "ainda está a mesma coisa"
+      após instalar a 0.3.0-preview.3, com o pedido de que a extensão pareça um sistema
+      desktop. Constatação verificada no repositório: os sete módulos de HTML de painel
+      usam --vscode-* diretamente e nenhum consome a camada --sdd- criada na 0035. É a
+      iteração que a questão Q3 da 0035 adiou de forma registrada. Entre as leituras
+      possíveis de "sistema desktop", o usuário escolheu redesenhar as telas existentes e
+      pediu spec antes do código.
+  - status: CLARIFIED
+    date: "2026-08-05"
+    reason: >-
+      Questões Q1–Q6 resolvidas pelo usuário via /sdd-kit:clarify. Nenhuma questão crítica
+      permanece em aberto. As decisões ampliaram o alcance: a sidebar deixa de ser
+      TreeView e vira webview (Q1), os sete painéis migram para esbuild + Preact (Q2) com
+      uma biblioteca interna de componentes (Q3), as boas-vindas saem do viewsWelcome (Q4)
+      e os quatro painéis sem mockup entram por analogia (Q6). O redesenho segue
+      estritamente visual (Q5). O refinamento seguinte por /sdd-kit:spec detectou uma
+      contradição entre Q4 e Q5 e a registrou como Q7, resolvida na sequência: as
+      boas-vindas viram um estado da sidebar, cumprindo Q4 sem violar Q5.
+  - status: DESIGNED
+    date: "2026-08-05"
+    reason: >-
+      Design técnico gerado com dois ADRs. ADR-036 (sidebar como WebviewView) formaliza Q1
+      e a responsabilidade que vem junto — teclado, seleção, ações por item e revelar-item
+      deixam de vir da plataforma. ADR-037 (bundler e biblioteca de componentes para todos
+      os painéis) formaliza Q2 e Q3, estende o ADR-034 e REVISA uma recusa explícita dele
+      ("bundler para todos os painéis — reescreveria superfícies estáveis sem ganho"): a
+      premissa caiu porque a 0036 reescreve essas superfícies de qualquer forma. Fecha a
+      questão arquitetural A1 para a extensão inteira. A migração é incremental painel a
+      painel, com os testes existentes como contrato imutável, e a sidebar vai por último
+      por ser o passo de maior risco. Nenhuma questão bloqueante em aberto.
+  - status: PLANNED
+    date: "2026-08-05"
+    reason: >-
+      Plano gerado com 20 tarefas (6 P, 14 M, 0 G), caminho crítico TASK-COCK-001 → 002 →
+      003 → 009 → 016 → 017 → 019 → 020. As três verificações de consistência passaram:
+      nenhum dos 11 requisitos ficou descoberto, nenhuma tarefa órfã, nenhuma dependência
+      inválida e nenhum ciclo. O Board foi dividido em três tarefas (casca, interações,
+      feed) porque como tarefa única seria G, e nenhuma G pode sobreviver ao plano. A
+      sidebar depende de TASK-COCK-009 de propósito: o design manda exercitar a biblioteca
+      de componentes em painéis reais antes de encarar o passo de maior risco. Matriz de
+      rastreabilidade criada com implementation vazio e 4 lacunas registradas.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-036
+    summary: >-
+      Sidebar: trocar a TreeView por uma superfície de webview, implementando o mockup 01
+      fielmente. Consequência aceita: navegação por teclado, seleção, ações por item e
+      revelar-item deixam de vir prontos da plataforma e viram responsabilidade da
+      implementação — formalizado em REQ-COCK-006 e NFR-COCK-004.
+  - question: Q2
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-037
+    summary: >-
+      Stack: migrar todos os sete painéis para esbuild + Preact, unificando com o wizard
+      (ADR-034). Consequência aceita: reescrita de módulos testados, com risco de
+      regressão nas funcionalidades do Board; o design definiu migração incremental com os
+      testes existentes como contrato imutável.
+  - question: Q3
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-037
+    summary: >-
+      Componentes: biblioteca interna de componentes Preact em src/webview/ui/ (Card,
+      StatusBadge, PanelHeader, EmptyState, Toolbar, StatTile), importada por todos os
+      painéis. O requisito observável correspondente é REQ-COCK-002.
+  - question: Q4
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Boas-vindas saem do viewsWelcome em markdown e viram superfície de webview fiel ao
+      mockup 02. Onde elas vivem ficou em aberto como Q7.
+  - question: Q5
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      A expectativa de "sistema desktop" se satisfaz com o redesenho visual por agora.
+      Comportamento de app (atalhos, toolbar persistente, painel de detalhes, undo) fica
+      fora e vira mudança nova se necessário. Formalizado em NFR-COCK-003.
+  - question: Q6
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Histórico, métricas, validação e editor de spec entram por completo, derivados por
+      analogia aos mockups existentes. Formalizado em REQ-COCK-007; o design nomeia a
+      origem de cada um na tabela de derivação.
+  - question: Q7
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-036
+    summary: >-
+      Contradição entre Q4 e Q5 detectada no refinamento da spec. Resolvida: as
+      boas-vindas viram um estado da sidebar (que já passa a ser webview por Q1), em vez
+      de um painel que abre no editor. Cumpre Q4 sem violar Q5 — nada abre sozinho e o
+      usuário encontra no mesmo lugar de hoje. Formalizado em REQ-COCK-005, SCN-COCK-011
+      e NFR-COCK-003.
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 20
+  pending: 20
+  in_progress: 0
+  done: 0
