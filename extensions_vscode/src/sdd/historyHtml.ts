@@ -45,13 +45,16 @@ function timelineCss(): string {
 /** Uma entrada da linha do tempo, no formato do bloco do mockup 13. */
 function eventRow(e: HistoryEvent): string {
   const detail = e.detail ? `<div class="detail">${escapeHtml(e.detail)}</div>` : ''
+
   // O evento de estado ganha o badge colorido do ciclo de vida — mesma cor que o status
-  // tem no Board e no dashboard (REQ-COCK-002, SCN-COCK-003).
-  const badge =
-    e.kind === 'status'
-      ? `<span class="ui-badge" style="background: var(${statusBadge(e.title).tokenName})">${escapeHtml(statusBadge(e.title).label)}</span>`
-      : `<span class="hist-kind">${escapeHtml(KIND_LABEL[e.kind] ?? e.kind)}</span>`
-  const title = e.kind === 'status' ? '' : `<span class="title">${escapeHtml(e.title)}</span>`
+  // tem no Board e no dashboard (REQ-COCK-002, SCN-COCK-003). Nesse caso o próprio badge
+  // já diz qual é o estado, então o título não se repete ao lado.
+  const isStatus = e.kind === 'status'
+  const status = statusBadge(e.title)
+  const badge = isStatus
+    ? `<span class="ui-badge ${status.className}">${escapeHtml(status.label)}</span>`
+    : `<span class="hist-kind">${escapeHtml(KIND_LABEL[e.kind] ?? e.kind)}</span>`
+  const title = isStatus ? '' : `<span class="title">${escapeHtml(e.title)}</span>`
   return `      <li class="hist-event ${escapeHtml(e.kind)}">
         <span class="dot" aria-hidden="true"></span>
         <div class="head">

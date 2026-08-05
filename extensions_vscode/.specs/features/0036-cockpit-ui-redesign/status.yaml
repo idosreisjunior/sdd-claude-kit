@@ -95,7 +95,15 @@ history:
       ADR-038 restringe o ADR-037 às superfícies interativas e dá aos painéis de leitura a
       identidade pelo CSS compartilhado, via renderStaticPanelHtml (CSP sem script-src).
       Histórico redesenhado a partir do bloco de linha do tempo do mockup 13, com a origem
-      declarada no módulo (REQ-COCK-007). 247 testes ok.
+      declarada no módulo (REQ-COCK-007). TASK-COCK-012 (métricas, derivada do mockup 13) e
+      TASK-COCK-013 (validação, derivada do mockup 12) na sequência, mesma abordagem sem
+      script. Duas correções de segurança no caminho: (1) estilo INLINE não passa na CSP com
+      nonce — nonce autoriza elementos <style>, atributos style= exigiriam unsafe-inline —,
+      então as cores de status viraram classes emitidas no bloco com nonce e a largura da
+      barra de métricas também; (2) o guarda de tokens só olhava hex e deixava passar
+      rgba() literal, que o validationHtml usava em três lugares: foi estendido para
+      rgb/rgba/hsl/hsla e passou a ignorar comentários, depois de acusar a si mesmo. Ambos
+      verificados por injeção de infração real. 247 testes ok.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
@@ -170,6 +178,6 @@ resolved_questions:
 # Contadores derivados de tasks.md. total = pending + in_progress + done.
 tasks:
   total: 20
-  pending: 14
+  pending: 12
   in_progress: 0
-  done: 6
+  done: 8

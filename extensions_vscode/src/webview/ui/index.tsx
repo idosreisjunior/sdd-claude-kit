@@ -69,12 +69,9 @@ export function Card({
  * de rascunho preservando o texto (ver `statusBadge`).
  */
 export function StatusBadge({ status }: { status: string }) {
-  const { label, tokenName } = statusBadge(status)
-  return (
-    <span class="ui-badge" style={{ background: `var(${tokenName})` }}>
-      {label}
-    </span>
-  )
+  const { label, className } = statusBadge(status)
+  // Classe, não `style` inline: atributo inline não passa na CSP com nonce (ver uiCss).
+  return <span class={`ui-badge ${className}`}>{label}</span>
 }
 
 /** Estado vazio explicativo — nunca uma tela em branco. */

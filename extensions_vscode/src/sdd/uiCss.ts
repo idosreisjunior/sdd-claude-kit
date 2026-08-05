@@ -4,10 +4,27 @@
 // Toda cor vem de um token `--sdd-*`: o teste-guarda TEST-COCK-001 varre este arquivo e
 // falha se aparecer `--vscode-*` de cor ou hex fixo. Se você precisar de uma cor que não
 // existe como token, o lugar de criá-la é `themeTokens.ts`, não aqui.
+//
+// Por que as cores de status são CLASSES e não estilo inline: a CSP é
+// `style-src 'nonce-…'`, e nonce autoriza elementos `<style>` — atributos `style=` só
+// passariam com `'unsafe-inline'`, que enfraqueceria a postura (NFR-COCK-002). Tudo que
+// varia por dado vira classe declarada aqui, ou regra emitida no bloco com nonce.
+import { STATUS_TOKENS } from './themeTokens'
+
+/** Uma classe por status do ciclo de vida: `.ui-badge.s-designed`, `.ui-badge.s-…`. */
+function statusBadgeClasses(): string {
+  return Object.keys(STATUS_TOKENS)
+    .map((tokenName) => {
+      const cls = tokenName.replace('--sdd-status-', 's-')
+      return `  .ui-badge.${cls} { background: var(${tokenName}); }`
+    })
+    .join('\n')
+}
 
 /** CSS de `Card`, `StatusBadge`, `PanelHeader`, `EmptyState`, `Toolbar` e `StatTile`. */
 export function componentsCss(): string {
   return `
+${statusBadgeClasses()}
   .ui-panel-header { display: flex; align-items: flex-start; gap: .75rem; margin-bottom: 1rem; }
   .ui-panel-header .titles { flex: 1 1 auto; min-width: 0; }
   .ui-panel-header h1 { margin: 0; font-size: 1.05rem; font-weight: 700; }

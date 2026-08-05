@@ -24,8 +24,8 @@ MIGRAÇÃO DOS PAINÉIS (paralelizáveis entre si)              TRILHA DA SIDEBA
   TASK-COCK-009 (dashboard) ──────────────────────────────────────┤
   TASK-COCK-010 (visão do projeto)                                ▼
   TASK-COCK-011 (histórico) [OK]                          TASK-COCK-016 (WebviewView)
-  TASK-COCK-012 (métricas)                                  ├─► TASK-COCK-017 (teclado/ações)
-  TASK-COCK-013 (validação)                                 └─► TASK-COCK-018 (boas-vindas)
+  TASK-COCK-012 (métricas) [OK]                                  ├─► TASK-COCK-017 (teclado/ações)
+  TASK-COCK-013 (validação) [OK]                                 └─► TASK-COCK-018 (boas-vindas)
   TASK-COCK-014 (editor de spec)                                  │
         │                                                         │
         └──────────────────► TASK-COCK-019 (contraste) ◄──────────┘
@@ -438,7 +438,7 @@ em tela cheia — a derivação declarada no design §3. Registrar a origem no p
 **Requisitos:** REQ-COCK-007, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -475,7 +475,7 @@ Migrar o painel de métricas reusando os `StatTile` e a barra de progresso do
 **Requisitos:** REQ-COCK-007, REQ-COCK-002
 **Dependências:** TASK-COCK-003, TASK-COCK-005
 **Complexidade:** P
-**Status:** pending
+**Status:** done
 
 ### Descrição
 
@@ -762,7 +762,7 @@ ao longo das migrações — a regra do design §11.
 | M | 14 |
 | G | 0 |
 
-Total: 20 tarefas · 6 concluídas · 14 pendentes.
+Total: 20 tarefas · 8 concluídas · 12 pendentes.
 
 **Caminho crítico:** TASK-COCK-001 → TASK-COCK-002 → TASK-COCK-003 → TASK-COCK-009 →
 TASK-COCK-016 → TASK-COCK-017 → TASK-COCK-019 → TASK-COCK-020

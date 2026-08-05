@@ -123,6 +123,8 @@ requirements:
       - "TASK-COCK-014"
     implementation:
       - "src/sdd/historyHtml.ts"
+      - "src/sdd/metricsHtml.ts"
+      - "src/sdd/validationHtml.ts"
     tests:
       - "TEST-COCK-010"
 
@@ -145,6 +147,8 @@ requirements:
     implementation:
       - "src/sdd/panelHtml.ts"
       - "src/sdd/historyHtml.ts"
+      - "src/sdd/metricsHtml.ts"
+      - "src/sdd/validationHtml.ts"
     tests:
       - "TEST-COCK-002"
 

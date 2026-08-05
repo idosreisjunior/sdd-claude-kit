@@ -35,11 +35,19 @@ export function statTileDisplay(count: Count | undefined): TileDisplay {
   return { text: String(count.value), available: true }
 }
 
-/** O que um `StatusBadge` mostra: o rótulo e o token de cor do ciclo de vida. */
+/** O que um `StatusBadge` mostra: o rótulo, o token de cor e a classe modificadora. */
 export interface BadgeDisplay {
   label: string
   /** Nome do token `--sdd-status-*`. Status desconhecido cai em rascunho. */
   tokenName: string
+  /**
+   * Classe CSS que aplica a cor (`s-designed`, `s-in-progress`, …).
+   *
+   * Existe porque estilo INLINE não passa na CSP: `style-src 'nonce-…'` autoriza elementos
+   * `<style>`, mas atributos `style=` só passam com `'unsafe-inline'`, que não temos e não
+   * queremos. A cor entra por classe declarada no bloco `<style nonce>` (`uiCss.ts`).
+   */
+  className: string
 }
 
 /**
@@ -49,7 +57,8 @@ export interface BadgeDisplay {
  */
 export function statusBadge(status: string): BadgeDisplay {
   const label = status.trim() === '' ? 'SEM STATUS' : status.trim().toUpperCase()
-  return { label, tokenName: statusToken(status) }
+  const tokenName = statusToken(status)
+  return { label, tokenName, className: tokenName.replace('--sdd-status-', 's-') }
 }
 
 /** Percentual de progresso, limitado a 0–100. Total zero devolve 0, nunca NaN. */
