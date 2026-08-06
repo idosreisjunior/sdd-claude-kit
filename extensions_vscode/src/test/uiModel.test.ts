@@ -7,6 +7,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { statTileDisplay, statusBadge, progressPct } from '../sdd/uiModel'
 import { componentsCss } from '../sdd/uiCss'
+import { BRAND_TOKENS } from '../sdd/themeTokens'
 
 test('TEST-COCK-003 · SCN-COCK-005 — valor indisponível nunca vira 0', () => {
   const semFonte = statTileDisplay(undefined)
@@ -60,7 +61,19 @@ test('progressPct é limitado a 0–100 e nunca devolve NaN', () => {
 
 test('REQ-COCK-001 — o CSS dos componentes só usa tokens --sdd-*', () => {
   const css = componentsCss()
-  assert.equal(css.match(/#[0-9a-fA-F]{3,8}\b/g), null, 'sem hex fixo')
   const vscodeColors = css.match(/(?:color|background|border)\s*:[^;]*--vscode-/g)
   assert.equal(vscodeColors, null, 'sem --vscode-* para cor de conteúdo')
+
+  // Hex é permitido APENAS quando vem da camada de marca. A primeira versão deste teste
+  // proibia hex de qualquer origem, o que era grosseiro demais: a regra de REQ-COCK-001 é
+  // sobre cor de CONTEÚDO, e o ADR-035 reserva a paleta de marca como exceção declarada.
+  // `readableOn` passou a emitir essas tintas, e a asserção precisou virar precisa em vez
+  // de ampla — mais estrita no que importa, não mais frouxa.
+  const brandInks = new Set(Object.values(BRAND_TOKENS).map((v) => v.toUpperCase()))
+  for (const hex of css.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []) {
+    assert.ok(
+      brandInks.has(hex.toUpperCase()),
+      `hex ${hex} não pertence à camada de marca (themeTokens.BRAND_TOKENS)`,
+    )
+  }
 })

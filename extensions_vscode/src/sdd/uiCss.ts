@@ -9,14 +9,19 @@
 // `style-src 'nonce-…'`, e nonce autoriza elementos `<style>` — atributos `style=` só
 // passariam com `'unsafe-inline'`, que enfraqueceria a postura (NFR-COCK-002). Tudo que
 // varia por dado vira classe declarada aqui, ou regra emitida no bloco com nonce.
-import { STATUS_TOKENS } from './themeTokens'
+import { STATUS_TOKENS, BRAND_TOKENS, readableOn } from './themeTokens'
 
-/** Uma classe por status do ciclo de vida: `.ui-badge.s-designed`, `.ui-badge.s-…`. */
+/**
+ * Uma classe por status do ciclo de vida: `.ui-badge.s-designed`, `.ui-badge.s-…`.
+ *
+ * Cada uma leva a SUA tinta, escolhida por contraste em vez de fixada em branco: a paleta
+ * mistura fundos claros e escuros, e branco em todos reprovava seis dos dez no WCAG AA.
+ */
 function statusBadgeClasses(): string {
-  return Object.keys(STATUS_TOKENS)
-    .map((tokenName) => {
+  return Object.entries(STATUS_TOKENS)
+    .map(([tokenName, hex]) => {
       const cls = tokenName.replace('--sdd-status-', 's-')
-      return `  .ui-badge.${cls} { background: var(${tokenName}); }`
+      return `  .ui-badge.${cls} { background: var(${tokenName}); color: ${readableOn(hex)}; }`
     })
     .join('\n')
 }
@@ -43,7 +48,7 @@ ${statusBadgeClasses()}
   /* O fundo padrão é o de rascunho: um status desconhecido, que não casa com nenhuma
      classe .s-*, cai nele em vez de ficar sem fundo — texto branco sobre transparente
      seria um badge invisível. Espelha em CSS o fallback de statusToken(). */
-  .ui-badge { display: inline-block; font-size: .66rem; font-weight: 700; letter-spacing: .04em; padding: .1rem .45rem; border-radius: .8rem; background: var(--sdd-status-draft); color: var(--sdd-on-brand); white-space: nowrap; }
+  .ui-badge { display: inline-block; font-size: .66rem; font-weight: 700; letter-spacing: .04em; padding: .1rem .45rem; border-radius: .8rem; background: var(--sdd-status-draft); color: ${readableOn(STATUS_TOKENS["--sdd-status-draft"])}; white-space: nowrap; }
 
   .ui-empty { border: 1px dashed var(--sdd-border); border-radius: .5rem; padding: 1.25rem; text-align: center; color: var(--sdd-text-muted); }
   .ui-empty h2 { margin: 0 0 .35rem; font-size: .95rem; color: var(--sdd-text); font-weight: 600; }
@@ -59,7 +64,7 @@ ${statusBadgeClasses()}
 
   .ui-btn { font: inherit; font-size: .8rem; font-weight: 600; padding: .3rem .7rem; border-radius: .4rem; border: 1px solid var(--sdd-border); background: var(--sdd-button-bg); color: var(--sdd-button-fg); cursor: pointer; }
   .ui-btn:hover { background: var(--sdd-button-hover); }
-  .ui-btn.primary { background: var(--sdd-accent); border-color: var(--sdd-accent); color: var(--sdd-on-brand); }
+  .ui-btn.primary { background: var(--sdd-accent); border-color: var(--sdd-accent); color: ${readableOn(BRAND_TOKENS["--sdd-accent"])}; }
   .ui-btn:disabled { opacity: .5; cursor: not-allowed; }
   `
 }

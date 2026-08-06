@@ -52,7 +52,40 @@ export const BRAND_TOKENS: Readonly<Record<string, string>> = {
   // de conteúdo: o par fundo-da-marca/texto tem que se manter legível independentemente do
   // tema do usuário, então não pode derivar de --vscode-*. Acrescentado pela 0036 para que
   // os painéis parem de escrever `#fff` solto (REQ-COCK-001).
+  //
+  // São DUAS tintas porque uma só não serve. Medindo o contraste WCAG do branco sobre cada
+  // fundo da paleta, seis dos dez reprovavam em AA — o pior, o âmbar de `planned`, ficava
+  // em 2,22:1 onde texto pequeno exige 4,5:1. Quem escolhe entre elas é `readableOn`.
   '--sdd-on-brand': '#FFFFFF',
+  '--sdd-on-brand-dark': '#10141A',
+}
+
+/** Luminância relativa (WCAG 2.x) de uma cor `#RRGGBB`. */
+function luminance(hex: string): number {
+  const channels = [1, 3, 5]
+    .map((i) => parseInt(hex.substr(i, 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)))
+  return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+}
+
+/** Razão de contraste WCAG entre duas cores `#RRGGBB`. 1:1 é igual; 21:1 é preto e branco. */
+export function contrastRatio(a: string, b: string): number {
+  const la = luminance(a)
+  const lb = luminance(b)
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05)
+}
+
+/**
+ * A tinta legível sobre um fundo de marca: clara ou escura, a que der mais contraste.
+ *
+ * Existe porque a paleta do SDD tem fundos claros (âmbar, verde, ciano) e escuros (violeta,
+ * cinza) na mesma família, e fixar branco em todos reprovava metade deles no WCAG AA. A
+ * escolha é calculada, não opinada — e `contrast.test.ts` verifica o resultado.
+ */
+export function readableOn(background: string): string {
+  const light = BRAND_TOKENS['--sdd-on-brand']
+  const dark = BRAND_TOKENS['--sdd-on-brand-dark']
+  return contrastRatio(light, background) >= contrastRatio(dark, background) ? light : dark
 }
 
 /** Cores de status do ciclo de vida — paleta semântica do SDD (STYLE-CONTRACT.md). */
