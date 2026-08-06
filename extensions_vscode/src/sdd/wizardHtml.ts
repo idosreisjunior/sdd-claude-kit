@@ -5,7 +5,8 @@
 // type="application/json">), lido pelo cliente via textContent + JSON.parse — nunca
 // executado e nunca inserido como HTML. Todo texto de artefato tem o `<` neutralizado no
 // JSON para não fechar a tag (NFR-WIZ-001, espelha o boardHtml).
-import { themeTokensCss } from './themeTokens'
+import { themeTokensCss, readableOn, BRAND_TOKENS, STATUS_TOKENS } from './themeTokens'
+import { componentsCss } from './uiCss'
 import type { WizardState } from './wizardModel'
 import type { AdvanceResult } from './wizardStepGuards'
 import type { WizardDetails } from './wizardContent'
@@ -31,7 +32,7 @@ export function wizardCss(): string {
   .sdd-step.done .conn, .sdd-step.current .conn { background: var(--sdd-accent); }
   .sdd-step:first-child .conn { display: none; }
   .sdd-node { position: relative; z-index: 1; width: 26px; height: 26px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; background: var(--sdd-surface); border: 2px solid var(--sdd-border); color: var(--sdd-text-muted); }
-  .sdd-step.done .sdd-node { background: var(--sdd-accent); border-color: var(--sdd-accent); color: var(--sdd-on-brand); }
+  .sdd-step.done .sdd-node { background: var(--sdd-accent); border-color: var(--sdd-accent); color: ${readableOn(BRAND_TOKENS["--sdd-accent"])}; }
   .sdd-step.current .sdd-node { border-color: var(--sdd-accent); color: var(--sdd-text); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sdd-accent) 30%, transparent); }
   .sdd-step .lbl { display: block; margin-top: .35rem; font-size: .72rem; color: var(--sdd-text-muted); overflow: hidden; text-overflow: ellipsis; }
   .sdd-step.current .lbl { color: var(--sdd-text); font-weight: 600; }
@@ -53,7 +54,7 @@ export function wizardCss(): string {
   .sdd-sev { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--sdd-text-muted); }
   .sdd-list li.critical .sdd-sev { color: var(--sdd-status-in-progress); font-weight: 700; }
   .sdd-badge { display: inline-block; margin-left: .5rem; font-size: .7rem; padding: .1rem .45rem; border-radius: .8rem; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); }
-  .sdd-badge.critical { background: var(--sdd-status-in-progress); color: var(--sdd-on-brand); }
+  .sdd-badge.critical { background: var(--sdd-status-in-progress); color: ${readableOn(STATUS_TOKENS["--sdd-status-in-progress"])}; }
   .sdd-task-status { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--sdd-text-muted); }
   .sdd-task-status.done { color: var(--sdd-status-verified); }
   .sdd-task-status.in_progress { color: var(--sdd-status-in-progress); }
@@ -66,7 +67,6 @@ export function wizardCss(): string {
   .sdd-hub-item .id { font-family: var(--vscode-editor-font-family, monospace); font-size: .76rem; color: var(--sdd-link); }
   .sdd-hub-item .title { flex: 1 1 auto; font-size: .86rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sdd-hub-item .type { font-size: .7rem; color: var(--sdd-text-muted); }
-  .sdd-status { font-size: .68rem; font-weight: 700; letter-spacing: .04em; padding: .1rem .45rem; border-radius: .8rem; color: var(--sdd-on-brand); }
   .sdd-btn.ghost { background: transparent; color: var(--sdd-accent-2); border-color: var(--sdd-border); padding: .3rem .7rem; font-size: .8rem; }
   .sdd-btn.ghost:hover { border-color: var(--sdd-accent); }
   .sdd-welcome { border: 1px solid var(--sdd-border); border-radius: .6rem; padding: 1.5rem; background: var(--sdd-surface); text-align: center; }
@@ -75,13 +75,13 @@ export function wizardCss(): string {
   .sdd-backlink { background: none; border: none; color: var(--sdd-text-muted); font: inherit; font-size: .78rem; cursor: pointer; padding: 0; margin-bottom: .6rem; }
   .sdd-backlink:hover { color: var(--sdd-text); text-decoration: underline; }
   .sdd-actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; }
-  .sdd-btn.ai { background: var(--sdd-ai); color: var(--sdd-on-brand); }
+  .sdd-btn.ai { background: var(--sdd-ai); color: ${readableOn(BRAND_TOKENS["--sdd-ai"])}; }
   .sdd-btn.ai:hover { background: var(--sdd-ai-2); }
   .sdd-btn:focus-visible { outline: 2px solid var(--sdd-focus); outline-offset: 2px; }
   .sdd-hint { color: var(--sdd-text-muted); font-size: .75rem; }
   .sdd-footer { display: flex; flex-direction: column; align-items: flex-end; gap: .4rem; margin-top: 1rem; }
   .sdd-btn { font: inherit; font-size: .9rem; font-weight: 600; padding: .45rem 1rem; border-radius: .5rem; border: 1px solid transparent; cursor: pointer; }
-  .sdd-btn.primary { background: var(--sdd-accent); color: var(--sdd-on-brand); }
+  .sdd-btn.primary { background: var(--sdd-accent); color: ${readableOn(BRAND_TOKENS["--sdd-accent"])}; }
   .sdd-btn:disabled { opacity: .5; cursor: not-allowed; }
   .sdd-reasons { margin: 0; padding-left: 1.1rem; color: var(--sdd-status-planned); font-size: .8rem; text-align: right; list-style: none; }
   .sdd-reasons li::before { content: "⚠ "; }
@@ -124,6 +124,7 @@ export function renderWizardHtml({ payload, nonce, scriptUri }: WizardHtmlOption
 <title>Assistente SDD</title>
 <style nonce="${nonce}">
 ${themeTokensCss()}
+${componentsCss()}
 ${wizardCss()}
 </style>
 </head>

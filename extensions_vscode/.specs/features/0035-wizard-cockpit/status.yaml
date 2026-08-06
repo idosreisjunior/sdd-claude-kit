@@ -77,6 +77,15 @@ history:
       nunca foram ESCRITOS, e CI verde não supre teste inexistente. TASK-WIZ-008 segue parcial
       (falta o formulário) e TASK-WIZ-011 aguarda as capturas das quatro views.
 
+      TASK-WIZ-015 (acessibilidade e contraste) avançou a partir de um achado da feature
+      0036: a camada de marca é hex fixo, e medindo o contraste o texto branco reprovava no
+      WCAG AA em seis dos dez fundos — o wizard tinha o mesmo defeito em cinco lugares. A
+      tinta passou a ser calculada por readableOn(). No caminho saiu também o último estilo
+      INLINE do Hub, que não passa na CSP com nonce (nonce autoriza elementos <style>, não
+      atributos style=): o badge do hub passou a usar a classe compartilhada. O wizard agora
+      consome componentsCss(). Falta de WIZ-015: as capturas nos dois temas e a conferência
+      de teclado, que exigem o host.
+
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
 approval: null

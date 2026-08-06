@@ -153,7 +153,9 @@ requirements:
     implementation:
       - "src/sdd/uiCss.ts"
       - "src/sdd/themeTokens.ts"
-    tests: []
+      - "src/sdd/wizardHtml.ts"
+    tests:
+      - "TEST-COCK-011"
 
   "NFR-COCK-002":
     title: "Segurança do webview preservada"
@@ -203,9 +205,11 @@ requirements:
 # omitidos. Um requisito que só dá para verificar por revisão humana continua
 # sendo um requisito — o que não pode é a lacuna ficar invisível.
 gaps:
-  - id: "NFR-COCK-001 (contraste e fidelidade visual)"
+  - id: "NFR-COCK-001 (fidelidade visual e contraste do que deriva do tema)"
     reason: >-
-      Contraste percebido e correspondência ao mockup não são verificáveis por teste
+      REDUZIDA em 2026-08-05: a camada de MARCA é hex fixo, então seu contraste virou
+      cálculo e TEST-COCK-011 o verifica (todo par acima de 4,5:1). Permanece humano o
+      contraste do que deriva do tema do usuário, e a fidelidade aos mockups. Contraste percebido e correspondência ao mockup não são verificáveis por teste
       automatizado: exigem olho humano sobre a tela renderizada, nos dois temas. Um teste
       que medisse razão de contraste sobre os tokens não capturaria composição, densidade
       nem hierarquia — daria cobertura aparente.

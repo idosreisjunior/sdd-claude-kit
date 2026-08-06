@@ -2,10 +2,10 @@
 // pelo ciclo de vida e retoma cada uma na sua etapa atual (SCN-WIZ-010); sem nenhuma
 // mudança, apresenta as boas-vindas com a ação de criar a primeira (SCN-WIZ-011).
 //
-// `statusToken` vem de themeTokens, que não importa nada — não arrasta peso para o
-// bundle (ver a nota em buildWizardDetails sobre import de valor no webview).
+// `statusBadge` vem de uiModel, que só depende de themeTokens — não arrasta peso para o
+// bundle. A CLASSE em vez de `style` inline: atributo inline não passa na CSP com nonce.
 import type { HubState } from '../../sdd/wizardHub'
-import { statusToken } from '../../sdd/themeTokens'
+import { statusBadge } from '../../sdd/uiModel'
 import { vscodeApi } from './vscodeApi'
 
 function resume(id: string) {
@@ -60,11 +60,8 @@ export function Hub({ hub }: { hub: HubState }) {
                 <span class="id">{change.id}</span>
                 <span class="title">{change.title}</span>
                 <span class="type">{change.type}</span>
-                <span
-                  class="sdd-status"
-                  style={{ background: `var(${statusToken(change.status)})` }}
-                >
-                  {change.status}
+                <span class={`ui-badge ${statusBadge(change.status).className}`}>
+                  {statusBadge(change.status).label}
                 </span>
                 <button
                   class="sdd-btn ghost"

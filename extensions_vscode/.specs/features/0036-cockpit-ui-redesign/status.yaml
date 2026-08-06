@@ -139,7 +139,18 @@ history:
       O mapeamento tecla → intenção virou módulo puro (sidebarNav) porque o cliente precisa
       dele e importar sidebarModel arrastaria js-yaml para o bundle — separação verificada:
       sidebar.js tem 25,4 kB e zero js-yaml. preventDefault só quando a tecla é nossa, para
-      a sidebar não sequestrar atalho do VS Code. 284 testes ok.
+      a sidebar não sequestrar atalho do VS Code. 284 testes ok. TASK-COCK-019 avançou por
+      CÁLCULO, não por olho: a camada de marca é hex fixo, então o contraste dela é
+      calculável — e medindo, o branco reprovava no WCAG AA em SEIS dos dez fundos, o pior
+      em 2,22:1 onde texto pequeno exige 4,5:1. Os badges eram ilegíveis em metade dos
+      estados, em toda superfície. Corrigido com readableOn(), que escolhe a tinta por
+      contraste; contrast.test.ts tranca o resultado. Um teste meu precisou ficar preciso
+      (proibia hex de qualquer origem; a regra é sobre cor de CONTEÚDO, e a marca é exceção
+      declarada pelo ADR-035). O mesmo defeito no wizard foi corrigido sob TASK-WIZ-015,
+      junto com o último estilo inline que não passava na CSP. TASK-COCK-020 verificada em
+      parte: os 7 arquivos de teste preexistentes estão idênticos ao main e os 20 do diff
+      são só adições — nenhuma expectativa foi afrouxada em toda a feature. 289 testes ok.
+      PENDENTE em 019/020: as capturas nos dois temas, que exigem revisão humana.
 
 # null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
 # {date, by, revision}.
