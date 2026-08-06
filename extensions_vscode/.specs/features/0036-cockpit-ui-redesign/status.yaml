@@ -1,0 +1,230 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0036-cockpit-ui-redesign"
+# feature | bug | refactor | change
+type: "feature"
+title: "Identidade visual do Cockpit nas telas existentes"
+
+status: IN_PROGRESS
+
+created: "2026-08-05"
+updated: "2026-08-05"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-05"
+    reason: >-
+      Criada a partir do relato do usuário de que a interface "ainda está a mesma coisa"
+      após instalar a 0.3.0-preview.3, com o pedido de que a extensão pareça um sistema
+      desktop. Constatação verificada no repositório: os sete módulos de HTML de painel
+      usam --vscode-* diretamente e nenhum consome a camada --sdd- criada na 0035. É a
+      iteração que a questão Q3 da 0035 adiou de forma registrada. Entre as leituras
+      possíveis de "sistema desktop", o usuário escolheu redesenhar as telas existentes e
+      pediu spec antes do código.
+  - status: CLARIFIED
+    date: "2026-08-05"
+    reason: >-
+      Questões Q1–Q6 resolvidas pelo usuário via /sdd-kit:clarify. Nenhuma questão crítica
+      permanece em aberto. As decisões ampliaram o alcance: a sidebar deixa de ser
+      TreeView e vira webview (Q1), os sete painéis migram para esbuild + Preact (Q2) com
+      uma biblioteca interna de componentes (Q3), as boas-vindas saem do viewsWelcome (Q4)
+      e os quatro painéis sem mockup entram por analogia (Q6). O redesenho segue
+      estritamente visual (Q5). O refinamento seguinte por /sdd-kit:spec detectou uma
+      contradição entre Q4 e Q5 e a registrou como Q7, resolvida na sequência: as
+      boas-vindas viram um estado da sidebar, cumprindo Q4 sem violar Q5.
+  - status: DESIGNED
+    date: "2026-08-05"
+    reason: >-
+      Design técnico gerado com dois ADRs. ADR-036 (sidebar como WebviewView) formaliza Q1
+      e a responsabilidade que vem junto — teclado, seleção, ações por item e revelar-item
+      deixam de vir da plataforma. ADR-037 (bundler e biblioteca de componentes para todos
+      os painéis) formaliza Q2 e Q3, estende o ADR-034 e REVISA uma recusa explícita dele
+      ("bundler para todos os painéis — reescreveria superfícies estáveis sem ganho"): a
+      premissa caiu porque a 0036 reescreve essas superfícies de qualquer forma. Fecha a
+      questão arquitetural A1 para a extensão inteira. A migração é incremental painel a
+      painel, com os testes existentes como contrato imutável, e a sidebar vai por último
+      por ser o passo de maior risco. Nenhuma questão bloqueante em aberto.
+  - status: PLANNED
+    date: "2026-08-05"
+    reason: >-
+      Plano gerado com 20 tarefas (6 P, 14 M, 0 G), caminho crítico TASK-COCK-001 → 002 →
+      003 → 009 → 016 → 017 → 019 → 020. As três verificações de consistência passaram:
+      nenhum dos 11 requisitos ficou descoberto, nenhuma tarefa órfã, nenhuma dependência
+      inválida e nenhum ciclo. O Board foi dividido em três tarefas (casca, interações,
+      feed) porque como tarefa única seria G, e nenhuma G pode sobreviver ao plano. A
+      sidebar depende de TASK-COCK-009 de propósito: o design manda exercitar a biblioteca
+      de componentes em painéis reais antes de encarar o passo de maior risco. Matriz de
+      rastreabilidade criada com implementation vazio e 4 lacunas registradas.
+
+  - status: APPROVED
+    date: "2026-08-05"
+    reason: >-
+      Aprovada pelo usuário com a autorização explícita "pode implementar", sobre o plano de
+      20 tarefas gerado em 75e6e98. Registrada aqui à mão porque o skill /sdd-kit:approve
+      não está disponível nesta sessão — o campo approval traz a origem da aprovação em vez
+      de simular a passagem pelo skill. O usuário está ciente do alcance: substituir a
+      TreeView da sidebar e reescrever sete painéis cobertos por teste.
+
+  - status: IN_PROGRESS
+    date: "2026-08-05"
+    reason: >-
+      Fundação implementada: TASK-COCK-001 (esbuild com um bundle por superfície, teto
+      verificado por build falhando), TASK-COCK-002 (renderPanelHtml — ponto único de
+      CSP/nonce/escape, 7 testes), TASK-COCK-004 (teste-guarda, verificado VERMELHO listando
+      73 declarações infratoras em 9 módulos) e TASK-COCK-005 (78 substituições levando o
+      guarda ao verde). A camada de tokens foi estendida com 12 tokens de conteúdo e o
+      --sdd-on-brand, porque os painéis usavam variáveis --vscode-* sem token correspondente
+      e sem eles não haveria como consumir a camada. A regra do design §11 se sustentou:
+      nenhum arquivo de teste existente foi modificado. compile ok, 234 testes ok, lint
+      limpo, bundle 32,3 kB. TASK-COCK-003 em seguida: biblioteca de seis componentes em
+      src/webview/ui/, com as decisões em src/sdd/uiModel.ts porque src/webview está fora do
+      tsc (ADR-034) e componente .tsx não é alcançável por node --test. O critério original
+      da tarefa ("nenhum componente importa valor de src/sdd/") era estrito demais e proibia
+      o próprio padrão: foi corrigido para a regra real — o que a importação ARRASTA —,
+      verificada por medição (bundle de prova com os seis componentes: 20 kB, sem js-yaml).
+      242 testes ok. TASK-COCK-011 (histórico) em seguida, e com ela um ADR novo: ao
+      começar a migração descobriu-se que histórico, métricas e validação rodam com
+      enableScripts: false por decisão do ADR-016 — postura MAIS forte que CSP+nonce.
+      Migrá-los para Preact como o ADR-037 mandava exigiria ligar scripts e violaria
+      NFR-COCK-002. Interrompido e levado ao usuário, que escolheu preservar a postura:
+      ADR-038 restringe o ADR-037 às superfícies interativas e dá aos painéis de leitura a
+      identidade pelo CSS compartilhado, via renderStaticPanelHtml (CSP sem script-src).
+      Histórico redesenhado a partir do bloco de linha do tempo do mockup 13, com a origem
+      declarada no módulo (REQ-COCK-007). TASK-COCK-012 (métricas, derivada do mockup 13) e
+      TASK-COCK-013 (validação, derivada do mockup 12) na sequência, mesma abordagem sem
+      script. Duas correções de segurança no caminho: (1) estilo INLINE não passa na CSP com
+      nonce — nonce autoriza elementos <style>, atributos style= exigiriam unsafe-inline —,
+      então as cores de status viraram classes emitidas no bloco com nonce e a largura da
+      barra de métricas também; (2) o guarda de tokens só olhava hex e deixava passar
+      rgba() literal, que o validationHtml usava em três lugares: foi estendido para
+      rgb/rgba/hsl/hsla e passou a ignorar comentários, depois de acusar a si mesmo. Ambos
+      verificados por injeção de infração real. TASK-COCK-006/007 (Board) em seguida, e com
+      elas o ADR-039: os cinco asserts de boardHtml.test.ts descrevem o MECANISMO de entrega
+      (script inline, #app, const INITIAL), e migrar para Preact exigiria reescrevê-los — a
+      regressão que o design §11 proíbe. Levado ao usuário, que escolheu não migrar: o Board
+      mantém o cliente inline e recebe a identidade pelas classes compartilhadas. Risco de
+      regressão nas seis funcionalidades cai a zero e os cinco asserts seguem intactos. A
+      007 deixou de ser reimplementação e virou verificação. 257 testes ok, nenhum arquivo
+      de teste existente alterado, lint limpo. Ao seguir, o levantamento completo das
+      superfícies mostrou que visão do projeto e dashboard de feature TAMBÉM rodam com
+      enableScripts: false — a terceira exceção que o próprio ADR-039 elegeu como gatilho
+      para reconsiderar o ADR-037 por inteiro. Feito: ADR-040 SUBSTITUI o ADR-037 e registra
+      a regra que a realidade impôs — a identidade vem do CSS compartilhado, que serve a
+      todas as superfícies, e cliente existe só onde há interação. TASK-COCK-008/009/010
+      concluídas como restilo: feed do Board, dashboard e visão do projeto passam a usar
+      ui-card e ui-tile. Dois defeitos latentes corrigidos no caminho: o status do feed usava
+      uma classe .badge que não existia no CSS do Board (sem estilo desde a 0029), e o
+      contador do dashboard precisou continuar em div e não span porque TEST-UI-002 afirma
+      ">N</div>" — adaptei o código ao contrato, não o teste ao código. TASK-COCK-014
+      (editor de spec) restilado pelo mesmo critério: já tem cliente inline e testes de
+      mecanismo, então não migra. TASK-COCK-015 entregou sidebarModel.ts — o estado que a
+      TreeView resolvia sozinha (foco, seleção, navegação) vira núcleo puro com 13 testes,
+      incluindo o que a TreeView fazia de graça e ninguém perdoaria perder: reidratar sem
+      jogar o usuário de volta ao topo. 270 testes ok. ACHADO para o próximo passo: a
+      sidebar tem 18 ações por item (2 inline + 16 em submenu) que o SCN-COCK-008 exige
+      preservar — número maior do que a decisão Q1 deixava aparente. TASK-COCK-016/018
+      resolveram isso sem pagar o risco previsto: o menu NÃO foi reimplementado no webview.
+      O cliente só sinaliza a intenção e um QuickPick nativo apresenta as ações, montado a
+      partir do package.json — não pode divergir do manifesto, e teclado, busca e leitor de
+      tela seguem sendo da plataforma. Os 18 comandos ficaram intactos porque
+      featureChangeOf aceita qualquer nó com kind feature, então a borda monta um compatível.
+      viewsWelcome removido do manifesto e as boas-vindas viraram modo da própria sidebar
+      (Q7). TASK-COCK-017 fechou o teclado: setas, PageUp/PageDown, Home/End, Enter/espaço
+      e ContextMenu/Shift+F10, mais o scrollIntoView que substitui o reveal() da TreeView.
+      O mapeamento tecla → intenção virou módulo puro (sidebarNav) porque o cliente precisa
+      dele e importar sidebarModel arrastaria js-yaml para o bundle — separação verificada:
+      sidebar.js tem 25,4 kB e zero js-yaml. preventDefault só quando a tecla é nossa, para
+      a sidebar não sequestrar atalho do VS Code. 284 testes ok. TASK-COCK-019 avançou por
+      CÁLCULO, não por olho: a camada de marca é hex fixo, então o contraste dela é
+      calculável — e medindo, o branco reprovava no WCAG AA em SEIS dos dez fundos, o pior
+      em 2,22:1 onde texto pequeno exige 4,5:1. Os badges eram ilegíveis em metade dos
+      estados, em toda superfície. Corrigido com readableOn(), que escolhe a tinta por
+      contraste; contrast.test.ts tranca o resultado. Um teste meu precisou ficar preciso
+      (proibia hex de qualquer origem; a regra é sobre cor de CONTEÚDO, e a marca é exceção
+      declarada pelo ADR-035). O mesmo defeito no wizard foi corrigido sob TASK-WIZ-015,
+      junto com o último estilo inline que não passava na CSP. TASK-COCK-020 verificada em
+      parte: os 7 arquivos de teste preexistentes estão idênticos ao main e os 20 do diff
+      são só adições — nenhuma expectativa foi afrouxada em toda a feature. 289 testes ok.
+      PENDENTE em 019/020: as capturas nos dois temas, que exigem revisão humana.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval:
+  date: "2026-08-05"
+  by: "idosreisjunior (autorização explícita em conversa)"
+  revision: "75e6e98"
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas. Preservadas em vez de apagadas: uma decisão sem
+# rastro é indistinguível de uma suposição — ver constitution.md, Art. 5.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-036
+    summary: >-
+      Sidebar: trocar a TreeView por uma superfície de webview, implementando o mockup 01
+      fielmente. Consequência aceita: navegação por teclado, seleção, ações por item e
+      revelar-item deixam de vir prontos da plataforma e viram responsabilidade da
+      implementação — formalizado em REQ-COCK-006 e NFR-COCK-004.
+  - question: Q2
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-037
+    summary: >-
+      Stack: migrar todos os sete painéis para esbuild + Preact, unificando com o wizard
+      (ADR-034). Consequência aceita: reescrita de módulos testados, com risco de
+      regressão nas funcionalidades do Board; o design definiu migração incremental com os
+      testes existentes como contrato imutável.
+  - question: Q3
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-037
+    summary: >-
+      Componentes: biblioteca interna de componentes Preact em src/webview/ui/ (Card,
+      StatusBadge, PanelHeader, EmptyState, Toolbar, StatTile), importada por todos os
+      painéis. O requisito observável correspondente é REQ-COCK-002.
+  - question: Q4
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Boas-vindas saem do viewsWelcome em markdown e viram superfície de webview fiel ao
+      mockup 02. Onde elas vivem ficou em aberto como Q7.
+  - question: Q5
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      A expectativa de "sistema desktop" se satisfaz com o redesenho visual por agora.
+      Comportamento de app (atalhos, toolbar persistente, painel de detalhes, undo) fica
+      fora e vira mudança nova se necessário. Formalizado em NFR-COCK-003.
+  - question: Q6
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Histórico, métricas, validação e editor de spec entram por completo, derivados por
+      analogia aos mockups existentes. Formalizado em REQ-COCK-007; o design nomeia a
+      origem de cada um na tabela de derivação.
+  - question: Q7
+    date: "2026-08-05"
+    resolved_by: clarify
+    adr: ADR-036
+    summary: >-
+      Contradição entre Q4 e Q5 detectada no refinamento da spec. Resolvida: as
+      boas-vindas viram um estado da sidebar (que já passa a ser webview por Q1), em vez
+      de um painel que abre no editor. Cumpre Q4 sem violar Q5 — nada abre sozinho e o
+      usuário encontra no mesmo lugar de hoje. Formalizado em REQ-COCK-005, SCN-COCK-011
+      e NFR-COCK-003.
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 20
+  pending: 2
+  in_progress: 0
+  done: 18

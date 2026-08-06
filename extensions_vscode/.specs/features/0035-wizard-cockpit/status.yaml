@@ -1,0 +1,142 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0035-wizard-cockpit"
+# feature | bug | refactor | change
+type: "feature"
+title: "Wizard Cockpit — GUI guiada de specs"
+
+status: IN_PROGRESS
+
+created: "2026-08-05"
+updated: "2026-08-05"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-05"
+    reason: >-
+      Feature criada a partir do pedido de tornar a GUI da extensão profissional
+      com um wizard guiado. Mockups (14 telas), design system e plano de
+      implementação já entregues em docs/ui-redesign/ e aprovados pelo usuário.
+  - status: CLARIFIED
+    date: "2026-08-05"
+    reason: >-
+      Questões Q2–Q6 resolvidas pelo usuário via /sdd-kit:clarify (escopo da 1ª
+      entrega = wizard primeiro; gestão = criar/conduzir/arquivar; Claude Code
+      ausente = copiar prompt e instruir; tema claro desde já; QuickPick mantido
+      em paralelo). Nenhuma questão crítica em aberto.
+  - status: DESIGNED
+    date: "2026-08-05"
+    reason: >-
+      Design técnico gerado e 3 ADRs registrados: ADR-033 (wizard como WebviewPanel
+      interativo, estende ADR-024), ADR-034 (esbuild + Preact para o webview do
+      wizard, resolve A1 no escopo do wizard) e ADR-035 (camada de marca --sdd-*
+      derivada do tema). Nenhuma questão crítica em aberto.
+  - status: PLANNED
+    date: "2026-08-05"
+    reason: >-
+      Plano gerado com 15 tarefas (1 P, 14 M, 0 G), caminho crítico
+      TASK-WIZ-003→005→006→007→011→014. Matriz de rastreabilidade criada: os 6
+      requisitos e os 4 NFRs cobertos por tarefa e teste, sem tarefa órfã nem
+      dependência inválida. Transição DESIGNED → PLANNED válida.
+  - status: IN_PROGRESS
+    date: "2026-08-05"
+    reason: >-
+      Implementação iniciada a pedido do usuário pela fundação. TASK-WIZ-001
+      (themeTokens, tokens --sdd-* derivados de --vscode-* + paleta de marca)
+      concluída: compile ok, 4 testes ok (TEST-WIZ-001), lint limpo. A etapa
+      approve do fluxo não foi executada (approval permanece null): o skill
+      /sdd-kit:approve não está disponível nesta sessão. TASK-WIZ-010 (ações de IA)
+      implementada em seguida: runHybridStep extraído de extension.ts para o serviço
+      reusável hybridStep.ts, mapa puro etapa → ação em wizardActions.ts, mensagem {ai}
+      na borda e botão no cliente. compile ok, 208 testes de unidade ok, lint limpo. O
+      e2e TEST-WIZ-011 está escrito mas NÃO foi executado: o VS Code headless não sobe
+      neste ambiente (libnspr4.so ausente) — registrado como gap na traceability.
+      TASK-WIZ-011 (views de conteúdo) implementada em seguida: wizardContent.ts extrai
+      requisitos, dúvidas, ADRs e tarefas dos artefatos; StageView roteia; as views
+      Especificar/Clarificar/Desenhar/Tarefas exibem o conteúdo com a ação de IA. Achado
+      e corrigido no caminho: um import de VALOR de wizardContent num componente arrastou
+      o js-yaml para o bundle do webview (21 kB → 136 kB, contra o "bundle leve" do
+      ADR-034); a derivação passou ao host e o esbuild agora falha acima de 60 kB.
+      compile ok, 218 testes de unidade ok, lint limpo. TASK-WIZ-009 (hub) implementada
+      em seguida: wizardHub.ts agrupa as mudanças reusando groupByStatus, o payload passa
+      a declarar o modo (hub | change), e openWizard sem nó abre o hub em vez do
+      QuickPick. compile ok, 225 testes de unidade ok, lint limpo, bundle 32,3 kB. O e2e
+      TEST-WIZ-010 cobre o SCN-WIZ-011 (hub abre sem QuickPick em projeto vazio) mas
+      segue sem execução local pelo mesmo bloqueio de ambiente.
+
+      Rodada de CI verde em 2026-08-05 (run 31041744209): os 10 e2e passaram sob xvfb,
+      incluindo os três novos — TEST-WIZ-010 (o hub abre sem QuickPick em projeto vazio,
+      SCN-WIZ-011) e TEST-WIZ-011 (a ação de etapa compõe e copia /sdd-kit:<ação> <id>,
+      SCN-WIZ-004/012). Com a evidência de execução, TASK-WIZ-009 e TASK-WIZ-010 passam a
+      done. As TASK-WIZ-005/006/007 permanecem in_progress: os e2e delas (TEST-WIZ-006/007/008)
+      nunca foram ESCRITOS, e CI verde não supre teste inexistente. TASK-WIZ-008 segue parcial
+      (falta o formulário) e TASK-WIZ-011 aguarda as capturas das quatro views.
+
+      TASK-WIZ-015 (acessibilidade e contraste) avançou a partir de um achado da feature
+      0036: a camada de marca é hex fixo, e medindo o contraste o texto branco reprovava no
+      WCAG AA em seis dos dez fundos — o wizard tinha o mesmo defeito em cinco lugares. A
+      tinta passou a ser calculada por readableOn(). No caminho saiu também o último estilo
+      INLINE do Hub, que não passa na CSP com nonce (nonce autoriza elementos <style>, não
+      atributos style=): o badge do hub passou a usar a classe compartilhada. O wizard agora
+      consome componentsCss(). Falta de WIZ-015: as capturas nos dois temas e a conferência
+      de teclado, que exigem o host.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by: []
+
+# Questões já resolvidas.
+resolved_questions:
+  - question: Q1
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Stack do webview do wizard: esbuild + Preact (bundle leve só para o wizard;
+      painéis de leitura permanecem em vanilla). Formalizado em ADR-034.
+  - question: Q2
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Tema claro suportado desde já: as cores derivam de variáveis --vscode-* via a
+      camada de tokens --sdd-* (ADR-035); validar contraste no polimento.
+  - question: Q3
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Primeira entrega = o wizard completo (criar → conduzir → verificar). O
+      redesenho de Board e sidebar fica para uma iteração seguinte.
+  - question: Q4
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      O newFeature por QuickPick é mantido em paralelo como fallback até a etapa
+      Solicitar do wizard estar verificada; não é aposentado de imediato.
+  - question: Q5
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      Quando o Claude Code não é detectado no PATH, a ação de IA copia o prompt para
+      a área de transferência e mostra como instalar/configurar o caminho (reusa o
+      adapter da feature 0004).
+  - question: Q6
+    date: "2026-08-05"
+    resolved_by: clarify
+    summary: >-
+      "Gerenciar" abrange criar, retomar, avançar etapas e arquivar (estado terminal
+      do fluxo). Excluir e renomear ficam fora do escopo (identificadores são
+      permanentes; renomear quebraria a rastreabilidade).
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 15
+  pending: 4
+  in_progress: 5
+  done: 6

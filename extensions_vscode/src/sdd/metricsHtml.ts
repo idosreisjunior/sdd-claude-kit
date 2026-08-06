@@ -1,9 +1,21 @@
-// Renderização do relatório de métricas (feature 0009, RF-022, REQ-METR-002) — lógica pura,
-// sem a API do VS Code. Gera o HTML do webview a partir do MetricsSnapshot com CSP + nonce,
-// escapando todo texto (NFR-METR-001). WebviewPanel, como o dashboard/validação (ADR-013).
+// Renderização do relatório de métricas (feature 0009, RF-022, REQ-METR-002; redesenhado
+// pela 0036, TASK-COCK-012) — lógica pura, sem a API do VS Code.
+//
+// ORIGEM DO LAYOUT (REQ-COCK-007): derivado dos *stat tiles* e da barra de progresso do
+// mockup `13-feature-dashboard` — a única tela aprovada que apresenta números agregados.
+// Não há mockup próprio para métricas, e a derivação está declarada aqui.
+//
+// Painel SOMENTE-LEITURA: `enableScripts: false` preservado (ADR-038). Identidade pelo CSS
+// compartilhado, sem runtime.
+import { renderStaticPanelHtml } from './panelHtml'
 import type { MetricsSnapshot, MetricsDelta } from './metrics'
 
-/** Escapa texto para inserção segura em HTML. */
+/**
+ * Escapa texto para inserção segura em HTML.
+ *
+ * Mantido aqui e com este comportamento porque é contrato público deste módulo, coberto
+ * por TEST-METR-004. Difere do `escapeHtml` do `panelHtml` por também escapar `'`.
+ */
 export function esc(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -13,54 +25,70 @@ export function esc(value: string): string {
     .replace(/'/g, '&#39;')
 }
 
-/** Gera o documento HTML do relatório de métricas. `nonce` deve ser alfanumérico. */
-export function renderMetricsHtml(s: MetricsSnapshot, delta: MetricsDelta | undefined, nonce: string): string {
-  const csp = `default-src 'none'; style-src 'nonce-${nonce}';`
-  return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="${csp}">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Métricas — ${esc(s.changeId)}</title>
-<style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 1rem 1.25rem; line-height: 1.5; }
-  h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
-  .sub { opacity: .75; font-size: .9rem; margin-bottom: 1rem; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: .6rem; }
-  .card { border: 1px solid var(--vscode-panel-border); border-radius: .4rem; padding: .55rem .65rem; }
-  .card .n { font-size: 1.35rem; font-weight: 600; }
-  .card .l { opacity: .75; font-size: .8rem; }
-  .delta { font-size: .8rem; margin-left: .35rem; }
-  .up { color: var(--vscode-testing-iconPassed, #3fa63f); }
-  .down { color: var(--vscode-errorForeground, #c83c3c); }
-  .muted { opacity: .7; font-size: .85rem; margin-top: 1rem; }
-  .bar { height: .5rem; border-radius: .25rem; background: var(--vscode-panel-border); overflow: hidden; margin: .35rem 0; }
-  .bar > span { display: block; height: 100%; background: var(--vscode-progressBar-background); }
-</style>
-</head>
-<body>
-  <h1>Métricas — ${esc(s.changeId)}</h1>
-  <div class="sub">${esc(s.status)} · medido em ${esc(s.timestamp)}${delta ? ' · delta vs. medição anterior' : ' · primeira medição'}</div>
-  <div class="grid">
-    ${card('Tarefas', `${s.tasksDone}/${s.tasksTotal}`, delta?.tasksDone)}
-    ${card('Requisitos validados', `${s.requirementsValidated}/${s.requirements}`, delta?.requirementsValidated)}
-    ${card('% validado', `${s.validatedPct}%`, delta?.validatedPct, '%')}
-    ${card('Cenários', String(s.scenarios))}
-    ${card('Testes', String(s.tests), delta?.tests)}
-    ${card('Arquivos rastreados', String(s.files), delta?.files)}
-    ${s.durationDays !== undefined ? card('Duração (dias)', String(s.durationDays)) : ''}
-    ${s.git ? card('Diff (git)', `+${s.git.added}/-${s.git.removed}`) : ''}
-    ${s.contextTokens !== undefined ? card('Contexto (est.)', `~${formatTokens(s.contextTokens)}`) : ''}
-  </div>
-  <div class="bar"><span style="width:${Math.min(100, s.validatedPct)}%"></span></div>
-  <div class="muted">Métricas locais, sem telemetria (RNF-004). Contexto/tokens são estimativa (~4 caracteres/token).</div>
-</body>
-</html>`
+/**
+ * CSS do relatório. A largura da barra entra AQUI, no bloco com nonce, e não como
+ * `style="width:…"` no elemento: atributo inline não é autorizado por `style-src` com
+ * nonce (ver a nota em `uiCss.ts`).
+ */
+function metricsCss(validatedPct: number): string {
+  const width = Math.max(0, Math.min(100, validatedPct))
+  return `
+  .m-sub { color: var(--sdd-text-muted); font-size: .85rem; margin: -.5rem 0 1rem; }
+  .m-bar { height: .5rem; border-radius: .25rem; background: var(--sdd-border); overflow: hidden; margin: 1rem 0 .35rem; }
+  .m-bar > span { display: block; height: 100%; background: var(--sdd-progress); width:${width}%; }
+  .m-delta { font-size: .78rem; margin-left: .35rem; font-weight: 600; }
+  .m-delta.up { color: var(--sdd-ok); }
+  .m-delta.down { color: var(--sdd-danger); }
+  .m-note { color: var(--sdd-text-muted); font-size: .8rem; margin-top: 1rem; }
+  `
 }
 
-function card(label: string, value: string, delta?: number, suffix = ''): string {
-  return `<div class="card"><div class="n">${esc(value)}${deltaBadge(delta, suffix)}</div><div class="l">${esc(label)}</div></div>`
+/** Gera o documento HTML do relatório de métricas. `nonce` deve ser alfanumérico. */
+export function renderMetricsHtml(
+  s: MetricsSnapshot,
+  delta: MetricsDelta | undefined,
+  nonce: string,
+): string {
+  const tiles = [
+    tile('Tarefas', `${s.tasksDone}/${s.tasksTotal}`, delta?.tasksDone),
+    tile('Requisitos validados', `${s.requirementsValidated}/${s.requirements}`, delta?.requirementsValidated),
+    tile('% validado', `${s.validatedPct}%`, delta?.validatedPct, '%'),
+    tile('Cenários', String(s.scenarios)),
+    tile('Testes', String(s.tests), delta?.tests),
+    tile('Arquivos rastreados', String(s.files), delta?.files),
+    s.durationDays !== undefined ? tile('Duração (dias)', String(s.durationDays)) : '',
+    s.git ? tile('Diff (git)', `+${s.git.added}/-${s.git.removed}`) : '',
+    s.contextTokens !== undefined ? tile('Contexto (est.)', `~${formatTokens(s.contextTokens)}`) : '',
+  ]
+    .filter(Boolean)
+    .join('\n      ')
+
+  const body = `  <header class="ui-panel-header">
+    <div class="titles">
+      <h1>Métricas</h1>
+      <span class="subtitle">${esc(s.changeId)}</span>
+    </div>
+  </header>
+  <div class="m-sub">${esc(s.status)} · medido em ${esc(s.timestamp)}${
+    delta ? ' · delta vs. medição anterior' : ' · primeira medição'
+  }</div>
+  <div class="ui-tiles">
+      ${tiles}
+  </div>
+  <div class="m-bar"><span></span></div>
+  <div class="m-note">Métricas locais, sem telemetria (RNF-004). Contexto/tokens são estimativa (~4 caracteres/token).</div>`
+
+  return renderStaticPanelHtml({
+    title: `Métricas — ${s.changeId}`,
+    body,
+    nonce,
+    css: metricsCss(s.validatedPct),
+  })
+}
+
+/** Um número agregado, no `StatTile` compartilhado. */
+function tile(label: string, value: string, delta?: number, suffix = ''): string {
+  return `<div class="ui-tile"><span class="ui-tile-value">${esc(value)}${deltaBadge(delta, suffix)}</span><span class="ui-tile-label">${esc(label)}</span></div>`
 }
 
 function deltaBadge(delta: number | undefined, suffix: string): string {
@@ -69,7 +97,7 @@ function deltaBadge(delta: number | undefined, suffix: string): string {
   }
   const cls = delta > 0 ? 'up' : 'down'
   const sign = delta > 0 ? '+' : ''
-  return `<span class="delta ${cls}">${sign}${delta}${suffix}</span>`
+  return `<span class="m-delta ${cls}">${sign}${delta}${suffix}</span>`
 }
 
 function formatTokens(n: number): string {

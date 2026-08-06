@@ -1,0 +1,33 @@
+# Matriz de rastreabilidade — 0037-board-status-parsing
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+version: 1
+
+feature: "0037-board-status-parsing"
+
+requirements:
+
+  "SCN-BOARD-002":
+    title: "Kanban de tarefas: cada tarefa na coluna do seu status (regra violada)"
+    scenarios:
+      - "SCN-BSTAT-001"
+      - "SCN-BSTAT-002"
+      - "SCN-BSTAT-003"
+    tasks:
+      - "TASK-BSTAT-001"
+      - "TASK-BSTAT-002"
+    implementation:
+      - "src/sdd/boardModel.ts"
+    tests:
+      - "TEST-BSTAT-001"
+
+# Itens sem cobertura automatizada, registrados explicitamente.
+gaps:
+  - id: "Q1 — parsers de status divergentes"
+    reason: >-
+      boardModel, tasksPlan e scripts/progress.mjs leem a mesma linha com regex próprias.
+      Esta correção arruma um deles; tasksPlan continua capturando a linha inteira sem
+      normalizar. Unificar é refatoração e ficou fora do escopo do bug de propósito.
+    mitigation: >-
+      Registrado como questão em aberto no status.yaml; abrir mudança de refatoração se o
+      defeito reaparecer em outro consumidor.

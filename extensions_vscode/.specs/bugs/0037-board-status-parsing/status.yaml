@@ -1,0 +1,66 @@
+# Estado da mudança. Forma válida: plugins/sdd-kit/schemas/status.schema.json
+#
+# Datas SEMPRE entre aspas: sem elas o YAML produz um objeto data e a
+# validação por schema falha. Ver standards.md §9.
+version: 1
+
+id: "0037-board-status-parsing"
+# feature | bug | refactor | change
+type: "bug"
+title: "Kanban de tarefas conta **done** como pendente"
+
+status: IN_PROGRESS
+
+created: "2026-08-05"
+updated: "2026-08-05"
+
+# Histórico de transições. Só acrescenta; nunca reescreve.
+history:
+  - status: DRAFT
+    date: "2026-08-05"
+    reason: >-
+      Registrado a partir de achado de auditoria independente feita durante a feature 0036:
+      TASK_STATUS em boardModel.ts:345 exige a palavra logo após "**Status:**" e não casa
+      com a forma "**Status:** **done** — 2026-07-29", usada por 17 tarefas do projeto do
+      plugin. Elas caem no fallback e aparecem como pendentes. Contradiz SCN-BOARD-002, que
+      reserva esse fallback para tarefa SEM status reconhecível — estas têm status, ele só
+      não é lido. Causa raiz já confirmada no registro; reprodução determinística em uma
+      linha de node.
+
+  - status: IN_PROGRESS
+    date: "2026-08-05"
+    reason: >-
+      Correção feita na ordem que o template de bug exige: TASK-BSTAT-001 escreveu o teste
+      de regressão e ele falhou APENAS no cenário do defeito (SCN-BSTAT-001), com os outros
+      quatro verdes; TASK-BSTAT-002 separou o reconhecimento em linha-de-status e
+      palavra-dentro-do-valor, e o teste ficou inteiro verde. A ressalva do SCN-BOARD-002 é
+      preservada: valor sem palavra conhecida continua caindo em pendente. Efeito real
+      verificado no arquivo que motivou o registro — 0001-plugin-foundation passou de 0/17
+      para 17/17 concluídas. 252 testes ok, nenhum teste existente alterado, lint limpo. As
+      etapas clarify/design/tasks/approve não foram executadas pelos skills: bug de causa
+      raiz confirmada e correção de duas linhas, registrado assim no histórico em vez de
+      simular a passagem por elas.
+
+# null significa NÃO APROVADO. Preenchido por /sdd-kit:approve com
+# {date, by, revision}.
+approval: null
+
+# Bloqueios ativos. Lista vazia significa sem bloqueio.
+blocked_by:
+  - question: Q1
+    description: >-
+      Três módulos leem a linha **Status:** com regex próprias e divergentes (boardModel,
+      tasksPlan e o painel scripts/progress.mjs). tasksPlan captura a linha inteira sem
+      normalizar. Unificar num leitor único é refatoração — abrir mudança própria agora ou
+      deixar registrado?
+    severity: medium
+
+# Questões já resolvidas.
+resolved_questions: []
+
+# Contadores derivados de tasks.md. total = pending + in_progress + done.
+tasks:
+  total: 2
+  pending: 0
+  in_progress: 0
+  done: 2

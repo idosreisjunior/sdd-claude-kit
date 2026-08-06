@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDD Cockpit — Galeria de mockups</title>
+<style>
+  :root{--bg:#0E1116;--surface:#161B22;--border:#263041;--text:#E6EDF3;--muted:#9AA7B4;--dim:#6B7684;--violet:#7C6BF0;--coral:#E08256}
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0F131A,#0C0F14);color:var(--text);font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.5}
+  header{padding:40px 48px 24px;border-bottom:1px solid var(--border)}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7C6BF0,#9C8CFF);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff}
+  h1{margin:0;font-size:24px;font-weight:700}
+  header p{margin:6px 0 0;color:var(--muted);font-size:14px;max-width:820px}
+  .flow{margin-top:16px;color:var(--dim);font-size:12px;font-family:'JetBrains Mono',Consolas,monospace}
+  main{padding:32px 48px 80px;max-width:1440px;margin:0 auto}
+  .sec{margin:36px 0 14px;font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+  .grid{display:grid;grid-template-columns:1fr;gap:28px}
+  figure{margin:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  figure img{display:block;width:100%;height:auto;background:#0E1116}
+  figcaption{padding:14px 18px;border-top:1px solid var(--border)}
+  figcaption .t{font-weight:600;font-size:15px}
+  figcaption .d{color:var(--muted);font-size:13px;margin-top:3px}
+  .num{display:inline-block;min-width:26px;color:var(--violet);font-weight:700;font-variant-numeric:tabular-nums}
+  .two{display:grid;grid-template-columns:340px 1fr;gap:28px;align-items:start}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+  a{color:var(--violet)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">◧</div>
+    <div><h1>SDD Cockpit — Galeria de mockups</h1></div>
+  </div>
+  <p>Proposta de redesenho da GUI da extensão SDD Claude Kit, com um wizard guiado que conduz uma mudança do primeiro requisito à verificação. Mockups dark-first; na implementação as cores mapeiam para variáveis <code>--vscode-*</code>. Veja o plano em <a href="PLAN.md">PLAN.md</a> e o sistema em <a href="STYLE-CONTRACT.md">STYLE-CONTRACT.md</a>.</p>
+  <div class="flow">Solicitar → Especificar → Clarificar → Desenhar → Tarefas → Aprovar → Implementar → Verificar → Arquivar</div>
+</header>
+<main>
+
+  <div class="sec">Fundação</div>
+  <div class="grid">
+    <figure><img src="mockups/00-design-system.svg" alt="Design system"><figcaption><span class="t"><span class="num">00</span> Design system</span><div class="d">Paleta, tipografia, componentes, stepper e ícones — a base reutilizada por todas as telas.</div></figcaption></figure>
+  </div>
+
+  <div class="sec">Cockpit e visão macro</div>
+  <div class="two">
+    <figure><img src="mockups/01-sidebar-cockpit.svg" alt="Sidebar cockpit"><figcaption><span class="t"><span class="num">01</span> Sidebar cockpit</span><div class="d">Mudança ativa com mini-stepper, saúde, contexto e atividade recente.</div></figcaption></figure>
+    <figure><img src="mockups/03-board-kanban.svg" alt="Board Kanban"><figcaption><span class="t"><span class="num">03</span> Board (Kanban)</span><div class="d">Quadro do ciclo de vida com cards ricos: anel de progresso e chips de status.</div></figcaption></figure>
+  </div>
+  <div class="grid" style="margin-top:28px">
+    <figure><img src="mockups/02-welcome-onboarding.svg" alt="Boas-vindas"><figcaption><span class="t"><span class="num">02</span> Boas-vindas / onboarding</span><div class="d">Estado inicial quando o workspace ainda não tem <code>.specs</code>.</div></figcaption></figure>
+    <figure><img src="mockups/13-feature-dashboard.svg" alt="Dashboard"><figcaption><span class="t"><span class="num">13</span> Dashboard da mudança</span><div class="d">Visão de detalhe: objetivo, progresso, contagens, ciclo de vida, histórico e ações.</div></figcaption></figure>
+  </div>
+
+  <div class="sec">Wizard — as 8 etapas</div>
+  <div class="grid">
+    <figure><img src="mockups/04-wizard-home.svg" alt="Hub do wizard"><figcaption><span class="t"><span class="num">04</span> Hub do wizard</span><div class="d">Jornada da mudança: 8 cards de etapa com estado e "continuar de onde parou".</div></figcaption></figure>
+    <figure><img src="mockups/05-wizard-1-new.svg" alt="Etapa 1 Solicitar"><figcaption><span class="t"><span class="num">05</span> Etapa 1 · Solicitar</span><div class="d">Tipo da mudança + solicitação em linguagem natural.</div></figcaption></figure>
+    <figure><img src="mockups/06-wizard-2-spec.svg" alt="Etapa 2 Especificar"><figcaption><span class="t"><span class="num">06</span> Etapa 2 · Especificar</span><div class="d">Requisitos REQ/NFR, cenários em Gherkin e critérios de aceite. (Shell de referência.)</div></figcaption></figure>
+    <figure><img src="mockups/07-wizard-3-clarify.svg" alt="Etapa 3 Clarificar"><figcaption><span class="t"><span class="num">07</span> Etapa 3 · Clarificar</span><div class="d">Resolver dúvidas, registrar hipóteses; portão bloqueia o avanço com dúvidas críticas.</div></figcaption></figure>
+    <figure><img src="mockups/08-wizard-4-design.svg" alt="Etapa 4 Desenhar"><figcaption><span class="t"><span class="num">08</span> Etapa 4 · Desenhar</span><div class="d">Design técnico e ADRs.</div></figcaption></figure>
+    <figure><img src="mockups/09-wizard-5-tasks.svg" alt="Etapa 5 Tarefas"><figcaption><span class="t"><span class="num">09</span> Etapa 5 · Tarefas</span><div class="d">Decomposição por dependência, ligada a requisitos, com rastreabilidade.</div></figcaption></figure>
+    <figure><img src="mockups/10-wizard-6-approve.svg" alt="Etapa 6 Aprovar"><figcaption><span class="t"><span class="num">10</span> Etapa 6 · Aprovar</span><div class="d">Portão de qualidade antes de implementar.</div></figcaption></figure>
+    <figure><img src="mockups/11-wizard-7-implement.svg" alt="Etapa 7 Implementar"><figcaption><span class="t"><span class="num">11</span> Etapa 7 · Implementar</span><div class="d">Tarefa a tarefa, com execução no Claude Code e guarda de escopo (Git).</div></figcaption></figure>
+    <figure><img src="mockups/12-wizard-8-verify.svg" alt="Etapa 8 Verificar"><figcaption><span class="t"><span class="num">12</span> Etapa 8 · Verificar</span><div class="d">Critérios de aceite com evidência e comandos de validação (três estados).</div></figcaption></figure>
+  </div>
+
+</main>
+</body>
+</html>

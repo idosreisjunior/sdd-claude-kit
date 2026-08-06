@@ -2,7 +2,7 @@
   "name": "sdd-claude-kit-vscode",
   "displayName": "SDD Claude Kit",
   "description": "Cockpit visual de Spec-Driven Development para Claude Code dentro do VS Code.",
-  "version": "0.2.12",
+  "version": "0.3.0-preview.5",
   "publisher": "idosreisjunior",
   "license": "Apache-2.0",
   "engines": {
@@ -56,7 +56,8 @@
         },
         {
           "id": "sddFeatures",
-          "name": "Features"
+          "name": "Features",
+          "type": "webview"
         }
       ]
     },
@@ -70,18 +71,6 @@
           }
         ],
         "priority": "default"
-      }
-    ],
-    "viewsWelcome": [
-      {
-        "view": "sddFeatures",
-        "contents": "Este workspace ainda não tem a estrutura SDD (.specs).\n[Inicializar SDD](command:sddClaudeKit.initProject)",
-        "when": "!sddClaudeKit.initialized"
-      },
-      {
-        "view": "sddFeatures",
-        "contents": "Nenhuma mudança especificada ainda.\n[Nova feature](command:sddClaudeKit.newFeature)\nApós criar, detalhe a spec com /sdd-kit:spec no Claude Code.",
-        "when": "sddClaudeKit.initialized"
       }
     ],
     "commands": [
@@ -101,6 +90,12 @@
         "title": "SDD: Painel (Kanban)",
         "category": "SDD Claude Kit",
         "icon": "$(project)"
+      },
+      {
+        "command": "sddClaudeKit.openWizard",
+        "title": "SDD: Assistente (wizard)",
+        "category": "SDD Claude Kit",
+        "icon": "$(rocket)"
       },
       {
         "command": "sddClaudeKit.newFeature",
@@ -446,7 +441,8 @@
     "js-yaml": "^4.1.0"
   },
   "scripts": {
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && node esbuild.mjs",
+    "build:webview": "node esbuild.mjs",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src",
     "test": "node --test ./out/test",
@@ -466,8 +462,10 @@
     "@typescript-eslint/parser": "^7.0.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.28.1",
     "eslint": "^8.57.0",
     "mocha": "^11.8.0",
+    "preact": "^10.29.8",
     "typescript": "^5.4.0"
   }
 }

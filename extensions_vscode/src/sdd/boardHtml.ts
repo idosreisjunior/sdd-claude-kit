@@ -4,7 +4,15 @@
 // A CSP mantém default-src 'none' e restringe style/script ao nonce. Todo texto
 // de artefato é inserido via textContent no cliente (nunca innerHTML), então não
 // há injeção de HTML.
+//
+// Redesenhado pela feature 0036 (TASK-COCK-006). Por ADR-039 este painel MANTÉM o cliente
+// inline que já tem — os testes de `boardHtml.test.ts` afirmam o mecanismo de entrega, e
+// migrá-lo para Preact exigiria reescrevê-los, o que a regra do design §11 chama de
+// regressão. A identidade visual entra pelas classes compartilhadas (`componentsCss`), as
+// mesmas dos demais painéis: cartão, badge de status e estado vazio ficam idênticos sem
+// que uma linha de comportamento seja tocada.
 import type { ChangesBoard, FeedItem } from './boardModel'
+import { componentsCss } from './uiCss'
 
 /** Serializa dados para dentro do <script>, neutralizando `<` (evita fechar a tag). */
 function inlineJson(value: unknown): string {
@@ -22,45 +30,48 @@ export function renderBoardHtml(board: ChangesBoard, nonce: string, feed: FeedIt
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel SDD</title>
 <style nonce="${nonce}">
+${componentsCss()}
   * { box-sizing: border-box; }
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); margin: 0; padding: .75rem 1rem; }
-  .overview { display: flex; align-items: baseline; gap: .4rem 1.2rem; flex-wrap: wrap; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--vscode-panel-border); }
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); margin: 0; padding: .75rem 1rem; }
+  .overview { display: flex; align-items: baseline; gap: .4rem 1.2rem; flex-wrap: wrap; margin-bottom: .75rem; padding-bottom: .6rem; border-bottom: 1px solid var(--sdd-border); }
   .ovbig { font-size: 1.5rem; font-weight: 700; }
   .ovlbl { opacity: .7; font-size: .85rem; margin-right: .6rem; }
   .topbar { display: flex; align-items: center; gap: .6rem; margin-bottom: .75rem; }
   .crumb { font-weight: 600; }
   .board { display: flex; gap: .6rem; align-items: flex-start; overflow-x: auto; padding-bottom: .5rem; }
-  .col { flex: 0 0 15rem; background: var(--vscode-editorWidget-background, rgba(127,127,127,.06)); border: 1px solid var(--vscode-panel-border); border-radius: .5rem; padding: .5rem; max-height: calc(100vh - 8rem); overflow-y: auto; }
-  .col.dragover { border-color: var(--vscode-focusBorder); background: var(--vscode-list-dropBackground, rgba(127,127,127,.16)); }
+  .col { flex: 0 0 15rem; background: var(--sdd-surface); border: 1px solid var(--sdd-border); border-radius: .5rem; padding: .5rem; max-height: calc(100vh - 8rem); overflow-y: auto; }
+  .col.dragover { border-color: var(--sdd-focus); background: var(--sdd-drop); }
   .col.collapsed { flex: 0 0 auto; max-height: none; }
   .card[draggable="true"] { cursor: grab; }
   .colh { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; position: sticky; top: 0; }
   .coltitle { flex: 1 1 auto; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; opacity: .85; font-weight: 600; }
-  .colmove { font: inherit; font-size: .8rem; line-height: 1; cursor: pointer; background: transparent; border: none; color: var(--vscode-foreground); opacity: .7; padding: 0 .15rem; }
+  .colmove { font: inherit; font-size: .8rem; line-height: 1; cursor: pointer; background: transparent; border: none; color: var(--sdd-text); opacity: .7; padding: 0 .15rem; }
   .colmove:hover:not(:disabled) { opacity: 1; }
   .colmove:disabled { opacity: .25; cursor: default; }
-  .colcount { font-size: .75rem; background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-radius: .6rem; padding: .05rem .45rem; }
-  .card { background: var(--vscode-editor-background); border: 1px solid var(--vscode-panel-border); border-radius: .45rem; padding: .5rem .55rem; margin-bottom: .5rem; }
+  .colcount { font-size: .75rem; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); border-radius: .6rem; padding: .05rem .45rem; }
+  /* .card: aparência vem de .ui-card (uiCss). Aqui só o que é do Board. */
+  .ui-card { margin-bottom: .5rem; padding: .5rem .55rem; }
   .ctitle { font-weight: 600; font-size: .9rem; cursor: pointer; }
   .ctitle:hover { text-decoration: underline; }
   .meta { display: flex; flex-wrap: wrap; gap: .3rem; margin: .35rem 0; }
-  .chip { font-size: .72rem; opacity: .85; background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-radius: .5rem; padding: .05rem .4rem; }
-  .bar { height: .4rem; border-radius: .25rem; background: var(--vscode-panel-border); overflow: hidden; margin: .3rem 0 .15rem; }
-  .bar > span { display: block; height: 100%; background: var(--vscode-progressBar-background); }
+  .chip { font-size: .72rem; opacity: .85; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); border-radius: .5rem; padding: .05rem .4rem; }
+  .meta .ui-badge { font-size: .66rem; }
+  .bar { height: .4rem; border-radius: .25rem; background: var(--sdd-border); overflow: hidden; margin: .3rem 0 .15rem; }
+  .bar > span { display: block; height: 100%; background: var(--sdd-progress); }
   .barlbl { font-size: .72rem; opacity: .75; }
   .muted { opacity: .65; }
-  .tbtn { margin-top: .35rem; font: inherit; font-size: .78rem; cursor: pointer; color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)); background: var(--vscode-button-secondaryBackground, transparent); border: 1px solid var(--vscode-panel-border); border-radius: .35rem; padding: .15rem .5rem; }
-  .tbtn:hover { background: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground)); }
+  .tbtn { margin-top: .35rem; font: inherit; font-size: .78rem; cursor: pointer; color: var(--sdd-button-fg); background: var(--sdd-button-bg); border: 1px solid var(--sdd-border); border-radius: .35rem; padding: .15rem .5rem; }
+  .tbtn:hover { background: var(--sdd-button-hover); }
   .toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .65rem; }
-  .search { flex: 1 1 14rem; min-width: 9rem; font: inherit; padding: .3rem .5rem; border-radius: .4rem; border: 1px solid var(--vscode-input-border, var(--vscode-panel-border)); background: var(--vscode-input-background); color: var(--vscode-input-foreground); }
-  .search::placeholder { color: var(--vscode-input-placeholderForeground); }
+  .search { flex: 1 1 14rem; min-width: 9rem; font: inherit; padding: .3rem .5rem; border-radius: .4rem; border: 1px solid var(--sdd-input-border); background: var(--sdd-input-bg); color: var(--sdd-input-fg); }
+  .search::placeholder { color: var(--sdd-input-placeholder); }
   .chips { display: flex; flex-wrap: wrap; gap: .3rem; }
-  .fchip { font: inherit; font-size: .78rem; cursor: pointer; padding: .18rem .55rem; border-radius: .6rem; border: 1px solid var(--vscode-panel-border); background: transparent; color: var(--vscode-foreground); }
-  .fchip.on { background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); border-color: transparent; }
-  .sortsel { font: inherit; font-size: .8rem; padding: .2rem .4rem; border-radius: .35rem; border: 1px solid var(--vscode-panel-border); background: var(--vscode-dropdown-background, var(--vscode-input-background)); color: var(--vscode-dropdown-foreground, var(--vscode-foreground)); }
+  .fchip { font: inherit; font-size: .78rem; cursor: pointer; padding: .18rem .55rem; border-radius: .6rem; border: 1px solid var(--sdd-border); background: transparent; color: var(--sdd-text); }
+  .fchip.on { background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); border-color: transparent; }
+  .sortsel { font: inherit; font-size: .8rem; padding: .2rem .4rem; border-radius: .35rem; border: 1px solid var(--sdd-border); background: var(--sdd-dropdown-bg); color: var(--sdd-dropdown-fg); }
   .feedbtn { margin-left: auto; }
   .feed { display: flex; flex-direction: column; gap: .4rem; max-width: 48rem; }
-  .feeditem { border: 1px solid var(--vscode-panel-border); border-radius: .45rem; padding: .45rem .6rem; }
+  .feeditem { padding: .45rem .6rem; }
   .feedhead { display: flex; align-items: center; gap: .5rem; }
   .feedid { font-weight: 600; cursor: pointer; }
   .feedid:hover { text-decoration: underline; }
@@ -80,6 +91,16 @@ const saved = vscode.getState && vscode.getState();
 if (saved && Array.isArray(saved.columnOrder)) { state.columnOrder = saved.columnOrder; }
 if (saved && Array.isArray(saved.collapsed)) { state.collapsed = saved.collapsed; }
 function persist() { if (vscode.setState) { vscode.setState({ columnOrder: state.columnOrder, collapsed: state.collapsed }); } }
+
+// Badge do status do ciclo de vida, com a MESMA cor dos demais painéis (SCN-COCK-003).
+// A classe é derivada aqui em vez de vir pronta do host porque este cliente é inline e não
+// importa módulo; o mapeamento espelha statusToken() em themeTokens.ts. Status desconhecido
+// não casa com nenhuma .s-* e cai no fundo padrão de .ui-badge — o mesmo fallback, em CSS.
+function statusBadge(status) {
+  const el = h('span', 'ui-badge', status || '');
+  if (status) { el.classList.add('s-' + String(status).trim().toLowerCase().replace(/_/g, '-')); }
+  return el;
+}
 
 // Espelha toggleLabel (boardModel.ts) — colapsa/expande uma coluna (ADR-032).
 function toggleCollapse(label) {
@@ -135,7 +156,7 @@ function progressBar(p) {
 }
 
 function changeCard(card) {
-  const el = h('div', 'card');
+  const el = h('div', 'ui-card card');
   el.draggable = true;
   el.addEventListener('dragstart', function (ev) {
     ev.dataTransfer.setData('text/plain', card.id);
@@ -148,7 +169,7 @@ function changeCard(card) {
   const meta = h('div', 'meta');
   meta.appendChild(h('span', 'chip', card.id));
   meta.appendChild(h('span', 'chip', card.type));
-  meta.appendChild(h('span', 'chip', card.status));
+  meta.appendChild(statusBadge(card.status));
   el.appendChild(meta);
   el.appendChild(progressBar(card.progress));
   const tbtn = h('button', 'tbtn', 'Tarefas ▸');
@@ -328,9 +349,9 @@ function renderFeedChips(chipsEl) {
 }
 
 function feeditemRow(it) {
-  const row = h('div', 'feeditem');
+  const row = h('div', 'ui-card feeditem');
   const head = h('div', 'feedhead');
-  head.appendChild(h('span', 'badge', it.status));
+  head.appendChild(statusBadge(it.status));
   const id = h('span', 'feedid', it.id);
   id.title = 'Abrir dashboard';
   id.addEventListener('click', function () { vscode.postMessage({ type: 'open', id: it.id }); });
@@ -463,7 +484,7 @@ function renderBoardArea() {
 }
 
 function taskCard(t) {
-  const el = h('div', 'card');
+  const el = h('div', 'ui-card card');
   el.appendChild(h('div', 'ctitle', t.title || t.id));
   el.appendChild(h('span', 'chip', t.id));
   return el;

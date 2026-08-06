@@ -1,6 +1,7 @@
 // Renderização do dashboard (RF-005, TASK-UI-003) — lógica pura, sem a API do VS
 // Code. Gera o HTML do webview a partir do DashboardModel com CSP + nonce e
 // escapando todo texto vindo dos artefatos (NFR-UI-002). Sem scripts, sem rede.
+import { componentsCss } from './uiCss'
 import type { Count, DashboardModel } from './dashboardModel'
 import type { ChangeEntry } from './specsIndex'
 
@@ -35,18 +36,17 @@ export function renderDashboardHtml(
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(model.title)}</title>
 <style nonce="${nonce}">
-  body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 1rem 1.25rem; line-height: 1.5; }
+${componentsCss()}
+  body { font-family: var(--vscode-font-family); color: var(--sdd-text); padding: 1rem 1.25rem; line-height: 1.5; }
   h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
   h2 { font-size: .95rem; text-transform: uppercase; letter-spacing: .04em; opacity: .8; margin: 1.4rem 0 .5rem; }
   .sub { opacity: .75; font-size: .9rem; margin-bottom: .5rem; }
-  .badge { display: inline-block; padding: .1rem .5rem; border-radius: .5rem; background: var(--vscode-badge-background); color: var(--vscode-badge-foreground); font-size: .8rem; }
+  .badge { display: inline-block; padding: .1rem .5rem; border-radius: .5rem; background: var(--sdd-badge-bg); color: var(--sdd-badge-fg); font-size: .8rem; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: .5rem; }
-  .card { border: 1px solid var(--vscode-panel-border); border-radius: .4rem; padding: .5rem .6rem; }
-  .card .n { font-size: 1.4rem; font-weight: 600; }
-  .card .l { opacity: .75; font-size: .8rem; }
+  /* contadores usam .ui-tile (uiCss) — o mesmo do mockup 13 e do painel de métricas */
   .na { opacity: .55; font-style: italic; }
-  .bar { height: .5rem; border-radius: .25rem; background: var(--vscode-panel-border); overflow: hidden; margin: .35rem 0; }
-  .bar > span { display: block; height: 100%; background: var(--vscode-progressBar-background); }
+  .bar { height: .5rem; border-radius: .25rem; background: var(--sdd-border); overflow: hidden; margin: .35rem 0; }
+  .bar > span { display: block; height: 100%; background: var(--sdd-progress); }
   ul { margin: .25rem 0; padding-left: 1.2rem; }
   li { margin: .15rem 0; }
   .sev { font-size: .75rem; opacity: .8; }
@@ -56,8 +56,8 @@ export function renderDashboardHtml(
   .actions { display: flex; flex-direction: column; gap: .55rem; margin: .5rem 0 .25rem; }
   .actgroup { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
   .actlabel { width: 100%; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; opacity: .6; }
-  .actbtn { display: inline-block; padding: .25rem .6rem; border: 1px solid var(--vscode-panel-border); border-radius: .4rem; background: var(--vscode-button-secondaryBackground, transparent); color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)); text-decoration: none; font-size: .82rem; }
-  .actbtn:hover { background: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground)); }
+  .actbtn { display: inline-block; padding: .25rem .6rem; border: 1px solid var(--sdd-border); border-radius: .4rem; background: var(--sdd-button-bg); color: var(--sdd-button-fg); text-decoration: none; font-size: .82rem; }
+  .actbtn:hover { background: var(--sdd-button-hover); }
 </style>
 </head>
 <body>
@@ -105,7 +105,9 @@ function progressBlock(model: DashboardModel): string {
 
 function card(label: string, count: Count): string {
   const n = count.available ? String(count.value) : `<span class="na">${esc(count.note)}</span>`
-  return `<div class="card"><div class="n">${n}</div><div class="l">${esc(label)}</div></div>`
+  // `div` e não `span`: TEST-UI-002 afirma `>N</div>`, e adaptar o teste ao código novo
+  // seria a regressão que o design §11 proíbe. As classes compartilhadas funcionam igual.
+  return `<div class="ui-tile"><div class="ui-tile-value">${n}</div><div class="ui-tile-label">${esc(label)}</div></div>`
 }
 
 function blockersBlock(model: DashboardModel): string {

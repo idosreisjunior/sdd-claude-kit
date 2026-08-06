@@ -342,7 +342,18 @@ export function buildActivityFeed(sources: readonly FeedSource[], limit = 50): F
 }
 
 const TASK_HEADER = /^##\s+(TASK-[A-Z0-9]+-\d+)\s*(?:—|-)?\s*(.*)$/
-const TASK_STATUS = /^\*\*Status:\*\*\s*(pending|in_progress|done)\b/i
+// Linha de status de uma tarefa. Duas partes de propósito (bug 0037): primeiro reconhece
+// a LINHA, depois procura a palavra dentro do valor.
+//
+// A versão anterior exigia a palavra colada em `**Status:**` e não casava com
+// `**Status:** **done** — 2026-07-29`, forma usada por 17 tarefas deste repositório — que
+// caíam no fallback e apareciam como pendentes, contradizendo SCN-BOARD-002. O valor
+// depois dos dois-pontos tem forma livre na prática: negrito, data, nota entre parênteses.
+//
+// `KNOWN_TASK_STATUS` sem `g` e usado com `exec` devolve a PRIMEIRA ocorrência, então
+// `pending (o done vem depois)` continua sendo pendente.
+const TASK_STATUS_LINE = /^\*\*Status:\*\*\s*(.*)$/i
+const KNOWN_TASK_STATUS = /\b(pending|in_progress|done)\b/i
 
 /**
  * Extrai o kanban de tarefas de um `tasks.md`: cada bloco `## TASK-…` vira um
@@ -377,9 +388,15 @@ export function parseTaskBoard(tasksMd: string): TaskBoard {
       continue
     }
     if (current && state === undefined) {
-      const st = TASK_STATUS.exec(line.trim())
+      const st = TASK_STATUS_LINE.exec(line.trim())
       if (st) {
-        state = st[1].toLowerCase() as TaskState
+        // Linha de status encontrada. Se o valor não contiver palavra conhecida, `state`
+        // permanece indefinido e o bloco cai em "pendente" — a ressalva do SCN-BOARD-002,
+        // que vale para status IRRECONHECÍVEL, não para status escrito de outra forma.
+        const known = KNOWN_TASK_STATUS.exec(st[1])
+        if (known) {
+          state = known[1].toLowerCase() as TaskState
+        }
       }
     }
   }

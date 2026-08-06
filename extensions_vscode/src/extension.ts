@@ -19,12 +19,13 @@ import {
 } from './sdd/featureCreator'
 import { FeatureDashboard } from './sdd/featureDashboard'
 import { BoardPanel } from './sdd/boardPanel'
+import { WizardPanel } from './sdd/wizardPanel'
 import { SpecEditorProvider } from './sdd/specEditor'
-import { detectClaudeCode, type ClaudeCodeEnv } from './sdd/claudeCode'
-import { ACTIONS, buildLaunchCommand, composePrompt, type SddAction } from './sdd/claudePrompt'
-import { canGenerateDesign, extractScope } from './sdd/designGenerator'
+import { detectClaudeCode } from './sdd/claudeCode'
+import { ACTIONS } from './sdd/claudePrompt'
+import { hostClaudeEnv, launchClaudeAction, runHybridStep } from './sdd/hybridStep'
+import { canGenerateDesign } from './sdd/designGenerator'
 import { hasRequirements } from './sdd/clarifyGenerator'
-import { buildSkeleton } from './sdd/skeleton'
 import { analyzeTasks } from './sdd/taskAnalysis'
 import { analyzeSql, type SqlFindingKind } from './sdd/sqlGuard'
 import { aggregateHistory } from './sdd/historyModel'
@@ -81,7 +82,8 @@ import {
   type MetricsSnapshot,
 } from './sdd/metrics'
 import { renderMetricsHtml } from './sdd/metricsHtml'
-import { FeaturesTreeProvider, featureChangeOf } from './views/featuresTreeProvider'
+import { featureChangeOf } from './views/featuresTreeProvider'
+import { SidebarViewProvider } from './views/sidebarViewProvider'
 
 /**
  * Ponto de entrada da extensão (feature 0001-project-foundation).
@@ -103,13 +105,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     getContext: () => lastUsage,
     getDoctor: () => lastDoctorHealth,
   })
-  const featuresProvider = new FeaturesTreeProvider()
+  // A sidebar deixou de ser TreeView (ADR-036): a FeaturesTreeProvider some do registro,
+  // mas featureChangeOf continua sendo o contrato dos comandos por item.
+  const featuresProvider = new SidebarViewProvider(context.extensionUri)
   const dashboard = new FeatureDashboard()
   const boardPanel = new BoardPanel()
+  const wizardPanel = new WizardPanel(context.extensionUri)
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(ProjectViewProvider.viewType, projectProvider),
-    vscode.window.registerTreeDataProvider('sddFeatures', featuresProvider),
+    vscode.window.registerWebviewViewProvider(SidebarViewProvider.viewType, featuresProvider),
     vscode.window.registerCustomEditorProvider(
       SpecEditorProvider.viewType,
       new SpecEditorProvider(),
@@ -146,6 +151,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await projectProvider.refresh()
     featuresProvider.refresh()
     void boardPanel.refresh() // atualização ao vivo do Painel SDD (0025), se aberto
+    void wizardPanel.refresh() // reidrata o Assistente SDD (0035), se aberto
     updateContextIndicator(contextIndicator, detection.hasSpecs, lastUsage)
   }
 
@@ -168,6 +174,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.commands.registerCommand('sddClaudeKit.refresh', refresh),
     vscode.commands.registerCommand('sddClaudeKit.openBoard', () => boardPanel.open()),
+    vscode.commands.registerCommand('sddClaudeKit.openWizard', (node?: unknown) => wizardPanel.open(node)),
     vscode.commands.registerCommand('sddClaudeKit.initProject', () => initProject(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.newFeature', () => newFeature(context, refresh)),
     vscode.commands.registerCommand('sddClaudeKit.openDashboard', (node?: unknown) => openDashboard(dashboard, node)),
@@ -559,8 +566,6 @@ async function editSpec(node: unknown): Promise<void> {
   await vscode.commands.executeCommand('vscode.openWith', uri, SpecEditorProvider.viewType)
 }
 
-const CLAUDE_TERMINAL_NAME = 'SDD · Claude Code'
-
 /**
  * Abre a mudança no Claude Code (RF-011, feature 0004). Do nó da feature no painel:
  * pergunta a ação do fluxo SDD (QuickPick), compõe o prompt (`/sdd-kit:<ação> <id>`),
@@ -589,154 +594,6 @@ async function openInClaudeCode(node: unknown): Promise<void> {
     return
   }
   await launchClaudeAction(root, change.id, pick.id)
-}
-
-/**
- * Compõe o prompt de uma ação SDD, copia-o (RF-011) e deixa-o PRONTO num terminal
- * com a CLI detectada — sem enviar (ADR-007, NFR-CC-001). CLI ausente: prompt
- * copiado + orientação. Reusado por "Abrir no Claude Code" (0004) e por "Gerar
- * design" para preencher o conteúdo (0014, ADR-014).
- */
-async function launchClaudeAction(
-  root: vscode.Uri,
-  changeId: string,
-  action: SddAction,
-): Promise<void> {
-  const prompt = composePrompt(action, changeId)
-
-  // Copia sempre (RF-011 "copiar prompt"; funciona mesmo sem a CLI e sem a UI).
-  await vscode.env.clipboard.writeText(prompt)
-
-  const detection = await detectClaudeCode(hostClaudeEnv())
-  if (!detection.available || !detection.path) {
-    vscode.window.showWarningMessage(
-      `SDD: Claude Code não detectado. Prompt copiado (${prompt}). ` +
-        'Configure "sddClaudeKit.claudeCode.path" ou instale a CLI, cole o prompt e envie você mesmo.',
-    )
-    return
-  }
-
-  // Abre/reutiliza o terminal e deixa o prompt PRONTO — não envia a ação (ADR-007,
-  // NFR-CC-001). Terminal novo inicia a CLI; reutilizado assume a CLI já em uso.
-  const existing = vscode.window.terminals.find(
-    (t) => t.name === CLAUDE_TERMINAL_NAME && t.exitStatus === undefined,
-  )
-  const terminal = existing ?? vscode.window.createTerminal({ name: CLAUDE_TERMINAL_NAME, cwd: root })
-  terminal.show()
-  if (!existing) {
-    terminal.sendText(buildLaunchCommand(detection.path), true)
-  }
-  terminal.sendText(prompt, false) // sem newline: o usuário revisa e pressiona Enter para enviar
-
-  vscode.window.showInformationMessage(
-    `SDD: prompt copiado e pronto no Claude Code (${prompt}). Revise e pressione Enter para enviar.`,
-  )
-}
-
-/**
- * Contexto passado à pré-condição de um passo híbrido.
- */
-interface HybridPreconditionCtx {
-  root: vscode.Uri
-  changeDir: string[]
-  changeId: string
-  specMd: string | undefined
-}
-
-/**
- * Descreve um "passo híbrido" do fluxo SDD (research 0017, design 0014, clarify
- * 0015): scaffolda um arquivo-esqueleto de um template sincronizado e oferece
- * delegar a análise ao Claude Code. As três ações diferem só nestes dados.
- */
-interface HybridStep {
-  /** Basename do template e do arquivo de saída (ex.: `design.md`). */
-  fileName: string
-  /** Ação do 0004 delegada ao Claude Code. */
-  action: SddAction
-  /** Mensagem quando não há pasta aberta. */
-  noRootMessage: string
-  /** Rótulo da ação no aviso "use a ação X de uma feature". */
-  menuLabel: string
-  /** Rótulo do botão que delega ao Claude Code. */
-  offerLabel: string
-  /** Mensagem de sucesso; recebe `change.path` e o esqueleto gerado. */
-  createdMessage: (changePath: string, skeleton: string) => string
-  /** Pré-condição opcional; devolve a mensagem de bloqueio, ou `undefined` se ok. */
-  precondition?: (ctx: HybridPreconditionCtx) => Promise<string | undefined>
-}
-
-/**
- * Executa um passo híbrido (RF-007/008/009): valida o nó, a pré-condição e o
- * template, monta o esqueleto (`buildSkeleton`), grava sem sobrescrever sem
- * confirmação, e oferece delegar ao Claude Code. Somente esta função conhece o
- * fluxo; as três ações são só descritores.
- */
-async function runHybridStep(
-  context: vscode.ExtensionContext,
-  node: unknown,
-  step: HybridStep,
-): Promise<void> {
-  const root = vscode.workspace.workspaceFolders?.[0]?.uri
-  if (!root) {
-    vscode.window.showWarningMessage(step.noRootMessage)
-    return
-  }
-  const change = featureChangeOf(node)
-  if (!change || !change.path) {
-    vscode.window.showInformationMessage(
-      `SDD: use a ação "${step.menuLabel}" de uma feature no painel Features.`,
-    )
-    return
-  }
-  const changeDir = ['.specs', ...change.path.split('/')]
-  const specMd = await readText(vscode.Uri.joinPath(root, ...changeDir, 'spec.md'))
-
-  if (step.precondition) {
-    const blocked = await step.precondition({ root, changeDir, changeId: change.id, specMd })
-    if (blocked !== undefined) {
-      vscode.window.showInformationMessage(blocked)
-      return
-    }
-  }
-
-  const template = await readText(
-    vscode.Uri.joinPath(context.extensionUri, 'templates', 'pt-BR', 'feature', step.fileName),
-  )
-  if (template === undefined) {
-    vscode.window.showErrorMessage(
-      `SDD: template feature/${step.fileName} não encontrado no pacote da extensão.`,
-    )
-    return
-  }
-  const skeleton = buildSkeleton(template, {
-    id: change.id,
-    title: change.title,
-    scope: extractScope(specMd ?? '') ?? '',
-    date: today(),
-  })
-
-  const outUri = vscode.Uri.joinPath(root, ...changeDir, step.fileName)
-  if (await exists(outUri)) {
-    // Não sobrescreve sem confirmação: recusada, o arquivo fica intacto.
-    const overwrite = await vscode.window.showWarningMessage(
-      `SDD: ${change.id} já tem ${step.fileName}. Sobrescrever com um novo esqueleto? O conteúdo atual será perdido.`,
-      { modal: true },
-      'Sobrescrever',
-    )
-    if (overwrite !== 'Sobrescrever') {
-      return
-    }
-  }
-  await vscode.workspace.fs.writeFile(outUri, Buffer.from(skeleton, 'utf8'))
-  await vscode.commands.executeCommand('vscode.open', outUri)
-
-  const choice = await vscode.window.showInformationMessage(
-    step.createdMessage(change.path, skeleton),
-    step.offerLabel,
-  )
-  if (choice === step.offerLabel) {
-    await launchClaudeAction(root, change.id, step.action)
-  }
 }
 
 /**
@@ -1965,22 +1822,3 @@ async function collectChangeDirs(root: vscode.Uri): Promise<string[]> {
 }
 
 /** Ambiente para a detecção do Claude Code a partir do host (ADR-002, reuso de 0001). */
-function hostClaudeEnv(): ClaudeCodeEnv {
-  const configured = vscode.workspace
-    .getConfiguration('sddClaudeKit')
-    .get<string>('claudeCode.path', '')
-  return {
-    platform: process.platform,
-    pathVar: process.env.PATH,
-    pathExt: process.env.PATHEXT,
-    configuredPath: configured,
-    isExecutable: async (absPath) => {
-      try {
-        const stat = await vscode.workspace.fs.stat(vscode.Uri.file(absPath))
-        return (stat.type & vscode.FileType.File) !== 0
-      } catch {
-        return false
-      }
-    },
-  }
-}

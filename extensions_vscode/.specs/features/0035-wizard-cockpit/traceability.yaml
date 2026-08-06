@@ -1,0 +1,250 @@
+# Matriz de rastreabilidade — 0035-wizard-cockpit
+#
+#   Requisito → Cenário → Tarefa → Arquivo → Teste
+#
+# `implementation` começa vazio e é preenchido durante a implementação.
+# Requisito sem tarefa, tarefa sem requisito e arquivo sem rastreio são
+# defeitos de processo — ver constitution.md, Art. 6.
+version: 1
+
+feature: "0035-wizard-cockpit"
+
+requirements:
+
+  "REQ-WIZ-001":
+    title: "Stepper das 8 etapas com estado atual"
+    scenarios:
+      - "SCN-WIZ-001"
+      - "SCN-WIZ-007"
+    tasks:
+      - "TASK-WIZ-003"
+      - "TASK-WIZ-005"
+      - "TASK-WIZ-006"
+      - "TASK-WIZ-011"
+    implementation:
+      - "src/sdd/wizardModel.ts"
+      - "src/sdd/wizardHtml.ts"
+      - "src/sdd/wizardArtifacts.ts"
+      - "src/sdd/wizardContent.ts"
+      - "src/sdd/wizardPanel.ts"
+      - "src/webview/wizard/Shell.tsx"
+      - "src/webview/wizard/Stepper.tsx"
+      - "src/webview/wizard/StageView.tsx"
+      - "src/webview/wizard/StepSpec.tsx"
+      - "src/webview/wizard/StepDesign.tsx"
+      - "src/webview/wizard/StepTasks.tsx"
+    tests:
+      - "TEST-WIZ-002"
+      - "TEST-WIZ-003"
+      - "TEST-WIZ-006"
+      - "TEST-WIZ-012"
+      - "TEST-WIZ-017"
+
+  "REQ-WIZ-002":
+    title: "Portões de qualidade por etapa"
+    scenarios:
+      - "SCN-WIZ-002"
+      - "SCN-WIZ-003"
+    tasks:
+      - "TASK-WIZ-004"
+      - "TASK-WIZ-007"
+      - "TASK-WIZ-011"
+      - "TASK-WIZ-012"
+    implementation:
+      - "src/sdd/wizardStepGuards.ts"
+      - "src/sdd/wizardContent.ts"
+      - "src/webview/wizard/Footer.tsx"
+      - "src/webview/wizard/StepClarify.tsx"
+    tests:
+      - "TEST-WIZ-004"
+      - "TEST-WIZ-005"
+      - "TEST-WIZ-008"
+      - "TEST-WIZ-012"
+
+  "REQ-WIZ-003":
+    title: "Ações de IA abrem o Claude Code sem enviar"
+    scenarios:
+      - "SCN-WIZ-004"
+      - "SCN-WIZ-012"
+    tasks:
+      - "TASK-WIZ-010"
+      - "TASK-WIZ-013"
+    implementation:
+      - "src/sdd/hybridStep.ts"
+      - "src/sdd/wizardActions.ts"
+      - "src/sdd/wizardPanel.ts"
+      - "src/webview/wizard/AiAction.tsx"
+    tests:
+      - "TEST-WIZ-011"
+      - "TEST-WIZ-014"
+
+  "REQ-WIZ-004":
+    title: "Transições persistem em status.yaml"
+    scenarios:
+      - "SCN-WIZ-005"
+      - "SCN-WIZ-008"
+    tasks:
+      - "TASK-WIZ-006"
+      - "TASK-WIZ-007"
+      - "TASK-WIZ-012"
+      - "TASK-WIZ-014"
+    implementation:
+      - "src/sdd/wizardPanel.ts"
+      - "src/sdd/wizardStepGuards.ts"
+      - "src/webview/wizard/Footer.tsx"
+      - "src/webview/wizard/vscodeApi.ts"
+    tests:
+      - "TEST-WIZ-007"
+      - "TEST-WIZ-008"
+      - "TEST-WIZ-013"
+      - "TEST-WIZ-015"
+
+  "REQ-WIZ-005":
+    title: "Criar a mudança pela etapa Solicitar"
+    scenarios:
+      - "SCN-WIZ-006"
+      - "SCN-WIZ-009"
+    tasks:
+      - "TASK-WIZ-008"
+    implementation:
+      - "src/sdd/changePlanner.ts"
+    tests:
+      - "TEST-WIZ-009"
+
+  "REQ-WIZ-006":
+    title: "Gerenciar e retomar mudanças existentes"
+    scenarios:
+      - "SCN-WIZ-010"
+      - "SCN-WIZ-011"
+    tasks:
+      - "TASK-WIZ-009"
+      - "TASK-WIZ-013"
+      - "TASK-WIZ-014"
+    implementation:
+      - "src/sdd/wizardHub.ts"
+      - "src/sdd/wizardPanel.ts"
+      - "src/sdd/wizardHtml.ts"
+      - "src/webview/wizard/Hub.tsx"
+      - "src/webview/wizard/index.tsx"
+    tests:
+      - "TEST-WIZ-010"
+      - "TEST-WIZ-014"
+      - "TEST-WIZ-015"
+
+  "NFR-WIZ-001":
+    title: "Segurança do webview (CSP + nonce + escape)"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-002"
+      - "TASK-WIZ-005"
+    implementation:
+      - "esbuild.mjs"
+      - "src/webview/wizard/index.tsx"
+      - "src/sdd/wizardHtml.ts"
+    tests:
+      - "TEST-WIZ-006"
+      - "TEST-WIZ-012"
+
+  "NFR-WIZ-002":
+    title: "Aderência ao tema (claro/escuro)"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-001"
+      - "TASK-WIZ-015"
+    implementation:
+      - "src/sdd/themeTokens.ts"
+    tests:
+      - "TEST-WIZ-001"
+      - "TEST-WIZ-016"
+
+  "NFR-WIZ-003":
+    title: "Núcleo puro testável"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-003"
+      - "TASK-WIZ-004"
+    implementation:
+      - "src/sdd/wizardModel.ts"
+      - "src/sdd/wizardStepGuards.ts"
+      - "src/sdd/wizardArtifacts.ts"
+    tests:
+      - "TEST-WIZ-002"
+      - "TEST-WIZ-003"
+      - "TEST-WIZ-004"
+      - "TEST-WIZ-005"
+      - "TEST-WIZ-017"
+
+  "NFR-WIZ-004":
+    title: "Acessibilidade"
+    scenarios: []
+    tasks:
+      - "TASK-WIZ-005"
+      - "TASK-WIZ-015"
+    implementation:
+      - "src/webview/wizard/Stepper.tsx"
+    tests:
+      - "TEST-WIZ-006"
+      - "TEST-WIZ-016"
+
+# Itens sem cobertura automatizada, registrados explicitamente em vez de
+# omitidos.
+gaps:
+  - id: "NFR-WIZ-002 (estética da camada de marca)"
+    reason: >-
+      A fidelidade visual e o acabamento estético da camada de marca em cada tema só
+      são plenamente verificáveis por revisão humana; TEST-WIZ-016 cobre apenas um
+      smoke de contraste/operação.
+    mitigation: >-
+      Capturas nos temas claro e escuro anexadas como evidência da TASK-WIZ-015, além
+      do smoke TEST-WIZ-016, comparadas aos mockups de docs/ui-redesign/.
+  - id: "TEST-WIZ-011 (envio ao terminal não é inspecionável)"
+    reason: >-
+      A API do VS Code não expõe o conteúdo enviado a um `Terminal`: não há como afirmar
+      por teste que o prompt ficou PRONTO sem ser enviado (SCN-WIZ-004). O e2e cobre o
+      efeito observável — o prompt correto é composto e copiado, nos dois caminhos do
+      SCN-WIZ-012 (com e sem a CLI detectada).
+    mitigation: >-
+      `sendText(prompt, false)` (sem newline) em `hybridStep.ts`, herdado do adapter 0004
+      já em uso; verificação manual pelo roteiro do HANDOFF; teste unitário do mapa
+      etapa → ação (wizardActions) garantindo o comando composto.
+  - id: "TEST-WIZ-010 (a lista e o clique de retomar não são inspecionáveis)"
+    reason: >-
+      O e2e alcança que o hub ABRE sem QuickPick num projeto vazio (SCN-WIZ-011), pela
+      aba do painel; não alcança o conteúdo da lista nem o clique em "Retomar", que vivem
+      no DOM do webview. O agrupamento, o descarte de mudança sem id e a forma de cada
+      item têm cobertura unitária (wizardHub.test.ts).
+    mitigation: >-
+      Unidade sobre buildHubState e sobre o payload (wizardHtml.test.ts, incl. o título do
+      índice escapado); o roteiro manual do HANDOFF cobre listar, retomar e voltar.
+  - id: "TEST-WIZ-012 (render das views não é inspecionável do host)"
+    reason: >-
+      O DOM de um webview não é acessível pela API da extensão: nenhum teste do host
+      consegue afirmar que a view Especificar listou os requisitos. O e2e cobriria apenas
+      o payload — que já é coberto por unidade em wizardHtml.test.ts (o conteúdo entra
+      escapado) e wizardContent.test.ts (a extração está certa).
+    mitigation: >-
+      Cobertura unitária da extração (wizardContent) e do payload (wizardHtml); capturas
+      das 4 views anexadas como evidência, conforme o critério da TASK-WIZ-011, e o
+      roteiro manual do HANDOFF.
+  - id: "TEST-WIZ-006/007/008 (render, reidratação e avanço no host) — NÃO ESCRITOS"
+    reason: >-
+      O render do shell/stepper/rodapé no WebviewPanel, a reidratação por edição externa e o
+      ciclo cliente→host do avanço exigem o host do VS Code. Estes três e2e ainda NÃO FORAM
+      ESCRITOS — distinto de escritos-e-não-executados. A CI roda os e2e sob xvfb e está
+      verde, mas cobertura verde não supre teste inexistente: por isso TASK-WIZ-005/006/007
+      permanecem in_progress.
+    mitigation: >-
+      Escrever os três e2e; até lá, cobertura unitária de renderWizardHtml, wizardModel,
+      wizardStepGuards (incl. advanceTargetStatus), wizardArtifacts, wizardContent,
+      wizardActions e wizardHub, mais a reutilização de applyTransition (coberto pelo E2E
+      0032). Roteiro manual pelo F5 no HANDOFF.
+
+  - id: "TEST-WIZ-010/011 — EXECUTADOS e verdes na CI"
+    reason: >-
+      Registrado aqui porque a versão anterior desta matriz declarava os dois como escritos
+      e não executados, por falta de libnspr4 no ambiente local. Deixou de ser lacuna: a
+      execução aconteceu (run 31041744209, 2026-08-05, xvfb), 10 e2e passando.
+    mitigation: >-
+      Nenhuma necessária. Permanece fora do alcance de teste apenas a parte não observável
+      pela API — que o prompt não foi ENVIADO ao terminal —, coberta pelo gap específico.
+

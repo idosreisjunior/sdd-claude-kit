@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 832" font-family="'Inter','Segoe UI',system-ui,-apple-system,sans-serif">
+  <defs>
+    <linearGradient id="gViolet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C6BF0"/><stop offset="1" stop-color="#9C8CFF"/></linearGradient>
+    <linearGradient id="gCoral" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E08256"/><stop offset="1" stop-color="#F0A07A"/></linearGradient>
+    <linearGradient id="gCanvas" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0F131A"/><stop offset="1" stop-color="#0C0F14"/></linearGradient>
+    <filter id="softsm" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000000" flood-opacity="0.30"/></filter>
+  </defs>
+
+  <rect width="1280" height="832" fill="url(#gCanvas)"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#12161D"/>
+  <line x1="0" y1="56" x2="1280" y2="56" stroke="#263041"/>
+  <g transform="translate(24,13)">
+    <rect x="0" y="0" width="30" height="30" rx="8" fill="url(#gViolet)"/>
+    <rect x="7" y="8" width="9" height="14" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="12" y="10" width="6" height="10" rx="1" fill="none" stroke="#fff" stroke-width="1.5"/>
+    <text x="42" y="14" font-size="14" font-weight="700" fill="#E6EDF3">Assistente de mudança</text>
+    <text x="42" y="30" font-size="11" fill="#6B7684">0035 — Wizard de specs</text>
+  </g>
+  <g transform="translate(1000,18)">
+    <rect width="120" height="22" rx="11" fill="#7C6BF0" fill-opacity="0.16"/><circle cx="16" cy="11" r="3.5" fill="#7C6BF0"/><text x="30" y="15" font-size="10" font-weight="600" fill="#9C8CFF">DESIGNED</text>
+  </g>
+  <text x="1140" y="33" font-size="12" fill="#6B7684">salvo automaticamente</text>
+  <path d="M1244,20 l14,14 M1258,20 l-14,14" stroke="#6B7684" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Stepper band -->
+  <rect x="0" y="56" width="1280" height="66" fill="#0E1219"/>
+  <line x1="0" y1="122" x2="1280" y2="122" stroke="#263041"/>
+  <g transform="translate(0,86)" font-size="11" text-anchor="middle">
+    <!-- connectors -->
+    <line x1="90" y1="0" x2="247" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="247" y1="0" x2="404" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="404" y1="0" x2="561" y2="0" stroke="#7C6BF0" stroke-width="2"/>
+    <line x1="561" y1="0" x2="718" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="718" y1="0" x2="875" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="875" y1="0" x2="1032" y2="0" stroke="#263041" stroke-width="2"/>
+    <line x1="1032" y1="0" x2="1189" y2="0" stroke="#263041" stroke-width="2"/>
+    <!-- 1,2,3 done -->
+    <g transform="translate(90,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Solicitar</text></g>
+    <g transform="translate(247,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Especificar</text></g>
+    <g transform="translate(404,0)"><circle r="13" fill="url(#gViolet)"/><path d="M-4,0 l3,3 l6,-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text y="30" fill="#9AA7B4">Clarificar</text></g>
+    <!-- 4 current -->
+    <g transform="translate(561,0)"><circle r="14" fill="#161B22" stroke="#7C6BF0" stroke-width="2"/><circle r="4.5" fill="#7C6BF0"/><text y="30" font-weight="700" fill="#E6EDF3">Desenhar</text></g>
+    <!-- 5..8 future -->
+    <g transform="translate(718,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">5</text><text y="30" fill="#6B7684">Tarefas</text></g>
+    <g transform="translate(875,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">6</text><text y="30" fill="#6B7684">Aprovar</text></g>
+    <g transform="translate(1032,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">7</text><text y="30" fill="#6B7684">Implementar</text></g>
+    <g transform="translate(1189,0)"><circle r="13" fill="#161B22" stroke="#313C4E" stroke-width="2"/><text y="4" fill="#6B7684">8</text><text y="30" fill="#6B7684">Verificar</text></g>
+  </g>
+
+  <!-- LEFT PANE: design técnico -->
+  <g transform="translate(24,138)">
+    <rect width="792" height="618" rx="12" fill="#161B22" stroke="#263041"/>
+    <text x="20" y="34" font-size="18" font-weight="700" fill="#E6EDF3">Design técnico</text>
+    <text x="20" y="54" font-size="12" fill="#9AA7B4">Descreve o COMO. O quê e o porquê ficam na spec. Uma decisão não prevista interrompe o fluxo e vira um ADR.</text>
+
+    <!-- VISÃO -->
+    <text x="20" y="92" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">VISÃO</text>
+    <text x="20" y="114" font-size="12.5" fill="#C7D0DA">O wizard é um WebviewPanel com script + nonce (como o Board). Cada etapa é uma view</text>
+    <text x="20" y="134" font-size="12.5" fill="#C7D0DA">client-side; as transições gravam em status.yaml via postMessage.</text>
+
+    <!-- COMPONENTES -->
+    <text x="20" y="176" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">COMPONENTES</text>
+    <g transform="translate(20,186)" font-family="'JetBrains Mono','Consolas',monospace" font-size="11.5">
+      <rect x="0" y="0" width="128" height="28" rx="8" fill="#12161D" stroke="#263041"/><text x="64" y="18" fill="#9AA7B4" text-anchor="middle">WizardPanel.ts</text>
+      <rect x="138" y="0" width="128" height="28" rx="8" fill="#12161D" stroke="#263041"/><text x="202" y="18" fill="#9AA7B4" text-anchor="middle">wizardHtml.ts</text>
+      <rect x="276" y="0" width="200" height="28" rx="8" fill="#12161D" stroke="#263041"/><text x="376" y="18" fill="#9AA7B4" text-anchor="middle">wizardModel.ts (puro)</text>
+      <rect x="486" y="0" width="128" height="28" rx="8" fill="#12161D" stroke="#263041"/><text x="550" y="18" fill="#9AA7B4" text-anchor="middle">stepGuards.ts</text>
+    </g>
+
+    <!-- FLUXO DE DADOS -->
+    <text x="20" y="252" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">FLUXO DE DADOS</text>
+    <g transform="translate(20,262)">
+      <rect x="0" y="0" width="158" height="56" rx="10" fill="#12161D" stroke="#263041"/><text x="79" y="32" font-size="11" fill="#E6EDF3" text-anchor="middle">.specs (disco)</text>
+      <line x1="158" y1="28" x2="196" y2="28" stroke="#7C6BF0" stroke-width="2"/><path d="M190,22 l6,6 l-6,6" fill="none" stroke="#7C6BF0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="198" y="0" width="158" height="56" rx="10" fill="#12161D" stroke="#263041"/><text x="277" y="32" font-size="11" fill="#E6EDF3" text-anchor="middle">wizardModel (puro)</text>
+      <line x1="356" y1="28" x2="394" y2="28" stroke="#7C6BF0" stroke-width="2"/><path d="M388,22 l6,6 l-6,6" fill="none" stroke="#7C6BF0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="396" y="0" width="158" height="56" rx="10" fill="#12161D" stroke="#263041"/><text x="475" y="32" font-size="11" fill="#E6EDF3" text-anchor="middle">wizardHtml (webview)</text>
+      <line x1="554" y1="28" x2="592" y2="28" stroke="#7C6BF0" stroke-width="2"/><path d="M586,22 l6,6 l-6,6" fill="none" stroke="#7C6BF0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="594" y="0" width="158" height="56" rx="10" fill="#12161D" stroke="#263041"/><text x="673" y="26" font-size="11" fill="#E6EDF3" text-anchor="middle">comandos</text><text x="673" y="40" font-size="10.5" font-family="'JetBrains Mono','Consolas',monospace" fill="#9AA7B4" text-anchor="middle">sddClaudeKit.*</text>
+    </g>
+
+    <!-- DECISÕES (ADR) -->
+    <text x="20" y="362" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">DECISÕES (ADR)</text>
+    <g transform="translate(20,372)" font-size="12.5">
+      <g transform="translate(0,0)">
+        <rect width="752" height="54" rx="10" fill="#12161D" stroke="#263041"/>
+        <rect x="12" y="17" width="70" height="20" rx="6" fill="#7C6BF0" fill-opacity="0.16"/><text x="47" y="31" font-size="11" font-weight="600" fill="#9C8CFF" text-anchor="middle">ADR-041</text>
+        <text x="96" y="31" fill="#E6EDF3">Wizard como WebviewPanel com script</text>
+        <rect x="648" y="16" width="92" height="22" rx="11" fill="#3FB86B" fill-opacity="0.16"/><text x="694" y="31" font-size="10" font-weight="600" fill="#3FB86B" text-anchor="middle">ACEITO</text>
+      </g>
+      <g transform="translate(0,62)">
+        <rect width="752" height="54" rx="10" fill="#12161D" stroke="#263041"/>
+        <rect x="12" y="17" width="70" height="20" rx="6" fill="#7C6BF0" fill-opacity="0.16"/><text x="47" y="31" font-size="11" font-weight="600" fill="#9C8CFF" text-anchor="middle">ADR-042</text>
+        <text x="96" y="31" fill="#E6EDF3">Persistir transições em status.yaml a cada etapa</text>
+        <rect x="648" y="16" width="92" height="22" rx="11" fill="#3FB86B" fill-opacity="0.16"/><text x="694" y="31" font-size="10" font-weight="600" fill="#3FB86B" text-anchor="middle">ACEITO</text>
+      </g>
+      <g transform="translate(0,124)">
+        <rect width="752" height="54" rx="10" fill="#12161D" stroke="#263041"/>
+        <rect x="12" y="17" width="70" height="20" rx="6" fill="#7C6BF0" fill-opacity="0.16"/><text x="47" y="31" font-size="11" font-weight="600" fill="#9C8CFF" text-anchor="middle">ADR-043</text>
+        <text x="96" y="31" fill="#E6EDF3">Introduzir bundler (esbuild) para o webview</text>
+        <rect x="648" y="16" width="92" height="22" rx="11" fill="#E0A33A" fill-opacity="0.16"/><text x="694" y="31" font-size="10" font-weight="600" fill="#E0A33A" text-anchor="middle">PROPOSTO</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- RIGHT PANE -->
+  <g transform="translate(832,138)">
+    <!-- AI assist card -->
+    <g filter="url(#softsm)">
+      <rect width="424" height="150" rx="12" fill="#1B1A22" stroke="#E08256" stroke-opacity="0.5"/>
+      <path d="M28,34 l2.4,6 L36,42 l-5.6,2.4 L28,50 l-2.4,-5.6 L20,42 l5.6,-2 Z" fill="url(#gCoral)"/>
+      <text x="48" y="34" font-size="14" font-weight="700" fill="#E6EDF3">Gerar design com o Claude Code</text>
+      <text x="20" y="66" font-size="12" fill="#9AA7B4">Gera o design técnico a partir da spec clarificada</text>
+      <text x="20" y="84" font-size="12" fill="#9AA7B4">usando o skill <tspan fill="#F0A07A" font-family="monospace">/sdd-kit:design</tspan> — o prompt é aberto</text>
+      <text x="20" y="102" font-size="12" fill="#9AA7B4">no terminal, nunca enviado automaticamente.</text>
+      <rect x="20" y="112" width="200" height="30" rx="8" fill="url(#gCoral)"/>
+      <path d="M36,127 l1.6,3.4 L41,132 l-3.4,1.6 L36,138 l-1.6,-3.4 L31,132 l3.4,-1.6 Z" fill="#fff"/>
+      <text x="52" y="131" font-size="12.5" font-weight="600" fill="#fff">Desenhar com IA</text>
+    </g>
+
+    <!-- ADR count card -->
+    <g transform="translate(0,166)">
+      <rect width="424" height="150" rx="12" fill="#161B22" stroke="#263041"/>
+      <text x="20" y="30" font-size="11" font-weight="600" letter-spacing="1" fill="#6B7684">ADRs DESTA MUDANÇA</text>
+      <text x="20" y="76" font-size="30" font-weight="700" fill="#E6EDF3">3</text>
+      <text x="56" y="76" font-size="13" fill="#9AA7B4">decisões registradas</text>
+      <g transform="translate(20,98)" font-size="12">
+        <circle cx="4" cy="4" r="4" fill="#3FB86B"/><text x="16" y="8" fill="#C7D0DA">2 aceitos</text>
+        <circle cx="4" cy="28" r="4" fill="#E0A33A"/><text x="16" y="32" fill="#C7D0DA">1 proposto</text>
+      </g>
+    </g>
+
+    <!-- Info card -->
+    <g transform="translate(0,332)">
+      <rect width="424" height="110" rx="12" fill="#161B22" stroke="#263041"/>
+      <rect x="0" y="0" width="4" height="110" rx="2" fill="#E0A33A"/>
+      <path d="M28,26 l6,-11 l6,11 Z" fill="none" stroke="#E0A33A" stroke-width="1.6" stroke-linejoin="round"/><circle cx="34" cy="24" r="0.8" fill="#E0A33A"/>
+      <text x="20" y="46" font-size="12.5" font-weight="600" fill="#E6EDF3">Decisão arquitetural não prevista?</text>
+      <text x="20" y="68" font-size="12" fill="#9AA7B4">Interrompa e proponha um ADR — não</text>
+      <text x="20" y="86" font-size="12" fill="#9AA7B4">improvise.</text>
+    </g>
+  </g>
+
+  <!-- Footer nav -->
+  <rect x="0" y="772" width="1280" height="60" fill="#12161D"/>
+  <line x1="0" y1="772" x2="1280" y2="772" stroke="#263041"/>
+  <g transform="translate(24,786)">
+    <rect width="120" height="34" rx="8" fill="none" stroke="#313C4E"/>
+    <path d="M20,17 l6,-6 M20,17 l6,6" stroke="#9AA7B4" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="72" y="22" font-size="13" fill="#E6EDF3" text-anchor="middle">Voltar</text>
+  </g>
+  <g transform="translate(940,786)">
+    <rect width="150" height="34" rx="8" fill="none" stroke="#313C4E"/>
+    <text x="75" y="22" font-size="13" fill="#E6EDF3" text-anchor="middle">Salvar rascunho</text>
+    <rect x="162" y="0" width="230" height="34" rx="8" fill="url(#gViolet)"/>
+    <text x="264" y="22" font-size="13" font-weight="600" fill="#fff" text-anchor="middle">Avançar para Tarefas</text>
+    <path d="M362,17 l6,-6 M362,17 l6,6 M356,11 l6,6 l-6,6" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

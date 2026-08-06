@@ -34,3 +34,6 @@ yarn-error.log*
 
 # Claude Code (configuração local do usuário)
 .claude/settings.local.json
+
+# Painel de progresso gerado (scripts/progress.mjs)
+sdd-progress.html
